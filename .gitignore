@@ -1,0 +1,6 @@
+analysis/outputs
+fakerate/outputs
+analysis/scalefactors
+analysis/.jobs.txt
+fakerate/.jobs.txt
+analysis/plots

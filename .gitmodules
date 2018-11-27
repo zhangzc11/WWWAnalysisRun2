@@ -8,3 +8,9 @@
 	path = wwwbabymaker
 	url = git@github.com:cmstas/VVVBabyMaker.git
 	branch = 2017
+[submodule "fakerate/plottery"]
+	path = fakerate/plottery
+	url = git@github.com:aminnj/plottery.git
+[submodule "fakerate/rooutil"]
+	path = fakerate/rooutil
+	url = git@github.com:sgnoohc/rooutil.git
