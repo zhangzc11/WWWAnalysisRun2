@@ -1,0 +1,6 @@
+[submodule "analysis/rooutil"]
+	path = analysis/rooutil
+	url = git@github.com:sgnoohc/rooutil.git
+[submodule "analysis/plottery"]
+	path = analysis/plottery
+	url = git@github.com:aminnj/plottery.git
