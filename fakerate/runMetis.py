@@ -13,7 +13,7 @@ base_dir_path = "/hadoop/cms/store/user/phchang/metis/wwwbaby/{}/".format(input_
 
 # The following defines the tag for this round of submission (change it every time you submit)
 data_year = "2017"
-job_tag = "FR{}_analysis_v0.11.3".format(data_year)
+job_tag = "FR{}_analysis_v0.11.4".format(data_year)
 
 # These are the list of samples that will be submitted
 samples = [
