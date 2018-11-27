@@ -4,3 +4,7 @@
 [submodule "analysis/plottery"]
 	path = analysis/plottery
 	url = git@github.com:aminnj/plottery.git
+[submodule "wwwbabymaker"]
+	path = wwwbabymaker
+	url = git@github.com:cmstas/VVVBabyMaker.git
+	branch = 2017
