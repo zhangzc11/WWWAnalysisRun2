@@ -14,3 +14,6 @@
 [submodule "fakerate/rooutil"]
 	path = fakerate/rooutil
 	url = git@github.com:sgnoohc/rooutil.git
+[submodule "fakerate/ProjectMetis"]
+	path = fakerate/ProjectMetis
+	url = git@github.com:aminnj/ProjectMetis.git
