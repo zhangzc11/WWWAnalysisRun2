@@ -11,4 +11,10 @@ This will loop over the fake rate babies produced by the VVVBabyMaker and write 
     make -j2
     # Test a job to make sure things don't crash
     # ./doAnalysis /nfs-7/userdata/phchang/WWW_babies/FR2017_v3.0.17/link/TTJets_DiLept_TuneCP5_13TeV-madgraphMLM_output_1.root test.root -1
+
+Batch jobs can be submitted using aminnj/ProjectMetis.git
+
+    # Setup Metis
+    cd ProjectMetis/
+    source setup.sh
     python runMetis.py # submits jobs to condor (change the job_tag in the script the next time you submit the job)

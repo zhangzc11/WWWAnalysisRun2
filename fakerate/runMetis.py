@@ -87,10 +87,27 @@ for sample in samples:
 # Now submit the job!
 from rooutil import rooutil as ru
 ru.submit_metis(
-        job_tag,                                         # The tag for this round of submission
-        samples_map,                                     # The dictionary of where the input locations are for a given sample
+        job_tag=job_tag,                                 # The tag for this round of submission
+        samples_map=samples_map,                         # The dictionary of where the input locations are for a given sample
         tar_files=["doAnalysis", "setup.sh", "histmap"], # Files/directories to transfer to working nodes
         exec_script="metis.sh",                          # Executable to run for each condor job
         hadoop_dirname="franalysis")                     # Where the output of the condor jobs will be (i.e. /hadoop/cms/store/user/${USER}/metis/"hadoop_dirname")
+
+import os
+print "Done with {}".format(job_tag)
+print "hadding ..."
+os.system("mkdir -p outputs/{}/{}".format(input_fr_ntup_tag, job_tag))
+os.system("hadd -f outputs/{}/{}/dy.root      /hadoop/cms/store/user/phchang/metis/franalysis/{}/DYJets*/*.root".format(input_fr_ntup_tag, job_tag, job_tag))
+os.system("hadd -f outputs/{}/{}/data_mu.root /hadoop/cms/store/user/phchang/metis/franalysis/{}/Double*/*.root".format(input_fr_ntup_tag, job_tag, job_tag))
+os.system("hadd -f outputs/{}/{}/data_el.root /hadoop/cms/store/user/phchang/metis/franalysis/{}/Single*/*.root".format(input_fr_ntup_tag, job_tag, job_tag))
+os.system("hadd -f outputs/{}/{}/tt_incl.root /hadoop/cms/store/user/phchang/metis/franalysis/{}/TTJets_Tune*/*.root".format(input_fr_ntup_tag, job_tag, job_tag))
+os.system("hadd -f outputs/{}/{}/tt_1l.root   /hadoop/cms/store/user/phchang/metis/franalysis/{}/TTJets_Single*/*.root".format(input_fr_ntup_tag, job_tag, job_tag))
+os.system("hadd -f outputs/{}/{}/wj_incl.root /hadoop/cms/store/user/phchang/metis/franalysis/{}/WJetsToLNu_TuneCP5_13TeV*/*.root".format(input_fr_ntup_tag, job_tag, job_tag))
+os.system("hadd -f outputs/{}/{}/wj_ht.root   /hadoop/cms/store/user/phchang/metis/franalysis/{}/WJetsToLNu_HT*/*.root".format(input_fr_ntup_tag, job_tag, job_tag))
+os.system("hadd -f outputs/{}/{}/ww.root      /hadoop/cms/store/user/phchang/metis/franalysis/{}/WW_TuneCP5_13TeV*/*.root".format(input_fr_ntup_tag, job_tag, job_tag))
+os.system("hadd -f outputs/{}/{}/wz.root      /hadoop/cms/store/user/phchang/metis/franalysis/{}/WZ_TuneCP5_13TeV*/*.root".format(input_fr_ntup_tag, job_tag, job_tag))
+os.system("hadd -f outputs/{}/{}/qcd_mu.root  /hadoop/cms/store/user/phchang/metis/franalysis/{}/QCD_Pt*MuEnriched*/*.root".format(input_fr_ntup_tag, job_tag, job_tag))
+os.system("hadd -f outputs/{}/{}/qcd_em.root  /hadoop/cms/store/user/phchang/metis/franalysis/{}/QCD_Pt*EMEnriched*/*.root".format(input_fr_ntup_tag, job_tag, job_tag))
+os.system("hadd -f outputs/{}/{}/qcd_bc.root  /hadoop/cms/store/user/phchang/metis/franalysis/{}/QCD_Pt*bcToE*/*.root".format(input_fr_ntup_tag, job_tag, job_tag))
 
 #eof
