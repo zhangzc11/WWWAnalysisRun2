@@ -36,10 +36,13 @@ int main(int argc, char** argv)
     // Create a Looper object to loop over input files
     RooUtil::Looper<frtree> looper(ch, &fr, nEvents);
 
+    // Lepton fake rate suffix
+    const char* suffix = lepversion == 0 ? "_ss" : "_3l";
+
     // Hist map for retreiving histograms with fake rates and pileup reweights
     RooUtil::HistMap purewgt("histmap/puw_2017.root:puw_central");
-    RooUtil::HistMap qcd_mu("histmap/fakerate.root:Mu_ptcorretarolledcoarse_qcd_fakerate");
-    RooUtil::HistMap qcd_el("histmap/fakerate.root:El_ptcorretarolledcoarse_qcd_fakerate");
+    RooUtil::HistMap qcd_mu(TString::Format("histmap/fakerate%s.root:Mu_ptcorretarolledcoarse_qcd_fakerate", suffix));
+    RooUtil::HistMap qcd_el(TString::Format("histmap/fakerate%s.root:El_ptcorretarolledcoarse_qcd_fakerate", suffix));
 
     // Variables
     float weight;

@@ -1,5 +1,24 @@
 #!/bin/env python
 
+# Plotting script for the fake rate analysis
+
+import sys
+
+def help():
+    print "Error - Usage:"
+    print ""
+    print "  $ python {} INPUT_NTUP_TAG ANALYSIS_TAG".format(sys.argv[0])
+    print ""
+    print "    INPUT_NTUP_TAG     input ntuple tag       (e.g. FR2017_v3.0.17)"
+    print "    ANALYSIS_TAG       fake rate analysis tag (e.g. FR2017_analysis_ss_v0.11.4)"
+    print ""
+    sys.exit()
+
+try:
+    output_dirpath = "outputs/{}/{}".format(sys.argv[1], sys.argv[2])
+except:
+    help()
+
 import ROOT as r
 from rooutil import rooutil as ru
 from rooutil import plottery_wrapper as p
@@ -8,8 +27,6 @@ import glob
 import math
 from array import array
 
-# The path for the plotting
-output_dirpath = "outputs/FR2017_v3.0.17/FR2017_analysis_v0.11.4"
 is2017 = "FR2017" in output_dirpath
 
 def main():
@@ -21,7 +38,7 @@ def main():
     mu_fakerate()
     el_fakerate()
     
-    ofile = r.TFile("fakerate.root", "recreate")
+    ofile = r.TFile("histmap/fakerate_ss.root" if "_ss_" in output_dirpath else "histmap/fakerate_3l.root", "recreate")
 
     prescale_muHLT17 = get_prescale("TwoMuHLT17__Mll")
     prescale_elHLT23 = get_prescale("TwoElHLT23__Mll")
@@ -88,6 +105,14 @@ def main():
     closure_plot("ElClosureTightNbgeq2__MT", "ElClosureTightNbgeq2Predict__MT")
     closure_plot("MuClosureTightNbgeq1__MT", "MuClosureTightNbgeq1Predict__MT")
     closure_plot("ElClosureTightNbgeq1__MT", "ElClosureTightNbgeq1Predict__MT")
+
+    print ""
+    print ""
+    print "=============================================="
+    print "NOTE: Wrote fake rate histograms to", ofile.GetName()
+    print "=============================================="
+    print ""
+    print ""
 
 def get_bounds_from_source_file(keyword):
     line = [ y.strip() for y in open("process.cc").readlines() if keyword in y and "const std::vector<float>" in y ][0]

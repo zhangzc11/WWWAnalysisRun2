@@ -44,7 +44,6 @@ else
     CMSSWVERSION=$5
     SCRAMARCH=$6
     BABYMODE=$7
-    LEPTONVERSION=$8
     if [ "x${_CONDOR_SLOT}" == "x" ]; then
         WORKDIR=/tmp/phchang_condor_local_${OUTPUTDIR//\//_}_${OUTPUTNAME}_${IFILE}
         mkdir -p ${WORKDIR}
@@ -64,8 +63,7 @@ else
     echo "CMSSWVERSION  : $5"
     echo "SCRAMARCH     : $6"
     echo "BABYMODE      : $7"
-    echo "LEPTONVERSION : $8"
-    shift 8
+    shift 7
     md5sum package.tar.gz
     tar xvzf package.tar.gz
     if [ $? -eq 0 ]; then
@@ -84,8 +82,8 @@ echo ">>> ls -l"
 ls -l
 echo ">>> export COREDIR=$PWD/CORE/"
 export COREDIR=$PWD/CORE/
-echo ">>> ./doAnalysis ${INPUTFILENAMES} output.root ${LEPTONVERSION}"
-./doAnalysis ${INPUTFILENAMES} output.root ${LEPTONVERSION}
+echo ">>> ./doAnalysis ${INPUTFILENAMES} output.root ${BABYMODE}"
+./doAnalysis ${INPUTFILENAMES} output.root ${BABYMODE}
 
 ###################################################################################################
 # ProjectMetis/CondorTask specific (Copying files over to hadoop)
