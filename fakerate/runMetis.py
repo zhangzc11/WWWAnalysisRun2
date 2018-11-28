@@ -110,38 +110,41 @@ ru.submit_metis(
 import os
 
 print "Done with {}".format(job_tag)
-print "hadding ..."
 
-os.system("mkdir -p outputs/{}/{}_ss".format(input_fr_ntup_tag, job_tag))
-os.system("hadd -f outputs/{}/{}_ss/dy.root      /hadoop/cms/store/user/phchang/metis/franalysis/{}/DYJets*_ss*/*.root"                   .format(input_fr_ntup_tag, job_tag, job_tag))
-os.system("hadd -f outputs/{}/{}_ss/data_mu.root /hadoop/cms/store/user/phchang/metis/franalysis/{}/Double*_ss*/*.root"                   .format(input_fr_ntup_tag, job_tag, job_tag))
-os.system("hadd -f outputs/{}/{}_ss/data_el.root /hadoop/cms/store/user/phchang/metis/franalysis/{}/Single*_ss*/*.root"                   .format(input_fr_ntup_tag, job_tag, job_tag))
-os.system("hadd -f outputs/{}/{}_ss/tt_incl.root /hadoop/cms/store/user/phchang/metis/franalysis/{}/TTJets_Tune*_ss*/*.root"              .format(input_fr_ntup_tag, job_tag, job_tag))
-os.system("hadd -f outputs/{}/{}_ss/tt_1l.root   /hadoop/cms/store/user/phchang/metis/franalysis/{}/TTJets_Single*_ss*/*.root"            .format(input_fr_ntup_tag, job_tag, job_tag))
-os.system("hadd -f outputs/{}/{}_ss/wj_incl.root /hadoop/cms/store/user/phchang/metis/franalysis/{}/WJetsToLNu_TuneCP5_13TeV*_ss*/*.root" .format(input_fr_ntup_tag, job_tag, job_tag))
-os.system("hadd -f outputs/{}/{}_ss/wj_ht.root   /hadoop/cms/store/user/phchang/metis/franalysis/{}/WJetsToLNu_HT*_ss*/*.root"            .format(input_fr_ntup_tag, job_tag, job_tag))
-os.system("hadd -f outputs/{}/{}_ss/ww.root      /hadoop/cms/store/user/phchang/metis/franalysis/{}/WW_TuneCP5_13TeV*_ss*/*.root"         .format(input_fr_ntup_tag, job_tag, job_tag))
-os.system("hadd -f outputs/{}/{}_ss/wz.root      /hadoop/cms/store/user/phchang/metis/franalysis/{}/WZ_TuneCP5_13TeV*_ss*/*.root"         .format(input_fr_ntup_tag, job_tag, job_tag))
-os.system("hadd -f outputs/{}/{}_ss/qcd_mu.root  /hadoop/cms/store/user/phchang/metis/franalysis/{}/QCD_Pt*MuEnriched*_ss*/*.root"        .format(input_fr_ntup_tag, job_tag, job_tag))
-os.system("hadd -f outputs/{}/{}_ss/qcd_em.root  /hadoop/cms/store/user/phchang/metis/franalysis/{}/QCD_Pt*EMEnriched*_ss*/*.root"        .format(input_fr_ntup_tag, job_tag, job_tag))
-os.system("hadd -f outputs/{}/{}_ss/qcd_bc.root  /hadoop/cms/store/user/phchang/metis/franalysis/{}/QCD_Pt*bcToE*_ss*/*.root"             .format(input_fr_ntup_tag, job_tag, job_tag))
+os.system("mkdir -p outputs/{}/{}/ss".format(input_fr_ntup_tag, job_tag))
+if not os.path.isfile("outputs/{}/{}/ss/dy.root"      .format(input_fr_ntup_tag, job_tag)): os.system("hadd outputs/{}/{}/ss/dy.root      /hadoop/cms/store/user/phchang/metis/franalysis/{}/DYJets*_ss*/*.root"                   .format(input_fr_ntup_tag, job_tag, job_tag))
+if not os.path.isfile("outputs/{}/{}/ss/data_mu.root" .format(input_fr_ntup_tag, job_tag)): os.system("hadd outputs/{}/{}/ss/data_mu.root /hadoop/cms/store/user/phchang/metis/franalysis/{}/Double*_ss*/*.root"                   .format(input_fr_ntup_tag, job_tag, job_tag))
+if not os.path.isfile("outputs/{}/{}/ss/data_el.root" .format(input_fr_ntup_tag, job_tag)): os.system("hadd outputs/{}/{}/ss/data_el.root /hadoop/cms/store/user/phchang/metis/franalysis/{}/Single*_ss*/*.root"                   .format(input_fr_ntup_tag, job_tag, job_tag))
+if not os.path.isfile("outputs/{}/{}/ss/tt_incl.root" .format(input_fr_ntup_tag, job_tag)): os.system("hadd outputs/{}/{}/ss/tt_incl.root /hadoop/cms/store/user/phchang/metis/franalysis/{}/TTJets_Tune*_ss*/*.root"              .format(input_fr_ntup_tag, job_tag, job_tag))
+if not os.path.isfile("outputs/{}/{}/ss/tt_1l.root"   .format(input_fr_ntup_tag, job_tag)): os.system("hadd outputs/{}/{}/ss/tt_1l.root   /hadoop/cms/store/user/phchang/metis/franalysis/{}/TTJets_Single*_ss*/*.root"            .format(input_fr_ntup_tag, job_tag, job_tag))
+if not os.path.isfile("outputs/{}/{}/ss/wj_incl.root" .format(input_fr_ntup_tag, job_tag)): os.system("hadd outputs/{}/{}/ss/wj_incl.root /hadoop/cms/store/user/phchang/metis/franalysis/{}/WJetsToLNu_TuneCP5_13TeV*_ss*/*.root" .format(input_fr_ntup_tag, job_tag, job_tag))
+if not os.path.isfile("outputs/{}/{}/ss/wj_ht.root"   .format(input_fr_ntup_tag, job_tag)): os.system("hadd outputs/{}/{}/ss/wj_ht.root   /hadoop/cms/store/user/phchang/metis/franalysis/{}/WJetsToLNu_HT*_ss*/*.root"            .format(input_fr_ntup_tag, job_tag, job_tag))
+if not os.path.isfile("outputs/{}/{}/ss/ww.root"      .format(input_fr_ntup_tag, job_tag)): os.system("hadd outputs/{}/{}/ss/ww.root      /hadoop/cms/store/user/phchang/metis/franalysis/{}/WW_TuneCP5_13TeV*_ss*/*.root"         .format(input_fr_ntup_tag, job_tag, job_tag))
+if not os.path.isfile("outputs/{}/{}/ss/wz.root"      .format(input_fr_ntup_tag, job_tag)): os.system("hadd outputs/{}/{}/ss/wz.root      /hadoop/cms/store/user/phchang/metis/franalysis/{}/WZ_TuneCP5_13TeV*_ss*/*.root"         .format(input_fr_ntup_tag, job_tag, job_tag))
+if not os.path.isfile("outputs/{}/{}/ss/qcd_mu.root"  .format(input_fr_ntup_tag, job_tag)): os.system("hadd outputs/{}/{}/ss/qcd_mu.root  /hadoop/cms/store/user/phchang/metis/franalysis/{}/QCD_Pt*MuEnriched*_ss*/*.root"        .format(input_fr_ntup_tag, job_tag, job_tag))
+if not os.path.isfile("outputs/{}/{}/ss/qcd_em.root"  .format(input_fr_ntup_tag, job_tag)): os.system("hadd outputs/{}/{}/ss/qcd_em.root  /hadoop/cms/store/user/phchang/metis/franalysis/{}/QCD_Pt*EMEnriched*_ss*/*.root"        .format(input_fr_ntup_tag, job_tag, job_tag))
+if not os.path.isfile("outputs/{}/{}/ss/qcd_bc.root"  .format(input_fr_ntup_tag, job_tag)): os.system("hadd outputs/{}/{}/ss/qcd_bc.root  /hadoop/cms/store/user/phchang/metis/franalysis/{}/QCD_Pt*bcToE*_ss*/*.root"             .format(input_fr_ntup_tag, job_tag, job_tag))
 
-os.system("mkdir -p outputs/{}/{}_3l".format(input_fr_ntup_tag, job_tag))
-os.system("hadd -f outputs/{}/{}_3l/dy.root      /hadoop/cms/store/user/phchang/metis/franalysis/{}/DYJets*_3l*/*.root"                   .format(input_fr_ntup_tag, job_tag, job_tag))
-os.system("hadd -f outputs/{}/{}_3l/data_mu.root /hadoop/cms/store/user/phchang/metis/franalysis/{}/Double*_3l*/*.root"                   .format(input_fr_ntup_tag, job_tag, job_tag))
-os.system("hadd -f outputs/{}/{}_3l/data_el.root /hadoop/cms/store/user/phchang/metis/franalysis/{}/Single*_3l*/*.root"                   .format(input_fr_ntup_tag, job_tag, job_tag))
-os.system("hadd -f outputs/{}/{}_3l/tt_incl.root /hadoop/cms/store/user/phchang/metis/franalysis/{}/TTJets_Tune*_3l*/*.root"              .format(input_fr_ntup_tag, job_tag, job_tag))
-os.system("hadd -f outputs/{}/{}_3l/tt_1l.root   /hadoop/cms/store/user/phchang/metis/franalysis/{}/TTJets_Single*_3l*/*.root"            .format(input_fr_ntup_tag, job_tag, job_tag))
-os.system("hadd -f outputs/{}/{}_3l/wj_incl.root /hadoop/cms/store/user/phchang/metis/franalysis/{}/WJetsToLNu_TuneCP5_13TeV*_3l*/*.root" .format(input_fr_ntup_tag, job_tag, job_tag))
-os.system("hadd -f outputs/{}/{}_3l/wj_ht.root   /hadoop/cms/store/user/phchang/metis/franalysis/{}/WJetsToLNu_HT*_3l*/*.root"            .format(input_fr_ntup_tag, job_tag, job_tag))
-os.system("hadd -f outputs/{}/{}_3l/ww.root      /hadoop/cms/store/user/phchang/metis/franalysis/{}/WW_TuneCP5_13TeV*_3l*/*.root"         .format(input_fr_ntup_tag, job_tag, job_tag))
-os.system("hadd -f outputs/{}/{}_3l/wz.root      /hadoop/cms/store/user/phchang/metis/franalysis/{}/WZ_TuneCP5_13TeV*_3l*/*.root"         .format(input_fr_ntup_tag, job_tag, job_tag))
-os.system("hadd -f outputs/{}/{}_3l/qcd_mu.root  /hadoop/cms/store/user/phchang/metis/franalysis/{}/QCD_Pt*MuEnriched*_3l*/*.root"        .format(input_fr_ntup_tag, job_tag, job_tag))
-os.system("hadd -f outputs/{}/{}_3l/qcd_em.root  /hadoop/cms/store/user/phchang/metis/franalysis/{}/QCD_Pt*EMEnriched*_3l*/*.root"        .format(input_fr_ntup_tag, job_tag, job_tag))
-os.system("hadd -f outputs/{}/{}_3l/qcd_bc.root  /hadoop/cms/store/user/phchang/metis/franalysis/{}/QCD_Pt*bcToE*_3l*/*.root"             .format(input_fr_ntup_tag, job_tag, job_tag))
+os.system("mkdir -p outputs/{}/{}/3l".format(input_fr_ntup_tag, job_tag))
+if not os.path.isfile("outputs/{}/{}/3l/dy.root"      .format(input_fr_ntup_tag, job_tag)): os.system("hadd outputs/{}/{}/3l/dy.root      /hadoop/cms/store/user/phchang/metis/franalysis/{}/DYJets*_3l*/*.root"                   .format(input_fr_ntup_tag, job_tag, job_tag))
+if not os.path.isfile("outputs/{}/{}/3l/data_mu.root" .format(input_fr_ntup_tag, job_tag)): os.system("hadd outputs/{}/{}/3l/data_mu.root /hadoop/cms/store/user/phchang/metis/franalysis/{}/Double*_3l*/*.root"                   .format(input_fr_ntup_tag, job_tag, job_tag))
+if not os.path.isfile("outputs/{}/{}/3l/data_el.root" .format(input_fr_ntup_tag, job_tag)): os.system("hadd outputs/{}/{}/3l/data_el.root /hadoop/cms/store/user/phchang/metis/franalysis/{}/Single*_3l*/*.root"                   .format(input_fr_ntup_tag, job_tag, job_tag))
+if not os.path.isfile("outputs/{}/{}/3l/tt_incl.root" .format(input_fr_ntup_tag, job_tag)): os.system("hadd outputs/{}/{}/3l/tt_incl.root /hadoop/cms/store/user/phchang/metis/franalysis/{}/TTJets_Tune*_3l*/*.root"              .format(input_fr_ntup_tag, job_tag, job_tag))
+if not os.path.isfile("outputs/{}/{}/3l/tt_1l.root"   .format(input_fr_ntup_tag, job_tag)): os.system("hadd outputs/{}/{}/3l/tt_1l.root   /hadoop/cms/store/user/phchang/metis/franalysis/{}/TTJets_Single*_3l*/*.root"            .format(input_fr_ntup_tag, job_tag, job_tag))
+if not os.path.isfile("outputs/{}/{}/3l/wj_incl.root" .format(input_fr_ntup_tag, job_tag)): os.system("hadd outputs/{}/{}/3l/wj_incl.root /hadoop/cms/store/user/phchang/metis/franalysis/{}/WJetsToLNu_TuneCP5_13TeV*_3l*/*.root" .format(input_fr_ntup_tag, job_tag, job_tag))
+if not os.path.isfile("outputs/{}/{}/3l/wj_ht.root"   .format(input_fr_ntup_tag, job_tag)): os.system("hadd outputs/{}/{}/3l/wj_ht.root   /hadoop/cms/store/user/phchang/metis/franalysis/{}/WJetsToLNu_HT*_3l*/*.root"            .format(input_fr_ntup_tag, job_tag, job_tag))
+if not os.path.isfile("outputs/{}/{}/3l/ww.root"      .format(input_fr_ntup_tag, job_tag)): os.system("hadd outputs/{}/{}/3l/ww.root      /hadoop/cms/store/user/phchang/metis/franalysis/{}/WW_TuneCP5_13TeV*_3l*/*.root"         .format(input_fr_ntup_tag, job_tag, job_tag))
+if not os.path.isfile("outputs/{}/{}/3l/wz.root"      .format(input_fr_ntup_tag, job_tag)): os.system("hadd outputs/{}/{}/3l/wz.root      /hadoop/cms/store/user/phchang/metis/franalysis/{}/WZ_TuneCP5_13TeV*_3l*/*.root"         .format(input_fr_ntup_tag, job_tag, job_tag))
+if not os.path.isfile("outputs/{}/{}/3l/qcd_mu.root"  .format(input_fr_ntup_tag, job_tag)): os.system("hadd outputs/{}/{}/3l/qcd_mu.root  /hadoop/cms/store/user/phchang/metis/franalysis/{}/QCD_Pt*MuEnriched*_3l*/*.root"        .format(input_fr_ntup_tag, job_tag, job_tag))
+if not os.path.isfile("outputs/{}/{}/3l/qcd_em.root"  .format(input_fr_ntup_tag, job_tag)): os.system("hadd outputs/{}/{}/3l/qcd_em.root  /hadoop/cms/store/user/phchang/metis/franalysis/{}/QCD_Pt*EMEnriched*_3l*/*.root"        .format(input_fr_ntup_tag, job_tag, job_tag))
+if not os.path.isfile("outputs/{}/{}/3l/qcd_bc.root"  .format(input_fr_ntup_tag, job_tag)): os.system("hadd outputs/{}/{}/3l/qcd_bc.root  /hadoop/cms/store/user/phchang/metis/franalysis/{}/QCD_Pt*bcToE*_3l*/*.root"             .format(input_fr_ntup_tag, job_tag, job_tag))
 
-print "Done hadding {}".format(job_tag)
+print ""
+print "=============================================="
+print ""
+print ""
 print "Finished processing {} with fake rate baby {}!".format(job_tag, input_fr_ntup_tag)
 print "Your output should be outputs/{}/{}_3l and outputs/{}/{}_ss".format(input_fr_ntup_tag, job_tag, input_fr_ntup_tag, job_tag)
+print ""
 
 #eof
