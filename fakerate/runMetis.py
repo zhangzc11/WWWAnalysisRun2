@@ -1,8 +1,18 @@
 ##!/bin/env python
 
-#_____________________________________________________________________________________________
 # This script submits the jobs to condor
 # It takes a while and it is not ideal to run over them on a local machine
+
+################
+#
+# There is only one setting to be aware of, which is to decide whether to run same-sign fake rate study or the three-lepton
+#
+################
+doSameSign = True
+
+
+
+
 
 #_____________________________________________________________________________________________
 # Job tag and output hadoop path
@@ -13,7 +23,7 @@ base_dir_path = "/hadoop/cms/store/user/phchang/metis/wwwbaby/{}/".format(input_
 
 # The following defines the tag for this round of submission (change it every time you submit)
 data_year = "2017"
-job_tag = "FR{}_analysis_v0.11.4".format(data_year)
+job_tag = "FR{}_analysis_{}_v0.11.4".format(data_year, "ss" if doSameSign else "3l")
 
 # These are the list of samples that will be submitted
 samples = [
@@ -79,16 +89,19 @@ samples = [
         ]
 
 #_____________________________________________________________________________________________
-# Create the samples mapping between the sample name -> the location of input sample hadoop directory
+# Create the samples mapping between the sample name -> the location of input sample hadoop directory and arguments map for each sample
 samples_map = {}
+arguments_map = {}
 for sample in samples:
     samples_map[sample] = base_dir_path + "/MAKER_" + sample + "_" + input_fr_ntup_tag
+    arguments_map[sample] = "0" if doSameSign else "1"
 
 # Now submit the job!
 from rooutil import rooutil as ru
 ru.submit_metis(
         job_tag=job_tag,                                 # The tag for this round of submission
         samples_map=samples_map,                         # The dictionary of where the input locations are for a given sample
+        arguments_map=arguments_map,                     # The dictionary of whether to run same-sign or three-lepton
         tar_files=["doAnalysis", "setup.sh", "histmap"], # Files/directories to transfer to working nodes
         exec_script="metis.sh",                          # Executable to run for each condor job
         hadoop_dirname="franalysis")                     # Where the output of the condor jobs will be (i.e. /hadoop/cms/store/user/${USER}/metis/"hadoop_dirname")
