@@ -17,3 +17,5 @@
 [submodule "fakerate/ProjectMetis"]
 	path = fakerate/ProjectMetis
 	url = git@github.com:aminnj/ProjectMetis.git
+	branch = master
+	ignore = dirty
