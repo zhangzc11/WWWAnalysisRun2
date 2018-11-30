@@ -1606,19 +1606,22 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
     // Now book cutflows
     cutflow.bookCutflows();
 
-    // Histogram booking is dependent on whether you ask for certain regions
-    if (not regions.IsNull())
+    // Histogram booking is dependent on whether you ask for certain regions also when systematics is asked, do not run the entire histogramming otherwise too many will be booked (O(20k) histograms!)
+    if (not doSystematics)
     {
-        // book histogram from the requested region and below
-        for (auto& region : RooUtil::StringUtil::split(regions, ","))
+        if (not regions.IsNull())
         {
-            cutflow.bookHistogramsForCutAndBelow(histograms, region);
+            // book histogram from the requested region and below
+            for (auto& region : RooUtil::StringUtil::split(regions, ","))
+            {
+                cutflow.bookHistogramsForCutAndBelow(histograms, region);
+            }
         }
-    }
-    else
-    {
-        // Now book histograms at the end of each cut structures (the CutTree nodes that terminates)
-        cutflow.bookHistogramsForEndCuts(histograms);
+        else
+        {
+            // Now book histograms at the end of each cut structures (the CutTree nodes that terminates)
+            cutflow.bookHistogramsForEndCuts(histograms);
+        }
     }
 
     // Print the cut structure for review

@@ -10,7 +10,7 @@ from rooutil import plottery_wrapper as p
 import glob
 import ROOT as r
 
-output_dirpath = "outputs/WWW2017_v4.0.5/test1"
+output_dirpath = "outputs/condor/WWW2017_v4.0.5/test1"
 is2017 = "WWW2017" in output_dirpath
 
 def main():
