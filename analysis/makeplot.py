@@ -10,43 +10,39 @@ from rooutil import plottery_wrapper as p
 import glob
 import ROOT as r
 
+output_dirpath = "outputs/WWW2017_v4.0.5/test1"
 output_dirpath = "outputs/condor/WWW2017_v4.0.5/test1"
 is2017 = "WWW2017" in output_dirpath
 
+# Bkg order
+bkg_order = ["photon", "qflip", "fakes", "lostlep", "prompt"]
+colors = [ 920, 2007, 2005, 2003, 2001, 2 ]
+
 def main():
     write_datacard()
-#    get_wzsf()
+    plotSR()
 #    plot()
+#    get_wzsf()
 #    study_wz()
 #    oscr()
 
 def write_datacard():
 
+    # List of processes
+
     # Get the main yield
     wzsf = get_wzsf()
-    hists = get_yield_hists("SR", True, wzsf)
-
-    # Get the WZ CR statistical uncertainties
-    systs={
-            "lostlep": {
-                "CRstat_ee"    : ru.frac_syst_hists(hists["lostlep"],[wzsf["lostlep"]["SSee"][1]/wzsf["lostlep"]["SSee"][0],0,0,wzsf["lostlep"]["SSee"][1]/wzsf["lostlep"]["SSee"][0],0,0,0,0,0]),
-                "CRstat_em"    : ru.frac_syst_hists(hists["lostlep"],[0,wzsf["lostlep"]["SSem"][1]/wzsf["lostlep"]["SSem"][0],0,0,wzsf["lostlep"]["SSem"][1]/wzsf["lostlep"]["SSem"][0],0,0,0,0]),
-                "CRstat_mm"    : ru.frac_syst_hists(hists["lostlep"],[0,0,wzsf["lostlep"]["SSmm"][1]/wzsf["lostlep"]["SSmm"][0],0,0,wzsf["lostlep"]["SSmm"][1]/wzsf["lostlep"]["SSmm"][0],0,0,0]),
-                "CRstat_1sfos" : ru.frac_syst_hists(hists["lostlep"],[0,0,0,0,0,0,0,wzsf["lostlep"]["1SFOS"][1]/wzsf["lostlep"]["1SFOS"][0],0]),
-                "CRstat_2sfos" : ru.frac_syst_hists(hists["lostlep"],[0,0,0,0,0,0,0,0,wzsf["lostlep"]["2SFOS"][1]/wzsf["lostlep"]["2SFOS"][0]]),
-                }
-            }
+    hists = get_yield_hists("SR", True, wzsf) # Get the main yields
+    systs = get_systs() # Get all systematic histograms
 
     # putting together the background histograms
-    bkg_order = ["photon", "qflip", "fakes", "lostlep", "prompt"]
     bgs = [ hists[x] for x in bkg_order ]
 
     # Write to the datacard
-    ru.write_shape_fit_datacard(sig=hists["sig"], bgs=bgs, data=None, datacard_filename="datacard.txt", systs=systs)
+    ru.write_shape_fit_datacard(sig=hists["www"], bgs=bgs, data=None, datacard_filename="datacard.txt", systs=systs)
 
 def get_wzsf():
     hists = get_yield_hists("WZCR", False)
-    bkg_order = ["photon", "qflip", "fakes", "lostlep", "prompt"]
     bgs = [ hists[x] for x in bkg_order ]
     sf = ru.get_sf(hists["lostlep"], hists["data"], [hists["photon"], hists["qflip"], hists["fakes"], hists["prompt"]])
     sfs = {"lostlep": {
@@ -62,21 +58,110 @@ def get_wzsf():
             }
     return sfs
 
+def get_systs():
+
+    # Get the main yield
+    wzsf = get_wzsf()
+    hists = get_yield_hists("SR", True, wzsf)
+
+    # Get the WZ CR statistical uncertainties
+    systs={
+            "CRstat_ee": {
+                "lostlep": ru.frac_syst_hists(hists["lostlep"],[wzsf["lostlep"]["SSee"][1]/wzsf["lostlep"]["SSee"][0],0,0,wzsf["lostlep"]["SSee"][1]/wzsf["lostlep"]["SSee"][0],0,0,0,0,0]),
+                },
+            "CRstat_em": {
+                "lostlep": ru.frac_syst_hists(hists["lostlep"],[0,wzsf["lostlep"]["SSem"][1]/wzsf["lostlep"]["SSem"][0],0,0,wzsf["lostlep"]["SSem"][1]/wzsf["lostlep"]["SSem"][0],0,0,0,0]),
+                },
+            "CRstat_mm": {
+                "lostlep": ru.frac_syst_hists(hists["lostlep"],[0,0,wzsf["lostlep"]["SSmm"][1]/wzsf["lostlep"]["SSmm"][0],0,0,wzsf["lostlep"]["SSmm"][1]/wzsf["lostlep"]["SSmm"][0],0,0,0]),
+                },
+            "CRstat_1sfos": {
+                "lostlep": ru.frac_syst_hists(hists["lostlep"],[0,0,0,0,0,0,0,wzsf["lostlep"]["1SFOS"][1]/wzsf["lostlep"]["1SFOS"][0],0]),
+                },
+            "CRstat_2sfos": {
+                "lostlep": ru.frac_syst_hists(hists["lostlep"],[0,0,0,0,0,0,0,0,wzsf["lostlep"]["2SFOS"][1]/wzsf["lostlep"]["2SFOS"][0]]),
+                },
+            }
+
+    # Usual systematic variations for both signal and backgrounds
+    syst_names = ["JES", "LepSF", "TrigSF", "BTagLF", "BTagHF", "Pileup"]
+
+    for sys in syst_names:
+        sys_hists_up = get_yield_hists("SR", True, wzsf, sys+"Up")
+        sys_hists_dn = get_yield_hists("SR", True, wzsf, sys+"Down")
+        systs[sys] = {}
+        for bkg in ["www", "qflip", "prompt", "photon"]:
+            systs[sys][bkg] = [sys_hists_up[bkg], sys_hists_dn[bkg]]
+
+    # Signal systematics
+    for sys in ["PDF", "Qsq", "AlphaS"]:
+        sys_hists_up = get_yield_hists("SR", True, wzsf, sys+"Up")
+        sys_hists_dn = get_yield_hists("SR", True, wzsf, sys+"Down")
+        systs[sys] = {}
+        for bkg in ["www"]:
+            systs[sys][bkg] = [sys_hists_up[bkg], sys_hists_dn[bkg]]
+
+    # Flat systematics for certain processes
+    systs["VBSWWXsec"] = {}
+    systs["VBSWWXsec"]["prompt"] = ru.frac_syst_hists(hists["prompt"], 0.2)
+    systs["GammaSyst"] = {}
+    systs["GammaSyst"]["photon"] = ru.frac_syst_hists(hists["photon"], 0.5)
+    systs["FakeError"] = {}
+    systs["FakeError"]["fakes"] = ru.frac_syst_hists(hists["fakes"], 0.5)
+    systs["LostLepEr"] = {}
+    systs["LostLepEr"]["lostlep"] = ru.frac_syst_hists(hists["lostlep"], 0.1)
+
+    return systs
+
+def plotSR():
+
+    # Regions to plot
+    region = "SR"
+    use_data_driven_fakes = True
+    histnames = get_histnames(output_dirpath + "/signal.root", region)
+    histnames.sort(key=region_index)
+    hists = get_hists(histnames, use_data_driven_fakes, "_cutflow" in histnames[0], sfs=(get_wzsf() if region == "SR" else {}))
+    colors = [ 920, 2007, 2005, 2003, 2001, 2 ]
+    alloptions= {
+                "ratio_range":[0.0,2.2],
+                "nbins": 15,
+                "autobin": False,
+                "legend_scalex": 1.8,
+                "legend_scaley": 1.1,
+                "output_name": "plots/test.pdf",
+                "bkg_sort_method": "unsorted",
+                "no_ratio": False,
+                "print_yield": True,
+                "blind": True if "SR" in histnames[0] else False,
+                #"blind": False,
+                "lumi_value": "41.3",
+                }
+
+    bgs = [ ru.remove_negative_or_zero(hists[x]) for x in bkg_order ]
+    bgs_dict = {}
+    for x in bkg_order:
+        bgs_dict[x] = hists[x].Clone()
+    p.plot_hist(
+            sigs = [hists["www"]],
+            bgs  = bgs,
+            data = hists["data"],
+            colors = colors,
+            syst = ru.get_total_error(bgs_dict, get_systs()),
+            #syst = None,
+            options=alloptions)
+
 def plot():
 
     # Regions to plot
     region = "WZCR"
-    use_data_driven_fakes = False
+    use_data_driven_fakes = True
 
     # Bkg stack order
-    bkg_order = ["photon", "qflip", "fakes", "lostlep", "prompt"]
-    color_map = { "photon":920, "qflip":2007, "fakes":2005, "lostlep":2003, "prompt":2001, "www":2 }
 
     histnames = get_histnames(output_dirpath + "/signal.root", region)
     histnames.sort(key=region_index)
 
-    hists = get_hists(histnames, use_data_driven_fakes, "_cutflow" in histnames[0], sfs=get_wzsf())
-    #hists = get_hists(histnames, use_data_driven_fakes, "_cutflow" in histnames[0])
+    hists = get_hists(histnames, use_data_driven_fakes, "_cutflow" in histnames[0], sfs=(get_wzsf() if region == "SR" else {}))
 
     colors = [ 920, 2007, 2005, 2003, 2001, 2 ]
 
@@ -98,7 +183,7 @@ def plot():
     bgs = [ hists[x] for x in bkg_order ]
 
     p.plot_hist(
-            sigs = [hists["sig"]],
+            sigs = [hists["www"]],
             bgs  = bgs,
             data = hists["data"],
             colors = colors,
@@ -155,7 +240,6 @@ def oscr():
     #histnames = ["OSCRem__nvtx"]
     #histnames = ["OSCRem__MET"]
     #histnames = ["OSCRem__MllSS"]
-    #histnames = ["WZCRSSmm__MllSS"]
 
     histnames = [
             "WZCRSSeeFull",
@@ -177,7 +261,6 @@ def oscr():
     else:
         hists["data"] = ru.get_yield_histogram(sample_lists["data"] , histnames).Clone("data")
 
-    colors = [ 920, 2007, 2005, 2003, 2001, 2 ]
 
     alloptions= {
                 "ratio_range":[0.3,1.7],
@@ -210,14 +293,14 @@ def oscr():
 
 ###########################################################################################################3
 
-def get_histnames(fpath, region):
+def get_histnames(fpath, region, syst=""):
 
     f = r.TFile(fpath)
 
     rtn = []
 
     for key in f.GetListOfKeys():
-        if region in str(key.GetName()) and "Full_cutflow" in str(key.GetName()):
+        if region in str(key.GetName()) and "Full{}_cutflow".format(syst) in str(key.GetName()):
             name = str(key.GetName())
             name = name.replace("_cutflow", "")
             rtn.append(name)
@@ -264,7 +347,7 @@ def get_hists(histnames, use_data_driven_fakes=False, docutflow=False, sfs={}):
         hists["fakes"]   = ru.get_summed_histogram(bkg_lists["fakes"]   , histnames , sfs=sfs)
         hists["ewksubt"] = ru.get_summed_histogram(bkg_lists["ewksubt"] , histnames , sfs=sfs)
         hists["prompt"]  = ru.get_summed_histogram(bkg_lists["prompt"]  , histnames , sfs=sfs)
-        hists["sig"]     = ru.get_summed_histogram(sig_list             , histnames , sfs=sfs)
+        hists["www"]     = ru.get_summed_histogram(sig_list             , histnames , sfs=sfs)
         hists["data"]    = ru.get_summed_histogram(data_list            , histnames , sfs=sfs)
     else:
         hists["lostlep"] = ru.get_yield_histogram(bkg_lists["lostlep"] , histnames , sfs=sfs)
@@ -273,7 +356,7 @@ def get_hists(histnames, use_data_driven_fakes=False, docutflow=False, sfs={}):
         hists["fakes"]   = ru.get_yield_histogram(bkg_lists["fakes"]   , histnames , sfs=sfs)
         hists["ewksubt"] = ru.get_yield_histogram(bkg_lists["ewksubt"] , histnames , sfs=sfs)
         hists["prompt"]  = ru.get_yield_histogram(bkg_lists["prompt"]  , histnames , sfs=sfs)
-        hists["sig"]     = ru.get_yield_histogram(sig_list             , histnames , sfs=sfs)
+        hists["www"]     = ru.get_yield_histogram(sig_list             , histnames , sfs=sfs)
         hists["data"]    = ru.get_yield_histogram(data_list            , histnames , sfs=sfs)
 
     if bkg_lists["fakes"] == bkg_lists["ddfakes"]:
@@ -287,7 +370,7 @@ def get_hists(histnames, use_data_driven_fakes=False, docutflow=False, sfs={}):
     hists["qflip"]   .SetName("Charge mis-id")
     hists["fakes"]   .SetName("Non-prompt")
     hists["prompt"]  .SetName("Irredu.")
-    hists["sig"]     .SetName("WWW")
+    hists["www"]     .SetName("WWW")
     hists["data"]    .SetName("Data")
 
     hists["lostlep"] .SetTitle("lostlep")
@@ -295,16 +378,17 @@ def get_hists(histnames, use_data_driven_fakes=False, docutflow=False, sfs={}):
     hists["qflip"]   .SetTitle("qflip")
     hists["fakes"]   .SetTitle("fakes")
     hists["prompt"]  .SetTitle("prompt")
-    hists["sig"]     .SetTitle("www")
+    hists["www"]     .SetTitle("www")
     hists["data"]    .SetTitle("data")
 
     return hists
 
-def get_yield_hists(region, use_data_driven_fakes, sfs={}):
-    bkg_order = ["photon", "qflip", "fakes", "lostlep", "prompt"]
-    histnames = get_histnames(output_dirpath + "/signal.root", region)
+def get_yield_hists(region, use_data_driven_fakes, sfs={}, syst=""):
+    histnames = get_histnames(output_dirpath + "/signal.root", region, syst)
     histnames.sort(key=region_index)
     hists = get_hists(histnames, use_data_driven_fakes, "_cutflow" in histnames[0], sfs=sfs)
+    for h in hists:
+        hists[h] = ru.remove_negative_or_zero(hists[h])
     return hists
 
 if __name__ == "__main__":
