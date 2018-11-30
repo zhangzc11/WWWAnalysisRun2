@@ -18,3 +18,11 @@ Batch jobs can be submitted using aminnj/ProjectMetis.git
     cd ProjectMetis/
     source setup.sh
     python runMetis.py # submits jobs to condor (change the job_tag in the script the next time you submit the job)
+
+Plotting is done via ```makeplot.py```
+
+    # > python makeplot.py INPUT_NTUP_TAG ANALYSIS_TAG
+    python makeplot.py FR2017_v3.0.17 FR2017_analysis_v1.0.0 # This is an example
+
+Once the plotting script runs, it also writes out ```fakerate_ss.root``` and ```fakerate_3l.root``` which is also used for closure test.
+In order to perform the closure test, one needs to submit the batch job again.

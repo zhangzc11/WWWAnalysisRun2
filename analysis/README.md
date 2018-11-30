@@ -16,3 +16,7 @@ As of Nov. 2018, latest 2017 ntuple baby is:
     make clean
     make -j2
     sh run.sh WWW2017_v4.0.5 test1
+    # Or to submit in batch to condor
+    python runMetis.py
+    # Once the job has finished plot using
+    python makeplot.py
