@@ -262,8 +262,8 @@ class FakeRates
 
         FakeRates()
         {
-            histmap_fr_ss_el = new RooUtil::HistMap("scalefactors/fakerate.root:El_ptcorretarolledcoarse_data_fakerate");
-            histmap_fr_ss_mu = new RooUtil::HistMap("scalefactors/fakerate.root:Mu_ptcorretarolledcoarse_data_fakerate");
+            histmap_fr_ss_el = new RooUtil::HistMap("scalefactors/fakerate_ss.root:El_ptcorretarolledcoarse_data_fakerate");
+            histmap_fr_ss_mu = new RooUtil::HistMap("scalefactors/fakerate_ss.root:Mu_ptcorretarolledcoarse_data_fakerate");
             histmap_fr_3l_el = new RooUtil::HistMap("scalefactors/fakerate_3l.root:El_ptcorretarolledcoarse_data_fakerate");
             histmap_fr_3l_mu = new RooUtil::HistMap("scalefactors/fakerate_3l.root:Mu_ptcorretarolledcoarse_data_fakerate");
         }

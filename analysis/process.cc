@@ -19,8 +19,8 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
 
     // For fake estimations, we use data-driven method.
     // When looping over data and the output_path is set to have a "fakes" substring included we turn on the fake-weight settings
-//    const bool doSystematics = not TString(input_paths).Contains("data_");
-    const bool doSystematics = false;
+    const bool doSystematics = not TString(input_paths).Contains("data_");
+//    const bool doSystematics = false;
     bool doFakeEstimation = TString(output_file_name).Contains("ddfakes") or TString(output_file_name).Contains("ewksubt");
     bool doEwkSubtraction = TString(output_file_name).Contains("ewksubt");
     bool isData = TString(input_paths).Contains("data_") || TString(input_paths).Contains("Run2017");
@@ -115,6 +115,7 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
     float btag_sf;
     float trig_sf;
     bool hasz_ss, hasz_3l;
+    bool passPhotonCRSFOS;
 
     cutflow.addCut("CutWeight"                    , [&]() { return 1                                                            ; } , [&]() { return weight                             ; } );
     cutflow.addCutToLastActiveCut("CutPresel"     , [&]() { return presel                                                       ; } , [&]() { return 1                                  ; } );
@@ -694,17 +695,10 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
 
     // Gamma control region
     cutflow.getCut("CutSRTrilep")                                                                                                             ;
-    cutflow.addCutToLastActiveCut("GCR0SFOS"              , [&]() { return (www.nSFOSinZ()==0)*(www.met_pt()<30)*(fabs(www.M3l()-91.1876)<20) ; } , [&]() { return threelep_sf                  ; } ) ;
-    cutflow.addCutToLastActiveCut("GCR0SFOSNj1"           , [&]() { return www.nj()<=1                                                        ; } , [&]() { return 1                            ; } ) ;
-    cutflow.addCutToLastActiveCut("GCR0SFOSNb0"           , [&]() { return www.nb()==0                                                        ; } , [&]() { return btag_sf                      ; } ) ;
-    cutflow.addCutToLastActiveCut("GCR0SFOSPt3l"          , [&]() { return 1.                                                                 ; } , [&]() { return 1                            ; } ) ;
-    cutflow.addCutToLastActiveCut("GCR0SFOSDPhi3lMET"     , [&]() { return www.DPhi3lMET()>2.5                                                ; } , [&]() { return 1                            ; } ) ;
-    cutflow.addCutToLastActiveCut("GCR0SFOSMET"           , [&]() { return www.met_pt()>30.                                                   ; } , [&]() { return 1                            ; } ) ;
-    cutflow.addCutToLastActiveCut("GCR0SFOSMll"           , [&]() { return www.Mll3L() > 20.                                                  ; } , [&]() { return 1                            ; } ) ;
-    cutflow.addCutToLastActiveCut("GCR0SFOSM3l"           , [&]() { return abs(www.M3l()-91.1876) > 10.                                       ; } , [&]() { return 1                            ; } ) ;
-    cutflow.addCutToLastActiveCut("GCR0SFOSZVt"           , [&]() { return abs(www.Mee3L()-91.1876) > 15.                                     ; } , [&]() { return 1                            ; } ) ;
-    cutflow.addCutToLastActiveCut("GCR0SFOSMTmax"         , [&]() { return www.MTmax3L()>90.                                                  ; } , [&]() { return 1                            ; } ) ;
-    cutflow.addCutToLastActiveCut("GCR0SFOSFull"          , [&]() { return 1                                                                  ; } , [&]() { return 1                            ; } ) ;
+    cutflow.addCutToLastActiveCut("PhotonCR"              , [&]() { return (www.met_pt()<50)*(www.Mll3L()>20.)*(fabs(www.Mll3L1())>20.)       ; }        , [&]() { return threelep_sf           ; } ) ;
+    cutflow.addCutToLastActiveCut("PhotonCRNj1"           , [&]() { return www.nj()<=1                                                        ; }        , [&]() { return 1                     ; } ) ;
+    cutflow.addCutToLastActiveCut("PhotonCRNb0"           , [&]() { return www.nb()==0                                                        ; }        , [&]() { return btag_sf               ; } ) ;
+    cutflow.addCutToLastActiveCut("PhotonCRFull"          , [&]() { return passPhotonCRSFOS                                                   ; }        , [&]() { return 1                     ; } ) ;
 
     // Btagged CR for Same-sign Mjj on-W region
     cutflow.getCut("CutARDilep")                                                                                                              ;
@@ -1097,8 +1091,6 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
         cutflow.setCutSyst("LXECRSSmmMET"                   , "JESUp"   , [&]() { return www.met_up_pt()<60.                                   ;} , [&]() { return 1 ;} );
         cutflow.setCutSyst("LXECRSSemMET"                   , "JESUp"   , [&]() { return www.met_up_pt()<60.                                   ;} , [&]() { return 1 ;} );
         cutflow.setCutSyst("LXECRSSeeMET"                   , "JESUp"   , [&]() { return www.met_up_pt()<60. and fabs(www.MllSS()-91.1876)>10. ;} , [&]() { return 1 ;} );
-        cutflow.setCutSyst("GCR0SFOSDPhi3lMET"              , "JESUp"   , [&]() { return www.DPhi3lMET_up()>2.5                                ;} , [&]() { return 1 ;} );
-        cutflow.setCutSyst("GCR0SFOSMET"                    , "JESUp"   , [&]() { return www.met_up_pt()>30.                                   ;} , [&]() { return 1 ;} );
         cutflow.setCutSyst("BTARCRSSmmMjjW"                 , "JESUp"   , [&]() { return fabs(www.Mjj_up()-80.)<15.                            ;} , [&]() { return 1 ;} );
         cutflow.setCutSyst("BTARCRSSmmMjjL"                 , "JESUp"   , [&]() { return www.MjjL_up()<400.                                    ;} , [&]() { return 1 ;} );
         cutflow.setCutSyst("BTARCRSSmmDetajjL"              , "JESUp"   , [&]() { return www.DetajjL_up()<1.5                                  ;} , [&]() { return 1 ;} );
@@ -1290,8 +1282,6 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
         cutflow.setCutSyst("LXECRSSmmMET"                   , "JESDown" , [&]() { return www.met_dn_pt()<60.                                   ;} , [&]() { return 1 ;} );
         cutflow.setCutSyst("LXECRSSemMET"                   , "JESDown" , [&]() { return www.met_dn_pt()<60.                                   ;} , [&]() { return 1 ;} );
         cutflow.setCutSyst("LXECRSSeeMET"                   , "JESDown" , [&]() { return www.met_dn_pt()<60. and fabs(www.MllSS()-91.1876)>10. ;} , [&]() { return 1 ;} );
-        cutflow.setCutSyst("GCR0SFOSDPhi3lMET"              , "JESDown" , [&]() { return www.DPhi3lMET_dn()>2.5                                ;} , [&]() { return 1 ;} );
-        cutflow.setCutSyst("GCR0SFOSMET"                    , "JESDown" , [&]() { return www.met_dn_pt()>30.                                   ;} , [&]() { return 1 ;} );
         cutflow.setCutSyst("BTARCRSSmmMjjW"                 , "JESDown" , [&]() { return fabs(www.Mjj_dn()-80.)<15.                            ;} , [&]() { return 1 ;} );
         cutflow.setCutSyst("BTARCRSSmmMjjL"                 , "JESDown" , [&]() { return www.MjjL_dn()<400.                                    ;} , [&]() { return 1 ;} );
         cutflow.setCutSyst("BTARCRSSmmDetajjL"              , "JESDown" , [&]() { return www.DetajjL_dn()<1.5                                  ;} , [&]() { return 1 ;} );
@@ -1388,7 +1378,7 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
         cutflow.setCutSyst("LXECRSSmmNj2"                   , "JESUp"   , [&]() { return www.nj30_up()>= 2                                     ;} , [&]() { return 1 ;} );
         cutflow.setCutSyst("LXECRSSemNj2"                   , "JESUp"   , [&]() { return www.nj30_up()>= 2                                     ;} , [&]() { return 1 ;} );
         cutflow.setCutSyst("LXECRSSeeNj2"                   , "JESUp"   , [&]() { return www.nj30_up()>= 2                                     ;} , [&]() { return 1 ;} );
-        cutflow.setCutSyst("GCR0SFOSNj1"                    , "JESUp"   , [&]() { return www.nj_up()<=1                                        ;} , [&]() { return 1 ;} );
+        cutflow.setCutSyst("PhotonCRNj1"                    , "JESUp"   , [&]() { return www.nj_up()<=1                                        ;} , [&]() { return 1 ;} );
         cutflow.setCutSyst("BTARCRSSmmNj2"                  , "JESUp"   , [&]() { return www.nj30_up()>= 2                                     ;} , [&]() { return 1 ;} );
         cutflow.setCutSyst("BTARCRSSemNj2"                  , "JESUp"   , [&]() { return www.nj30_up()>= 2                                     ;} , [&]() { return 1 ;} );
         cutflow.setCutSyst("BTARCRSSeeNj2"                  , "JESUp"   , [&]() { return www.nj30_up()>= 2                                     ;} , [&]() { return 1 ;} );
@@ -1452,7 +1442,7 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
         cutflow.setCutSyst("LXECRSSmmNj2"                   , "JESDown" , [&]() { return www.nj30_dn()>= 2                                     ;} , [&]() { return 1 ;} );
         cutflow.setCutSyst("LXECRSSemNj2"                   , "JESDown" , [&]() { return www.nj30_dn()>= 2                                     ;} , [&]() { return 1 ;} );
         cutflow.setCutSyst("LXECRSSeeNj2"                   , "JESDown" , [&]() { return www.nj30_dn()>= 2                                     ;} , [&]() { return 1 ;} );
-        cutflow.setCutSyst("GCR0SFOSNj1"                    , "JESDown" , [&]() { return www.nj_dn()<=1                                        ;} , [&]() { return 1 ;} );
+        cutflow.setCutSyst("PhotonCRNj1"                    , "JESDown" , [&]() { return www.nj_dn()<=1                                        ;} , [&]() { return 1 ;} );
         cutflow.setCutSyst("BTARCRSSmmNj2"                  , "JESDown" , [&]() { return www.nj30_dn()>= 2                                     ;} , [&]() { return 1 ;} );
         cutflow.setCutSyst("BTARCRSSemNj2"                  , "JESDown" , [&]() { return www.nj30_dn()>= 2                                     ;} , [&]() { return 1 ;} );
         cutflow.setCutSyst("BTARCRSSeeNj2"                  , "JESDown" , [&]() { return www.nj30_dn()>= 2                                     ;} , [&]() { return 1 ;} );
@@ -1516,7 +1506,7 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
         cutflow.setCutSyst("LXECRSSmmNb0"                   , "JESUp"   , [&]() { return www.nb_up()==0                                        ;} , [&]() { return btag_sf ;} );
         cutflow.setCutSyst("LXECRSSemNb0"                   , "JESUp"   , [&]() { return www.nb_up()==0                                        ;} , [&]() { return btag_sf ;} );
         cutflow.setCutSyst("LXECRSSeeNb0"                   , "JESUp"   , [&]() { return www.nb_up()==0                                        ;} , [&]() { return btag_sf ;} );
-        cutflow.setCutSyst("GCR0SFOSNb0"                    , "JESUp"   , [&]() { return www.nb_up()==0                                        ;} , [&]() { return btag_sf ;} );
+        cutflow.setCutSyst("PhotonCRNb0"                    , "JESUp"   , [&]() { return www.nb_up()==0                                        ;} , [&]() { return btag_sf ;} );
         cutflow.setCutSyst("BTARCRSSmmNbgeq1"               , "JESUp"   , [&]() { return www.nb_up()>=1                                        ;} , [&]() { return btag_sf ;} );
         cutflow.setCutSyst("BTARCRSSemNbgeq1"               , "JESUp"   , [&]() { return www.nb_up()>=1                                        ;} , [&]() { return btag_sf ;} );
         cutflow.setCutSyst("BTARCRSSeeNbgeq1"               , "JESUp"   , [&]() { return www.nb_up()>=1                                        ;} , [&]() { return btag_sf ;} );
@@ -1580,7 +1570,7 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
         cutflow.setCutSyst("LXECRSSmmNb0"                   , "JESDown" , [&]() { return www.nb_dn()==0                                        ;} , [&]() { return btag_sf ;} );
         cutflow.setCutSyst("LXECRSSemNb0"                   , "JESDown" , [&]() { return www.nb_dn()==0                                        ;} , [&]() { return btag_sf ;} );
         cutflow.setCutSyst("LXECRSSeeNb0"                   , "JESDown" , [&]() { return www.nb_dn()==0                                        ;} , [&]() { return btag_sf ;} );
-        cutflow.setCutSyst("GCR0SFOSNb0"                    , "JESDown" , [&]() { return www.nb_dn()==0                                        ;} , [&]() { return btag_sf ;} );
+        cutflow.setCutSyst("PhotonCRNb0"                    , "JESDown" , [&]() { return www.nb_dn()==0                                        ;} , [&]() { return btag_sf ;} );
         cutflow.setCutSyst("BTARCRSSmmNbgeq1"               , "JESDown" , [&]() { return www.nb_dn()>=1                                        ;} , [&]() { return btag_sf ;} );
         cutflow.setCutSyst("BTARCRSSemNbgeq1"               , "JESDown" , [&]() { return www.nb_dn()>=1                                        ;} , [&]() { return btag_sf ;} );
         cutflow.setCutSyst("BTARCRSSeeNbgeq1"               , "JESDown" , [&]() { return www.nb_dn()>=1                                        ;} , [&]() { return btag_sf ;} );
@@ -1688,6 +1678,9 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
 
         hasz_ss = (abs(www.Mll3L()-91.1876)<10.||abs(www.Mll3L1()-91.1876)<10.);
         hasz_3l = (abs(www.Mll3L()-91.1876)<20.||abs(www.Mll3L1()-91.1876)<20.);
+        passPhotonCRSFOS =
+            (www.nSFOS()==1)*(www.Mll3L()<55)*(www.Mll3L()>110) +
+            (www.nSFOS()==2)*((fabs(www.Mll3L()-90.)>20.)*(fabs(www.Mll3L1()-90.)>20.));
 
         // Theory related weights from h_neventsinfile in each input root file but only set files when new file opens
         // NOTE if there was a continue statement prior to this it can mess it up
