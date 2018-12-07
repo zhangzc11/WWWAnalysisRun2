@@ -17,11 +17,11 @@ output_dirpath = "outputs/WWW_v1.2.2/test1"
 output_dirpath = "outputs/condor/WWW_v1.2.2/test1"
 output_dirpath = "outputs/condor/WWW_v1.2.2/test8"
 output_dirpath = "outputs/WWW2016_v4.0.6/test4"
-output_dirpath = "outputs/condor/WWW2017_v4.0.5/test1"
 output_dirpath = "outputs/condor/WWW2016_v4.0.6/test5"
 output_dirpath = "outputs/condor/WWW2016_v4.0.6/test6"
 output_dirpath = "outputs/condor/WWW2016_v4.0.6/test9"
 output_dirpath = "outputs/condor/WWW2016_v4.0.6/test10"
+output_dirpath = "outputs/condor/WWW2017_v4.0.5/test11"
 is2017 = "WWW2017" in output_dirpath
 
 # Bkg order

@@ -7,12 +7,12 @@ import os
 def main():
 
     data_year = "2017"
-    job_tag = "test10"
+    job_tag = "test11"
     input_ntup_tag = "WWW_v1.2.2"
     input_ntup_tag = "OS2017_v4.0.5"
-    input_ntup_tag = "WWW2017_v4.0.5"
     input_ntup_tag = "WWW2016_v4.0.5"
     input_ntup_tag = "WWW2016_v4.0.6"
+    input_ntup_tag = "WWW2017_v4.0.5"
     base_dir_path = "/hadoop/cms/store/user/phchang/metis/wwwbaby/{}/".format(input_ntup_tag)
     tar_files = ["doAnalysis", "setup.sh", "scalefactors/*.root", "scalefactors/*/*/*/*/sf.root"]
     hadoop_dirname = "wwwanalysis"
@@ -82,7 +82,7 @@ def main():
     for sample in sorted(samples_map.keys()):
         print sample, arguments_map[sample]
 
-    ru.submit_metis(job_tag, samples_map, arguments_map=arguments_map, tar_files=tar_files, hadoop_dirname=hadoop_dirname+"/"+input_ntup_tag, files_per_output=1, globber="merged/*.root" if "OS" not in input_ntup_tag else "*.root", sites="UAF")
+    ru.submit_metis(job_tag, samples_map, arguments_map=arguments_map, tar_files=tar_files, hadoop_dirname=hadoop_dirname+"/"+input_ntup_tag, files_per_output=1, globber="merged/*.root" if "OS" not in input_ntup_tag else "*.root", sites="T2_US_UCSD")
 
     os.system("mkdir -p outputs/condor/{}/{}/".format(input_ntup_tag, job_tag))
 
