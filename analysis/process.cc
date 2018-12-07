@@ -15,12 +15,16 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
 
     // Some case-by-case checking needed for WWW_v1.2.2 (should be no longer necessary later on)
     bool is2017 = TString(input_paths).Contains("2017");
+    is2017 = TString(input_paths).Contains("v1.2.2") ? false : is2017;
+    is2017 = TString(input_paths).Contains("WWW2016") ? false : is2017;
     bool isWWW = TString(input_paths).Contains("www_2l_");
+    bool doWWWXsecScaling = TString(input_paths).Contains("v1.2.2"); // The v1.2.2 version had slightly lower xsec.
 
     // For fake estimations, we use data-driven method.
     // When looping over data and the output_path is set to have a "fakes" substring included we turn on the fake-weight settings
     const bool doSystematics = not TString(input_paths).Contains("data_");
 //    const bool doSystematics = false;
+    const bool doHistogram = false;
     bool doFakeEstimation = TString(output_file_name).Contains("ddfakes") or TString(output_file_name).Contains("ewksubt");
     bool doEwkSubtraction = TString(output_file_name).Contains("ewksubt");
     bool isData = TString(input_paths).Contains("data_") || TString(input_paths).Contains("Run2017");
@@ -902,45 +906,44 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
         cutflow.addWgtSyst("AlphaSUp"   , [&]() { return www.weight_fr_r1_f1() == 0 or theoryweight.alsup() == 0 ? 0 : www.weight_alphas_up()       / www.weight_fr_r1_f1() * theoryweight.nominal() / theoryweight.alsup(); } );
         cutflow.addWgtSyst("AlphaSDown" , [&]() { return www.weight_fr_r1_f1() == 0 or theoryweight.alsdn() == 0 ? 0 : www.weight_alphas_down()     / www.weight_fr_r1_f1() * theoryweight.nominal() / theoryweight.alsdn(); } );
 
-        if (doFakeEstimation)
+    }
+
+    if (doFakeEstimation)
+    {
+        if (!is2017)
         {
-            if (!is2017)
-            {
-                cutflow.addWgtSyst("FakeUp"            , [&]() { return www.ffwgt() == 0 ? 0 : www.ffwgt_full_up()       / www.ffwgt(); } );
-                cutflow.addWgtSyst("FakeDown"          , [&]() { return www.ffwgt() == 0 ? 0 : www.ffwgt_full_dn()       / www.ffwgt(); } );
-                cutflow.addWgtSyst("FakeRateUp"        , [&]() { return www.ffwgt() == 0 ? 0 : www.ffwgt_up()            / www.ffwgt(); } );
-                cutflow.addWgtSyst("FakeRateDown"      , [&]() { return www.ffwgt() == 0 ? 0 : www.ffwgt_dn()            / www.ffwgt(); } );
-                cutflow.addWgtSyst("FakeRateElUp"      , [&]() { return www.ffwgt() == 0 ? 0 : www.ffwgt_el_up()         / www.ffwgt(); } );
-                cutflow.addWgtSyst("FakeRateElDown"    , [&]() { return www.ffwgt() == 0 ? 0 : www.ffwgt_el_dn()         / www.ffwgt(); } );
-                cutflow.addWgtSyst("FakeRateMuUp"      , [&]() { return www.ffwgt() == 0 ? 0 : www.ffwgt_mu_up()         / www.ffwgt(); } );
-                cutflow.addWgtSyst("FakeRateMuDown"    , [&]() { return www.ffwgt() == 0 ? 0 : www.ffwgt_mu_dn()         / www.ffwgt(); } );
-                cutflow.addWgtSyst("FakeClosureUp"     , [&]() { return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_up()    / www.ffwgt(); } );
-                cutflow.addWgtSyst("FakeClosureDown"   , [&]() { return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_dn()    / www.ffwgt(); } );
-                cutflow.addWgtSyst("FakeClosureElUp"   , [&]() { return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_el_up() / www.ffwgt(); } );
-                cutflow.addWgtSyst("FakeClosureElDown" , [&]() { return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_el_dn() / www.ffwgt(); } );
-                cutflow.addWgtSyst("FakeClosureMuUp"   , [&]() { return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_mu_up() / www.ffwgt(); } );
-                cutflow.addWgtSyst("FakeClosureMuDown" , [&]() { return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_mu_dn() / www.ffwgt(); } );
-                cutflow.addWgtSyst("FakeClosureMuDown" , [&]() { return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_mu_dn() / www.ffwgt(); } );
-            }
-            else
-            {
-                // TODO
-                cutflow.addWgtSyst("FakeUp"            , UNITY );
-                cutflow.addWgtSyst("FakeDown"          , UNITY );
-                cutflow.addWgtSyst("FakeRateUp"        , UNITY );
-                cutflow.addWgtSyst("FakeRateDown"      , UNITY );
-                cutflow.addWgtSyst("FakeRateElUp"      , UNITY );
-                cutflow.addWgtSyst("FakeRateElDown"    , UNITY );
-                cutflow.addWgtSyst("FakeRateMuUp"      , UNITY );
-                cutflow.addWgtSyst("FakeRateMuDown"    , UNITY );
-                cutflow.addWgtSyst("FakeClosureUp"     , UNITY );
-                cutflow.addWgtSyst("FakeClosureDown"   , UNITY );
-                cutflow.addWgtSyst("FakeClosureElUp"   , UNITY );
-                cutflow.addWgtSyst("FakeClosureElDown" , UNITY );
-                cutflow.addWgtSyst("FakeClosureMuUp"   , UNITY );
-                cutflow.addWgtSyst("FakeClosureMuDown" , UNITY );
-                cutflow.addWgtSyst("FakeClosureMuDown" , UNITY );
-            }
+            cutflow.addWgtSyst("FakeUp"            , [&]() { return www.ffwgt() == 0 ? 0 : www.ffwgt_full_up()       / www.ffwgt(); } );
+            cutflow.addWgtSyst("FakeDown"          , [&]() { return www.ffwgt() == 0 ? 0 : www.ffwgt_full_dn()       / www.ffwgt(); } );
+            cutflow.addWgtSyst("FakeRateUp"        , [&]() { return www.ffwgt() == 0 ? 0 : www.ffwgt_up()            / www.ffwgt(); } );
+            cutflow.addWgtSyst("FakeRateDown"      , [&]() { return www.ffwgt() == 0 ? 0 : www.ffwgt_dn()            / www.ffwgt(); } );
+            cutflow.addWgtSyst("FakeRateElUp"      , [&]() { return www.ffwgt() == 0 ? 0 : www.ffwgt_el_up()         / www.ffwgt(); } );
+            cutflow.addWgtSyst("FakeRateElDown"    , [&]() { return www.ffwgt() == 0 ? 0 : www.ffwgt_el_dn()         / www.ffwgt(); } );
+            cutflow.addWgtSyst("FakeRateMuUp"      , [&]() { return www.ffwgt() == 0 ? 0 : www.ffwgt_mu_up()         / www.ffwgt(); } );
+            cutflow.addWgtSyst("FakeRateMuDown"    , [&]() { return www.ffwgt() == 0 ? 0 : www.ffwgt_mu_dn()         / www.ffwgt(); } );
+            cutflow.addWgtSyst("FakeClosureUp"     , [&]() { return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_up()    / www.ffwgt(); } );
+            cutflow.addWgtSyst("FakeClosureDown"   , [&]() { return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_dn()    / www.ffwgt(); } );
+            cutflow.addWgtSyst("FakeClosureElUp"   , [&]() { return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_el_up() / www.ffwgt(); } );
+            cutflow.addWgtSyst("FakeClosureElDown" , [&]() { return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_el_dn() / www.ffwgt(); } );
+            cutflow.addWgtSyst("FakeClosureMuUp"   , [&]() { return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_mu_up() / www.ffwgt(); } );
+            cutflow.addWgtSyst("FakeClosureMuDown" , [&]() { return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_mu_dn() / www.ffwgt(); } );
+        }
+        else
+        {
+            // TODO
+            cutflow.addWgtSyst("FakeUp"            , UNITY );
+            cutflow.addWgtSyst("FakeDown"          , UNITY );
+            cutflow.addWgtSyst("FakeRateUp"        , UNITY );
+            cutflow.addWgtSyst("FakeRateDown"      , UNITY );
+            cutflow.addWgtSyst("FakeRateElUp"      , UNITY );
+            cutflow.addWgtSyst("FakeRateElDown"    , UNITY );
+            cutflow.addWgtSyst("FakeRateMuUp"      , UNITY );
+            cutflow.addWgtSyst("FakeRateMuDown"    , UNITY );
+            cutflow.addWgtSyst("FakeClosureUp"     , UNITY );
+            cutflow.addWgtSyst("FakeClosureDown"   , UNITY );
+            cutflow.addWgtSyst("FakeClosureElUp"   , UNITY );
+            cutflow.addWgtSyst("FakeClosureElDown" , UNITY );
+            cutflow.addWgtSyst("FakeClosureMuUp"   , UNITY );
+            cutflow.addWgtSyst("FakeClosureMuDown" , UNITY );
         }
     }
 
@@ -1606,8 +1609,11 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
     // Now book cutflows
     cutflow.bookCutflows();
 
+    // Book event lists
+    cutflow.bookEventLists();
+
     // Histogram booking is dependent on whether you ask for certain regions also when systematics is asked, do not run the entire histogramming otherwise too many will be booked (O(20k) histograms!)
-    if (not doSystematics)
+    if (not doSystematics and doHistogram)
     {
         if (not regions.IsNull())
         {
@@ -1658,11 +1664,12 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
         presel &= (www.nLlep()                >= 2);
 
         // Compute trigger variable (TODO for 2016 baby, the tertiary statement may be outdated)
-        trigger = is2017 == 1 ? www.passTrigger() * www.pass_duplicate_ee_em_mm() : passTrigger2016();
+        trigger  = is2017 == 1 ? www.passTrigger() * www.pass_duplicate_ee_em_mm() : passTrigger2016();
+        trigger &= is2017 == 0 ? (TString(input_paths).Contains("v1.2.2") ? 1 : www.pass_duplicate_ee_em_mm()) : 1;
 
         // Event weight
         weight = (isData and !doFakeEstimation) ? 1 : www.evt_scale1fb() * purewgt * lumi * ffwgt;
-        if (isWWW and !is2017) weight *= 1.0384615385; // NLO cross section v. MadGraph cross section
+        if (isWWW and !is2017 and doWWWXsecScaling) weight *= 1.0384615385; // NLO cross section v. MadGraph cross section
 
         // Lepton counter to define dilep or trilep region
         isdilep          = (www.nVlep() == 2) * (www.nLlep() == 2) * (www.nTlep() == 2);
@@ -1675,7 +1682,17 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
 
 
         // Compute the scale factors
-        std::tie(ee_sf, em_sf, mm_sf, threelep_sf) = leptonScaleFactors.getScaleFactors(is2017, doFakeEstimation, isData);
+        if (is2017)
+        {
+            std::tie(ee_sf, em_sf, mm_sf, threelep_sf) = leptonScaleFactors.getScaleFactors(is2017, doFakeEstimation, isData);
+        }
+        else
+        {
+            ee_sf = www.lepsf();
+            em_sf = www.lepsf();
+            mm_sf = www.lepsf();
+            threelep_sf = www.lepsf();
+        }
         btag_sf = isData ? 1 : www.weight_btagsf();
         trig_sf = isData ? 1 : www.trigsf();
 
@@ -1687,7 +1704,7 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
 
         // Theory related weights from h_neventsinfile in each input root file but only set files when new file opens
         // NOTE if there was a continue statement prior to this it can mess it up
-        if (looper.isNewFileInChain()) theoryweight.setFile(looper.getCurrentFileName());
+        if (looper.isNewFileInChain() and not isData) theoryweight.setFile(looper.getCurrentFileName());
 
         // Set the variables used for histogramming
         int index = fakerates.getFakeLepIndex();
@@ -1707,6 +1724,8 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
 
     // Save output
     cutflow.saveOutput();
+
+    cutflow.getCut("Root").printEventList();
 
     return 0;
 }

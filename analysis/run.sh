@@ -59,6 +59,9 @@ for f in $(ls /nfs-7/userdata/phchang/WWW_babies/${VERSION}/skim/*.root); do
     if [[ $f == *"hpmpm"* ]]; then continue; fi
     if [[ $f == *"wprime"* ]]; then continue; fi
     if [[ $f == *"whsusy"* ]]; then continue; fi
+    if [[ $f == *"alp"* ]]; then continue; fi
+    if [[ $f == *"sapta"* ]]; then continue; fi
+    if [[ $f == *"_bw"* ]]; then continue; fi
 
     # Print out which ntuple is being considered to write out jobs to .jobs.txt
     echo "Writing jobs for $f to .jobs.txt"
@@ -126,8 +129,8 @@ for f in $(ls /nfs-7/userdata/phchang/WWW_babies/${VERSION}/skim/*.root); do
     #
     elif [[ $f == *"/data"* ]]; then
 
-        # If the sample is for 2017 events
-        if [[ $f == *"WWW2017"* ]]; then
+        # If the sample is for 2017 events or v4 and above for 2016
+        if [[ $f == *"WWW2017"*  ]] || [[ $f == *"WWW2016_v4"* ]]; then
 
             # Write out the job command for processing data events
             echo './doAnalysis '$f' 't' '${OUTPUTDIR}'/t_ss_'$(basename $f)' -1 '${regions}'  > '${OUTPUTDIR}'/'t_ss_$(basename $f)'.log 2>&1' >> .jobs.txt
@@ -151,6 +154,10 @@ for f in $(ls /nfs-7/userdata/phchang/WWW_babies/${VERSION}/skim/*.root); do
 
         # The tzq samples are HUGE and is very TINY. We skip it. Just takes up time and does nothing.
         if [[ $f == *"tzq"* ]]; then continue; fi
+        if [[ $f == *"wz_3lnu0"* ]]; then continue; fi
+        if [[ $f == *"wz_3lnu1"* ]]; then continue; fi
+        if [[ $f == *"wz_3lnu2"* ]]; then continue; fi
+        if [[ $f == *"wz_3lnu3"* ]]; then continue; fi
 
         # Loop over the various TTree suffixes and write out jobs for each TTree
         for TREEVARIATION in ${TREEVARIATIONS}; do
@@ -185,16 +192,15 @@ TAG=${VERSION}
 DIRPATH=${OUTPUTDIR}
 OUTPATH=${OUTPUTDIR}
 
-# We will exclude some WZ samples as there are duplicate WZ samples with different generators
-lostlep=$(ls $DIRPATH/*t_lostlep_*.root | grep -v "wz_incl")
-photon=$(ls $DIRPATH/*t_photon_*.root   | grep -v "wz_incl")
-qflip=$(ls $DIRPATH/*t_qflip_*.root     | grep -v "wz_incl")
-ddfakes=$(ls $DIRPATH/*t_ddfakes_*.root | grep -v "wz_incl")
-ewksubt=$(ls $DIRPATH/*t_ewksubt_*.root | grep -v "wz_incl" | grep -v "wjets_incl" )
-fakes=$(ls $DIRPATH/*t_fakes_*.root     | grep -v "wz_incl")
-prompt=$(ls $DIRPATH/*t_prompt_*.root   | grep -v "wz_incl")
-data=$(ls $DIRPATH/*t_ss_*.root         | grep -v "wz_incl")
-signal=$(ls $DIRPATH/*t_www_*.root      | grep -v "wz_incl")
+lostlep=$(ls --ignore="*wz_incl*" --ignore="*wz_3lnu*jet*" $DIRPATH/*t_lostlep_*.root ${TOEXCLUDE})
+photon=$(ls --ignore="*wz_incl*" --ignore="*wz_3lnu*jet*" $DIRPATH/*t_photon_*.root   ${TOEXCLUDE})
+qflip=$(ls --ignore="*wz_incl*" --ignore="*wz_3lnu*jet*" $DIRPATH/*t_qflip_*.root     ${TOEXCLUDE})
+ddfakes=$(ls --ignore="*wz_incl*" --ignore="*wz_3lnu*jet*" $DIRPATH/*t_ddfakes_*.root ${TOEXCLUDE})
+ewksubt=$(ls --ignore="*wz_incl*" --ignore="*wz_3lnu*jet*" $DIRPATH/*t_ewksubt_*.root ${TOEXCLUDE} | grep -v "wjets_incl" )
+fakes=$(ls --ignore="*wz_incl*" --ignore="*wz_3lnu*jet*" $DIRPATH/*t_fakes_*.root     ${TOEXCLUDE})
+prompt=$(ls --ignore="*wz_incl*" --ignore="*wz_3lnu*jet*" $DIRPATH/*t_prompt_*.root   ${TOEXCLUDE})
+data=$(ls --ignore="*wz_incl*" --ignore="*wz_3lnu*jet*" $DIRPATH/*t_ss_*.root         ${TOEXCLUDE})
+signal=$(ls --ignore="*wz_incl*" --ignore="*wz_3lnu*jet*" $DIRPATH/*t_www_*.root      ${TOEXCLUDE})
 
 # Should already exist but just in case.
 mkdir -p ${OUTPATH}
@@ -208,15 +214,15 @@ mkdir -p ${OUTPATH}
 #for f in ${data}; do echo $f; done
 #for f in ${signal}; do echo $f; done
 
-hadd -f ${OUTPATH}/lostlep.root ${lostlep} &
-hadd -f ${OUTPATH}/photon.root  ${photon} &
-hadd -f ${OUTPATH}/qflip.root   ${qflip} &
-hadd -f ${OUTPATH}/ddfakes.root ${ddfakes} &
-hadd -f ${OUTPATH}/ewksubt.root ${ewksubt} &
-hadd -f ${OUTPATH}/fakes.root   ${fakes} &
-hadd -f ${OUTPATH}/prompt.root  ${prompt} &
-hadd -f ${OUTPATH}/data.root    ${data} &
-hadd -f ${OUTPATH}/signal.root  ${signal} &
+hadd ${OUTPATH}/lostlep.root ${lostlep} &
+hadd ${OUTPATH}/photon.root  ${photon} &
+hadd ${OUTPATH}/qflip.root   ${qflip} &
+hadd ${OUTPATH}/ddfakes.root ${ddfakes} &
+hadd ${OUTPATH}/ewksubt.root ${ewksubt} &
+hadd ${OUTPATH}/fakes.root   ${fakes} &
+hadd ${OUTPATH}/prompt.root  ${prompt} &
+hadd ${OUTPATH}/data.root    ${data} &
+hadd ${OUTPATH}/signal.root  ${signal} &
 
 wait
 
