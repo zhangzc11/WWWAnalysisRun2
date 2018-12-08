@@ -13,3 +13,6 @@ fakerate/histmap
 fakerate/*.o
 fakerate/doAnalysis
 fakerate/*.root
+
+docs/*.aux
+docs/*.log

@@ -527,19 +527,22 @@ def get_hists(histnames, use_data_driven_fakes=False, docutflow=False, sfs={}):
         if do_retrieve_data_event_based_histograms:
             hists["data"]    = ru.get_summed_histogram(data_list            , histnames , sfs=sfs)
     else:
-        hists["lostlep"] = ru.get_yield_histogram(bkg_lists["lostlep"] , histnames , sfs=sfs)
-        hists["photon"]  = ru.get_yield_histogram(bkg_lists["photon"]  , histnames , sfs=sfs)
-        hists["qflip"]   = ru.get_yield_histogram(bkg_lists["qflip"]   , histnames , sfs=sfs)
-        hists["ewksubt"] = ru.get_yield_histogram(bkg_lists["ewksubt"] , histnames , sfs=sfs)
-        hists["prompt"]  = ru.get_yield_histogram(bkg_lists["prompt"]  , histnames , sfs=sfs)
-        hists["vbsww"]   = ru.get_yield_histogram(bkg_lists["vbsww"]   , histnames , sfs=sfs)
-        hists["ttw"]     = ru.get_yield_histogram(bkg_lists["ttw"]     , histnames , sfs=sfs)
-        hists["www"]     = ru.get_yield_histogram(sig_list             , histnames , sfs=sfs)
+        labels = ru.remove_all_common_longest_common_substring(histnames)
+        labels = [ l.replace("FO","SFOS") for l in labels ]
+        labels = [ l.replace("ide","side-") for l in labels ]
+        hists["lostlep"] = ru.get_yield_histogram(bkg_lists["lostlep"] , histnames , labels=labels, sfs=sfs)
+        hists["photon"]  = ru.get_yield_histogram(bkg_lists["photon"]  , histnames , labels=labels, sfs=sfs)
+        hists["qflip"]   = ru.get_yield_histogram(bkg_lists["qflip"]   , histnames , labels=labels, sfs=sfs)
+        hists["ewksubt"] = ru.get_yield_histogram(bkg_lists["ewksubt"] , histnames , labels=labels, sfs=sfs)
+        hists["prompt"]  = ru.get_yield_histogram(bkg_lists["prompt"]  , histnames , labels=labels, sfs=sfs)
+        hists["vbsww"]   = ru.get_yield_histogram(bkg_lists["vbsww"]   , histnames , labels=labels, sfs=sfs)
+        hists["ttw"]     = ru.get_yield_histogram(bkg_lists["ttw"]     , histnames , labels=labels, sfs=sfs)
+        hists["www"]     = ru.get_yield_histogram(sig_list             , histnames , labels=labels, sfs=sfs)
         # Only access data root file when accessing nominal variation
         if do_retrieve_data_event_based_histograms or not use_data_driven_fakes:
-            hists["fakes"]   = ru.get_yield_histogram(bkg_lists["fakes"]   , histnames , sfs=sfs)
+            hists["fakes"]   = ru.get_yield_histogram(bkg_lists["fakes"]   , histnames , labels=labels, sfs=sfs)
         if do_retrieve_data_event_based_histograms:
-            hists["data"]    = ru.get_yield_histogram(data_list            , histnames , sfs=sfs)
+            hists["data"]    = ru.get_yield_histogram(data_list            , histnames , labels=labels, sfs=sfs)
 
     if use_data_driven_fakes:
         if do_retrieve_data_event_based_histograms:
@@ -549,7 +552,7 @@ def get_hists(histnames, use_data_driven_fakes=False, docutflow=False, sfs={}):
             hists["fakes"].Add(hists["ewksubt"])
 
     hists["lostlep"] .SetName("Lost/three lep")
-    hists["photon"]  .SetName("#gamma#rightarrowlepton")
+    hists["photon"]  .SetName("#gamma#rightarrow lepton")
     hists["qflip"]   .SetName("Charge mis-id")
     if do_retrieve_data_event_based_histograms or not use_data_driven_fakes:
         hists["fakes"].SetName("Non-prompt")
