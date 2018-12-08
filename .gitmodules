@@ -22,3 +22,4 @@
 [submodule "analysis/ProjectMetis"]
 	path = analysis/ProjectMetis
 	url = git@github.com:aminnj/ProjectMetis.git
+	ignore = dirty

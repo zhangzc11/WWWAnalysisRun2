@@ -25,15 +25,15 @@ output_dirpath = "outputs/condor/WWW2017_v4.0.5/test14"
 is2017 = "WWW2017" in output_dirpath
 
 # Bkg order
-#bkg_order = ["photon", "qflip", "fakes", "lostlep", "prompt"]
-bkg_order = ["fakes", "photon", "lostlep", "qflip", "prompt", "ttw", "vbsww"]
+bkg_order = ["photon", "qflip", "fakes", "lostlep", "prompt"]
+#bkg_order = ["fakes", "photon", "lostlep", "qflip", "prompt", "ttw", "vbsww"]
 colors_map = {"photon":920, "qflip":2007, "lostlep":2003, "prompt":2001, "fakes":2005, "sig":2, "vbsww":2002, "ttw":2004}
 colors = [ colors_map[b] for b in bkg_order ]
 
 def main():
-    write_datacard()
+#    write_datacard()
 #    plotSR()
-#    plot()
+    plot()
 #    get_wzsf()
 #    study_wz()
 #    oscr()
@@ -367,10 +367,10 @@ def study_wz():
             hists_sr[key].Divide(hists_cr[key])
             h_sys_tf[syst+var] = hists_sr[key].Clone(syst+var)
     hists = [ h_sys_tf[syst+var] for syst in systs for var in ["Up", "Down"] ]
-    #for hist in hists:
-        #hist.Divide(h_nom_tf)
-    #h_nom_tf.Divide(h_nom_tf)
-    alloptions= { "output_name": "plots/test.pdf", "bkg_sort_method" : "unsorted", "print_yield": True, "lumi_value": "41.3", "yield_prec": 5}
+    for hist in hists:
+        hist.Divide(h_nom_tf)
+    h_nom_tf.Divide(h_nom_tf)
+    alloptions= { "output_name": "plots/test.pdf", "bkg_sort_method" : "unsorted", "print_yield": True, "lumi_value": "41.3", "yield_prec": 2}
     p.plot_hist(sigs=hists, bgs=[h_nom_tf], options=alloptions)
 
 def oscr():
