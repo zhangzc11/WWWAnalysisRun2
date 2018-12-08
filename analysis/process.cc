@@ -929,21 +929,20 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
         }
         else
         {
-            // TODO
-            cutflow.addWgtSyst("FakeUp"            , UNITY );
-            cutflow.addWgtSyst("FakeDown"          , UNITY );
-            cutflow.addWgtSyst("FakeRateUp"        , UNITY );
-            cutflow.addWgtSyst("FakeRateDown"      , UNITY );
-            cutflow.addWgtSyst("FakeRateElUp"      , UNITY );
-            cutflow.addWgtSyst("FakeRateElDown"    , UNITY );
-            cutflow.addWgtSyst("FakeRateMuUp"      , UNITY );
-            cutflow.addWgtSyst("FakeRateMuDown"    , UNITY );
-            cutflow.addWgtSyst("FakeClosureUp"     , UNITY );
-            cutflow.addWgtSyst("FakeClosureDown"   , UNITY );
-            cutflow.addWgtSyst("FakeClosureElUp"   , UNITY );
-            cutflow.addWgtSyst("FakeClosureElDown" , UNITY );
-            cutflow.addWgtSyst("FakeClosureMuUp"   , UNITY );
-            cutflow.addWgtSyst("FakeClosureMuDown" , UNITY );
+            cutflow.addWgtSyst("FakeUp"            , UNITY ); // TODO
+            cutflow.addWgtSyst("FakeDown"          , UNITY ); // TODO
+            cutflow.addWgtSyst("FakeRateUp"        , UNITY ); // TODO
+            cutflow.addWgtSyst("FakeRateDown"      , UNITY ); // TODO
+            cutflow.addWgtSyst("FakeRateElUp"      , [&]() { return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor( 1, 11) / fakerates.getFakeFactor() ;} );
+            cutflow.addWgtSyst("FakeRateElDown"    , [&]() { return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor(-1, 11) / fakerates.getFakeFactor() ;} );
+            cutflow.addWgtSyst("FakeRateMuUp"      , [&]() { return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor( 1, 13) / fakerates.getFakeFactor() ;} );
+            cutflow.addWgtSyst("FakeRateMuDown"    , [&]() { return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor(-1, 13) / fakerates.getFakeFactor() ;} );
+            cutflow.addWgtSyst("FakeClosureUp"     , UNITY ); // TODO
+            cutflow.addWgtSyst("FakeClosureDown"   , UNITY ); // TODO
+            cutflow.addWgtSyst("FakeClosureElUp"   , [&]() { return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor( 1, 11, true) / fakerates.getFakeFactor() ;} );
+            cutflow.addWgtSyst("FakeClosureElDown" , [&]() { return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor(-1, 11, true) / fakerates.getFakeFactor() ;} );
+            cutflow.addWgtSyst("FakeClosureMuUp"   , [&]() { return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor( 1, 13, true) / fakerates.getFakeFactor() ;} );
+            cutflow.addWgtSyst("FakeClosureMuDown" , [&]() { return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor(-1, 13, true) / fakerates.getFakeFactor() ;} );
         }
     }
 
@@ -1724,8 +1723,6 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
 
     // Save output
     cutflow.saveOutput();
-
-    cutflow.getCut("Root").printEventList();
 
     return 0;
 }

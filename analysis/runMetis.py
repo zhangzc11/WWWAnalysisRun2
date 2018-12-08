@@ -7,7 +7,7 @@ import os
 def main():
 
     data_year = "2017"
-    job_tag = "test11"
+    job_tag = "test14"
     input_ntup_tag = "WWW_v1.2.2"
     input_ntup_tag = "OS2017_v4.0.5"
     input_ntup_tag = "WWW2016_v4.0.5"

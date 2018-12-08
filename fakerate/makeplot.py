@@ -117,22 +117,29 @@ def grand_main(input_ntup_tag, analysis_tag, isSS):
             h.SetBinError(h.GetNbinsX()+1, h.GetNbinsY()+1, h.GetBinError(h.GetNbinsX(), h.GetNbinsY()))
         return h
 
-    def create_varbin(h, xboundskeyword, yboundskeyword=None):
+    def create_varbin(h, xboundskeyword, yboundskeyword=None, closureerr=0, suffix=""):
         # Read the initialization line from process.cc
         xbounds = get_bounds_from_source_file(xboundskeyword)
         if yboundskeyword:
             ybounds = get_bounds_from_source_file(yboundskeyword)
         if not yboundskeyword:
-            hrtn = r.TH1F(h.GetName(), h.GetTitle(), len(xbounds)-1, array('d', xbounds)) 
+            hrtn = r.TH1F(h.GetName()+suffix, h.GetTitle(), len(xbounds)-1, array('d', xbounds)) 
             for i in xrange(1, len(xbounds)+1):
                 hrtn.SetBinContent(i, h.GetBinContent(i))
-                hrtn.SetBinError(i, h.GetBinError(i))
+                if closureerr == 0:
+                    hrtn.SetBinError(i, h.GetBinError(i))
+                else:
+                    hrtn.SetBinError(i, h.GetBinContent(i) * closureerr)
         else:
-            hrtn = r.TH2F(h.GetName(), h.GetTitle(), len(xbounds)-1, array('d', xbounds), len(ybounds)-1, array('d', ybounds)) 
+            hrtn = r.TH2F(h.GetName()+suffix, h.GetTitle(), len(xbounds)-1, array('d', xbounds), len(ybounds)-1, array('d', ybounds)) 
             for i in xrange(1, len(xbounds)+1):
                 for j in xrange(1, len(ybounds)+1):
                     hrtn.SetBinContent(i, j, h.GetBinContent(i + (j-1)*(len(xbounds)-1)))
                     hrtn.SetBinError(i, j, h.GetBinError(i + (j-1)*(len(xbounds)-1)))
+                    if closureerr == 0:
+                        hrtn.SetBinError(i, j, h.GetBinError(i + (j-1)*(len(xbounds)-1)))
+                    else:
+                        hrtn.SetBinError(i, j, h.GetBinContent(i + (j-1)*(len(xbounds)-1)) * closureerr)
         hrtn = set_overflow_bins_to_last_bins(hrtn)
         return hrtn
 
@@ -269,6 +276,17 @@ def grand_main(input_ntup_tag, analysis_tag, isSS):
             elif histname == "ptcorretarolledcoarse":
                 create_varbin(data_fakerate, "ptcorrcoarse_bounds", "eta_bounds").Write()
                 create_varbin(qcd_fakerate, "ptcorrcoarse_bounds", "eta_bounds").Write()
+                # Closure 3l mu 51% 3l el 1% ss mu 33% ss el 3% (1.51, 0.994, 1.329, 0.978)
+                if channel == "Mu":
+                    if isSS:
+                        create_varbin(data_fakerate, "ptcorrcoarse_bounds", "eta_bounds", 0.33, "closure").Write()
+                    else:
+                        create_varbin(data_fakerate, "ptcorrcoarse_bounds", "eta_bounds", 0.51, "closure").Write()
+                elif channel == "El":
+                    if isSS:
+                        create_varbin(data_fakerate, "ptcorrcoarse_bounds", "eta_bounds", 0.03, "closure").Write()
+                    else:
+                        create_varbin(data_fakerate, "ptcorrcoarse_bounds", "eta_bounds", 0.01, "closure").Write()
 
     def plot(histnames, ps=0, sf=0):
 
