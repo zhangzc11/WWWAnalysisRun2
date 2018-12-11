@@ -5,6 +5,14 @@ PACKAGE=package.tar.gz
 # Echo exact command
 echo "$(basename $0) $*"
 
+help()
+{
+    echo "Error - usage:"
+    echo ""
+    echo "  $> sh $0 INPUTFILENAMES TREENAME BABYMODE FILTER DOHIST"
+    echo ""
+    exit
+}
 
 ###################################################################################################
 # ProjectMetis/CondorTask specific (Setting up some common environment)
@@ -14,9 +22,13 @@ echo "$(basename $0) $*"
 #echo "If X509_USER_PROXY is set, it's either on Vanilla or Local."
 # if 
 if [ "x${_CONDOR_JOB_AD}" == "x" ]; then
-    :
+    if [ -z $1 ]; then help; fi
     INPUTFILENAMES=$1
-    shift;
+    TREENAME=$2
+    BABYMODE=$3
+    FILTER=$4
+    DOHIST=$5
+    shift 5;
 else
     hostname
     uname -a
@@ -46,6 +58,7 @@ else
     TREENAME=$7
     BABYMODE=$8
     FILTER=$9
+    DOHIST=${10}
     if [ "x${_CONDOR_SLOT}" == "x" ]; then
         WORKDIR=/tmp/phchang_condor_local_${OUTPUTDIR//\//_}_${OUTPUTNAME}_${IFILE}
         mkdir -p ${WORKDIR}
@@ -67,7 +80,8 @@ else
     echo "TREENAME      : $7"
     echo "BABYMODE      : $8"
     echo "FILTER        : $9"
-    shift 9
+    echo "DOHIST        : ${10}"
+    shift 10
     md5sum package.tar.gz
     tar xvzf package.tar.gz
     if [ $? -eq 0 ]; then
@@ -86,8 +100,8 @@ echo ">>> ls -l"
 ls -l
 echo ">>> export COREDIR=$PWD/CORE/"
 export COREDIR=$PWD/CORE/
-echo ">>> ./doAnalysis ${INPUTFILENAMES} ${TREENAME} ${BABYMODE}_output.root -1 ${FILTER}"
-./doAnalysis ${INPUTFILENAMES} ${TREENAME} ${BABYMODE}_output.root -1 ${FILTER}
+echo ">>> ./doAnalysis ${INPUTFILENAMES} ${TREENAME} ${BABYMODE}_output.root -1 ${FILTER} ${DOHIST}"
+./doAnalysis ${INPUTFILENAMES} ${TREENAME} ${BABYMODE}_output.root -1 ${FILTER} ${DOHIST}
 
 mv ${BABYMODE}_output.root output.root
 

@@ -1,7 +1,7 @@
 #include "process.h"
 
 //_______________________________________________________________________________________________________
-int process(const char* input_paths, const char* input_tree_name, const char* output_file_name, int nEvents, TString regions)
+int process(const char* input_paths, const char* input_tree_name, const char* output_file_name, int nEvents, TString regions, bool dohist=true)
 {
     // Creating output file where we will put the outputs of the processing
     TFile* ofile = new TFile(output_file_name, "recreate");
@@ -22,9 +22,8 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
 
     // For fake estimations, we use data-driven method.
     // When looping over data and the output_path is set to have a "fakes" substring included we turn on the fake-weight settings
-    const bool doSystematics = not TString(input_paths).Contains("data_");
-//    const bool doSystematics = false;
-    const bool doHistogram = false;
+    const bool doSystematics = (not TString(input_paths).Contains("data_"));
+    const bool doHistogram = dohist;
     bool doFakeEstimation = TString(output_file_name).Contains("ddfakes") or TString(output_file_name).Contains("ewksubt");
     bool doEwkSubtraction = TString(output_file_name).Contains("ewksubt");
     bool isData = TString(input_paths).Contains("data_") || TString(input_paths).Contains("Run2017");
@@ -33,6 +32,7 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
     std::cout <<  " is2017: " << is2017 <<  std::endl;
     std::cout <<  " isWWW: " << isWWW <<  std::endl;
     std::cout <<  " doSystematics: " << doSystematics <<  std::endl;
+    std::cout <<  " doHistogram: " << doHistogram <<  std::endl;
     std::cout <<  " doFakeEstimation: " << doFakeEstimation <<  std::endl;
     std::cout <<  " doEwkSubtraction: " << doEwkSubtraction <<  std::endl;
     std::cout <<  " isData: " << isData <<  std::endl;
@@ -57,6 +57,7 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
     histograms.addHistogram("MllSS_wide"           ,  180 , 0.      , 2000.  , [&]() { return www.MllSS()                  ; });
     histograms.addHistogram("MllZ"                 ,  180 , 60.     , 120.   , [&]() { return www.MllSS()                  ; });
     histograms.addHistogram("MllZZoom"             ,  180 , 80.     , 100.   , [&]() { return www.MllSS()                  ; });
+    histograms.addHistogram("MllOnOff"             ,  180 , 30.     , 150.   , [&]() { return fabs(www.Mll3L()-91.1876)<fabs(www.Mll3L1()-91.1876)?www.Mll3L():www.Mll3L1(); });
     histograms.addHistogram("Mll3L"                ,  180 , 0.      , 300.   , [&]() { return www.Mll3L()                  ; });
     histograms.addHistogram("Mll3L1"               ,  180 , 0.      , 300.   , [&]() { return www.Mll3L1()                 ; });
     histograms.addHistogram("nSFOSinZ"             ,  3   , 0.      , 3.     , [&]() { return www.nSFOSinZ()               ; });
@@ -65,6 +66,7 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
     histograms.addHistogram("Pt3l"                 ,  180 , 0.      , 300.   , [&]() { return www.Pt3l()                   ; });
     histograms.addHistogram("Ptll"                 ,  180 , 0.      , 300.   , [&]() { return www.Pt3l()                   ; });
     histograms.addHistogram("nvtx"                 ,  60  , 0.      , 60.    , [&]() { return www.nVert()                  ; });
+    histograms.addHistogram("MjjZoom"              ,  180 , 0.      , 150.   , [&]() { return www.Mjj()                    ; });
     histograms.addHistogram("Mjj"                  ,  180 , 0.      , 300.   , [&]() { return www.Mjj()                    ; });
     histograms.addHistogram("MjjL"                 ,  180 , 0.      , 750.   , [&]() { return www.MjjL()                   ; });
     histograms.addHistogram("DetajjL"              ,  180 , 0.      , 5.     , [&]() { return www.DetajjL()                ; });
@@ -253,7 +255,7 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
 
     // Same-sign WZ CR
     cutflow.getCut("CutWZCRDilep")                                                                                                            ;
-    cutflow.addCutToLastActiveCut("WZCRSSmm"              , [&]() { return (hasz_ss)*(www.passSSmm())*(www.MllSS()>40.)                       ; }        , [&]() { return threelep_sf ; } ) ;
+    cutflow.addCutToLastActiveCut("WZCRSSmm"              , [&]() { return (www.passSSmm())*(www.MllSS()>40.)                                 ; }        , [&]() { return threelep_sf ; } ) ;
     cutflow.addCutToLastActiveCut("WZCRSSmmTVeto"         , [&]() { return www.nisoTrack_mt2_cleaned_VVV_cutbased_veto()==0                   ; }        , [&]() { return 1                     ; } ) ;
     cutflow.addCutToLastActiveCut("WZCRSSmmNj2"           , [&]() { return www.nj30()>= 2                                                     ; }        , [&]() { return 1                     ; } ) ;
     cutflow.addCutToLastActiveCut("WZCRSSmmNb0"           , [&]() { return www.nb()==0                                                        ; }        , [&]() { return btag_sf               ; } ) ;
@@ -261,9 +263,9 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
     cutflow.addCutToLastActiveCut("WZCRSSmmDetajjL"       , [&]() { return www.DetajjL()<1.5                                                  ; }        , [&]() { return 1                     ; } ) ;
     cutflow.addCutToLastActiveCut("WZCRSSmmMET"           , [&]() { return 1.                                                                 ; }        , [&]() { return 1                     ; } ) ;
     cutflow.addCutToLastActiveCut("WZCRSSmmMllSS"         , [&]() { return www.MllSS()>40.                                                    ; }        , [&]() { return 1                     ; } ) ;
-    cutflow.addCutToLastActiveCut("WZCRSSmmFull"          , [&]() { return 1                                                                  ; }        , [&]() { return 1                     ; } ) ;
+    cutflow.addCutToLastActiveCut("WZCRSSmmFull"          , [&]() { return hasz_ss                                                            ; }        , [&]() { return 1                     ; } ) ;
     cutflow.getCut("CutWZCRDilep")                                                                                                            ;
-    cutflow.addCutToLastActiveCut("WZCRSSem"              , [&]() { return (hasz_ss)*(www.passSSem())*(www.MllSS()>30.)                       ; }        , [&]() { return threelep_sf ; } ) ;
+    cutflow.addCutToLastActiveCut("WZCRSSem"              , [&]() { return (www.passSSem())*(www.MllSS()>30.)                                 ; }        , [&]() { return threelep_sf ; } ) ;
     cutflow.addCutToLastActiveCut("WZCRSSemTVeto"         , [&]() { return www.nisoTrack_mt2_cleaned_VVV_cutbased_veto()==0                   ; }        , [&]() { return 1                     ; } ) ;
     cutflow.addCutToLastActiveCut("WZCRSSemNj2"           , [&]() { return www.nj30()>= 2                                                     ; }        , [&]() { return 1                     ; } ) ;
     cutflow.addCutToLastActiveCut("WZCRSSemNb0"           , [&]() { return www.nb()==0                                                        ; }        , [&]() { return btag_sf               ; } ) ;
@@ -272,9 +274,9 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
     cutflow.addCutToLastActiveCut("WZCRSSemMET"           , [&]() { return www.met_pt()>60.                                                   ; }        , [&]() { return 1                     ; } ) ;
     cutflow.addCutToLastActiveCut("WZCRSSemMllSS"         , [&]() { return www.MllSS()>30.                                                    ; }        , [&]() { return 1                     ; } ) ;
     cutflow.addCutToLastActiveCut("WZCRSSemMTmax"         , [&]() { return www.MTmax()>90.                                                    ; }        , [&]() { return 1                     ; } ) ;
-    cutflow.addCutToLastActiveCut("WZCRSSemFull"          , [&]() { return 1                                                                  ; }        , [&]() { return 1                     ; } ) ;
+    cutflow.addCutToLastActiveCut("WZCRSSemFull"          , [&]() { return hasz_ss                                                            ; }        , [&]() { return 1                     ; } ) ;
     cutflow.getCut("CutWZCRDilep")                                                                                                            ;
-    cutflow.addCutToLastActiveCut("WZCRSSee"              , [&]() { return (hasz_ss)*(www.passSSee())*(1)*(www.MllSS()>40.)                   ; }        , [&]() { return threelep_sf ; } ) ;
+    cutflow.addCutToLastActiveCut("WZCRSSee"              , [&]() { return (www.passSSee())*(1)*(www.MllSS()>40.)                             ; }        , [&]() { return threelep_sf ; } ) ;
     cutflow.addCutToLastActiveCut("WZCRSSeeZeeVt"         , [&]() { return fabs(www.MllSS()-91.1876)>10.                                      ; }        , [&]() { return 1                     ; } ) ;
     cutflow.addCutToLastActiveCut("WZCRSSeeTVeto"         , [&]() { return www.nisoTrack_mt2_cleaned_VVV_cutbased_veto()==0                   ; }        , [&]() { return 1                     ; } ) ;
     cutflow.addCutToLastActiveCut("WZCRSSeeNj2"           , [&]() { return www.nj30()>= 2                                                     ; }        , [&]() { return 1                     ; } ) ;
@@ -283,7 +285,18 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
     cutflow.addCutToLastActiveCut("WZCRSSeeDetajjL"       , [&]() { return www.DetajjL()<1.5                                                  ; }        , [&]() { return 1                     ; } ) ;
     cutflow.addCutToLastActiveCut("WZCRSSeeMET"           , [&]() { return www.met_pt()>60.                                                   ; }        , [&]() { return 1                     ; } ) ;
     cutflow.addCutToLastActiveCut("WZCRSSeeMllSS"         , [&]() { return www.MllSS()>40.                                                    ; }        , [&]() { return 1                     ; } ) ;
-    cutflow.addCutToLastActiveCut("WZCRSSeeFull"          , [&]() { return 1                                                                  ; }        , [&]() { return 1                     ; } ) ;
+    cutflow.addCutToLastActiveCut("WZCRSSeeFull"          , [&]() { return hasz_ss                                                            ; }        , [&]() { return 1                     ; } ) ;
+
+    // Mjj selection validation region
+    cutflow.getCut("WZCRSSeeMllSS");
+    cutflow.addCutToLastActiveCut("WZVRSSee"    , [&]() { return hasz_ss;                 } ,  [&]() { return 1; } );
+    cutflow.addCutToLastActiveCut("WZVRSSeeFull", [&]() { return fabs(www.Mjj()-80.)<15.; } ,  [&]() { return 1; } );
+    cutflow.getCut("WZCRSSemMTmax");
+    cutflow.addCutToLastActiveCut("WZVRSSem"    , [&]() { return hasz_ss;                 } ,  [&]() { return 1; } );
+    cutflow.addCutToLastActiveCut("WZVRSSemFull", [&]() { return fabs(www.Mjj()-80.)<15.; } ,  [&]() { return 1; } );
+    cutflow.getCut("WZCRSSmmMllSS");
+    cutflow.addCutToLastActiveCut("WZVRSSmm"    , [&]() { return hasz_ss;                 } ,  [&]() { return 1; } );
+    cutflow.addCutToLastActiveCut("WZVRSSmmFull", [&]() { return fabs(www.Mjj()-80.)<15.; } ,  [&]() { return 1; } );
 
     // Trilep WZ CR
     cutflow.getCut("CutWZCRTrilep")                                                                                                           ;
@@ -295,8 +308,8 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
     cutflow.addCutToLastActiveCut("WZCR1SFOSMET"          , [&]() { return www.met_pt()>40.                                                   ; }        , [&]() { return 1                     ; } ) ;
     cutflow.addCutToLastActiveCut("WZCR1SFOSMll"          , [&]() { return www.Mll3L() > 20.                                                  ; }        , [&]() { return 1                     ; } ) ;
     cutflow.addCutToLastActiveCut("WZCR1SFOSM3l"          , [&]() { return abs(www.M3l()-91.1876) > 10.                                       ; }        , [&]() { return 1                     ; } ) ;
-    cutflow.addCutToLastActiveCut("WZCR1SFOSZVt"          , [&]() { return hasz_3l                                                            ; }        , [&]() { return 1                     ; } ) ;
     cutflow.addCutToLastActiveCut("WZCR1SFOSMT3rd"        , [&]() { return www.MT3rd()>90.                                                    ; }        , [&]() { return 1                     ; } ) ;
+    cutflow.addCutToLastActiveCut("WZCR1SFOSZVt"          , [&]() { return hasz_3l                                                            ; }        , [&]() { return 1                     ; } ) ;
     cutflow.addCutToLastActiveCut("WZCR1SFOSFull"         , [&]() { return 1                                                                  ; }        , [&]() { return 1                     ; } ) ;
     cutflow.getCut("CutWZCRTrilep")                                                                                                           ;
     cutflow.addCutToLastActiveCut("WZCR2SFOS"             , [&]() { return (www.nSFOS()==2)                                                   ; }        , [&]() { return threelep_sf           ; } ) ;
@@ -309,6 +322,14 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
     cutflow.addCutToLastActiveCut("WZCR2SFOSM3l"          , [&]() { return abs(www.M3l()-91.1876) > 10.                                       ; }        , [&]() { return 1                     ; } ) ;
     cutflow.addCutToLastActiveCut("WZCR2SFOSZVt"          , [&]() { return hasz_3l                                                            ; }        , [&]() { return 1                     ; } ) ;
     cutflow.addCutToLastActiveCut("WZCR2SFOSFull"         , [&]() { return 1                                                                  ; }        , [&]() { return 1                     ; } ) ;
+
+    // Invert met_pt
+    cutflow.getCut("WZCR1SFOSNb0");
+    cutflow.addCutToLastActiveCut("WZVR1SFOSMllOnOff"     , [&]() { return (www.Pt3l()<60.)*(www.DPhi3lMET()<2.5)*(www.met_pt()<40.)*(www.Mll3L()>20.)*(abs(www.M3l()-91.1876)>10.)*(www.MT3rd()<90.) ; } , [&]() { return 1 ; } ) ;
+    cutflow.addCutToLastActiveCut("WZVR1SFOSMllOnOffFull" , [&]() { return hasz_3l                                                                             ; } , [&]() { return 1 ; } ) ;
+    cutflow.getCut("WZCR2SFOSNb0");
+    cutflow.addCutToLastActiveCut("WZVR2SFOSMllOnOff"     , [&]() { return (www.Pt3l()<60.)*(www.DPhi3lMET()<2.5)*(www.met_pt()<55.)*((www.Mll3L()>20.&&www.Mll3L1()>20.))*(abs(www.M3l()-91.1876)>10.) ; } , [&]() { return 1 ; } ) ;
+    cutflow.addCutToLastActiveCut("WZVR2SFOSMllOnOffFull" , [&]() { return hasz_3l                                                                               ; } , [&]() { return 1 ; } ) ;
 
     // Same-sign Mjj on-W region
     cutflow.getCut("CutARDilep")                                                                                                              ;
@@ -1601,9 +1622,14 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
             list_of_cuts.push_back(endcut.ReplaceAll("Full", ""));
         // Now replace with "SRSSee,SRSSem,SRSSmm,..."
         regions = RooUtil::StringUtil::join(list_of_cuts);
-    }
 
-    if (not regions.IsNull()) cutflow.filterCuts(RooUtil::StringUtil::split(regions, ","));
+        // Also when processing all regios, skip histograms for systematics
+        cutflow.setSkipSystematicHistograms(true);
+    }
+    else if (not regions.IsNull())
+    {
+        cutflow.filterCuts(RooUtil::StringUtil::split(regions, ","));
+    }
 
     // Now book cutflows
     cutflow.bookCutflows();
@@ -1612,7 +1638,7 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
     cutflow.bookEventLists();
 
     // Histogram booking is dependent on whether you ask for certain regions also when systematics is asked, do not run the entire histogramming otherwise too many will be booked (O(20k) histograms!)
-    if (not doSystematics and doHistogram)
+    if (doHistogram)
     {
         if (not regions.IsNull())
         {
