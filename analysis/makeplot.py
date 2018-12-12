@@ -88,7 +88,7 @@ def main():
     plot("SR", "sr_yield", True)
 
     # Plot lost lepton yields
-    plot("WZCR", "lostlep_cr_yield", False)
+    plot("WZCR", "lostlep_cr_yield", False, caption="Lost lepton control region yields.")
     plot(["WZCRSSeeMllSS__MllOnOff", "WZCRSSemMTmax__MllOnOff", "WZCRSSmmMllSS__MllOnOff"], "lostlep_cr_ss_msfos", False)
     plot(["WZVR1SFOSMllOnOff__MllOnOff", "WZVR2SFOSMllOnOff__MllOnOff"], "lostlep_cr_3l_msfos", False)
     plot(["WZVRSSee__MjjZoom", "WZVRSSem__MjjZoom", "WZVRSSmm__MjjZoom"], "lostlep_cr_ss_mjj", False, 8)
@@ -364,7 +364,7 @@ def get_lostlep_alpha():
 
 #________________________________________________________________________________________________________________________________________
 # Main plotting script
-def plot(histnames, outputfilename, use_data_driven_fakes=False, nbin=12):
+def plot(histnames, outputfilename, use_data_driven_fakes=False, nbin=12, caption=""):
 
     # If provided histnames are just a string indicating a region, then get the list of cutflow table histograms, and plot the yields.
     if isinstance(histnames, str):
@@ -387,6 +387,7 @@ def plot(histnames, outputfilename, use_data_driven_fakes=False, nbin=12):
                 "no_ratio": False,
                 "print_yield": True,
                 "yield_prec": 3,
+                "yield_table_caption": caption,
                 "blind": True if "SR" in histnames[0] else False,
                 "lumi_value": "41.3" if is2017 else "35.9",
                 #"yaxis_range": [0.001,150],
@@ -426,7 +427,7 @@ def study_lostlep():
             hists_sr[key].Divide(hists_cr[key])
             h_sys_tf[syst+var] = hists_sr[key].Clone(syst+var)
     hists = [ h_sys_tf[syst+var] for syst in systs for var in ["Up", "Down"] ]
-    alloptions= { "output_name": "plots/{}/{}/lostlep_exp_tf.pdf".format(input_ntuple, analysis_tag), "bkg_sort_method" : "unsorted", "print_yield": True, "lumi_value": "41.3", "yield_prec": 3}
+    alloptions= { "output_name": "plots/{}/{}/lostlep_exp_tf.pdf".format(input_ntuple, analysis_tag), "bkg_sort_method" : "unsorted", "print_yield": True, "lumi_value": "41.3", "yield_prec": 3, "yield_table_caption": "Lost lepton transfer factor systematic variations."}
     p.plot_hist(bgs=[h_nom_tf], options=alloptions)
     for hist in hists:
         hist.Divide(h_nom_tf)
@@ -440,7 +441,7 @@ def study_lostlep():
         for i in xrange(1, h_sys_tf[syst+"Up"].GetNbinsX()+1):
             symerr = math.sqrt(abs(1 - h_sys_tf[syst+"Up"][i])**2 + abs(1 - h_sys_tf[syst+"Down"][i])**2)
             systs_symmetrized[-1].SetBinContent(i, symerr)
-    alloptions= { "output_name": "plots/{}/{}/lostlep_exp_syst.pdf".format(input_ntuple, analysis_tag), "bkg_sort_method" : "unsorted", "print_yield": True, "lumi_value": "41.3", "yield_prec": 3}
+    alloptions= { "output_name": "plots/{}/{}/lostlep_exp_syst.pdf".format(input_ntuple, analysis_tag), "bkg_sort_method" : "unsorted", "print_yield": True, "lumi_value": "41.3", "yield_prec": 3, "yield_table_caption": "Lost lepton transfer factor systematic variations."}
     #p.plot_hist(sigs=hists, bgs=[h_nom_tf], options=alloptions)
     p.plot_hist(sigs=systs_symmetrized, bgs=[h_nom_tf], options=alloptions)
 
