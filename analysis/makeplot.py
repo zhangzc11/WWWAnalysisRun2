@@ -48,8 +48,8 @@ def set_to_2017():
     global iscondor
     global hassyst
     global hashist
-    input_ntuple = "WWW2017_v4.0.5"
-    analysis_tag = "test21"
+    input_ntuple = "WWW2017_v4.0.6"
+    analysis_tag = "test22"
     iscondor = True
     hassyst = True
     hashist = False
@@ -62,20 +62,42 @@ def set_to_2017():
 
 # Bkg order
 bkg_order = ["photon", "qflip", "fakes", "lostlep", "prompt"]
-#bkg_order = ["fakes", "photon", "lostlep", "qflip", "prompt", "ttw", "vbsww"]
+bkg_order_5 = ["photon", "qflip", "fakes", "lostlep", "prompt"]
+bkg_order_7 = ["fakes", "photon", "lostlep", "qflip", "prompt", "ttw", "vbsww"]
 colors_map = {"photon":920, "qflip":2007, "lostlep":2003, "prompt":2001, "fakes":2005, "sig":2, "vbsww":2002, "ttw":2004}
 colors = [ colors_map[b] for b in bkg_order ]
+
+def set_bkg_to_7():
+    global bkg_order
+    global colors
+    bkg_order = bkg_order_7
+    colors = [ colors_map[b] for b in bkg_order ]
+
+def set_bkg_to_5():
+    global bkg_order
+    global colors
+    bkg_order = bkg_order_5
+    colors = [ colors_map[b] for b in bkg_order ]
 
 #________________________________________________________________________________________________________________________________________
 def main():
 
     set_to_2017()
 
+    # Money plot
+    plot("SR", "sr_yield", True)
+
     # Plot lost lepton yields
     plot("WZCR", "lostlep_cr_yield", False)
     plot(["WZCRSSeeMllSS__MllOnOff", "WZCRSSemMTmax__MllOnOff", "WZCRSSmmMllSS__MllOnOff"], "lostlep_cr_ss_msfos", False)
     plot(["WZVR1SFOSMllOnOff__MllOnOff", "WZVR2SFOSMllOnOff__MllOnOff"], "lostlep_cr_3l_msfos", False)
-    plot(["WZVRSSee__MjjZoom", "WZVRSSem__MjjZoom", "WZVRSSmm__MjjZoom"], "lostlep_cr_ss_mjj", False)
+    plot(["WZVRSSee__MjjZoom", "WZVRSSem__MjjZoom", "WZVRSSmm__MjjZoom"], "lostlep_cr_ss_mjj", False, 8)
+
+    set_bkg_to_7()
+    plot(["VBSCRSSeeFull__MjjVBF", "VBSCRSSemFull__MjjVBF", "VBSCRSSmmFull__MjjVBF"], "vbsww_cr_ss_mjj", False, 8)
+    plot(["TTWCRSSeeFull__nb", "TTWCRSSemFull__nb", "TTWCRSSmmFull__nb"], "ttw_cr_ss_nb", False)
+    plot(["TTWCRSSeeFull__MET", "TTWCRSSemFull__MET", "TTWCRSSmmFull__MET"], "ttw_cr_ss_MET", False, 6)
+    set_bkg_to_5()
 
     # Print extrapolation factors
     study_lostlep()
@@ -342,7 +364,7 @@ def get_lostlep_alpha():
 
 #________________________________________________________________________________________________________________________________________
 # Main plotting script
-def plot(histnames, outputfilename, use_data_driven_fakes=False):
+def plot(histnames, outputfilename, use_data_driven_fakes=False, nbin=12):
 
     # If provided histnames are just a string indicating a region, then get the list of cutflow table histograms, and plot the yields.
     if isinstance(histnames, str):
@@ -356,7 +378,7 @@ def plot(histnames, outputfilename, use_data_driven_fakes=False):
     # Set the option for plotting
     alloptions= {
                 "ratio_range":[0.0,2.2],
-                "nbins": 12,
+                "nbins": nbin,
                 "autobin": False,
                 "legend_scalex": 1.8,
                 "legend_scaley": 1.1,

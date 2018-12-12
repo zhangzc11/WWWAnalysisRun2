@@ -8,6 +8,10 @@
 \usepackage{fullpage}
 \usepackage{graphicx}
 \usepackage{subfig}
+\usepackage{verbatim}
+\usepackage{xcolor}
+
+\newcommand{\analysispath}{/home/users/phchang/public_html/analysis/www/code/WWWAnalysisRun2/analysis/plots/WWW2017_v4.0.6/test22}
 
 \begin{document}
 \maketitle
@@ -18,25 +22,56 @@ This contains various tables and plots used for the actual AN of WWW analysis.
 
 \section{Lost Lepton Control Region}
 
-\resizebox{1.0\textwidth}{!}{
-  \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
-  \hline
-     Bin number & $\gamma\rightarrow$ lepton & Charge mis-id & Non-prompt & Lost/three lep & Irredu. & WWW & Total & Data & Ratio \\ \cline{1-10} 
-     \hline\hline
-     Bin1 & 0.0 $\pm$ 0.0 & 0.0 $\pm$ 0.0 & 0.0 $\pm$ 0.0 & 7.56 $\pm$ 0.59 & 0.01 $\pm$ 0.0 & 0.0 $\pm$ 0.0 & 7.56 $\pm$ 0.59 & 12.0 $\pm$ 3.46 & 1.59 $\pm$ 0.47 \\ \cline{1-10} 
-     Bin2 & 0.0 $\pm$ 0.0 & 0.03 $\pm$ 0.03 & 3.08 $\pm$ 3.02 & 23.54 $\pm$ 1.13 & -0.13 $\pm$ 0.18 & 0.0 $\pm$ 0.0 & 26.51 $\pm$ 3.23 & 25.0 $\pm$ 5.0 & 0.94 $\pm$ 0.22 \\ \cline{1-10} 
-     Bin3 & 0.01 $\pm$ 0.01 & 0.0 $\pm$ 0.0 & 0.2 $\pm$ 0.16 & 46.65 $\pm$ 1.76 & 0.61 $\pm$ 0.38 & 0.12 $\pm$ 0.12 & 47.47 $\pm$ 1.81 & 59.0 $\pm$ 7.68 & 1.24 $\pm$ 0.17 \\ \cline{1-10} 
-     Bin4 & 0.0 $\pm$ 0.0 & 0.18 $\pm$ 0.08 & 0.41 $\pm$ 0.23 & 51.7 $\pm$ 1.55 & 0.09 $\pm$ 0.21 & 0.59 $\pm$ 0.25 & 52.38 $\pm$ 1.58 & 70.0 $\pm$ 8.37 & 1.34 $\pm$ 0.16 \\ \cline{1-10} 
-     Bin5 & 0.0 $\pm$ 0.0 & 0.22 $\pm$ 0.08 & 5.4 $\pm$ 2.92 & 198.75 $\pm$ 3.11 & 2.81 $\pm$ 1.51 & 0.37 $\pm$ 0.23 & 207.18 $\pm$ 4.53 & 199.0 $\pm$ 14.11 & 0.96 $\pm$ 0.07 \\ \cline{1-10} 
-  \end{tabular}
-}
+\input{\analysispath/lostlep_cr_yield}
 
 \begin{figure}[htb]
     \centering
-    \subfloat[][]{\includegraphics[width=0.45\textwidth]{figures/2017/lostlep_cr_yield.pdf}\label{fig:2017:lostlepcr}}
+    \subfloat[][]{\includegraphics[width=0.45\textwidth]{\analysispath/lostlep_cr_yield.pdf}}
     \caption{
         \label{fig:2017:lostlepcr} Lost lepton control region for 2017 data.
     }
 \end{figure}
+
+
+\input{\analysispath/lostlep_exp_syst}
+
+\begin{figure}[htb]
+    \centering
+    \subfloat[][]{\includegraphics[width=0.45\textwidth]{\analysispath/lostlep_cr_ss_msfos.pdf}\label{fig:2017:lostlepcr:msfos:ss}}
+    \subfloat[][]{\includegraphics[width=0.45\textwidth]{\analysispath/lostlep_cr_3l_msfos.pdf}\label{fig:2017:lostlepcr:msfos:3l}}\\
+    \subfloat[][]{\includegraphics[width=0.45\textwidth]{\analysispath/lostlep_cr_ss_mjj.pdf}\label{fig:2017:lostlepcr:mjj:ss}}
+    \caption{
+        \label{fig:2017:lostlepcr:modeling} Lost lepton control region, efficiencies and extrapolation checks
+        \subref{fig:2017:lostlepcr:msfos:ss}{ The $m_{SFOS}$ distribution in lost lepton control regions for same-sign channels.} 
+        \subref{fig:2017:lostlepcr:msfos:3l}{ The $m_{SFOS}$ distribution in lost lepton control regions for three-lepton channels.} 
+        \subref{fig:2017:lostlepcr:mjj:ss}{ The $m_{jj}$ distribution in lost lepton control regions for same-sign channels.} 
+    }
+\end{figure}
+
+\input{\analysispath/lostlep_eff_msfos_ss}
+\input{\analysispath/lostlep_ratio_msfos_3l}
+\input{\analysispath/lostlep_eff_mjj_ss}
+
+\section{Statistical interpretation}
+
+\subsection{$m_{jj}$-in ee}
+\scalebox{0.4}{\parbox{2.0\textwidth}{\verbatiminput{/home/users/phchang/public_html/analysis/www/code/WWWAnalysisRun2/analysis/plots/WWW2017_v4.0.6/test22/datacard_SRSSee.txt}}}
+\subsection{$m_{jj}$-in em}
+\scalebox{0.4}{\parbox{2.0\textwidth}{\verbatiminput{/home/users/phchang/public_html/analysis/www/code/WWWAnalysisRun2/analysis/plots/WWW2017_v4.0.6/test22/datacard_SRSSem.txt}}}
+\subsection{$m_{jj}$-in mm}
+\scalebox{0.4}{\parbox{2.0\textwidth}{\verbatiminput{/home/users/phchang/public_html/analysis/www/code/WWWAnalysisRun2/analysis/plots/WWW2017_v4.0.6/test22/datacard_SRSSmm.txt}}}
+\subsection{$m_{jj}$-out ee}
+\scalebox{0.4}{\parbox{2.0\textwidth}{\verbatiminput{/home/users/phchang/public_html/analysis/www/code/WWWAnalysisRun2/analysis/plots/WWW2017_v4.0.6/test22/datacard_SRSSSideee.txt}}}
+\subsection{$m_{jj}$-out em}
+\scalebox{0.4}{\parbox{2.0\textwidth}{\verbatiminput{/home/users/phchang/public_html/analysis/www/code/WWWAnalysisRun2/analysis/plots/WWW2017_v4.0.6/test22/datacard_SRSSSideem.txt}}}
+\subsection{$m_{jj}$-out mm}
+\scalebox{0.4}{\parbox{2.0\textwidth}{\verbatiminput{/home/users/phchang/public_html/analysis/www/code/WWWAnalysisRun2/analysis/plots/WWW2017_v4.0.6/test22/datacard_SRSSSidemm.txt}}}
+\subsection{0SFOS}
+\scalebox{0.4}{\parbox{2.0\textwidth}{\verbatiminput{/home/users/phchang/public_html/analysis/www/code/WWWAnalysisRun2/analysis/plots/WWW2017_v4.0.6/test22/datacard_SR0SFOS.txt}}}
+\subsection{1SFOS}
+\scalebox{0.4}{\parbox{2.0\textwidth}{\verbatiminput{/home/users/phchang/public_html/analysis/www/code/WWWAnalysisRun2/analysis/plots/WWW2017_v4.0.6/test22/datacard_SR1SFOS.txt}}}
+\subsection{2SFOS}
+\scalebox{0.4}{\parbox{2.0\textwidth}{\verbatiminput{\analysispath/datacard_SR2SFOS.txt}}}
+
 
 \end{document}
