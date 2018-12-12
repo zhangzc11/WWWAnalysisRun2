@@ -34,6 +34,29 @@ This contains various tables and plots used for the actual AN of WWW analysis.
         \begin{itemize}
             \item N.B. Currently, the scale factors are fitted, and the errors on SFs what is varied to obtain the fakerate errors.
         \end{itemize}
+    \item VBS $W^{\pm}W^{\pm}$ validation region
+        \begin{itemize}
+            \item Update the $m_{jj}$ variable to be the same as what was used in 2016 analysis note.
+            \item I am not sure if we can say (~22\%) like last time...
+            \item $Z\gamma$ sample is missing however...
+        \end{itemize}
+    \item $t\bar{t}W$ validation region
+        \begin{itemize}
+            \item Create a similar table done for 2016
+        \end{itemize}
+    \item $\gamma\rightarrow$ lepton validation region
+        \begin{itemize}
+            \item \note{Can't do this without $V\gamma$ MC sample! Still not ready AFAIK.}
+        \end{itemize}
+    \item Charge flip validation region
+        \begin{itemize}
+            \item Need opposite sign babies. (half a day time for baby production.) But shouldn't be difficult.
+            \item Smearing function is probably crucial?
+        \end{itemize}
+    \item Other random loose ends
+        \begin{itemize}
+            \item Pre-firing checks for 2017?
+        \end{itemize}
     \item Signal region yields
         \begin{itemize}
             \item The plot and table only contains statistical uncertainties.
@@ -191,6 +214,31 @@ This contains various tables and plots used for the actual AN of WWW analysis.
 \input{\fakeratepath/ss/scalefactors}
 \input{\fakeratepath/3l/scalefactors}
 
+\section{VBS Validation Region}
+
+\begin{figure}[!htb]
+    \centering
+    \subfloat[][]{\includegraphics[width=0.45\textwidth]{\analysispath/vbsww_cr_ss_mjj.pdf}\label{fig:2017:vbswwcr:ss:mjj}}
+    \subfloat[][]{\includegraphics[width=0.45\textwidth]{\analysispath/vbsww_cr_ss_detajj.pdf}\label{fig:2017:vbswwcr:ss:detajj}}
+    \caption{
+        \label{fig:2017:vbswwcr:ss} VBS $W^{\pm}W^{\pm}$ control region plots.
+        \subref{fig:2017:vbswwcr:ss:mjj}{ \note{This isn't the same variable as 2016 analysis note.} The invariant mass of the two leading jets across all $\eta$ region. }
+        \subref{fig:2017:vbswwcr:ss:detajj}{ The $\Delta_{jj}$ of two leading jets within central regions. }
+    }
+\end{figure}
+
+\clearpage
+
+\section{$t\bar{t}W$ Validation Region}
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=0.45\textwidth]{\analysispath/ttw_cr_ss_nb.pdf}\label{fig:2017:ttwcr:ss:nb}
+    \caption{
+        \label{fig:2017:ttwcr:ss} The $n_{b}$ distribution in $t\bar{t}W$ validation region.
+    }
+\end{figure}
+
 \clearpage
 
 \section{Signal Region Yields}
@@ -210,21 +258,21 @@ This contains various tables and plots used for the actual AN of WWW analysis.
 \section{Statistical interpretation}
 
 \subsection{$m_{jj}$-in ee}
-\scalebox{0.4}{\parbox{2.0\textwidth}{\verbatiminput{/home/users/phchang/public_html/analysis/www/code/WWWAnalysisRun2/analysis/plots/WWW2017_v4.0.6/test22/datacard_SRSSee.txt}}}
+\scalebox{0.4}{\parbox{2.0\textwidth}{\verbatiminput{\analysispath/datacard_SRSSee.txt}}}
 \subsection{$m_{jj}$-in em}
-\scalebox{0.4}{\parbox{2.0\textwidth}{\verbatiminput{/home/users/phchang/public_html/analysis/www/code/WWWAnalysisRun2/analysis/plots/WWW2017_v4.0.6/test22/datacard_SRSSem.txt}}}
+\scalebox{0.4}{\parbox{2.0\textwidth}{\verbatiminput{\analysispath/datacard_SRSSem.txt}}}
 \subsection{$m_{jj}$-in mm}
-\scalebox{0.4}{\parbox{2.0\textwidth}{\verbatiminput{/home/users/phchang/public_html/analysis/www/code/WWWAnalysisRun2/analysis/plots/WWW2017_v4.0.6/test22/datacard_SRSSmm.txt}}}
+\scalebox{0.4}{\parbox{2.0\textwidth}{\verbatiminput{\analysispath/datacard_SRSSmm.txt}}}
 \subsection{$m_{jj}$-out ee}
-\scalebox{0.4}{\parbox{2.0\textwidth}{\verbatiminput{/home/users/phchang/public_html/analysis/www/code/WWWAnalysisRun2/analysis/plots/WWW2017_v4.0.6/test22/datacard_SRSSSideee.txt}}}
+\scalebox{0.4}{\parbox{2.0\textwidth}{\verbatiminput{\analysispath/datacard_SRSSSideee.txt}}}
 \subsection{$m_{jj}$-out em}
-\scalebox{0.4}{\parbox{2.0\textwidth}{\verbatiminput{/home/users/phchang/public_html/analysis/www/code/WWWAnalysisRun2/analysis/plots/WWW2017_v4.0.6/test22/datacard_SRSSSideem.txt}}}
+\scalebox{0.4}{\parbox{2.0\textwidth}{\verbatiminput{\analysispath/datacard_SRSSSideem.txt}}}
 \subsection{$m_{jj}$-out mm}
-\scalebox{0.4}{\parbox{2.0\textwidth}{\verbatiminput{/home/users/phchang/public_html/analysis/www/code/WWWAnalysisRun2/analysis/plots/WWW2017_v4.0.6/test22/datacard_SRSSSidemm.txt}}}
+\scalebox{0.4}{\parbox{2.0\textwidth}{\verbatiminput{\analysispath/datacard_SRSSSidemm.txt}}}
 \subsection{0SFOS}
-\scalebox{0.4}{\parbox{2.0\textwidth}{\verbatiminput{/home/users/phchang/public_html/analysis/www/code/WWWAnalysisRun2/analysis/plots/WWW2017_v4.0.6/test22/datacard_SR0SFOS.txt}}}
+\scalebox{0.4}{\parbox{2.0\textwidth}{\verbatiminput{\analysispath/datacard_SR0SFOS.txt}}}
 \subsection{1SFOS}
-\scalebox{0.4}{\parbox{2.0\textwidth}{\verbatiminput{/home/users/phchang/public_html/analysis/www/code/WWWAnalysisRun2/analysis/plots/WWW2017_v4.0.6/test22/datacard_SR1SFOS.txt}}}
+\scalebox{0.4}{\parbox{2.0\textwidth}{\verbatiminput{\analysispath/datacard_SR1SFOS.txt}}}
 \subsection{2SFOS}
 \scalebox{0.4}{\parbox{2.0\textwidth}{\verbatiminput{\analysispath/datacard_SR2SFOS.txt}}}
 

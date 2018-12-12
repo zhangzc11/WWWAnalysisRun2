@@ -72,6 +72,8 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
     histograms.addHistogram("DetajjL"              ,  180 , 0.      , 5.     , [&]() { return www.DetajjL()                ; });
     histograms.addHistogram("MjjVBF"               ,  180 , 0.      , 750.   , [&]() { return www.MjjVBF()                 ; });
     histograms.addHistogram("DetajjVBF"            ,  180 , 0.      , 8.     , [&]() { return www.DetajjVBF()              ; });
+    histograms.addHistogram("MjjVBS"               ,  180 , 0.      , 750.   , [&]() { return www.Mjj()                    ; });
+    histograms.addHistogram("DetajjVBS"            ,  180 , 0.      , 3.     , [&]() { return www.DetajjL()                ; });
     histograms.addHistogram("MET"                  ,  180 , 0.      , 180.   , [&]() { return www.met_pt()                 ; });
     histograms.addHistogram("METWide"              ,  180 , 0.      , 300.   , [&]() { return www.met_pt()                 ; });
     histograms.addHistogram("lep_pt0"              ,  180 , 0.      , 250    , [&]() { return www.lep_pt()[0]              ; });

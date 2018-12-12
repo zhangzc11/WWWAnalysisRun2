@@ -95,6 +95,7 @@ def main():
 
     set_bkg_to_7()
     plot(["VBSCRSSeeFull__MjjVBF", "VBSCRSSemFull__MjjVBF", "VBSCRSSmmFull__MjjVBF"], "vbsww_cr_ss_mjj", False, 8)
+    plot(["VBSCRSSeeFull__DetajjL", "VBSCRSSemFull__DetajjL", "VBSCRSSmmFull__DetajjL"], "vbsww_cr_ss_detajj", False, 8)
     plot(["TTWCRSSeeFull__nb", "TTWCRSSemFull__nb", "TTWCRSSmmFull__nb"], "ttw_cr_ss_nb", False)
     plot(["TTWCRSSeeFull__MET", "TTWCRSSemFull__MET", "TTWCRSSmmFull__MET"], "ttw_cr_ss_MET", False, 6)
     set_bkg_to_5()
