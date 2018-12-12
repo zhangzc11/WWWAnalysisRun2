@@ -85,7 +85,7 @@ def main():
     set_to_2017()
 
     # Money plot
-    plot("SR", "sr_yield", True)
+    plot("SR", "sr_yield", True, caption="Signal region yields with each process set to its background estimation method's prediction.")
 
     # Plot lost lepton yields
     plot("WZCR", "lostlep_cr_yield", False, caption="Lost lepton control region yields.")

@@ -16,6 +16,8 @@ def grand_main(input_ntup_tag, analysis_tag, isSS):
     import glob
     import math
     from array import array
+    from pytable import Table
+    import tabletex
 
     is2017 = "FR2017" in output_dirpath
 
@@ -85,9 +87,13 @@ def grand_main(input_ntup_tag, analysis_tag, isSS):
         fakerate("OneMuTightMR__etavarbin"             , "OneMuMR__etavarbin"             , prescale_muHLT17 , mu_sf , mu_sferr, ofile)
         fakerate("OneMuTightMR__ptcorretarolled"       , "OneMuMR__ptcorretarolled"       , prescale_muHLT17 , mu_sf , mu_sferr, ofile)
         fakerate("OneMuTightMR__ptcorretarolledcoarse" , "OneMuMR__ptcorretarolledcoarse" , prescale_muHLT17 , mu_sf , mu_sferr, ofile)
-        print prescale_muHLT17 , prescale_elHLT23
-        print el_sf, el_sferr
-        print mu_sf, mu_sferr
+        x = Table()
+        x.add_column("type of scale factors", [ "Prescale $e$", "Prescale $\mu$", "$e$ prompt SF", "$\mu$ prompt SF", ])
+        x.add_column("scale factor values", ["{:.2f}".format(prescale_elHLT23), "{:.2f}".format(prescale_muHLT17), "{:.2f} $\\pm$ {:.2f}".format(el_sf, el_sferr), "{:.2f} $\\pm$ {:.2f}".format(mu_sf, mu_sferr)])
+        ru.write_tex_table(x, "./plots/{}/{}/{}/scalefactors.tex".format(input_ntup_tag, analysis_tag, "ss" if isSS else "3l"), caption="Scale factors used for {} channel".format("same-sign" if isSS else "three-lepton"))
+        print "PRINTHERE", "prescale_muHLT17 , prescale_elHLT23,", prescale_muHLT17 , prescale_elHLT23
+        print "PRINTHERE", "el_sf", el_sf, el_sferr
+        print "PRINTHERE", "mu_sf", mu_sf, mu_sferr
         closure_plot("MuClosureTight__MT", "MuClosureTightPredict__MT")
         closure_plot("ElClosureTight__MT", "ElClosureTightPredict__MT")
         closure_plot("MuClosureTightBVeto__MT", "MuClosureTightBVetoPredict__MT")
@@ -246,6 +252,21 @@ def grand_main(input_ntup_tag, analysis_tag, isSS):
         bgs_list = [h_num_qcd_mu] if "Mu" in num else [h_num_qcd_esum]
         #bgs_list = [h_num_qcd_mu] if "Mu" in num else [h_num_qcd_esum, h_num_qcd_el, h_num_qcd_bc]
         sigs_list = [] if "Mu" in num else [h_num_qcd_el, h_num_qcd_bc]
+
+        # Special label handling instance for pt-eta rolled out case
+        histname = num.split("__")[1]
+        if histname == "ptcorretarolledcoarse":
+            xbounds = get_bounds_from_source_file("ptcorrcoarse_bounds")
+            ybounds = get_bounds_from_source_file("eta_bounds")
+            for jndex in xrange(len(ybounds)-1):
+                for index in xrange(len(xbounds)-1):
+                    #label = "Ptcorr #in ({}, {}) and |#eta| #in ({:.1f}, {:.1f})".format(int(xbounds[index]), int(xbounds[index+1]), ybounds[jndex], ybounds[jndex+1])
+                    label = "({}, {}), ({:.1f}, {:.1f})".format(int(xbounds[index]), int(xbounds[index+1]), ybounds[jndex], ybounds[jndex+1])
+                    for h in sigs_list + bgs_list + [h_num]:
+                        h.GetXaxis().SetBinLabel((jndex)*(len(xbounds)-1) + (index+1), label)
+        alloptions["canvas_main_rightmargin"] = 1./6.
+        alloptions["canvas_ratio_rightmargin"] = 1./6.
+        alloptions["canvas_ratio_bottommargin"] = 0.5
 
         p.plot_hist(
                 sigs = sigs_list,
@@ -707,11 +728,18 @@ if __name__ == "__main__":
         print ""
         sys.exit()
 
-    try:
-        input_ntup_tag = sys.argv[1]
-        analysis_tag = sys.argv[2]
-    except:
-        help()
+    if len(sys.argv) == 1:
+        input_ntup_tag = "FR2017_v3.0.17"
+        analysis_tag = "FR2017_analysis_v1.0.0"
+        print "Using default input and analysis tag"
+        print "input_ntup_tag", input_ntup_tag
+        print "analysis_tag", analysis_tag
+    else:
+        try:
+            input_ntup_tag = sys.argv[1]
+            analysis_tag = sys.argv[2]
+        except:
+            help()
 
     # Run the same-sign fake rate studies first
     grand_main(input_ntup_tag, analysis_tag, isSS=True)
