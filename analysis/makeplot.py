@@ -643,7 +643,7 @@ def study_mjj_modeling():
 
     # Now obtain the list of histograms
     hists_ss_after = get_hists(histnames, False, "_cutflow" in histnames[0], sfs=(get_lostlep_sf() if histnames == "SR" else {}), dorawcutflow=False)
-    hists_ss_after_raw = get_hists(histnames, False, "_cutflow" in histnames[0], sfs=(get_lostlep_sf() if histnames == "SR" else {}), dorawcutflow=False)
+    hists_ss_after_raw = get_hists(histnames, False, "_cutflow" in histnames[0], sfs=(get_lostlep_sf() if histnames == "SR" else {}), dorawcutflow=True)
 
     # Mjj-in efficiency
 
@@ -655,8 +655,8 @@ def study_mjj_modeling():
     eff_err_mc = math.sqrt(eff_mc * (1 - eff_mc) / hists_ss_before_raw["lostlep"].Integral())
 
     # Create histograms with the calculation results so that it can be plotted/made into a table
-    h_eff_data = r.TH1F("lostlep eff mjj ss data", "lostlep eff mjj ss data", 4, 0, 4)
-    h_eff_mc = r.TH1F("lostlep eff mjj ss mc", "lostlep eff mjj ss mc", 4, 0, 4)
+    h_eff_data = r.TH1F("lostlep eff mjj ss data", "lostlep eff mjj ss data", 5, 0, 5)
+    h_eff_mc = r.TH1F("lostlep eff mjj ss mc", "lostlep eff mjj ss mc", 5, 0, 5)
 
     h_eff_data.GetXaxis().SetBinLabel(1, "eff ($e$)")
     h_eff_data.SetBinContent(1, eff_data)
@@ -675,6 +675,9 @@ def study_mjj_modeling():
     h_eff_data.GetXaxis().SetBinLabel(4, "raw ($n$)")
     h_eff_data.SetBinContent(4, hists_ss_before["data"].Integral())
 
+    h_eff_data.GetXaxis().SetBinLabel(5, "raw pass ($n$)")
+    h_eff_data.SetBinContent(5, hists_ss_after["data"].Integral())
+
     h_eff_mc.GetXaxis().SetBinLabel(2, "after ($a$)")
     h_eff_mc.SetBinContent(2, hists_ss_after["lostlep"].Integral())
 
@@ -683,6 +686,9 @@ def study_mjj_modeling():
 
     h_eff_mc.GetXaxis().SetBinLabel(4, "raw ($n$)")
     h_eff_mc.SetBinContent(4, hists_ss_before_raw["lostlep"].Integral())
+
+    h_eff_mc.GetXaxis().SetBinLabel(5, "raw pass ($n$)")
+    h_eff_mc.SetBinContent(5, hists_ss_after_raw["lostlep"].Integral())
 
     # Write them out to a table/plot
     alloptions= { "output_name": "plots/{}/{}/lostlep_eff_mjj_ss.pdf".format(input_ntuple, analysis_tag), "bkg_sort_method" : "unsorted", "print_yield": True, "lumi_value": "41.3" if is2017 else "35.9", "yield_prec": 3}
@@ -713,14 +719,16 @@ def study_mjj_modeling():
     out_err_lostlep = math.sqrt(hists_ss_after["lostlep"].GetBinError(1)**2 - in_err_lostlep**2)
     total_err_lostlep = hists_ss_before["lostlep"].GetBinError(1)
 
+    out_raw_lostlep = hists_ss_before_raw["lostlep"][1] - hists_ss_after_raw["lostlep"][1]
+
     ineff_data = out_data / total_data;
-    ineff_err_data = math.sqrt((out_err_data / out_data)**2 + (total_err_data / total_data)**2)
+    ineff_err_data = math.sqrt(ineff_data * (1 - ineff_data) / hists_ss_before["data"].Integral())
     ineff_mc = out_lostlep / total_lostlep;
-    ineff_err_mc = math.sqrt((out_err_lostlep / out_lostlep)**2 + (total_err_lostlep / total_lostlep)**2)
+    ineff_err_mc = math.sqrt(ineff_mc * (1 - ineff_mc) / hists_ss_before_raw["lostlep"].Integral())
 
     # Create histograms with the calculation results so that it can be plotted/made into a table
-    h_ineff_data = r.TH1F("lostlep ineff mjj ss data", "lostlep ineff mjj ss data", 4, 0, 4)
-    h_ineff_mc = r.TH1F("lostlep ineff mjj ss mc", "lostlep ineff mjj ss mc", 4, 0, 4)
+    h_ineff_data = r.TH1F("lostlep ineff mjj ss data", "lostlep ineff mjj ss data", 5, 0, 5)
+    h_ineff_mc = r.TH1F("lostlep ineff mjj ss mc", "lostlep ineff mjj ss mc", 5, 0, 5)
 
     h_ineff_data.GetXaxis().SetBinLabel(1, "ineff ($e$)")
     h_ineff_data.SetBinContent(1, ineff_data)
@@ -739,6 +747,9 @@ def study_mjj_modeling():
     h_ineff_data.GetXaxis().SetBinLabel(4, "raw ($n$)")
     h_ineff_data.SetBinContent(4, total_data)
 
+    h_ineff_data.GetXaxis().SetBinLabel(5, "raw ($n$)")
+    h_ineff_data.SetBinContent(5, out_data)
+
     h_ineff_mc.GetXaxis().SetBinLabel(2, "after ($a$)")
     h_ineff_mc.SetBinContent(2, out_lostlep)
 
@@ -746,7 +757,10 @@ def study_mjj_modeling():
     h_ineff_mc.SetBinContent(3, total_lostlep)
 
     h_ineff_mc.GetXaxis().SetBinLabel(4, "raw ($n$)")
-    h_ineff_mc.SetBinContent(4, hists_ss_before_raw["lostlep"].GetBinError(1))
+    h_ineff_mc.SetBinContent(4, hists_ss_before_raw["lostlep"].GetBinContent(1))
+
+    h_ineff_mc.GetXaxis().SetBinLabel(5, "raw ($n$)")
+    h_ineff_mc.SetBinContent(5, out_raw_lostlep)
 
     # Write them out to a table/plot
     alloptions= { "output_name": "plots/{}/{}/lostlep_ineff_mjj_ss.pdf".format(input_ntuple, analysis_tag), "bkg_sort_method" : "unsorted", "print_yield": True, "lumi_value": "41.3" if is2017 else "35.9", "yield_prec": 3}
