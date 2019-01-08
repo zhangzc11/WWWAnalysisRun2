@@ -123,8 +123,59 @@ eval `scram runtime -sh`
 curl -s --insecure https://cms-pdmv.cern.ch/mcm/public/restapi/requests/get_fragment/SMP-RunIIFall17wmLHEGS-00059 --retry 2 --create-dirs -o Configuration/GenProduction/python/SMP-RunIIFall17wmLHEGS-00059-fragment.py 
 [ -s Configuration/GenProduction/python/SMP-RunIIFall17wmLHEGS-00059-fragment.py ] || exit $?;
 
+#cat << EOF > www_2l_fragment.py
+#import FWCore.ParameterSet.Config as cms
+#
+#externalLHEProducer = cms.EDProducer("ExternalLHEProducer",
+#    args = cms.vstring('/cvmfs/cms.cern.ch/phys_generator/gridpacks/2017/13TeV/madgraph/V5_2.4.2/VVV/WWWJets_4f_NLO_slc6_amd64_gcc481_CMSSW_7_1_30_tarball.tar.xz'),
+#    nEvents = cms.untracked.uint32(5000),
+#    numberOfParameters = cms.uint32(1),
+#    outputFile = cms.string('cmsgrid_final.lhe'),
+#    scriptName = cms.FileInPath('GeneratorInterface/LHEInterface/data/run_generic_tarball_cvmfs.sh')
+#)
+#from Configuration.Generator.Pythia8CommonSettings_cfi import *
+#from Configuration.Generator.MCTunes2017.PythiaCP5Settings_cfi import *
+#from Configuration.Generator.Pythia8aMCatNLOSettings_cfi import *
+#
+#generator = cms.EDFilter("Pythia8HadronizerFilter",
+#                         maxEventsToPrint = cms.untracked.int32(1),
+#                         pythiaPylistVerbosity = cms.untracked.int32(1),
+#                         filterEfficiency = cms.untracked.double(1.0),
+#                         pythiaHepMCVerbosity = cms.untracked.bool(False),
+#                         comEnergy = cms.double(13000.),
+#                         PythiaParameters = cms.PSet(
+#                            pythia8CommonSettingsBlock,
+#                            pythia8CP5SettingsBlock,
+#                            pythia8aMCatNLOSettingsBlock,
+#                            processParameters = cms.vstring(
+#                                '23:mMin = 0.05',      
+#                                '24:mMin = 0.05',      
+#                                'TimeShower:nPartonsInBorn = 0', #number of coloured particles (before resonance decays) in born matrix element
+#                                'ResonanceDecayFilter:filter = on', 
+#                                'ResonanceDecayFilter:exclusive = off', #off: require at least the specified number of daughters, on: require exactly the specified number of daughters
+#                                'ResonanceDecayFilter:eMuAsEquivalent = off', #on: treat electrons and muons as equivalent
+#                                'ResonanceDecayFilter:eMuTauAsEquivalent = on', #on: treat electrons, muons , and taus as equivalent
+#                                'ResonanceDecayFilter:allNuAsEquivalent = on', #on: treat all three neutrino flavours as equivalent
+#            #'ResonanceDecayFilter:mothers =', #list of mothers not specified -> count all particles in hard process+resonance decays (better to avoid specifying mothers when including leptons from the lhe in counting, since intermediate resonances are not gauranteed to appear in general
+#                                'ResonanceDecayFilter:daughters = 11,11'
+#                                ),
+#                            parameterSets = cms.vstring('pythia8CommonSettings',
+#                                    'pythia8CP5Settings',
+#                                    'pythia8aMCatNLOSettings',
+#                                    'processParameters',
+#                                    )
+#                            )
+#                         )
+#ProductionFilterSequence = cms.Sequence(generator)
+#
+#EOF
+#
+#mkdir -p Configuration/GenProduction/python/
+#cp www_2l_fragment.py Configuration/GenProduction/python/
+
 scram b
 cd ../../
+#cmsDriver.py Configuration/GenProduction/python/www_2l_fragment.py \
 cmsDriver.py Configuration/GenProduction/python/SMP-RunIIFall17wmLHEGS-00059-fragment.py \
     --fileout file:file_GEN-SIM__LHE.root \
     --mc \

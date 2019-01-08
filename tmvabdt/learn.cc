@@ -28,40 +28,138 @@ int main(int argc, char** argv)
 
     // Initialize TMVA
     TMVA::Tools::Instance();
-    TMVA::Factory *factory = new TMVA::Factory("TMVA", outputFile, "V:DrawProgressBar=True:Transformations=I;D;P;G:AnalysisType=Classification");
+//    TMVA::Factory *factory = new TMVA::Factory("TMVA", outputFile, "V:DrawProgressBar=True:Transformations=I;D;P;G:AnalysisType=Classification");
+    TMVA::Factory *factory = new TMVA::Factory("TMVA", outputFile, "V:DrawProgressBar=True:Transformations=I;P;G:AnalysisType=Classification");
 
     // sample parent directory
-    TString dirpath = "/hadoop/cms/store/user/phchang/metis/wwwbaby/WWW2017_v4.0.6";
+    TString version = "4.0.6.2";
+    TString dirpath = "/hadoop/cms/store/user/phchang/metis/wwwbaby/WWW2017_v" + version;
 
     // Get signal sample TChain
-    TString WWWSampleGlobber = dirpath + "/MAKER_WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v4.0.6/merged/www_amcatnlo_*.root";
-    TChain* WWWChain = RooUtil::FileUtil::createTChain("t", WWWSampleGlobber);
+    TString WWWSampleGlobber = "";
+    WWWSampleGlobber += dirpath + "/MAKER_WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8_PRIVATE_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v" + version + "/merged/www_private_amcatnlo_1.root";
+    WWWSampleGlobber += "," + dirpath + "/MAKER_VHToWW_M125_13TeV_amcatnloFXFX_madspin_pythia8_PRIVATE_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-ext1-v2_MINIAODSIM_WWW2017_v" + version + "/merged/vh_ww_private_amcatnlo_1.root";
+    TChain* WWWChain = RooUtil::FileUtil::createTChain("t_www", WWWSampleGlobber);
 
     // Get WZ sample TChain
-    TString WZSampleGlobber = dirpath + "/MAKER_WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v4.0.6/merged/wz_3lv_amcatnlo_*.root";
+    TString WZSampleGlobber;
+    WZSampleGlobber = dirpath + "/MAKER_WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v" + version + "/merged/wz_3lv_amcatnlo_*.root";
     TChain* WZChain = RooUtil::FileUtil::createTChain("t_lostlep", WZSampleGlobber);
+
+    // Get background sample TChain
+    vector<TString> BkgSampleGlobber;
+
+    // : Dataset[dataset] : Background -- number of events passed: 5 / sum of weights: 0.640183
+
+//    BkgSampleGlobber.push_back(dirpath + "/MAKER_ST_s-channel_4f_leptonDecays_TuneCP5_13TeV-amcatnlo-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
+//    BkgSampleGlobber.push_back(dirpath + "/MAKER_ST_t-channel_antitop_4f_inclusiveDecays_TuneCP5_13TeV-powhegV2-madspin-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
+//    BkgSampleGlobber.push_back(dirpath + "/MAKER_ST_t-channel_top_4f_inclusiveDecays_TuneCP5_13TeV-powhegV2-madspin-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
+//    BkgSampleGlobber.push_back(dirpath + "/MAKER_ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
+//    BkgSampleGlobber.push_back(dirpath + "/MAKER_ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
+
+    // : Dataset[dataset] : Background -- number of events passed: 70 / sum of weights: 6.78874
+//    BkgSampleGlobber.push_back(dirpath + "/MAKER_TTGamma_SingleLeptFromT_TuneCP5_PSweights_13TeV_madgraph_pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
+//    BkgSampleGlobber.push_back(dirpath + "/MAKER_TTGamma_SingleLeptFromTbar_TuneCP5_PSweights_13TeV_madgraph_pythia8_RunIIFall17MiniAOD-PU2017_94X_mc2017_realistic_v11-v1_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
+//    BkgSampleGlobber.push_back(dirpath + "/MAKER_TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
+//    BkgSampleGlobber.push_back(dirpath + "/MAKER_TTJets_SingleLeptFromT_TuneCP5_13TeV-madgraphMLM-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v" + version + "/merged/*.root"); // 4.83211
+//    BkgSampleGlobber.push_back(dirpath + "/MAKER_TTJets_SingleLeptFromTbar_TuneCP5_13TeV-madgraphMLM-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v" + version + "/merged/*.root"); // 4.83211
+
+    // : Dataset[dataset] : Background -- number of events passed: 1441 / sum of weights: 3.03995
+//    BkgSampleGlobber.push_back(dirpath + "/MAKER_TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
+//    BkgSampleGlobber.push_back(dirpath + "/MAKER_TTWJetsToQQ_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
+//    BkgSampleGlobber.push_back(dirpath + "/MAKER_TTZToLLNuNu_M-10_TuneCP5_13TeV-amcatnlo-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
+//    BkgSampleGlobber.push_back(dirpath + "/MAKER_TTZToLL_M-1to10_TuneCP5_13TeV-amcatnlo-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
+//    BkgSampleGlobber.push_back(dirpath + "/MAKER_TTZToQQ_TuneCP5_13TeV-amcatnlo-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
+
+    // : Dataset[dataset] : Background -- number of events passed: 2281 / sum of weights: 26.4934
+//    BkgSampleGlobber.push_back(dirpath + "/MAKER_WpWpJJ_EWK-QCD_TuneCP5_13TeV-madgraph-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v" + version + "/merged/*.root"); // 23.92
+//    BkgSampleGlobber.push_back(dirpath + "/MAKER_WW_DoubleScattering_13TeV-pythia8_TuneCP5_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
+//    BkgSampleGlobber.push_back(dirpath + "/MAKER_WW_TuneCP5_13TeV-pythia8_RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
+
+    // : Dataset[dataset] : Background -- number of events passed: 97 / sum of weights: 0.958179
+//    BkgSampleGlobber.push_back(dirpath + "/MAKER_WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
+//    BkgSampleGlobber.push_back(dirpath + "/MAKER_WZG_TuneCP5_13TeV-amcatnlo-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
+//    BkgSampleGlobber.push_back(dirpath + "/MAKER_WZZ_TuneCP5_13TeV-amcatnlo-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
+//    BkgSampleGlobber.push_back(dirpath + "/MAKER_ZZZ_TuneCP5_13TeV-amcatnlo-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
+
+    // : Dataset[dataset] : Background -- number of events passed: 2720 / sum of weights: 37.3314
+//    BkgSampleGlobber.push_back(dirpath + "/MAKER_WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
+//    BkgSampleGlobber.push_back(dirpath + "/MAKER_WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8_v2_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
+//    BkgSampleGlobber.push_back(dirpath + "/MAKER_WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
+//    BkgSampleGlobber.push_back(dirpath + "/MAKER_WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v" + version + "/merged/*.root"); // 37
+
+    // : Dataset[dataset] : Background -- number of events passed: 12350 / sum of weights: 38.4503
+    BkgSampleGlobber.push_back(dirpath + "/MAKER_WZTo3LNu_0Jets_MLL-4to50_TuneCP5_13TeV-madgraphMLM-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
+    BkgSampleGlobber.push_back(dirpath + "/MAKER_WZTo3LNu_0Jets_MLL-50_TuneCP5_13TeV-madgraphMLM-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v3_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
+    BkgSampleGlobber.push_back(dirpath + "/MAKER_WZTo3LNu_1Jets_MLL-4to50_TuneCP5_13TeV-madgraphMLM-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
+    BkgSampleGlobber.push_back(dirpath + "/MAKER_WZTo3LNu_1Jets_MLL-50_TuneCP5_13TeV-madgraphMLM-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
+    BkgSampleGlobber.push_back(dirpath + "/MAKER_WZTo3LNu_2Jets_MLL-4to50_TuneCP5_13TeV-madgraphMLM-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
+    BkgSampleGlobber.push_back(dirpath + "/MAKER_WZTo3LNu_2Jets_MLL-50_TuneCP5_13TeV-madgraphMLM-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
+    BkgSampleGlobber.push_back(dirpath + "/MAKER_WZTo3LNu_3Jets_MLL-4to50_TuneCP5_13TeV-madgraphMLM-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
+    BkgSampleGlobber.push_back(dirpath + "/MAKER_WZTo3LNu_3Jets_MLL-50_TuneCP5_13TeV-madgraphMLM-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
+
+//    BkgSampleGlobber.push_back(dirpath + "/MAKER_WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v" + version + "/merged/*.root"); // 37
+
+    // : Dataset[dataset] : Background -- number of events passed: 152 / sum of weights: 1.18814
+//    BkgSampleGlobber.push_back(dirpath + "/MAKER_ZZTo4L_13TeV_powheg_pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
+
+//    BkgSampleGlobber.push_back(dirpath + "/MAKER_tZq_ll_4f_ckm_NLO_TuneCP5_PSweights_13TeV-amcatnlo-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
+
+    TChain* BkgChain = RooUtil::FileUtil::createTChain("t_ss", RooUtil::StringUtil::join(BkgSampleGlobber));
 
     // Data Loader
     TMVA::DataLoader* dataloader = new TMVA::DataLoader("dataset");
     dataloader->AddSignalTree(WWWChain, 1.0);
-    dataloader->AddBackgroundTree(WZChain, 1.0);
-    dataloader->SetSignalWeightExpression("evt_scale1fb");
-    dataloader->SetBackgroundWeightExpression("evt_scale1fb");
+    dataloader->AddBackgroundTree(BkgChain, 1.0);
+    dataloader->SetSignalWeightExpression("evt_scale1fb*41.3*trigsf*weight_btagsf");
+    dataloader->SetBackgroundWeightExpression("evt_scale1fb*41.3*trigsf*weight_btagsf");
 
     // Add Variables
-    dataloader->AddVariable("Pt3l");
-    dataloader->AddVariable("DPhi3lMET");
+//    dataloader->AddVariable("Pt3l");
+//    dataloader->AddVariable("DPhi3lMET");
+    dataloader->AddVariable("lep_pt[0]");
+    dataloader->AddVariable("lep_pt[1]");
+    dataloader->AddVariable("Alt$(jets_p4[0].pt(),-999)");
+    dataloader->AddVariable("Alt$(jets_p4[1].pt(),-999)");
+//    dataloader->AddVariable("lep_eta[0]");
+//    dataloader->AddVariable("lep_eta[1]");
+//    dataloader->AddVariable("Alt$(jets_p4[0].eta(),-999)");
+//    dataloader->AddVariable("Alt$(jets_p4[1].eta(),-999)");
+    dataloader->AddVariable("Ml0j0");
+    dataloader->AddVariable("Ml0j1");
+    dataloader->AddVariable("Ml1j0");
+    dataloader->AddVariable("Ml1j1");
+    dataloader->AddVariable("MinMlj");
+    dataloader->AddVariable("MaxMlj");
+    dataloader->AddVariable("SumMlj");
+    dataloader->AddVariable("Ml0jj");
+    dataloader->AddVariable("Ml1jj");
+    dataloader->AddVariable("MinMljj");
+    dataloader->AddVariable("MaxMljj");
+    dataloader->AddVariable("SumMljj");
+    dataloader->AddVariable("Mjj");
+    dataloader->AddVariable("MllSS");
+    dataloader->AddVariable("MjjL");
+    dataloader->AddVariable("DetajjL");
+    dataloader->AddVariable("MTmax");
+    dataloader->AddVariable("met_pt");
     dataloader->AddVariable("nj", 'I');
     dataloader->AddVariable("nj30", 'I');
 
     // Prepare events
-    TCut cut = "(nVlep == 3) * (nLlep == 3) * (nTlep == 3) * (lep_pt[0]>25.) * (pass_duplicate_ee_em_mm) * (nSFOS == 0)";
+    //TCut cut = "(nVlep == 3) * (nLlep == 3) * (nTlep == 3) * (lep_pt[0]>25.) * (pass_duplicate_ee_em_mm) * (nSFOS == 0)";
+    //TCut cut = "(nVlep == 2) * (nLlep == 2) * (nTlep == 2) * (pass_duplicate_ee_em_mm) * (passSSmm + passSSem) * (nj30 >= 2) * (MllSS > 30.) * (Mjj<=150.)";
+    //TCut cut = "(nVlep == 2) * (nLlep == 2) * (nTlep == 2) * (pass_duplicate_ee_em_mm) * (passSSmm + passSSem)";
+    //TCut cut = "(nVlep == 2) * (nLlep == 2) * (nTlep == 2) * (pass_duplicate_ee_em_mm) * (passSSmm) * (nj30 >= 2) * (MllSS > 30.)";
+
+    TCut cut = "(firstgoodvertex == 0) * (Flag_AllEventFilters > 0) * (vetophoton == 0) * (evt_passgoodrunlist > 0) * (passTrigger) * (nVlep == 2) * (nLlep == 2) * (nTlep == 2) * (pass_duplicate_ee_em_mm) * (passSSem) * (nj30 >= 2) * (MllSS > 30.) * (nb == 0) * (nisoTrack_mt2_cleaned_VVV_cutbased_veto == 0)";
+
     //TCut cut = "1";
     //dataloader->PrepareTrainingAndTestTree(cut, cut, "nTest_Signal=100000:nTest_Background=100000:nTrain_Signal=100000:nTrain_Background=100000:SplitMode=random:!V");
     dataloader->PrepareTrainingAndTestTree(cut, cut, "SplitMode=random:!V");
 
     //TString option = "!H:V:NTrees=2000:BoostType=Grad:Shrinkage=1:!UseBaggedGrad:nCuts=20:MinNodeSize=3.%:MaxDepth=3:CreateMVAPdfs:SeparationType=SDivSqrtSPlusB:DoBoostMonitor";
-    TString option = "!H:V:NTrees=2000:BoostType=Grad:Shrinkage=1:!UseBaggedGrad:nCuts=20:MinNodeSize=3.%:MaxDepth=3:CreateMVAPdfs:DoBoostMonitor";
+    TString option = "!H:V:NTrees=250:BoostType=Grad:Shrinkage=1:!UseBaggedGrad:nCuts=20:MinNodeSize=3.%:MaxDepth=3:CreateMVAPdfs:DoBoostMonitor";
     factory->BookMethod(dataloader, TMVA::Types::kBDT, "BDT", option);
     factory->TrainAllMethods();
     factory->TestAllMethods();
@@ -207,3 +305,44 @@ int main(int argc, char** argv)
 ///hadoop/cms/store/user/phchang/metis/wwwbaby/WWW2017_v4.0.6/MAKER_tZq_ll_4f_ckm_NLO_TuneCP5_PSweights_13TeV-amcatnlo-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v4.0.6/merged/tzq_ll_amcatnlo_7.root
 ///hadoop/cms/store/user/phchang/metis/wwwbaby/WWW2017_v4.0.6/MAKER_tZq_ll_4f_ckm_NLO_TuneCP5_PSweights_13TeV-amcatnlo-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v4.0.6/merged/tzq_ll_amcatnlo_8.root
 ///hadoop/cms/store/user/phchang/metis/wwwbaby/WWW2017_v4.0.6/MAKER_tZq_ll_4f_ckm_NLO_TuneCP5_PSweights_13TeV-amcatnlo-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v4.0.6/merged/tzq_ll_amcatnlo_9.root
+
+//MAKER_DoubleEG_Run2017B-31Mar2018-v1_MINIAOD_WWW2017_v4.0.6
+//MAKER_DoubleEG_Run2017C-31Mar2018-v1_MINIAOD_WWW2017_v4.0.6
+//MAKER_DoubleEG_Run2017D-31Mar2018-v1_MINIAOD_WWW2017_v4.0.6
+//MAKER_DoubleEG_Run2017E-31Mar2018-v1_MINIAOD_WWW2017_v4.0.6
+//MAKER_DoubleEG_Run2017F-31Mar2018-v1_MINIAOD_WWW2017_v4.0.6
+//MAKER_DoubleMuon_Run2017B-31Mar2018-v1_MINIAOD_WWW2017_v4.0.6
+//MAKER_DoubleMuon_Run2017C-31Mar2018-v1_MINIAOD_WWW2017_v4.0.6
+//MAKER_DoubleMuon_Run2017D-31Mar2018-v1_MINIAOD_WWW2017_v4.0.6
+//MAKER_DoubleMuon_Run2017E-31Mar2018-v1_MINIAOD_WWW2017_v4.0.6
+//MAKER_DoubleMuon_Run2017F-31Mar2018-v1_MINIAOD_WWW2017_v4.0.6
+//MAKER_MuonEG_Run2017B-31Mar2018-v1_MINIAOD_WWW2017_v4.0.6
+//MAKER_MuonEG_Run2017C-31Mar2018-v1_MINIAOD_WWW2017_v4.0.6
+//MAKER_MuonEG_Run2017D-31Mar2018-v1_MINIAOD_WWW2017_v4.0.6
+//MAKER_MuonEG_Run2017E-31Mar2018-v1_MINIAOD_WWW2017_v4.0.6
+//MAKER_MuonEG_Run2017F-31Mar2018-v1_MINIAOD_WWW2017_v4.0.6
+//MAKER_WZTo3LNu_0Jets_MLL-4to50_TuneCP5_13TeV-madgraphMLM-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v4.0.6
+//MAKER_WZTo3LNu_0Jets_MLL-50_TuneCP5_13TeV-madgraphMLM-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v3_MINIAODSIM_WWW2017_v4.0.6
+//MAKER_WZTo3LNu_13TeV-powheg-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2_MINIAODSIM_WWW2017_v4.0.6
+//MAKER_WZTo3LNu_1Jets_MLL-4to50_TuneCP5_13TeV-madgraphMLM-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v4.0.6
+//MAKER_WZTo3LNu_1Jets_MLL-50_TuneCP5_13TeV-madgraphMLM-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2_MINIAODSIM_WWW2017_v4.0.6
+//MAKER_WZTo3LNu_2Jets_MLL-4to50_TuneCP5_13TeV-madgraphMLM-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v4.0.6
+//MAKER_WZTo3LNu_2Jets_MLL-50_TuneCP5_13TeV-madgraphMLM-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2_MINIAODSIM_WWW2017_v4.0.6
+//MAKER_WZTo3LNu_3Jets_MLL-4to50_TuneCP5_13TeV-madgraphMLM-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v4.0.6
+//MAKER_WZTo3LNu_3Jets_MLL-50_TuneCP5_13TeV-madgraphMLM-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2_MINIAODSIM_WWW2017_v4.0.6
+//MAKER_WZ_TuneCP5_13TeV-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v4.0.6
+//MAKER_WJetsToLNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2_MINIAODSIM_WWW2017_v4.0.6
+//MAKER_WJetsToLNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v4.0.6
+//MAKER_WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v4.0.6
+//MAKER_WJetsToLNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v3_MINIAODSIM_WWW2017_v4.0.6
+//MAKER_WJetsToLNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v4.0.6
+//MAKER_WJetsToLNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v4.0.6
+//MAKER_WJetsToLNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v4.0.6
+//MAKER_WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14_ext1-v2_MINIAODSIM_WWW2017_v4.0.6
+//MAKER_VHToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2_MINIAODSIM_WWW2017_v4.0.6
+//MAKER_VHToWW_M125_13TeV_amcatnloFXFX_madspin_pythia8_PRIVATE_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-ext1-v2_MINIAODSIM_WWW2017_v4.0.6.1
+//MAKER_WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8_PRIVATE_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v4.0.6.1
+//MAKER_WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v4.0.6
+//MAKER_DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8_RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v2_MINIAODSIM_WWW2017_v4.0.6
+//MAKER_DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14_ext1-v1_MINIAODSIM_WWW2017_v4.0.6
+//MAKER_GluGluHToZZTo4L_M125_13TeV_powheg2_JHUGenV7011_pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14_ext1-v1_MINIAODSIM_WWW2017_v4.0.6

@@ -819,12 +819,15 @@ def check_stats():
                 "output_name": "plots/{}/{}/{}.pdf".format(input_ntuple, analysis_tag, "mc_smwww_check"),
                 "print_yield": True,
                 "yield_prec": 3,
+                "legend_datalabel": "Official SM WWW",
+                "legend_scalex": 1.8,
+                "legend_scaley": 1.1,
                 }
 
     # Now actually plot the histogram
     p.plot_hist(
-            sigs = [hists["smwww"]],
-            bgs  = [hists["smwwwofficial"]],
+            bgs  = [hists["smwww"].Clone("SM WWW")],
+            data = hists["smwwwofficial"],
             colors = colors,
             options=alloptions)
 
@@ -833,12 +836,35 @@ def check_stats():
                 "output_name": "plots/{}/{}/{}.pdf".format(input_ntuple, analysis_tag, "mc_whwww_check"),
                 "print_yield": True,
                 "yield_prec": 3,
+                "legend_datalabel": "Official WH#rightarrowWWW",
+                "legend_scalex": 1.8,
+                "legend_scaley": 1.1,
                 }
 
     # Now actually plot the histogram
     p.plot_hist(
-            sigs = [hists["whwww"]],
-            bgs  = [hists["whwwwofficial"]],
+            bgs  = [hists["whwww"].Clone("WH#rightarrowWWW")],
+            data = hists["whwwwofficial"],
+            colors = colors,
+            options=alloptions)
+
+    # Set the option for plotting
+    alloptions= {
+                "output_name": "plots/{}/{}/{}.pdf".format(input_ntuple, analysis_tag, "mc_www_check"),
+                "print_yield": True,
+                "yield_prec": 3,
+                "legend_datalabel": "Official Signal",
+                "legend_scalex": 1.8,
+                "legend_scaley": 1.1,
+                }
+
+    total = hists["whwwwofficial"].Clone("total")
+    total.Add(hists["smwwwofficial"])
+
+    # Now actually plot the histogram
+    p.plot_hist(
+            bgs  = [hists["whwww"].Clone("WH#rightarrowWWW") + hists["smwww"].Clone("SM WWW")],
+            data = total,
             colors = colors,
             options=alloptions)
 

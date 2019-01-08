@@ -33,7 +33,7 @@ def main():
             miniaod = CondorTask(
 
                     sample = DummySample(
-                        N=10000,
+                        N=20000,
                         dataset="/WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8/PRIVATE_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"
                         ),
 

@@ -33,8 +33,8 @@ def main():
             miniaod = CondorTask(
 
                     sample = DummySample(
-                        N=20000,
-                        dataset="/VHToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8/PRIVATE_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/MINIAODSIM"
+                        N=8000,
+                        dataset="/VHToWW_M125_13TeV_amcatnloFXFX_madspin_pythia8/PRIVATE_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-ext1-v2/MINIAODSIM"
                         ),
 
                     tag                  = job_tag,
