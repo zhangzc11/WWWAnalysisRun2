@@ -7,11 +7,20 @@ import os
 def main():
 
     data_year = "2017"
-    job_tag = "test22"
-    input_ntup_tag = "WWW_v1.2.2"
-    input_ntup_tag = "OS2017_v4.0.5"
-    input_ntup_tag = "WWW2016_v4.0.6"
-    input_ntup_tag = "WWW2017_v4.0.6"
+
+#    job_tag = "test25"
+    job_tag = "test26" # Using Njet WZ samples
+#    job_tag = "test27" # Testing Loose ntuple
+#    job_tag = "test28" # Added Loose Region (LR)
+#    job_tag = "test29" # Added max of two lepiso
+
+#    input_ntup_tag = "WWW_v1.2.2"
+#    input_ntup_tag = "OS2017_v4.0.5"
+#    input_ntup_tag = "WWW2016_v4.0.6"
+#    input_ntup_tag = "WWW2017_v4.0.6"
+    input_ntup_tag = "WWW2017_v4.0.6.2"
+#    input_ntup_tag = "Loose2017_v4.0.6.2"
+
     base_dir_path = "/hadoop/cms/store/user/phchang/metis/wwwbaby/{}/".format(input_ntup_tag)
     tar_files = ["doAnalysis", "setup.sh", "scalefactors/*.root", "scalefactors/*/*/*/*/sf.root"]
     hadoop_dirname = "wwwanalysis"
@@ -29,7 +38,8 @@ def main():
 
     # Filter for defining good background sample
     def is_good_bkg_sample(x):
-        bad_patterns = ["tZq", "WZTo3LNu_0Jets", "WZTo3LNu_1Jets", "WZTo3LNu_2Jets", "WZTo3LNu_3Jets", "WZTo3LNu_13TeV", "WZ_Tune", "Wprime", "Photophobic", "SMS", "Doubly", "PrivateWWW"]
+        #bad_patterns = ["tZq", "WZTo3LNu_0Jets", "WZTo3LNu_1Jets", "WZTo3LNu_2Jets", "WZTo3LNu_3Jets", "WZTo3LNu_13TeV", "WZ_Tune", "Wprime", "Photophobic", "SMS", "Doubly", "PrivateWWW"]
+        bad_patterns = ["tZq", "WZTo3LNu_TuneCP", "WZTo3LNu_13TeV", "WZ_Tune", "Wprime", "Photophobic", "SMS", "Doubly", "PrivateWWW"]
         for bad_pattern in bad_patterns:
             if bad_pattern in x:
                 return False
@@ -37,7 +47,7 @@ def main():
 
     # Filter for defining good signal sample
     def is_good_sig_sample(x):
-        good_patterns = ["MAKER_WWW_4", "VHToNonbb", "PrivateWWW"]
+        good_patterns = ["MAKER_WWW_4", "VHToNonbb", "PrivateWWW", "VHToWW"]
         for good_pattern in good_patterns:
             if good_pattern in x:
                 return True
@@ -83,16 +93,22 @@ def main():
     for sample in sorted(samples_map.keys()):
         print sample, arguments_map[sample]
 
-    ru.submit_metis(job_tag, samples_map, arguments_map=arguments_map, tar_files=tar_files, hadoop_dirname=hadoop_dirname+"/"+input_ntup_tag, files_per_output=1, globber="merged/*.root" if "OS" not in input_ntup_tag else "*.root", sites="T2_US_UCSD")
+    #ru.submit_metis(job_tag, samples_map, arguments_map=arguments_map, tar_files=tar_files, hadoop_dirname=hadoop_dirname+"/"+input_ntup_tag, files_per_output=1, globber="merged/*.root" if "OS" not in input_ntup_tag else "*.root", sites="T2_US_UCSD")
+    ru.submit_metis(job_tag, samples_map, arguments_map=arguments_map, tar_files=tar_files, hadoop_dirname=hadoop_dirname+"/"+input_ntup_tag, files_per_output=1, globber="merged/*.root" if "OS" not in input_ntup_tag else "*.root", sites="UAF")
 
     os.system("mkdir -p outputs/condor/{}/{}/".format(input_ntup_tag, job_tag))
 
 #    exclusion = " | grep -v WZ_Tune | grep -v WZTo3LNu_0Jets | grep -v WZTo3LNu_1Jets | grep -v WZTo3LNu_2Jets | grep -v WZTo3LNu_3Jets | grep -v WZTo3LNu_13TeV"
     exclusion = " | grep -v WpWpJJ | grep -v ttWJet"
-    if not os.path.isfile("outputs/condor/{}/{}/signal.root"  .format (input_ntup_tag, job_tag)): os.system("hadd outputs/condor/{}/{}/signal.root       /hadoop/cms/store/user/phchang/metis/wwwanalysis/{}/{}/*_t_www*/*.root"           .format (input_ntup_tag, job_tag, input_ntup_tag, job_tag))
-    if not os.path.isfile("outputs/condor/{}/{}/data.root"    .format (input_ntup_tag, job_tag)): os.system("hadd outputs/condor/{}/{}/data.root         /hadoop/cms/store/user/phchang/metis/wwwanalysis/{}/{}/*Run201*t_ss*/*.root"      .format (input_ntup_tag, job_tag, input_ntup_tag, job_tag))
-    if not os.path.isfile("outputs/condor/{}/{}/ddfakes.root" .format (input_ntup_tag, job_tag)): os.system("hadd outputs/condor/{}/{}/ddfakes.root      /hadoop/cms/store/user/phchang/metis/wwwanalysis/{}/{}/*Run201*t_ddfakes*/*.root" .format (input_ntup_tag, job_tag, input_ntup_tag, job_tag))
-    if not os.path.isfile("outputs/condor/{}/{}/ewksubt.root" .format (input_ntup_tag, job_tag)): os.system("hadd outputs/condor/{}/{}/ewksubt.root $(ls /hadoop/cms/store/user/phchang/metis/wwwanalysis/{}/{}/*t_ewksubt*/*.root | grep -v WJetsToLNu_Tune)" .format (input_ntup_tag, job_tag, input_ntup_tag, job_tag))
+    if not os.path.isfile("outputs/condor/{}/{}/signalofficial.root"  .format (input_ntup_tag, job_tag)): os.system("hadd outputs/condor/{}/{}/signalofficial.root $(ls /hadoop/cms/store/user/phchang/metis/wwwanalysis/{}/{}/*_t_www*/*.root | grep -v PRIVATE)" .format (input_ntup_tag, job_tag, input_ntup_tag, job_tag))
+    if not os.path.isfile("outputs/condor/{}/{}/signal.root"          .format (input_ntup_tag, job_tag)): os.system("hadd outputs/condor/{}/{}/signal.root         $(ls /hadoop/cms/store/user/phchang/metis/wwwanalysis/{}/{}/*_t_www*/*.root | grep PRIVATE)"    .format (input_ntup_tag, job_tag, input_ntup_tag, job_tag))
+    if not os.path.isfile("outputs/condor/{}/{}/data.root"            .format (input_ntup_tag, job_tag)): os.system("hadd outputs/condor/{}/{}/data.root                /hadoop/cms/store/user/phchang/metis/wwwanalysis/{}/{}/*Run201*t_ss*/*.root"      .format (input_ntup_tag, job_tag, input_ntup_tag, job_tag))
+    if not os.path.isfile("outputs/condor/{}/{}/ddfakes.root"         .format (input_ntup_tag, job_tag)): os.system("hadd outputs/condor/{}/{}/ddfakes.root             /hadoop/cms/store/user/phchang/metis/wwwanalysis/{}/{}/*Run201*t_ddfakes*/*.root" .format (input_ntup_tag, job_tag, input_ntup_tag, job_tag))
+    if not os.path.isfile("outputs/condor/{}/{}/ewksubt.root"         .format (input_ntup_tag, job_tag)): os.system("hadd outputs/condor/{}/{}/ewksubt.root        $(ls /hadoop/cms/store/user/phchang/metis/wwwanalysis/{}/{}/*t_ewksubt*/*.root | grep -v WJetsToLNu_Tune)" .format (input_ntup_tag, job_tag, input_ntup_tag, job_tag))
+    if not os.path.isfile("outputs/condor/{}/{}/smwwwofficial.root"   .format (input_ntup_tag, job_tag)): os.system("hadd outputs/condor/{}/{}/smwwwofficial.root  $(ls /hadoop/cms/store/user/phchang/metis/wwwanalysis/{}/{}/*WWW*_t_www*/*.root | grep -v PRIVATE)" .format (input_ntup_tag, job_tag, input_ntup_tag, job_tag))
+    if not os.path.isfile("outputs/condor/{}/{}/whwwwofficial.root"   .format (input_ntup_tag, job_tag)): os.system("hadd outputs/condor/{}/{}/whwwwofficial.root  $(ls /hadoop/cms/store/user/phchang/metis/wwwanalysis/{}/{}/*VH*_t_www*/*.root | grep -v PRIVATE)" .format (input_ntup_tag, job_tag, input_ntup_tag, job_tag))
+    if not os.path.isfile("outputs/condor/{}/{}/smwww.root"           .format (input_ntup_tag, job_tag)): os.system("hadd outputs/condor/{}/{}/smwww.root          $(ls /hadoop/cms/store/user/phchang/metis/wwwanalysis/{}/{}/*WWW*_t_www*/*.root | grep PRIVATE)" .format (input_ntup_tag, job_tag, input_ntup_tag, job_tag))
+    if not os.path.isfile("outputs/condor/{}/{}/whwww.root"           .format (input_ntup_tag, job_tag)): os.system("hadd outputs/condor/{}/{}/whwww.root          $(ls /hadoop/cms/store/user/phchang/metis/wwwanalysis/{}/{}/*VH*_t_www*/*.root | grep PRIVATE)" .format (input_ntup_tag, job_tag, input_ntup_tag, job_tag))
 
     if not os.path.isfile("outputs/condor/{}/{}/lostlep.root" .format (input_ntup_tag, job_tag)): os.system("hadd outputs/condor/{}/{}/lostlep.root $(ls /hadoop/cms/store/user/phchang/metis/wwwanalysis/{}/{}/*t_lostlep*/*.root)"    .format (input_ntup_tag, job_tag, input_ntup_tag, job_tag))
     if not os.path.isfile("outputs/condor/{}/{}/fakes.root"   .format (input_ntup_tag, job_tag)): os.system("hadd outputs/condor/{}/{}/fakes.root   $(ls /hadoop/cms/store/user/phchang/metis/wwwanalysis/{}/{}/*t_fakes*/*.root)"      .format (input_ntup_tag, job_tag, input_ntup_tag, job_tag))

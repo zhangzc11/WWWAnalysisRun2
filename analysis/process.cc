@@ -53,46 +53,53 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
 
     // Histogram utility object that is used to define the histograms
     RooUtil::Histograms histograms;
-    histograms.addHistogram("MllSS"                ,  180 , 0.      , 300.   , [&]() { return www.MllSS()                  ; });
-    histograms.addHistogram("MllSS_wide"           ,  180 , 0.      , 2000.  , [&]() { return www.MllSS()                  ; });
-    histograms.addHistogram("MllZ"                 ,  180 , 60.     , 120.   , [&]() { return www.MllSS()                  ; });
-    histograms.addHistogram("MllZZoom"             ,  180 , 80.     , 100.   , [&]() { return www.MllSS()                  ; });
-    histograms.addHistogram("MllOnOff"             ,  180 , 30.     , 150.   , [&]() { return fabs(www.Mll3L()-91.1876)<fabs(www.Mll3L1()-91.1876)?www.Mll3L():www.Mll3L1(); });
-    histograms.addHistogram("Mll3L"                ,  180 , 0.      , 300.   , [&]() { return www.Mll3L()                  ; });
-    histograms.addHistogram("Mll3L1"               ,  180 , 0.      , 300.   , [&]() { return www.Mll3L1()                 ; });
-    histograms.addHistogram("nSFOSinZ"             ,  3   , 0.      , 3.     , [&]() { return www.nSFOSinZ()               ; });
-    histograms.addHistogram("M3l"                  ,  180 , 0.      , 150.   , [&]() { return www.M3l()                    ; });
-    histograms.addHistogram("Pt3lGCR"              ,  180 , 0.      , 100.   , [&]() { return www.Pt3l()                   ; });
-    histograms.addHistogram("Pt3l"                 ,  180 , 0.      , 300.   , [&]() { return www.Pt3l()                   ; });
-    histograms.addHistogram("Ptll"                 ,  180 , 0.      , 300.   , [&]() { return www.Pt3l()                   ; });
-    histograms.addHistogram("nvtx"                 ,  60  , 0.      , 60.    , [&]() { return www.nVert()                  ; });
-    histograms.addHistogram("MjjZoom"              ,  180 , 0.      , 150.   , [&]() { return www.Mjj()                    ; });
-    histograms.addHistogram("Mjj"                  ,  180 , 0.      , 300.   , [&]() { return www.Mjj()                    ; });
-    histograms.addHistogram("MjjL"                 ,  180 , 0.      , 750.   , [&]() { return www.MjjL()                   ; });
-    histograms.addHistogram("DetajjL"              ,  180 , 0.      , 5.     , [&]() { return www.DetajjL()                ; });
-    histograms.addHistogram("MjjVBF"               ,  180 , 0.      , 750.   , [&]() { return www.MjjVBF()                 ; });
-    histograms.addHistogram("DetajjVBF"            ,  180 , 0.      , 8.     , [&]() { return www.DetajjVBF()              ; });
-    histograms.addHistogram("MjjVBS"               ,  180 , 0.      , 750.   , [&]() { return www.Mjj()                    ; });
-    histograms.addHistogram("DetajjVBS"            ,  180 , 0.      , 3.     , [&]() { return www.DetajjL()                ; });
-    histograms.addHistogram("MET"                  ,  180 , 0.      , 180.   , [&]() { return www.met_pt()                 ; });
-    histograms.addHistogram("METWide"              ,  180 , 0.      , 300.   , [&]() { return www.met_pt()                 ; });
-    histograms.addHistogram("lep_pt0"              ,  180 , 0.      , 250    , [&]() { return www.lep_pt()[0]              ; });
-    histograms.addHistogram("lep_pt1"              ,  180 , 0.      , 150    , [&]() { return www.lep_pt()[1]              ; });
-    histograms.addHistogram("lep_pt2"              ,  180 , 0.      , 150    , [&]() { return www.lep_pt()[2]              ; });
-    histograms.addHistogram("lep_eta0"             ,  180 , -2.5    , 2.5    , [&]() { return www.lep_eta()[0]             ; });
-    histograms.addHistogram("lep_eta1"             ,  180 , -2.5    , 2.5    , [&]() { return www.lep_eta()[1]             ; });
-    histograms.addHistogram("lep_phi0"             ,  180 , -3.1416 , 3.1416 , [&]() { return www.lep_phi()[0]             ; });
-    histograms.addHistogram("lep_phi1"             ,  180 , -3.1416 , 3.1416 , [&]() { return www.lep_phi()[1]             ; });
-    histograms.addHistogram("lep_relIso03EAv2Lep0" ,  180 , 0.0     , 0.2    , [&]() { return www.lep_relIso03EAv2Lep()[0] ; });
-    histograms.addHistogram("lep_relIso03EAv2Lep1" ,  180 , 0.0     , 0.2    , [&]() { return www.lep_relIso03EAv2Lep()[1] ; });
-    histograms.addHistogram("lep_relIso03EAv2Lep2" ,  180 , 0.0     , 0.2    , [&]() { return www.lep_relIso03EAv2Lep()[2] ; });
-    histograms.addHistogram("nj"                   ,  7   , 0.      , 7.     , [&]() { return www.nj()                     ; });
-    histograms.addHistogram("nj30"                 ,  7   , 0.      , 7.     , [&]() { return www.nj30()                   ; });
-    histograms.addHistogram("nb"                   ,  5   , 0.      , 5.     , [&]() { return www.nb()                     ; });
-    histograms.addHistogram("MTmin"                ,  180 , 0.      , 300.   , [&]() { return www.MTmin()                  ; });
-    histograms.addHistogram("MTmax"                ,  180 , 0.      , 300.   , [&]() { return www.MTmax()                  ; });
-    histograms.addHistogram("MTmax3L"              ,  180 , 0.      , 300.   , [&]() { return www.MTmax3L()                ; });
-    histograms.addHistogram("MT3rd"                ,  180 , 0.      , 300.   , [&]() { return www.MT3rd()                  ; });
+    histograms.addHistogram("MllSS"                    ,  180 , 0.      , 300.   , [&]() { return www.MllSS()                  ; });
+    histograms.addHistogram("MllSS_wide"               ,  180 , 0.      , 2000.  , [&]() { return www.MllSS()                  ; });
+    histograms.addHistogram("MllZ"                     ,  180 , 60.     , 120.   , [&]() { return www.MllSS()                  ; });
+    histograms.addHistogram("MllZZoom"                 ,  180 , 80.     , 100.   , [&]() { return www.MllSS()                  ; });
+    histograms.addHistogram("MllOnOff"                 ,  180 , 30.     , 150.   , [&]() { return fabs(www.Mll3L()-91.1876)<fabs(www.Mll3L1()-91.1876)?www.Mll3L():www.Mll3L1(); });
+    histograms.addHistogram("Mll3L"                    ,  180 , 0.      , 300.   , [&]() { return www.Mll3L()                  ; });
+    histograms.addHistogram("Mll3L1"                   ,  180 , 0.      , 300.   , [&]() { return www.Mll3L1()                 ; });
+    histograms.addHistogram("nSFOSinZ"                 ,  3   , 0.      , 3.     , [&]() { return www.nSFOSinZ()               ; });
+    histograms.addHistogram("M3l"                      ,  180 , 0.      , 150.   , [&]() { return www.M3l()                    ; });
+    histograms.addHistogram("Pt3lGCR"                  ,  180 , 0.      , 100.   , [&]() { return www.Pt3l()                   ; });
+    histograms.addHistogram("Pt3l"                     ,  180 , 0.      , 300.   , [&]() { return www.Pt3l()                   ; });
+    histograms.addHistogram("Ptll"                     ,  180 , 0.      , 300.   , [&]() { return www.Pt3l()                   ; });
+    histograms.addHistogram("nvtx"                     ,  60  , 0.      , 60.    , [&]() { return www.nVert()                  ; });
+    histograms.addHistogram("MjjZoom"                  ,  180 , 0.      , 150.   , [&]() { return www.Mjj()                    ; });
+    histograms.addHistogram("Mjj"                      ,  180 , 0.      , 300.   , [&]() { return www.Mjj()                    ; });
+    histograms.addHistogram("MjjL"                     ,  180 , 0.      , 750.   , [&]() { return www.MjjL()                   ; });
+    histograms.addHistogram("DetajjL"                  ,  180 , 0.      , 5.     , [&]() { return www.DetajjL()                ; });
+    histograms.addHistogram("MjjVBF"                   ,  180 , 0.      , 750.   , [&]() { return www.MjjVBF()                 ; });
+    histograms.addHistogram("DetajjVBF"                ,  180 , 0.      , 8.     , [&]() { return www.DetajjVBF()              ; });
+    histograms.addHistogram("MjjVBS"                   ,  180 , 0.      , 750.   , [&]() { return www.Mjj()                    ; });
+    histograms.addHistogram("DetajjVBS"                ,  180 , 0.      , 3.     , [&]() { return www.DetajjL()                ; });
+    histograms.addHistogram("MET"                      ,  180 , 0.      , 180.   , [&]() { return www.met_pt()                 ; });
+    histograms.addHistogram("METWide"                  ,  180 , 0.      , 300.   , [&]() { return www.met_pt()                 ; });
+    histograms.addHistogram("lep_pt0"                  ,  180 , 0.      , 250    , [&]() { return www.lep_pt()[0]              ; });
+    histograms.addHistogram("lep_pt1"                  ,  180 , 0.      , 150    , [&]() { return www.lep_pt()[1]              ; });
+    histograms.addHistogram("lep_pt2"                  ,  180 , 0.      , 150    , [&]() { return www.lep_pt()[2]              ; });
+    histograms.addHistogram("lep_eta0"                 ,  180 , -2.5    , 2.5    , [&]() { return www.lep_eta()[0]             ; });
+    histograms.addHistogram("lep_eta1"                 ,  180 , -2.5    , 2.5    , [&]() { return www.lep_eta()[1]             ; });
+    histograms.addHistogram("lep_phi0"                 ,  180 , -3.1416 , 3.1416 , [&]() { return www.lep_phi()[0]             ; });
+    histograms.addHistogram("lep_phi1"                 ,  180 , -3.1416 , 3.1416 , [&]() { return www.lep_phi()[1]             ; });
+    histograms.addHistogram("lep_relIso03EAv2Lep0"     ,  180 , 0.0     , 0.2    , [&]() { return www.lep_relIso03EAv2Lep()[0] ; });
+    histograms.addHistogram("lep_relIso03EAv2Lep1"     ,  180 , 0.0     , 0.2    , [&]() { return www.lep_relIso03EAv2Lep()[1] ; });
+    histograms.addHistogram("lep_relIso03EAv2Lep2"     ,  180 , 0.0     , 0.2    , [&]() { return www.lep_relIso03EAv2Lep()[2] ; });
+    histograms.addHistogram("lep_relIso03EAv2LepMaxSS" ,  180 , 0.0     , 0.2    , [&]() { return std::max(www.lep_relIso03EAv2Lep()[0], www.lep_relIso03EAv2Lep()[1]) ; });
+    histograms.addHistogram("nj"                       ,  7   , 0.      , 7.     , [&]() { return www.nj()                     ; });
+    histograms.addHistogram("nj30"                     ,  7   , 0.      , 7.     , [&]() { return www.nj30()                   ; });
+    histograms.addHistogram("nb"                       ,  5   , 0.      , 5.     , [&]() { return www.nb()                     ; });
+    histograms.addHistogram("MTmin"                    ,  180 , 0.      , 300.   , [&]() { return www.MTmin()                  ; });
+    histograms.addHistogram("MTmax"                    ,  180 , 0.      , 300.   , [&]() { return www.MTmax()                  ; });
+    histograms.addHistogram("MTmax3L"                  ,  180 , 0.      , 300.   , [&]() { return www.MTmax3L()                ; });
+    histograms.addHistogram("MT3rd"                    ,  180 , 0.      , 300.   , [&]() { return www.MT3rd()                  ; });
+    histograms.addHistogram("MinMlj"                   ,  180 , 0.      , 300.   , [&]() { return www.MinMlj()                 ; });
+    histograms.addHistogram("MaxMlj"                   ,  180 , 0.      , 1000.  , [&]() { return www.MaxMlj()                 ; });
+    histograms.addHistogram("SumMlj"                   ,  180 , 0.      , 1200.  , [&]() { return www.SumMlj()                 ; });
+    histograms.addHistogram("MinMljj"                  ,  180 , 0.      , 600.   , [&]() { return www.MinMljj()                ; });
+    histograms.addHistogram("MaxMljj"                  ,  180 , 0.      , 1600.  , [&]() { return www.MaxMljj()                ; });
+    histograms.addHistogram("SumMljj"                  ,  180 , 0.      , 1800.  , [&]() { return www.SumMljj()                ; });
 
     // Fake rate estimation histogram
     const std::vector<float> eta_bounds = {0.0, 1.6, 2.4};
@@ -117,6 +124,7 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
     bool istrilep;
     bool isfakedilep;
     bool isfaketrilep;
+    bool isloosedilep;
     bool iswzcrtrilep;
     bool isfakewzcrtrilep;
     bool osdileppresel;
@@ -144,6 +152,8 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
     cutflow.addCutToLastActiveCut("CutARTrilep"   , [&]() { return isfaketrilep                                                 ; } , [&]() { return 1                                  ; } );
     cutflow.getCut("CutPresel");
     cutflow.addCutToLastActiveCut("CutOSDilep"    , [&]() { return osdileppresel                                                ; } , [&]() { return 1                                  ; } );
+    cutflow.getCut("CutTrigger");
+    cutflow.addCutToLastActiveCut("CutLRDilep"    , [&]() { return isloosedilep                                                 ; } , [&]() { return 1                                  ; } );
 
     // Same-sign Mjj on-W region
     cutflow.getCut("CutSRDilep");
@@ -906,6 +916,43 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
     cutflow.addCutToLastActiveCut("OSCReeMllSS"           , [&]() { return www.MllSS()>40.                                                    ; }        , [&]() { return 1                     ; } ) ;
     cutflow.addCutToLastActiveCut("OSCReeFull"            , [&]() { return 1                                                                  ; }        , [&]() { return 1                     ; } ) ;
 
+    // Same-sign Mjj on-W region
+    cutflow.getCut("CutLRDilep");
+    cutflow.addCutToLastActiveCut("LRSSmm"                , [&]() { return (www.passSSmm())*(www.MllSS()>40.)                                 ; }        , [&]() { return mm_sf                 ; } ) ;
+    cutflow.addCutToLastActiveCut("LRSSmmTVeto"           , [&]() { return www.nisoTrack_mt2_cleaned_VVV_cutbased_veto()==0                   ; }        , [&]() { return 1                     ; } ) ;
+    cutflow.addCutToLastActiveCut("LRSSmmNj2"             , [&]() { return www.nj30()>= 2                                                     ; }        , [&]() { return 1                     ; } ) ;
+    cutflow.addCutToLastActiveCut("LRSSmmNb0"             , [&]() { return www.nb()==0                                                        ; }        , [&]() { return btag_sf               ; } ) ;
+    cutflow.addCutToLastActiveCut("LRSSmmMjjW"            , [&]() { return fabs(www.Mjj()-80.)<15.                                            ; }        , [&]() { return 1                     ; } ) ;
+    cutflow.addCutToLastActiveCut("LRSSmmMjjL"            , [&]() { return www.MjjL()<400.                                                    ; }        , [&]() { return 1                     ; } ) ;
+    cutflow.addCutToLastActiveCut("LRSSmmDetajjL"         , [&]() { return www.DetajjL()<1.5                                                  ; }        , [&]() { return 1                     ; } ) ;
+    cutflow.addCutToLastActiveCut("LRSSmmMET"             , [&]() { return 1.                                                                 ; }        , [&]() { return 1                     ; } ) ;
+    cutflow.addCutToLastActiveCut("LRSSmmMllSS"           , [&]() { return www.MllSS()>40.                                                    ; }        , [&]() { return 1                     ; } ) ;
+    cutflow.addCutToLastActiveCut("LRSSmmFull"            , [&]() { return 1                                                                  ; }        , [&]() { return 1                     ; } ) ;
+    cutflow.getCut("CutLRDilep")                                                                                                              ;
+    cutflow.addCutToLastActiveCut("LRSSem"                , [&]() { return (www.passSSem())*(www.MllSS()>30.)                                 ; }        , [&]() { return em_sf                 ; } ) ;
+    cutflow.addCutToLastActiveCut("LRSSemTVeto"           , [&]() { return www.nisoTrack_mt2_cleaned_VVV_cutbased_veto()==0                   ; }        , [&]() { return 1                     ; } ) ;
+    cutflow.addCutToLastActiveCut("LRSSemNj2"             , [&]() { return www.nj30()>= 2                                                     ; }        , [&]() { return 1                     ; } ) ;
+    cutflow.addCutToLastActiveCut("LRSSemNb0"             , [&]() { return www.nb()==0                                                        ; }        , [&]() { return btag_sf               ; } ) ;
+    cutflow.addCutToLastActiveCut("LRSSemMjjW"            , [&]() { return fabs(www.Mjj()-80.)<15.                                            ; }        , [&]() { return 1                     ; } ) ;
+    cutflow.addCutToLastActiveCut("LRSSemMjjL"            , [&]() { return www.MjjL()<400.                                                    ; }        , [&]() { return 1                     ; } ) ;
+    cutflow.addCutToLastActiveCut("LRSSemDetajjL"         , [&]() { return www.DetajjL()<1.5                                                  ; }        , [&]() { return 1                     ; } ) ;
+    cutflow.addCutToLastActiveCut("LRSSemMET"             , [&]() { return www.met_pt()>60.                                                   ; }        , [&]() { return 1                     ; } ) ;
+    cutflow.addCutToLastActiveCut("LRSSemMllSS"           , [&]() { return www.MllSS()>30.                                                    ; }        , [&]() { return 1                     ; } ) ;
+    cutflow.addCutToLastActiveCut("LRSSemMTmax"           , [&]() { return www.MTmax()>90.                                                    ; }        , [&]() { return 1                     ; } ) ;
+    cutflow.addCutToLastActiveCut("LRSSemFull"            , [&]() { return 1                                                                  ; }        , [&]() { return 1                     ; } ) ;
+    cutflow.getCut("CutLRDilep")                                                                                                              ;
+    cutflow.addCutToLastActiveCut("LRSSee"                , [&]() { return (www.passSSee())*(1)*(www.MllSS()>40.)                             ; }        , [&]() { return ee_sf                 ; } ) ;
+    cutflow.addCutToLastActiveCut("LRSSeeZeeVt"           , [&]() { return fabs(www.MllSS()-91.1876)>10.                                      ; }        , [&]() { return 1                     ; } ) ;
+    cutflow.addCutToLastActiveCut("LRSSeeTVeto"           , [&]() { return www.nisoTrack_mt2_cleaned_VVV_cutbased_veto()==0                   ; }        , [&]() { return 1                     ; } ) ;
+    cutflow.addCutToLastActiveCut("LRSSeeNj2"             , [&]() { return www.nj30()>= 2                                                     ; }        , [&]() { return 1                     ; } ) ;
+    cutflow.addCutToLastActiveCut("LRSSeeNb0"             , [&]() { return www.nb()==0                                                        ; }        , [&]() { return btag_sf               ; } ) ;
+    cutflow.addCutToLastActiveCut("LRSSeeMjjW"            , [&]() { return fabs(www.Mjj()-80.)<15.                                            ; }        , [&]() { return 1                     ; } ) ;
+    cutflow.addCutToLastActiveCut("LRSSeeMjjL"            , [&]() { return www.MjjL()<400.                                                    ; }        , [&]() { return 1                     ; } ) ;
+    cutflow.addCutToLastActiveCut("LRSSeeDetajjL"         , [&]() { return www.DetajjL()<1.5                                                  ; }        , [&]() { return 1                     ; } ) ;
+    cutflow.addCutToLastActiveCut("LRSSeeMET"             , [&]() { return www.met_pt()>60.                                                   ; }        , [&]() { return 1                     ; } ) ;
+    cutflow.addCutToLastActiveCut("LRSSeeMllSS"           , [&]() { return www.MllSS()>40.                                                    ; }        , [&]() { return 1                     ; } ) ;
+    cutflow.addCutToLastActiveCut("LRSSeeFull"            , [&]() { return 1                                                                  ; }        , [&]() { return 1                     ; } ) ;
+
     // Systematics
     if (doSystematics)
     {
@@ -1165,6 +1212,18 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
         cutflow.setCutSyst("OSCReeMjjL"                     , "JESUp"   , [&]() { return www.MjjL_up()<400.                                    ;} , [&]() { return 1 ;} );
         cutflow.setCutSyst("OSCReeDetajjL"                  , "JESUp"   , [&]() { return www.DetajjL_up()<1.5                                  ;} , [&]() { return 1 ;} );
         cutflow.setCutSyst("OSCReeMET"                      , "JESUp"   , [&]() { return www.met_up_pt()>60.                                   ;} , [&]() { return 1 ;} );
+        cutflow.setCutSyst("LRSSmmMET"                      , "JESUp"   , [&]() { return 1.                                                    ;} , [&]() { return 1 ;} );
+        cutflow.setCutSyst("LRSSmmMjjW"                     , "JESUp"   , [&]() { return fabs(www.Mjj_up()-80.)<15.                            ;} , [&]() { return 1 ;} );
+        cutflow.setCutSyst("LRSSmmMjjL"                     , "JESUp"   , [&]() { return www.MjjL_up()<400.                                    ;} , [&]() { return 1 ;} );
+        cutflow.setCutSyst("LRSSmmDetajjL"                  , "JESUp"   , [&]() { return www.DetajjL_up()<1.5                                  ;} , [&]() { return 1 ;} );
+        cutflow.setCutSyst("LRSSemMjjW"                     , "JESUp"   , [&]() { return fabs(www.Mjj_up()-80.)<15.                            ;} , [&]() { return 1 ;} );
+        cutflow.setCutSyst("LRSSemMjjL"                     , "JESUp"   , [&]() { return www.MjjL_up()<400.                                    ;} , [&]() { return 1 ;} );
+        cutflow.setCutSyst("LRSSemDetajjL"                  , "JESUp"   , [&]() { return www.DetajjL_up()<1.5                                  ;} , [&]() { return 1 ;} );
+        cutflow.setCutSyst("LRSSemMET"                      , "JESUp"   , [&]() { return www.met_up_pt()>60.                                   ;} , [&]() { return 1 ;} );
+        cutflow.setCutSyst("LRSSeeMjjW"                     , "JESUp"   , [&]() { return fabs(www.Mjj_up()-80.)<15.                            ;} , [&]() { return 1 ;} );
+        cutflow.setCutSyst("LRSSeeMjjL"                     , "JESUp"   , [&]() { return www.MjjL_up()<400.                                    ;} , [&]() { return 1 ;} );
+        cutflow.setCutSyst("LRSSeeDetajjL"                  , "JESUp"   , [&]() { return www.DetajjL_up()<1.5                                  ;} , [&]() { return 1 ;} );
+        cutflow.setCutSyst("LRSSeeMET"                      , "JESUp"   , [&]() { return www.met_up_pt()>60.                                   ;} , [&]() { return 1 ;} );
 
         cutflow.setCutSyst("SRSSmmMET"                      , "JESDown" , [&]() { return 1.                                                    ;} , [&]() { return 1 ;} );
         cutflow.setCutSyst("SRSSmmMjjW"                     , "JESDown" , [&]() { return fabs(www.Mjj_dn()-80.)<15.                            ;} , [&]() { return 1 ;} );
@@ -1356,6 +1415,18 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
         cutflow.setCutSyst("OSCReeMjjL"                     , "JESDown" , [&]() { return www.MjjL_dn()<400.                                    ;} , [&]() { return 1 ;} );
         cutflow.setCutSyst("OSCReeDetajjL"                  , "JESDown" , [&]() { return www.DetajjL_dn()<1.5                                  ;} , [&]() { return 1 ;} );
         cutflow.setCutSyst("OSCReeMET"                      , "JESDown" , [&]() { return www.met_dn_pt()>60.                                   ;} , [&]() { return 1 ;} );
+        cutflow.setCutSyst("LRSSmmMET"                      , "JESDown" , [&]() { return 1.                                                    ;} , [&]() { return 1 ;} );
+        cutflow.setCutSyst("LRSSmmMjjW"                     , "JESDown" , [&]() { return fabs(www.Mjj_dn()-80.)<15.                            ;} , [&]() { return 1 ;} );
+        cutflow.setCutSyst("LRSSmmMjjL"                     , "JESDown" , [&]() { return www.MjjL_dn()<400.                                    ;} , [&]() { return 1 ;} );
+        cutflow.setCutSyst("LRSSmmDetajjL"                  , "JESDown" , [&]() { return www.DetajjL_dn()<1.5                                  ;} , [&]() { return 1 ;} );
+        cutflow.setCutSyst("LRSSemMjjW"                     , "JESDown" , [&]() { return fabs(www.Mjj_dn()-80.)<15.                            ;} , [&]() { return 1 ;} );
+        cutflow.setCutSyst("LRSSemMjjL"                     , "JESDown" , [&]() { return www.MjjL_dn()<400.                                    ;} , [&]() { return 1 ;} );
+        cutflow.setCutSyst("LRSSemDetajjL"                  , "JESDown" , [&]() { return www.DetajjL_dn()<1.5                                  ;} , [&]() { return 1 ;} );
+        cutflow.setCutSyst("LRSSemMET"                      , "JESDown" , [&]() { return www.met_dn_pt()>60.                                   ;} , [&]() { return 1 ;} );
+        cutflow.setCutSyst("LRSSeeMjjW"                     , "JESDown" , [&]() { return fabs(www.Mjj_dn()-80.)<15.                            ;} , [&]() { return 1 ;} );
+        cutflow.setCutSyst("LRSSeeMjjL"                     , "JESDown" , [&]() { return www.MjjL_dn()<400.                                    ;} , [&]() { return 1 ;} );
+        cutflow.setCutSyst("LRSSeeDetajjL"                  , "JESDown" , [&]() { return www.DetajjL_dn()<1.5                                  ;} , [&]() { return 1 ;} );
+        cutflow.setCutSyst("LRSSeeMET"                      , "JESDown" , [&]() { return www.met_dn_pt()>60.                                   ;} , [&]() { return 1 ;} );
 
         cutflow.setCutSyst("SRSSmmNj2"                      , "JESUp"   , [&]() { return www.nj30_up()>= 2                                     ;} , [&]() { return 1 ;} );
         cutflow.setCutSyst("SRSSemNj2"                      , "JESUp"   , [&]() { return www.nj30_up()>= 2                                     ;} , [&]() { return 1 ;} );
@@ -1420,6 +1491,9 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
         cutflow.setCutSyst("OSCRmmNj2"                      , "JESUp"   , [&]() { return www.nj30_up()>= 2                                     ;} , [&]() { return 1 ;} );
         cutflow.setCutSyst("OSCRemNj2"                      , "JESUp"   , [&]() { return www.nj30_up()>= 2                                     ;} , [&]() { return 1 ;} );
         cutflow.setCutSyst("OSCReeNj2"                      , "JESUp"   , [&]() { return www.nj30_up()>= 2                                     ;} , [&]() { return 1 ;} );
+        cutflow.setCutSyst("LRSSmmNj2"                      , "JESUp"   , [&]() { return www.nj30_up()>= 2                                     ;} , [&]() { return 1 ;} );
+        cutflow.setCutSyst("LRSSemNj2"                      , "JESUp"   , [&]() { return www.nj30_up()>= 2                                     ;} , [&]() { return 1 ;} );
+        cutflow.setCutSyst("LRSSeeNj2"                      , "JESUp"   , [&]() { return www.nj30_up()>= 2                                     ;} , [&]() { return 1 ;} );
 
         cutflow.setCutSyst("SRSSmmNj2"                      , "JESDown" , [&]() { return www.nj30_dn()>= 2                                     ;} , [&]() { return 1 ;} );
         cutflow.setCutSyst("SRSSemNj2"                      , "JESDown" , [&]() { return www.nj30_dn()>= 2                                     ;} , [&]() { return 1 ;} );
@@ -1484,6 +1558,9 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
         cutflow.setCutSyst("OSCRmmNj2"                      , "JESDown" , [&]() { return www.nj30_dn()>= 2                                     ;} , [&]() { return 1 ;} );
         cutflow.setCutSyst("OSCRemNj2"                      , "JESDown" , [&]() { return www.nj30_dn()>= 2                                     ;} , [&]() { return 1 ;} );
         cutflow.setCutSyst("OSCReeNj2"                      , "JESDown" , [&]() { return www.nj30_dn()>= 2                                     ;} , [&]() { return 1 ;} );
+        cutflow.setCutSyst("LRSSmmNj2"                      , "JESDown" , [&]() { return www.nj30_dn()>= 2                                     ;} , [&]() { return 1 ;} );
+        cutflow.setCutSyst("LRSSemNj2"                      , "JESDown" , [&]() { return www.nj30_dn()>= 2                                     ;} , [&]() { return 1 ;} );
+        cutflow.setCutSyst("LRSSeeNj2"                      , "JESDown" , [&]() { return www.nj30_dn()>= 2                                     ;} , [&]() { return 1 ;} );
 
         cutflow.setCutSyst("SRSSmmNb0"                      , "JESUp"   , [&]() { return www.nb_up()==0                                        ;} , [&]() { return btag_sf ;} );
         cutflow.setCutSyst("SRSSemNb0"                      , "JESUp"   , [&]() { return www.nb_up()==0                                        ;} , [&]() { return btag_sf ;} );
@@ -1548,6 +1625,9 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
         cutflow.setCutSyst("OSCRmmNb0"                      , "JESUp"   , [&]() { return www.nb_up()==0                                        ;} , [&]() { return btag_sf ;} );
         cutflow.setCutSyst("OSCRemNb0"                      , "JESUp"   , [&]() { return www.nb_up()==0                                        ;} , [&]() { return btag_sf ;} );
         cutflow.setCutSyst("OSCReeNb0"                      , "JESUp"   , [&]() { return www.nb_up()==0                                        ;} , [&]() { return btag_sf ;} );
+        cutflow.setCutSyst("LRSSmmNb0"                      , "JESUp"   , [&]() { return www.nb_up()==0                                        ;} , [&]() { return btag_sf ;} );
+        cutflow.setCutSyst("LRSSemNb0"                      , "JESUp"   , [&]() { return www.nb_up()==0                                        ;} , [&]() { return btag_sf ;} );
+        cutflow.setCutSyst("LRSSeeNb0"                      , "JESUp"   , [&]() { return www.nb_up()==0                                        ;} , [&]() { return btag_sf ;} );
 
         cutflow.setCutSyst("SRSSmmNb0"                      , "JESDown" , [&]() { return www.nb_dn()==0                                        ;} , [&]() { return btag_sf ;} );
         cutflow.setCutSyst("SRSSemNb0"                      , "JESDown" , [&]() { return www.nb_dn()==0                                        ;} , [&]() { return btag_sf ;} );
@@ -1612,6 +1692,9 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
         cutflow.setCutSyst("OSCRmmNb0"                      , "JESDown" , [&]() { return www.nb_dn()==0                                        ;} , [&]() { return btag_sf ;} );
         cutflow.setCutSyst("OSCRemNb0"                      , "JESDown" , [&]() { return www.nb_dn()==0                                        ;} , [&]() { return btag_sf ;} );
         cutflow.setCutSyst("OSCReeNb0"                      , "JESDown" , [&]() { return www.nb_dn()==0                                        ;} , [&]() { return btag_sf ;} );
+        cutflow.setCutSyst("LRSSmmNb0"                      , "JESDown" , [&]() { return www.nb_dn()==0                                        ;} , [&]() { return btag_sf ;} );
+        cutflow.setCutSyst("LRSSemNb0"                      , "JESDown" , [&]() { return www.nb_dn()==0                                        ;} , [&]() { return btag_sf ;} );
+        cutflow.setCutSyst("LRSSeeNb0"                      , "JESDown" , [&]() { return www.nb_dn()==0                                        ;} , [&]() { return btag_sf ;} );
     }
 
     if (regions.EqualTo("all"))
@@ -1704,6 +1787,7 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
         istrilep         = (www.nVlep() == 3) * (www.nLlep() == 3) * (www.nTlep() == 3) * (www.lep_pt()[0]>25.);
         isfakedilep      = (www.nVlep() == 2) * (www.nLlep() == 2) * (www.nTlep() == 1) * (www.lep_pt()[0]>25.) * (www.lep_pt()[1]>25.);
         isfaketrilep     = (www.nVlep() == 3) * (www.nLlep() == 3) * (www.nTlep() == 2);
+        isloosedilep     = (www.nVlep() == 2) * (www.nLlep() == 2);
         iswzcrtrilep     = (www.nVlep() == 3) * (www.nLlep() == 3) * (www.nTlep() == 3);
         isfakewzcrtrilep = (www.nVlep() == 3) * (www.nLlep() == 3) * (www.nTlep() == 2);
         osdileppresel    = (www.mc_HLT_DoubleEl()||www.mc_HLT_DoubleMu()||www.mc_HLT_MuEG())*(www.nVlep()==2)*(www.nLlep()==2)*(www.nTlep()==2);

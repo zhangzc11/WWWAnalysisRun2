@@ -25,7 +25,7 @@ def process_output_dirpath():
     global output_dirpath
     global is2017
     output_dirpath = "outputs/{}/{}/{}".format("condor" if iscondor else "", input_ntuple, analysis_tag)
-    is2017 = "WWW2017" in output_dirpath
+    is2017 = "2017" in output_dirpath
 
 # 2016 analysis re-processed
 def set_to_2016():
@@ -48,8 +48,14 @@ def set_to_2017():
     global iscondor
     global hassyst
     global hashist
-    input_ntuple = "WWW2017_v4.0.6"
-    analysis_tag = "test22"
+    #input_ntuple = "WWW2017_v4.0.6"
+    #analysis_tag = "test22"
+    input_ntuple = "WWW2017_v4.0.6.2"
+    analysis_tag = "test25"
+    analysis_tag = "test26" # WZ jet binned
+    #input_ntuple = "Loose2017_v4.0.6.2"
+    #analysis_tag = "test28"
+    #analysis_tag = "test29"
     iscondor = True
     hassyst = True
     hashist = False
@@ -78,6 +84,32 @@ def set_bkg_to_5():
     global colors
     bkg_order = bkg_order_5
     colors = [ colors_map[b] for b in bkg_order ]
+
+#________________________________________________________________________________________________________________________________________
+def test_main():
+
+    set_to_2017()
+
+    # MVA preselection
+    #plot(["SRSSeeFull(10)", "SRSSemFull(9)", "SRSSmmFull(9)"], "pr_yield", False, caption="Preselection region yields with MC estimation on yields.", dorawcutflow=True)
+    #plot(["SRSSemNb0__Mjj", "SRSSmmNb0__Mjj"], "pr_Mjj", False, caption="Preselection region (em+mm) only $m_{jj}$ distribution")
+    #plot(["SRSSemNb0__MinMlj", "SRSSmmNb0__MinMlj"], "pr_MinMlj", False, caption="Preselection region (em+mm) only $m_{min,lj}$ distribution", nbin=30)
+    #plot(["SRSSemNb0__MaxMlj", "SRSSmmNb0__MaxMlj"], "pr_MaxMlj", False, caption="Preselection region (em+mm) only $m_{max,lj}$ distribution", nbin=30)
+    #plot(["SRSSemNb0__SumMlj", "SRSSmmNb0__SumMlj"], "pr_SumMlj", False, caption="Preselection region (em+mm) only $#Sigmam_{lj}$ distribution", nbin=30)
+    #plot(["SRSSemNb0__MinMljj", "SRSSmmNb0__MinMljj"], "pr_MinMljj", False, caption="Preselection region (em+mm) only $m_{min,ljj}$ distribution", nbin=30)
+    #plot(["SRSSemNb0__MaxMljj", "SRSSmmNb0__MaxMljj"], "pr_MaxMljj", False, caption="Preselection region (em+mm) only $m_{max,ljj}$ distribution", nbin=30)
+    #plot(["SRSSemNb0__SumMljj", "SRSSmmNb0__SumMljj"], "pr_SumMljj", False, caption="Preselection region (em+mm) only $#Sigmam_{ljj}$ distribution", nbin=30)
+    #plot(["SRSSmmNb0__MinMlj"], "pr_mm_MinMlj", False, caption="Preselection region (em+mm) only $m_{min,lj}$ distribution", nbin=30)
+    #plot(["SRSSemNb0__MinMlj"], "pr_em_MinMlj", False, caption="Preselection region (em+mm) only $m_{min,lj}$ distribution", nbin=30)
+
+    #plot(["WZCRSSeeFull__nj", "WZCRSSemFull__nj", "WZCRSSmmFull__nj", "WZCR1SFOSFull__nj", "WZCR2SFOSFull__nj"], "lostlep_cr_nj", False)
+    #plot(["LRSSmmNb0__lep_relIso03EAv2LepMaxSS", ], "ssmm_lr_lepisomaxss", False, nbin=40, blind=True)
+    #plot(["LRSSmmMjjW__lep_relIso03EAv2LepMaxSS", ], "ssmm_lr_lepisomaxss", False, nbin=40, blind=True, extraoptions={"yaxis_range":[0.,5]})
+
+    check_stats()
+
+    return
+
 
 #________________________________________________________________________________________________________________________________________
 def main():
@@ -365,7 +397,7 @@ def get_lostlep_alpha():
 
 #________________________________________________________________________________________________________________________________________
 # Main plotting script
-def plot(histnames, outputfilename, use_data_driven_fakes=False, nbin=12, caption=""):
+def plot(histnames, outputfilename, use_data_driven_fakes=False, nbin=12, caption="", dorawcutflow=False, blind=False, extraoptions={}):
 
     # If provided histnames are just a string indicating a region, then get the list of cutflow table histograms, and plot the yields.
     if isinstance(histnames, str):
@@ -374,7 +406,7 @@ def plot(histnames, outputfilename, use_data_driven_fakes=False, nbin=12, captio
         histnames.sort(key=region_index) # Sort pretty
 
     # Now obtain the list of histograms
-    hists = get_hists(histnames, use_data_driven_fakes, "_cutflow" in histnames[0], sfs=(get_lostlep_sf() if histnames == "SR" else {}))
+    hists = get_hists(histnames, use_data_driven_fakes, "_cutflow" in histnames[0], sfs=(get_lostlep_sf() if histnames == "SR" else {}), dorawcutflow=dorawcutflow)
 
     # Set the option for plotting
     alloptions= {
@@ -389,11 +421,12 @@ def plot(histnames, outputfilename, use_data_driven_fakes=False, nbin=12, captio
                 "print_yield": True,
                 "yield_prec": 3,
                 "yield_table_caption": caption,
-                "blind": True if "SR" in histnames[0] else False,
+                "blind": True if "SR" in histnames[0] else blind,
                 "lumi_value": "41.3" if is2017 else "35.9",
-                #"yaxis_range": [0.001,150],
+                #"yaxis_range": [0., 30],
                 #"yaxis_log": True,
                 }
+    alloptions.update(extraoptions)
 
     # aggregate a list of backgrounds from the "hists"
     bgs = [ hists[x] for x in bkg_order ]
@@ -767,6 +800,50 @@ def study_mjj_modeling():
     alloptions["yield_table_caption"] = "Some numbers for same-sign channel $m_{jj}$ inefficiency measurement. Equation is that $\\textrm{ineff} = b / a$ and $\\textrm{ineff}_\\textrm{err} = \\sqrt(\\textrm{ineff} (1 - \\textrm{ineff}) / n)$"
     p.plot_hist(bgs=[h_ineff_mc], data=h_ineff_data, colors=colors, options=alloptions)
 
+#________________________________________________________________________________________________________________________________________
+def check_stats():
+
+    histnames = "SR"
+
+    # If provided histnames are just a string indicating a region, then get the list of cutflow table histograms, and plot the yields.
+    if isinstance(histnames, str):
+        # Regions to plot
+        histnames = get_histnames(output_dirpath + "/signal.root", histnames)
+        histnames.sort(key=region_index) # Sort pretty
+
+    # Now obtain the list of histograms
+    hists = get_hists(histnames)
+
+    # Set the option for plotting
+    alloptions= {
+                "output_name": "plots/{}/{}/{}.pdf".format(input_ntuple, analysis_tag, "mc_smwww_check"),
+                "print_yield": True,
+                "yield_prec": 3,
+                }
+
+    # Now actually plot the histogram
+    p.plot_hist(
+            sigs = [hists["smwww"]],
+            bgs  = [hists["smwwwofficial"]],
+            colors = colors,
+            options=alloptions)
+
+    # Set the option for plotting
+    alloptions= {
+                "output_name": "plots/{}/{}/{}.pdf".format(input_ntuple, analysis_tag, "mc_whwww_check"),
+                "print_yield": True,
+                "yield_prec": 3,
+                }
+
+    # Now actually plot the histogram
+    p.plot_hist(
+            sigs = [hists["whwww"]],
+            bgs  = [hists["whwwwofficial"]],
+            colors = colors,
+            options=alloptions)
+
+
+
 #----------------===============--------------------------------===============--------------------------------===============----------------
 #----------------===============--------------------------------===============--------------------------------===============----------------
 #----------------===============--------------------------------===============--------------------------------===============----------------
@@ -835,6 +912,11 @@ def get_hists(histnames, use_data_driven_fakes=False, docutflow=False, sfs={}, d
     sig_list  = glob.glob(output_dirpath+"/signal.root")
     data_list = glob.glob(output_dirpath+"/data.root")
 
+    smwww_list = glob.glob(output_dirpath+"/smwww.root")
+    whwww_list = glob.glob(output_dirpath+"/whwww.root")
+    smwwwofficial_list = glob.glob(output_dirpath+"/smwwwofficial.root")
+    whwwwofficial_list = glob.glob(output_dirpath+"/whwwwofficial.root")
+
     do_retrieve_data_event_based_histograms = ("Up" not in histnames[0] and "Down" not in histnames[0]) or ("Fake" in histnames[0])
 
     hists = {}
@@ -852,6 +934,10 @@ def get_hists(histnames, use_data_driven_fakes=False, docutflow=False, sfs={}, d
             hists["fakes"]   = ru.get_summed_histogram(bkg_lists["fakes"]   , histnames , sfs=sfs)
         if do_retrieve_data_event_based_histograms:
             hists["data"]    = ru.get_summed_histogram(data_list            , histnames , sfs=sfs)
+        hists["smwww"]   = ru.get_summed_histogram(smwww_list           , histnames , sfs=sfs)
+        hists["whwww"]   = ru.get_summed_histogram(whwww_list           , histnames , sfs=sfs)
+        hists["smwwwofficial"]   = ru.get_summed_histogram(smwwwofficial_list           , histnames , sfs=sfs)
+        hists["whwwwofficial"]   = ru.get_summed_histogram(whwwwofficial_list           , histnames , sfs=sfs)
     else:
         labels = ru.remove_all_common_longest_common_substring(histnames)
         labels = [ l.replace("FO","SFOS") for l in labels ]
@@ -869,6 +955,10 @@ def get_hists(histnames, use_data_driven_fakes=False, docutflow=False, sfs={}, d
             hists["fakes"]   = ru.get_yield_histogram(bkg_lists["fakes"]   , histnames , labels=labels, sfs=sfs, hsuffix=("_cutflow" if not dorawcutflow else "_rawcutflow"))
         if do_retrieve_data_event_based_histograms:
             hists["data"]    = ru.get_yield_histogram(data_list            , histnames , labels=labels, sfs=sfs, hsuffix=("_cutflow" if not dorawcutflow else "_rawcutflow"))
+        hists["smwww"]   = ru.get_yield_histogram(smwww_list           , histnames , labels=labels, sfs=sfs, hsuffix=("_cutflow" if not dorawcutflow else "_rawcutflow"))
+        hists["whwww"]   = ru.get_yield_histogram(whwww_list           , histnames , labels=labels, sfs=sfs, hsuffix=("_cutflow" if not dorawcutflow else "_rawcutflow"))
+        hists["smwwwofficial"]   = ru.get_yield_histogram(smwwwofficial_list           , histnames , labels=labels, sfs=sfs, hsuffix=("_cutflow" if not dorawcutflow else "_rawcutflow"))
+        hists["whwwwofficial"]   = ru.get_yield_histogram(whwwwofficial_list           , histnames , labels=labels, sfs=sfs, hsuffix=("_cutflow" if not dorawcutflow else "_rawcutflow"))
 
     if use_data_driven_fakes:
         if do_retrieve_data_event_based_histograms:
@@ -888,6 +978,10 @@ def get_hists(histnames, use_data_driven_fakes=False, docutflow=False, sfs={}, d
         hists["data"].SetName("Data")
     hists["vbsww"]   .SetName("VBS W^{#pm}W^{#pm}")
     hists["ttw"]     .SetName("ttW")
+    hists["smwww"]   .SetName("smwww")
+    hists["whwww"]   .SetName("whwww")
+    hists["smwwwofficial"]   .SetName("smwwwofficial")
+    hists["whwwwofficial"]   .SetName("whwwwofficial")
 
     hists["lostlep"] .SetTitle("lostlep")
     hists["photon"]  .SetTitle("photon")
@@ -932,5 +1026,7 @@ def get_yield_hists(region, use_data_driven_fakes, sfs={}, syst=""):
     return hists
 
 if __name__ == "__main__":
-    main()
+
+    test_main()
+    #main()
 
