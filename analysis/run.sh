@@ -44,6 +44,15 @@ fi
 
 
 #_____________________________________________________________________________________________
+# Set the number of events to process per file
+# Normally this would be set to -1 to run over all events to get correct yields and histograms
+# But this can also be used to speed things up and test whether things work
+NEVENTS=-1
+#NEVENTS=500
+
+
+
+#_____________________________________________________________________________________________
 # These are constant variables that do not need to be changed
 TREEVARIATIONS="qflip photon fakes prompt lostlep"
 
@@ -86,11 +95,11 @@ for f in $(ls /nfs-7/userdata/phchang/WWW_babies/${VERSION}/skim/*.root); do
         # Ask around HJ, Mia, or Philip who worked on it during Nov. 2018
         if [[ $f == *"_bw15_"* ]]; then
             # if BW15
-            echo './doAnalysis '$f' 't_${TREEVARIATION}' '${OUTPUTDIR}'/t_'${TREEVARIATION}'_'$(basename $f)' -1 '${regions} ${dohist}'  > '${OUTPUTDIR}'/t_'${TREEVARIATION}'_'$(basename $f)'.log 2>&1' >> .jobs.txt
+            echo 'if [ ! -f '${OUTPUTDIR}'/t_'${TREEVARIATION}'_'$(basename $f)' ]; then ./doAnalysis '$f' 't_${TREEVARIATION}' '${OUTPUTDIR}'/t_'${TREEVARIATION}'_'$(basename $f)' '${NEVENTS}' '${regions} ${dohist}'  > '${OUTPUTDIR}'/t_'${TREEVARIATION}'_'$(basename $f)'.log 2>&1; fi' >> .jobs.txt
         # Normally, you'd be falling under this category
         else
             # Write out signal sample job
-            echo './doAnalysis '$f' 't' '${OUTPUTDIR}'/t_'${TREEVARIATION}'_'$(basename $f)' -1 '${regions} ${dohist}'  > '${OUTPUTDIR}'/t_'${TREEVARIATION}'_'$(basename $f)'.log 2>&1' >> .jobs.txt
+            echo 'if [ ! -f '${OUTPUTDIR}'/t_'${TREEVARIATION}'_'$(basename $f)' ]; then ./doAnalysis '$f' 't' '${OUTPUTDIR}'/t_'${TREEVARIATION}'_'$(basename $f)' '${NEVENTS}' '${regions} ${dohist}'  > '${OUTPUTDIR}'/t_'${TREEVARIATION}'_'$(basename $f)'.log 2>&1; fi' >> .jobs.txt
         fi
     #
     # 2. VH sample: If the file name matches "vh_*" then this is also a signal sample. However, the non WH->WWW events in VH samples will also need to be included as backgrounds.
@@ -102,14 +111,14 @@ for f in $(ls /nfs-7/userdata/phchang/WWW_babies/${VERSION}/skim/*.root); do
         TREEVARIATION="www"
 
         # Write out the VH signal portion of the command line
-        echo './doAnalysis '$f' 't_${TREEVARIATION}' '${OUTPUTDIR}'/t_'${TREEVARIATION}'_'$(basename $f)' -1 '${regions} ${dohist}'  > '${OUTPUTDIR}'/t_'${TREEVARIATION}'_'$(basename $f)'.log 2>&1' >> .jobs.txt
+        echo 'if [ ! -f '${OUTPUTDIR}'/t_'${TREEVARIATION}'_'$(basename $f)' ]; then ./doAnalysis '$f' 't_${TREEVARIATION}' '${OUTPUTDIR}'/t_'${TREEVARIATION}'_'$(basename $f)' '${NEVENTS}' '${regions} ${dohist}'  > '${OUTPUTDIR}'/t_'${TREEVARIATION}'_'$(basename $f)'.log 2>&1; fi' >> .jobs.txt
 
         # Now write out the background part of the VH sample
         # Loop over the tree varations. (e.g. qflip, prompt, lostlep, etc.)
         for TREEVARIATION in ${TREEVARIATIONS}; do
 
             # Now write out the command to run over VH background events in various TTree's like t_qflip, t_lostlep, etc.
-            echo './doAnalysis '$f' 't_${TREEVARIATION}' '${OUTPUTDIR}'/t_'${TREEVARIATION}'_'$(basename $f)' -1 '${regions} ${dohist}'  > '${OUTPUTDIR}'/t_'${TREEVARIATION}'_'$(basename $f)'.log 2>&1' >> .jobs.txt
+            echo 'if [ ! -f '${OUTPUTDIR}'/t_'${TREEVARIATION}'_'$(basename $f)' ]; then ./doAnalysis '$f' 't_${TREEVARIATION}' '${OUTPUTDIR}'/t_'${TREEVARIATION}'_'$(basename $f)' '${NEVENTS}' '${regions} ${dohist}'  > '${OUTPUTDIR}'/t_'${TREEVARIATION}'_'$(basename $f)'.log 2>&1; fi' >> .jobs.txt
 
         done
     # (NOTE: not used for 2017 and onwards)
@@ -124,11 +133,11 @@ for f in $(ls /nfs-7/userdata/phchang/WWW_babies/${VERSION}/skim/*.root); do
     elif [[ $f == *"/data_ss"* ]]; then
 
         # Write out the job command for processing data events
-        echo './doAnalysis '$f' 't_ss' '${OUTPUTDIR}'/t_ss_'$(basename $f)' -1 '${regions} ${dohist}'  > '${OUTPUTDIR}'/'$(basename $f)'.log 2>&1' >> .jobs.txt
+        echo 'if [ ! -f '${OUTPUTDIR}'/t_ss_'$(basename $f)' ]; then ./doAnalysis '$f' 't_ss' '${OUTPUTDIR}'/t_ss_'$(basename $f)' '${NEVENTS}' '${regions} ${dohist}'  > '${OUTPUTDIR}'/'$(basename $f)'.log 2>&1; fi' >> .jobs.txt
 
         # Write out the job command for data-driven fake estimate
         # The analysis source file (i.e. process.cc) recognizes the output file pattern "ddfakes" and flips the internal switch to process it as a data-driven fake estimate
-        echo './doAnalysis '$f' 't_ss' '${OUTPUTDIR}'/t_ddfakes_'$(basename $f)' -1 '${regions} ${dohist}'  > '${OUTPUTDIR}'/t_ddfakes_'$(basename $f)'.log 2>&1' >> .jobs.txt
+        echo 'if [ ! -f '${OUTPUTDIR}'/t_ddfakes_'$(basename $f)' ]; then ./doAnalysis '$f' 't_ss' '${OUTPUTDIR}'/t_ddfakes_'$(basename $f)' '${NEVENTS}' '${regions} ${dohist}'  > '${OUTPUTDIR}'/t_ddfakes_'$(basename $f)'.log 2>&1; fi' >> .jobs.txt
 
     #
     # 4. Data: If the file name starts with "data*", then process the data events.
@@ -137,21 +146,21 @@ for f in $(ls /nfs-7/userdata/phchang/WWW_babies/${VERSION}/skim/*.root); do
     elif [[ $f == *"/data"* ]]; then
 
         # If the sample is for 2017 events or v4 and above for 2016
-        if [[ $f == *"WWW2017"*  ]] || [[ $f == *"WWW2016_v4"* ]]; then
+        if [[ $f == *"Loose2017"* ]] || [[ $f == *"WWW2017"*  ]] || [[ $f == *"WWW2016_v4"* ]]; then
 
             # Write out the job command for processing data events
-            echo './doAnalysis '$f' 't' '${OUTPUTDIR}'/t_ss_'$(basename $f)' -1 '${regions} ${dohist}'  > '${OUTPUTDIR}'/'t_ss_$(basename $f)'.log 2>&1' >> .jobs.txt
+            echo 'if [ ! -f '${OUTPUTDIR}'/t_ss_'$(basename $f)' ]; then ./doAnalysis '$f' 't' '${OUTPUTDIR}'/t_ss_'$(basename $f)' '${NEVENTS}' '${regions} ${dohist}'  > '${OUTPUTDIR}'/'t_ss_$(basename $f)'.log 2>&1; fi' >> .jobs.txt
 
             # Write out the job command for data-driven fake estimate
             # The analysis source file (i.e. process.cc) recognizes the output file pattern "ddfakes" and flips the internal switch to process it as a data-driven fake estimate
-            echo './doAnalysis '$f' 't' '${OUTPUTDIR}'/t_ddfakes_'$(basename $f)' -1 '${regions} ${dohist}'  > '${OUTPUTDIR}'/'t_ddfakes_$(basename $f)'.log 2>&1' >> .jobs.txt
+            echo 'if [ ! -f '${OUTPUTDIR}'/t_ddfakes_'$(basename $f)' ]; then ./doAnalysis '$f' 't' '${OUTPUTDIR}'/t_ddfakes_'$(basename $f)' '${NEVENTS}' '${regions} ${dohist}'  > '${OUTPUTDIR}'/'t_ddfakes_$(basename $f)'.log 2>&1; fi' >> .jobs.txt
 
         # TODO: The consistent treatment of 2016 analysis with the same version of baby maker hasn't been done yet. (As of Nov. 2018)
         #       Once the VVVBabyMaker/master version produced 2016 AND 2017 with a same setup, this will be implemented and the section "3." will be deprecated.
         else
             :
             # if data but not data_ss nor WWW_2017, then skip
-            #echo './doAnalysis '$f' 't' '${OUTPUTDIR}'/'$(basename $f)' -1 '${regions}'  > '${OUTPUTDIR}'/'$(basename $f)'.log 2>&1' >> .jobs.txt
+            #echo './doAnalysis '$f' 't' '${OUTPUTDIR}'/'$(basename $f)' '${NEVENTS}' '${regions}'  > '${OUTPUTDIR}'/'$(basename $f)'.log 2>&1' >> .jobs.txt
         fi
     #
     # 5. Background MC
@@ -170,18 +179,17 @@ for f in $(ls /nfs-7/userdata/phchang/WWW_babies/${VERSION}/skim/*.root); do
         for TREEVARIATION in ${TREEVARIATIONS}; do
 
             # Write out jobs for t_{$TREEVARIATION} for regular mc bkg processing
-            echo './doAnalysis '$f' 't_${TREEVARIATION}' '${OUTPUTDIR}'/t_'${TREEVARIATION}'_'$(basename $f)' -1 '${regions} ${dohist}'  > '${OUTPUTDIR}'/t_'${TREEVARIATION}'_'$(basename $f)'.log 2>&1' >> .jobs.txt
+            echo 'if [ ! -f '${OUTPUTDIR}'/t_'${TREEVARIATION}'_'$(basename $f)' ]; then ./doAnalysis '$f' 't_${TREEVARIATION}' '${OUTPUTDIR}'/t_'${TREEVARIATION}'_'$(basename $f)' '${NEVENTS}' '${regions} ${dohist}'  > '${OUTPUTDIR}'/t_'${TREEVARIATION}'_'$(basename $f)'.log 2>&1; fi' >> .jobs.txt
 
         done
 
         # Write out job commands for processing non-"non-prompt" backgrounds in application regions
-        echo './doAnalysis '$f' 't_ss' '${OUTPUTDIR}'/t_ewksubt_'$(basename $f)' -1 '${regions} ${dohist}'  > '${OUTPUTDIR}'/t_ewksubt_'$(basename $f)'.log 2>&1' >> .jobs.txt
+        echo 'if [ ! -f '${OUTPUTDIR}'/t_ewksubt_'$(basename $f)' ]; then ./doAnalysis '$f' 't_ss' '${OUTPUTDIR}'/t_ewksubt_'$(basename $f)' '${NEVENTS}' '${regions} ${dohist}'  > '${OUTPUTDIR}'/t_ewksubt_'$(basename $f)'.log 2>&1; fi' >> .jobs.txt
 
         # Write out job commands for processing as a whole
-        echo './doAnalysis '$f' 't_ss' '${OUTPUTDIR}'/t_ss_'$(basename $f)' -1 '${regions} ${dohist}'  > '${OUTPUTDIR}'/t_ss_'$(basename $f)'.log 2>&1' >> .jobs.txt
+        echo 'if [ ! -f '${OUTPUTDIR}'/t_ss_'$(basename $f)' ]; then ./doAnalysis '$f' 't_ss' '${OUTPUTDIR}'/t_ss_'$(basename $f)' '${NEVENTS}' '${regions} ${dohist}'  > '${OUTPUTDIR}'/t_ss_'$(basename $f)'.log 2>&1; fi' >> .jobs.txt
     fi
 done
-
 
 
 #_____________________________________________________________________________________________
@@ -202,42 +210,52 @@ TAG=${VERSION}
 DIRPATH=${OUTPUTDIR}
 OUTPATH=${OUTPUTDIR}
 
-lostlep=$(ls $DIRPATH/*t_lostlep_*.root | grep -v wz_incl | grep -v wz_3lnu0jet | grep -v wz_3lnu1jet | grep -v wz_3lnu2jet | grep -v wz_3lnu3jet )
-photon=$(ls $DIRPATH/*t_photon_*.root | grep -v wz_incl | grep -v wz_3lnu0jet | grep -v wz_3lnu1jet | grep -v wz_3lnu2jet | grep -v wz_3lnu3jet   )
-qflip=$(ls $DIRPATH/*t_qflip_*.root | grep -v wz_incl | grep -v wz_3lnu0jet | grep -v wz_3lnu1jet | grep -v wz_3lnu2jet | grep -v wz_3lnu3jet     )
-ddfakes=$(ls $DIRPATH/*t_ddfakes_*.root | grep -v wz_incl | grep -v wz_3lnu0jet | grep -v wz_3lnu1jet | grep -v wz_3lnu2jet | grep -v wz_3lnu3jet )
-ewksubt=$(ls $DIRPATH/*t_ewksubt_*.root | grep -v wz_incl | grep -v wz_3lnu0jet | grep -v wz_3lnu1jet | grep -v wz_3lnu2jet | grep -v wz_3lnu3jet  | grep -v "wjets_incl" )
-fakes=$(ls $DIRPATH/*t_fakes_*.root | grep -v wz_incl | grep -v wz_3lnu0jet | grep -v wz_3lnu1jet | grep -v wz_3lnu2jet | grep -v wz_3lnu3jet     )
-prompt=$(ls $DIRPATH/*t_prompt_*.root | grep -v wz_incl | grep -v wz_3lnu0jet | grep -v wz_3lnu1jet | grep -v wz_3lnu2jet | grep -v wz_3lnu3jet   )
-vbsww=$(ls $DIRPATH/*t_ss_*vbsww_*.root | grep -v wz_incl | grep -v wz_3lnu0jet | grep -v wz_3lnu1jet | grep -v wz_3lnu2jet | grep -v wz_3lnu3jet )
-ttw=$(ls $DIRPATH/*t_ss_*ttw_*.root | grep -v wz_incl | grep -v wz_3lnu0jet | grep -v wz_3lnu1jet | grep -v wz_3lnu2jet | grep -v wz_3lnu3jet     )
-lostlep_fit=$(ls $DIRPATH/*t_lostlep_*.root | grep -v wz_incl | grep -v wz_3lnu0jet | grep -v wz_3lnu1jet | grep -v wz_3lnu2jet | grep -v wz_3lnu3jet | grep -v ttw | grep -v vbsww )
-photon_fit=$(ls $DIRPATH/*t_photon_*.root | grep -v wz_incl | grep -v wz_3lnu0jet | grep -v wz_3lnu1jet | grep -v wz_3lnu2jet | grep -v wz_3lnu3jet | grep -v ttw | grep -v vbsww   )
-qflip_fit=$(ls $DIRPATH/*t_qflip_*.root | grep -v wz_incl | grep -v wz_3lnu0jet | grep -v wz_3lnu1jet | grep -v wz_3lnu2jet | grep -v wz_3lnu3jet | grep -v ttw | grep -v vbsww     )
-fakes_fit=$(ls $DIRPATH/*t_fakes_*.root | grep -v wz_incl | grep -v wz_3lnu0jet | grep -v wz_3lnu1jet | grep -v wz_3lnu2jet | grep -v wz_3lnu3jet | grep -v ttw | grep -v vbsww     )
-prompt_fit=$(ls $DIRPATH/*t_prompt_*.root | grep -v wz_incl | grep -v wz_3lnu0jet | grep -v wz_3lnu1jet | grep -v wz_3lnu2jet | grep -v wz_3lnu3jet | grep -v ttw | grep -v vbsww   )
+lostlep=$(ls $DIRPATH/*t_lostlep_*.root     | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                               ) 
+photon=$(ls $DIRPATH/*t_photon_*.root       | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                               ) 
+qflip=$(ls $DIRPATH/*t_qflip_*.root         | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                               ) 
+ddfakes=$(ls $DIRPATH/*t_ddfakes_*.root     | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                               ) 
+ewksubt=$(ls $DIRPATH/*t_ewksubt_*.root     | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow | grep -v "wjets_incl"        ) 
+fakes=$(ls $DIRPATH/*t_fakes_*.root         | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                               ) 
+prompt=$(ls $DIRPATH/*t_prompt_*.root       | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                               ) 
+vbsww=$(ls $DIRPATH/*t_ss_*vbsww_*.root     | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                               ) 
+ttw=$(ls $DIRPATH/*t_ss_*ttw_*.root         | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                               ) 
+lostlep_fit=$(ls $DIRPATH/*t_lostlep_*.root | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow | grep -v ttw | grep -v vbsww ) 
+photon_fit=$(ls $DIRPATH/*t_photon_*.root   | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow | grep -v ttw | grep -v vbsww ) 
+qflip_fit=$(ls $DIRPATH/*t_qflip_*.root     | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow | grep -v ttw | grep -v vbsww ) 
+fakes_fit=$(ls $DIRPATH/*t_fakes_*.root     | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow | grep -v ttw | grep -v vbsww ) 
+prompt_fit=$(ls $DIRPATH/*t_prompt_*.root   | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow | grep -v ttw | grep -v vbsww ) 
 data=$(ls $DIRPATH/*t_ss_data*.root )
-signal=$(ls $DIRPATH/*t_www_*.root  )
+signal=$(ls $DIRPATH/t_www_vh_ww*.root $DIRPATH/t_www_www_private*.root)
+signalofficial=$(ls $DIRPATH/t_www_vh_nonbb*.root $DIRPATH/t_www_www_amc*.root)
+smwwwofficial=$(ls $DIRPATH/t_www_www_amc*.root)
+whwwwofficial=$(ls $DIRPATH/t_www_vh_nonbb*.root)
+smwww=$(ls $DIRPATH/t_www_www_private*.root)
+whwww=$(ls $DIRPATH/t_www_vh_ww*.root)
 
 # Should already exist but just in case.
 mkdir -p ${OUTPATH}
 
-hadd ${OUTPATH}/lostlep.root ${lostlep} &
-hadd ${OUTPATH}/photon.root  ${photon} &
-hadd ${OUTPATH}/qflip.root   ${qflip} &
-hadd ${OUTPATH}/ddfakes.root ${ddfakes} &
-hadd ${OUTPATH}/ewksubt.root ${ewksubt} &
-hadd ${OUTPATH}/fakes.root   ${fakes} &
-hadd ${OUTPATH}/prompt.root  ${prompt} &
-hadd ${OUTPATH}/vbsww.root  ${vbsww} &
-hadd ${OUTPATH}/ttw.root  ${ttw} &
-hadd ${OUTPATH}/lostlep_fit.root ${lostlep_fit} &
-hadd ${OUTPATH}/photon_fit.root  ${photon_fit} &
-hadd ${OUTPATH}/qflip_fit.root   ${qflip_fit} &
-hadd ${OUTPATH}/fakes_fit.root   ${fakes_fit} &
-hadd ${OUTPATH}/prompt_fit.root  ${prompt_fit} &
-hadd ${OUTPATH}/data.root    ${data} &
-hadd ${OUTPATH}/signal.root  ${signal} &
+if [ ! -f ${OUTPATH}/lostlep.root        ]; then hadd ${OUTPATH}/lostlep.root        ${lostlep} & fi
+if [ ! -f ${OUTPATH}/photon.root         ]; then hadd ${OUTPATH}/photon.root         ${photon} & fi
+if [ ! -f ${OUTPATH}/qflip.root          ]; then hadd ${OUTPATH}/qflip.root          ${qflip} & fi
+if [ ! -f ${OUTPATH}/ddfakes.root        ]; then hadd ${OUTPATH}/ddfakes.root        ${ddfakes} & fi
+if [ ! -f ${OUTPATH}/ewksubt.root        ]; then hadd ${OUTPATH}/ewksubt.root        ${ewksubt} & fi
+if [ ! -f ${OUTPATH}/fakes.root          ]; then hadd ${OUTPATH}/fakes.root          ${fakes} & fi
+if [ ! -f ${OUTPATH}/prompt.root         ]; then hadd ${OUTPATH}/prompt.root         ${prompt} & fi
+if [ ! -f ${OUTPATH}/vbsww.root          ]; then hadd ${OUTPATH}/vbsww.root          ${vbsww} & fi
+if [ ! -f ${OUTPATH}/ttw.root            ]; then hadd ${OUTPATH}/ttw.root            ${ttw} & fi
+if [ ! -f ${OUTPATH}/lostlep_fit.root    ]; then hadd ${OUTPATH}/lostlep_fit.root    ${lostlep_fit} & fi
+if [ ! -f ${OUTPATH}/photon_fit.root     ]; then hadd ${OUTPATH}/photon_fit.root     ${photon_fit} & fi
+if [ ! -f ${OUTPATH}/qflip_fit.root      ]; then hadd ${OUTPATH}/qflip_fit.root      ${qflip_fit} & fi
+if [ ! -f ${OUTPATH}/fakes_fit.root      ]; then hadd ${OUTPATH}/fakes_fit.root      ${fakes_fit} & fi
+if [ ! -f ${OUTPATH}/prompt_fit.root     ]; then hadd ${OUTPATH}/prompt_fit.root     ${prompt_fit} & fi
+if [ ! -f ${OUTPATH}/data.root           ]; then hadd ${OUTPATH}/data.root           ${data} & fi
+if [ ! -f ${OUTPATH}/signal.root         ]; then hadd ${OUTPATH}/signal.root         ${signal} & fi
+if [ ! -f ${OUTPATH}/signalofficial.root ]; then hadd ${OUTPATH}/signalofficial.root ${signalofficial} & fi
+if [ ! -f ${OUTPATH}/smwwwofficial.root  ]; then hadd ${OUTPATH}/smwwwofficial.root  ${smwwwofficial} & fi
+if [ ! -f ${OUTPATH}/whwwwofficial.root  ]; then hadd ${OUTPATH}/whwwwofficial.root  ${whwwwofficial} & fi
+if [ ! -f ${OUTPATH}/smwww.root          ]; then hadd ${OUTPATH}/smwww.root          ${smwww} & fi
+if [ ! -f ${OUTPATH}/whwww.root          ]; then hadd ${OUTPATH}/whwww.root          ${whwww} & fi
 
 wait
 

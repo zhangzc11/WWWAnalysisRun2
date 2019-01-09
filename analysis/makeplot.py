@@ -48,15 +48,27 @@ def set_to_2017():
     global iscondor
     global hassyst
     global hashist
+
+    #---
     #input_ntuple = "WWW2017_v4.0.6"
     #analysis_tag = "test22"
+
+    #---
     input_ntuple = "WWW2017_v4.0.6.2"
     analysis_tag = "test25"
     analysis_tag = "test26" # WZ jet binned
-    #input_ntuple = "Loose2017_v4.0.6.2"
-    #analysis_tag = "test28"
-    #analysis_tag = "test29"
+
+    #---
+    input_ntuple = "Loose2017_v4.0.6.2"
+    analysis_tag = "test28"
+    analysis_tag = "test29"
     iscondor = True
+
+    #---
+    input_ntuple = "Loose2017_v4.0.6.2"
+    analysis_tag = "test1"
+    iscondor = False
+
     hassyst = True
     hashist = False
     process_output_dirpath()
@@ -103,10 +115,10 @@ def test_main():
     #plot(["SRSSemNb0__MinMlj"], "pr_em_MinMlj", False, caption="Preselection region (em+mm) only $m_{min,lj}$ distribution", nbin=30)
 
     #plot(["WZCRSSeeFull__nj", "WZCRSSemFull__nj", "WZCRSSmmFull__nj", "WZCR1SFOSFull__nj", "WZCR2SFOSFull__nj"], "lostlep_cr_nj", False)
-    #plot(["LRSSmmNb0__lep_relIso03EAv2LepMaxSS", ], "ssmm_lr_lepisomaxss", False, nbin=40, blind=True)
+    plot(["LRSSmmNb0__lep_relIso03EAv2LepMaxSS", ], "ssmm_lr_lepisomaxss", False, nbin=40, blind=True)
     #plot(["LRSSmmMjjW__lep_relIso03EAv2LepMaxSS", ], "ssmm_lr_lepisomaxss", False, nbin=40, blind=True, extraoptions={"yaxis_range":[0.,5]})
 
-    check_stats()
+    #check_stats()
 
     return
 
@@ -1054,5 +1066,5 @@ def get_yield_hists(region, use_data_driven_fakes, sfs={}, syst=""):
 if __name__ == "__main__":
 
     test_main()
-    #main()
+    main()
 
