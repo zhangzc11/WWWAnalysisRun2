@@ -59,15 +59,6 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
         // NOTE if there was a continue statement prior to this it can mess it up
         if (looper.isNewFileInChain() and not isData) theoryweight.setFile(looper.getCurrentFileName());
 
-//        // Set the variables used for histogramming
-//        int index = fakerates.getFakeLepIndex();
-//        float ptcorr = index >= 0 ? fakerates.getPtCorr() : -999;
-//        float abseta = index >= 0 ? fabs(www.lep_eta()[index]) : -999;
-//        int ibin = RooUtil::Calc::calcBin2D(ptcorrcoarse_bounds, eta_bounds, ptcorr, abseta);
-//        const int nbin = (eta_bounds.size()-1) * (ptcorrcoarse_bounds.size()-1);
-//        cutflow.setVariable("ptcorretarolledcoarse"    , ibin);
-//        cutflow.setVariable("ptcorretarolledcoarseemu" , ibin + nbin * (abs(www.lep_pdgId()[index]) == 11 ? 1 : 0));
-
         // Set the event list variables
         cutflow.setEventID(www.run(), www.lumi(), www.evt());
 
