@@ -1,4 +1,5 @@
 #ifndef histograms_h
+#define histograms_h
 
 #include "rooutil/rooutil.h"
 #include "wwwtree.h"

@@ -1,6 +1,6 @@
 #include "osregioncuts.h"
 
-addOppositeSignControlRegionCuts(RooUtil::Cutflow& cutflow)
+void addOppositeSignControlRegionCuts(RooUtil::Cutflow& cutflow)
 {
     cutflow.getCut("CutOSDilep");
     cutflow.addCutToLastActiveCut("OSCRmm"                , [&]() { return (www.lep_pdgId()[0]*www.lep_pdgId()[1]==-169)*(www.MllSS()>40.)    ; }        , [&]() { return mm_sf                 ; } ) ;

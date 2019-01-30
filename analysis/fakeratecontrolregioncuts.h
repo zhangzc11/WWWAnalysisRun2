@@ -1,5 +1,5 @@
-#ifndef fakeratecontrolregioncuts.h
-#define fakeratecontrolregioncuts.h
+#ifndef fakeratecontrolregioncuts_h
+#define fakeratecontrolregioncuts_h
 
 #include "wwwtree.h"
 #include "globalvariables.h"

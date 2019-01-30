@@ -1,4 +1,5 @@
 #ifndef scalefactors_h
+#define scalefactors_h
 
 #include "wwwtree.h"
 #include "rooutil/rooutil.h"

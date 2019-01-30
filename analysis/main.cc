@@ -1,7 +1,7 @@
 #include "main.h"
 
 //_______________________________________________________________________________________________________
-int process(const char* input_paths, const char* input_tree_name, const char* output_file_name, int nEvents, TString regions, bool dohist=true)
+int process(const char* input_paths, const char* input_tree_name, const char* output_file_name, int nEvents, TString regions)
 {
     // Creating output file where we will put the outputs of the processing
     TFile* ofile = new TFile(output_file_name, "recreate");
@@ -24,7 +24,7 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
 
     // Adding a whole bunch of cuts!
     addBaseCuts(cutflow);
-    addSignalRegionCuts(cuflow);
+    addSignalRegionCuts(cutflow);
     addLostLepControlRegionCuts(cutflow);
     addApplicationRegionCuts(cutflow);
     addBtaggedControlRegionCuts(cutflow);
@@ -179,7 +179,7 @@ void setGlobalEventVariables()
 
         // Compute trigger variable (TODO for 2016 baby, the tertiary statement may be outdated)
         trigger  = is2017 == 1 ? www.passTrigger() * www.pass_duplicate_ee_em_mm() : passTrigger2016();
-        trigger &= is2017 == 0 ? (TString(input_paths).Contains("v1.2.2") ? 1 : www.pass_duplicate_ee_em_mm()) : 1;
+        trigger &= is2017 == 0 ? (is2016_v122 ? 1 : www.pass_duplicate_ee_em_mm()) : 1;
 
         // Event weight
         weight = (isData and !doFakeEstimation) ? 1 : www.evt_scale1fb() * purewgt * lumi * ffwgt;
@@ -232,11 +232,12 @@ void setGlobalConfigurationVariables(const char* input_paths, const char* output
     is2017 = TString(input_paths).Contains("WWW2016") ? false : is2017;
     isWWW = TString(input_paths).Contains("www_2l_");
     doWWWXsecScaling = TString(input_paths).Contains("v1.2.2"); // The v1.2.2 version had slightly lower xsec.
+    is2016_v122 = TString(input_paths).Contains("v1.2.2");
 
     // For fake estimations, we use data-driven method.
     // When looping over data and the output_path is set to have a "fakes" substring included we turn on the fake-weight settings
     doSystematics = (not TString(input_paths).Contains("data_"));
-    doHistogram = dohist;
+    doHistogram = true;
     doFakeEstimation = TString(output_file_name).Contains("ddfakes") or TString(output_file_name).Contains("ewksubt");
     doEwkSubtraction = TString(output_file_name).Contains("ewksubt");
     isData = TString(input_paths).Contains("data_") || TString(input_paths).Contains("Run2017");
@@ -343,3 +344,4 @@ int main(int argc, char** argv)
     {
         return help();
     }
+}

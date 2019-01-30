@@ -5,6 +5,6 @@
 #include "globalvariables.h"
 #include "rooutil/rooutil.h"
 
-addOppositeSignControlRegionCuts(RooUtil::Cutflow& cutflow);
+void addOppositeSignControlRegionCuts(RooUtil::Cutflow& cutflow);
 
 #endif

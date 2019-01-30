@@ -26,5 +26,6 @@ extern bool doHistogram;
 extern bool doFakeEstimation;
 extern bool doEwkSubtraction;
 extern bool isData;
+extern bool is2016_v122;
 
 extern float lumi;
