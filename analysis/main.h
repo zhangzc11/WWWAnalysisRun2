@@ -11,7 +11,6 @@
 #include "histograms.h"
 #include "lostlepcontrolregioncuts.h"
 #include "misccontrolregioncuts.h"
-#include "osregioncuts.h"
 #include "promptcontrolregioncuts.h"
 #include "scalefactors.h"
 #include "signalregioncuts.h"

@@ -30,3 +30,6 @@ bool isData;
 bool is2016_v122;
 
 float lumi;
+
+std::map<TString, std::function<bool()>> systematic_cuts;
+std::map<TString, std::function<float()>> systematic_wgts;

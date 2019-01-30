@@ -8,8 +8,8 @@
 RooUtil::Histograms createHistograms();
 
 #ifndef __CINT__
-extern const std::vector<float> eta_bounds = {0.0, 1.6, 2.4};
-extern const std::vector<float> ptcorrcoarse_bounds = {0., 20., 25., 30., 35., 150.};
+extern const std::vector<float> eta_bounds;
+extern const std::vector<float> ptcorrcoarse_bounds;
 #endif
 
 #endif

@@ -8,8 +8,8 @@ HEADERS=$(SOURCES:.cc=.h)
 
 CC         = g++
 CXX        = g++
-#DEBUG      = -g
-DEBUG      =
+DEBUG      = -g
+#DEBUG      =
 CXXFLAGS   = $(DEBUG) -O2 -Wall -fPIC -Wshadow -Woverloaded-virtual
 LD         = g++
 LDFLAGS    = $(DEBUG) -O2
