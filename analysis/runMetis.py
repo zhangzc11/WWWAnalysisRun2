@@ -9,17 +9,24 @@ def main():
     data_year = "2017"
 
 #    job_tag = "test25"
-    job_tag = "test26" # Using Njet WZ samples
+#    job_tag = "test26" # Using Njet WZ samples
 #    job_tag = "test27" # Testing Loose ntuple
 #    job_tag = "test28" # Added Loose Region (LR)
 #    job_tag = "test29" # Added max of two lepiso
+#    job_tag = "test30" # Re-running with for all events
+#    job_tag = "test31" # v5.0.0 first run. Using CMS4_V10-02-05 with CMSSW 94X
+#    job_tag = "test32" # Tried to fix MllOnOff for 3lepton
+#    job_tag = "test33" # Not inverting MT3rd
+#    job_tag = "test34" # Not inverting MT3rd
+    job_tag = "test35" # Not inverting MT3rd
 
 #    input_ntup_tag = "WWW_v1.2.2"
 #    input_ntup_tag = "OS2017_v4.0.5"
 #    input_ntup_tag = "WWW2016_v4.0.6"
 #    input_ntup_tag = "WWW2017_v4.0.6"
-    input_ntup_tag = "WWW2017_v4.0.6.2"
+#    input_ntup_tag = "WWW2017_v4.0.6.2"
 #    input_ntup_tag = "Loose2017_v4.0.6.2"
+    input_ntup_tag = "WWW2017_v5.0.0"
 
     base_dir_path = "/hadoop/cms/store/user/phchang/metis/wwwbaby/{}/".format(input_ntup_tag)
     tar_files = ["doAnalysis", "setup.sh", "scalefactors/*.root", "scalefactors/*/*/*/*/sf.root"]

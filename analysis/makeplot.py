@@ -57,6 +57,7 @@ def set_to_2017():
     input_ntuple = "WWW2017_v4.0.6.2"
     analysis_tag = "test25"
     analysis_tag = "test26" # WZ jet binned
+    iscondor = True
 
     #---
     input_ntuple = "Loose2017_v4.0.6.2"
@@ -66,8 +67,23 @@ def set_to_2017():
 
     #---
     input_ntuple = "Loose2017_v4.0.6.2"
-    analysis_tag = "test1"
+    analysis_tag = "test4"
     iscondor = False
+
+    #---
+    input_ntuple = "WWW2017_v4.0.6.2"
+    analysis_tag = "test30"
+    iscondor = True
+
+    #---
+    input_ntuple = "WWW2017_v5.0.0"
+    analysis_tag = "test31"
+    iscondor = True
+
+    #---
+    input_ntuple = "WWW2017_v5.0.0"
+    analysis_tag = "test35"
+    iscondor = True
 
     hassyst = True
     hashist = False
@@ -115,8 +131,16 @@ def test_main():
     #plot(["SRSSemNb0__MinMlj"], "pr_em_MinMlj", False, caption="Preselection region (em+mm) only $m_{min,lj}$ distribution", nbin=30)
 
     #plot(["WZCRSSeeFull__nj", "WZCRSSemFull__nj", "WZCRSSmmFull__nj", "WZCR1SFOSFull__nj", "WZCR2SFOSFull__nj"], "lostlep_cr_nj", False)
-    plot(["LRSSmmNb0__lep_relIso03EAv2LepMaxSS", ], "ssmm_lr_lepisomaxss", False, nbin=40, blind=True)
     #plot(["LRSSmmMjjW__lep_relIso03EAv2LepMaxSS", ], "ssmm_lr_lepisomaxss", False, nbin=40, blind=True, extraoptions={"yaxis_range":[0.,5]})
+
+    #plot(["SRSSmmNj2__lep_pt1"], "pr_ssmm_lep_pt1", False, caption="preselection region sub-leading lepton Pt", nbin=30)
+    #plot(["SRSSemNj2__lep_pt1"], "pr_ssem_lep_pt1", False, caption="preselection region sub-leading lepton Pt", nbin=30)
+    #plot(["SRSSeeNj2__lep_pt1"], "pr_ssee_lep_pt1", False, caption="preselection region sub-leading lepton Pt", nbin=30)
+
+    #plot(["WZVR1SFOSMllOnOff__MllOnOff", "WZVR2SFOSMllOnOff__MllOnOff"], "lostlep_cr_3l_msfos", False, extraoptions={"yaxis_log": True, "yaxis_range": [0.1, 1000000]}, nbin=60)
+    #plot(["WZVR1SFOSMllOnOff__MllOnOff", "WZVR2SFOSMllOnOff__MllOnOff"], "lostlep_cr_3l_msfos", False, extraoptions={"yaxis_range": [0.5, 50]}, nbin=60)
+
+    #optimize_leptons()
 
     #check_stats()
 
@@ -130,11 +154,14 @@ def main():
 
     # Money plot
     plot("SR", "sr_yield", True, caption="Signal region yields with each process set to its background estimation method's prediction.")
+    plot("SR", "sr_yield_mc", False, caption="Signal region yields with WZ set to its bkg. est. method. fake is from MC")
 
     # Plot lost lepton yields
     plot("WZCR", "lostlep_cr_yield", False, caption="Lost lepton control region yields.")
     plot(["WZCRSSeeMllSS__MllOnOff", "WZCRSSemMTmax__MllOnOff", "WZCRSSmmMllSS__MllOnOff"], "lostlep_cr_ss_msfos", False)
-    plot(["WZVR1SFOSMllOnOff__MllOnOff", "WZVR2SFOSMllOnOff__MllOnOff"], "lostlep_cr_3l_msfos", False)
+    plot(["WZVR1SFOSMllOnOff__MllOnOff", "WZVR2SFOSMllOnOff__MllOnOff"], "lostlep_cr_3l_msfos", False, nbin=20)
+    plot(["WZVR1SFOSMllOnOff__MllOnOff"], "lostlep_cr_3l_msfos_1sfos", False, nbin=20)
+    plot(["WZVR2SFOSMllOnOff__MllOnOff"], "lostlep_cr_3l_msfos_2sfos", False, nbin=20)
     plot(["WZVRSSee__MjjZoom", "WZVRSSem__MjjZoom", "WZVRSSmm__MjjZoom"], "lostlep_cr_ss_mjj", False, 8)
 
     set_bkg_to_7()
@@ -152,6 +179,9 @@ def main():
 
     # Study mjj modeling
     study_mjj_modeling()
+
+    # Fake estimate plots
+    fake_est_plots()
 
     # Writing datacards
     write_datacard()
@@ -409,7 +439,7 @@ def get_lostlep_alpha():
 
 #________________________________________________________________________________________________________________________________________
 # Main plotting script
-def plot(histnames, outputfilename, use_data_driven_fakes=False, nbin=12, caption="", dorawcutflow=False, blind=False, extraoptions={}):
+def plot(histnames, outputfilename, use_data_driven_fakes=False, nbin=12, caption="", dorawcutflow=False, blind=False, extraoptions={}, docutscan=False, blowupfakes=1, lepscansystsmap={}, doroc=False):
 
     # If provided histnames are just a string indicating a region, then get the list of cutflow table histograms, and plot the yields.
     if isinstance(histnames, str):
@@ -419,6 +449,9 @@ def plot(histnames, outputfilename, use_data_driven_fakes=False, nbin=12, captio
 
     # Now obtain the list of histograms
     hists = get_hists(histnames, use_data_driven_fakes, "_cutflow" in histnames[0], sfs=(get_lostlep_sf() if histnames == "SR" else {}), dorawcutflow=dorawcutflow)
+
+    if blowupfakes != 1:
+        hists["fakes"].Scale(blowupfakes)
 
     # Set the option for plotting
     alloptions= {
@@ -433,7 +466,7 @@ def plot(histnames, outputfilename, use_data_driven_fakes=False, nbin=12, captio
                 "print_yield": True,
                 "yield_prec": 3,
                 "yield_table_caption": caption,
-                "blind": True if "SR" in histnames[0] else blind,
+                "blind": True if ("SR" in histnames[0] and "Full" in histnames[0]) else blind,
                 "lumi_value": "41.3" if is2017 else "35.9",
                 #"yaxis_range": [0., 30],
                 #"yaxis_log": True,
@@ -443,14 +476,34 @@ def plot(histnames, outputfilename, use_data_driven_fakes=False, nbin=12, captio
     # aggregate a list of backgrounds from the "hists"
     bgs = [ hists[x] for x in bkg_order ]
 
-    # Now actually plot the histogram
-    p.plot_hist(
-            sigs = [hists["www"]],
-            bgs  = bgs,
-            data = hists["data"],
-            colors = colors,
-            syst = None,
-            options=alloptions)
+    plot_func = p.plot_hist
+    if docutscan:
+        plot_func = p.plot_cut_scan
+        systs_map = lepscansystsmap
+        syst = [ systs_map[x] for x in bkg_order ]
+    if doroc:
+        plot_func = p.plot_roc
+        #systs_map = lepscansystsmap
+        #syst = [ systs_map[x] for x in bkg_order ]
+        alloptions["output_name"] = alloptions["output_name"].replace(".pdf", "_roc.pdf")
+        plot_func(
+                tps = [hists["www"]],
+                fps = [hists["fakes"]],
+                legend_labels = ["RelIso"],
+                scanreverse = [True],
+                colors = colors,
+                cutvals = [0.03],
+                options=alloptions,
+                )
+    else:
+        # Now actually plot the histogram
+        plot_func(
+                sigs = [hists["www"]],
+                bgs  = bgs,
+                data = hists["data"],
+                colors = colors,
+                syst = syst if docutscan else None,
+                options=alloptions)
 
 #________________________________________________________________________________________________________________________________________
 # This function plots the variations of lost lepton SR / CR yields extrapolation (N.B. slightly different math from alpha)
@@ -571,6 +624,8 @@ def study_msfos_modeling():
     histnames = [
             "WZVR1SFOSMllOnOffFull(-2)",
             "WZVR2SFOSMllOnOffFull(-2)",
+            #"WZVR2SFOSMllOnOffFull(-2)",
+            #"WZVR2SFOSMllOnOffFull(-2)",
             ]
 
     # Now obtain the list of histograms
@@ -880,6 +935,113 @@ def check_stats():
             colors = colors,
             options=alloptions)
 
+#________________________________________________________________________________________________________________________________________
+def optimize_leptons():
+
+    # Apply some mockup simpls systematics to all processes
+    systs_map = {"photon":0.5, "qflip":0.5, "lostlep":0.2, "prompt":0.2, "fakes":0.5, "sig":0, "vbsww":0.2, "ttw":0.2}
+
+    plot(["LRSSmmNb0__lep_relIso03EAv2LepMaxSS", ], "ssmm_lr_lepisomaxss_allsyst", False, nbin=180, blind=True, docutscan=True, extraoptions={"yaxis_range":[-1,2]}, blowupfakes=2, lepscansystsmap=systs_map)
+    plot(["LRSSemNb0__el_relIso03EAv2Lep", ], "ssem_lr_eliso_allsyst", False, nbin=180, blind=True, docutscan=True, extraoptions={"yaxis_range":[-1,2]}, blowupfakes=2, lepscansystsmap=systs_map)
+
+    plot(["LRSSmmFull__lep_relIso03EAv2LepMaxSS", ], "ssmm_lrfull_lepisomaxss_allsyst", False, nbin=180, blind=True, docutscan=True, extraoptions={"yaxis_range":[-1,2]}, blowupfakes=2, lepscansystsmap=systs_map)
+    plot(["LRSSemFull__el_relIso03EAv2Lep", ], "ssem_lrfull_eliso_allsyst", False, nbin=180, blind=True, docutscan=True, extraoptions={"yaxis_range":[-1,2]}, blowupfakes=2, lepscansystsmap=systs_map)
+
+    # Apply mockup systematics to fake only
+    systs_map = {"photon":0., "qflip":0., "lostlep":0., "prompt":0., "fakes":0.5, "sig":0, "vbsww":0., "ttw":0.}
+
+    plot(["LRSSmmNb0__lep_relIso03EAv2LepMaxSS", ], "ssmm_lr_lepisomaxss_fakeonlysyst", False, nbin=180, blind=True, docutscan=True, extraoptions={"yaxis_range":[-1,2]}, blowupfakes=2, lepscansystsmap=systs_map)
+    plot(["LRSSemNb0__el_relIso03EAv2Lep", ], "ssem_lr_eliso_fakeonlysyst", False, nbin=180, blind=True, docutscan=True, extraoptions={"yaxis_range":[-1,2]}, blowupfakes=2, lepscansystsmap=systs_map)
+
+    plot(["LRSSmmFull__lep_relIso03EAv2LepMaxSS", ], "ssmm_lrfull_lepisomaxss_fakeonlysyst", False, nbin=180, blind=True, docutscan=True, extraoptions={"yaxis_range":[-1,2]}, blowupfakes=2, lepscansystsmap=systs_map)
+    plot(["LRSSemFull__el_relIso03EAv2Lep", ], "ssem_lrfull_eliso_fakeonlysyst", False, nbin=180, blind=True, docutscan=True, extraoptions={"yaxis_range":[-1,2]}, blowupfakes=2, lepscansystsmap=systs_map)
+
+    # Apply no systematics
+    systs_map = {"photon":0., "qflip":0., "lostlep":0., "prompt":0., "fakes":0., "sig":0, "vbsww":0., "ttw":0.}
+
+    plot(["LRSSmmNb0__lep_relIso03EAv2LepMaxSS", ], "ssmm_lr_lepisomaxss_nosyst", False, nbin=180, blind=True, docutscan=True, extraoptions={"yaxis_range":[-1,2]}, blowupfakes=2, lepscansystsmap=systs_map)
+    plot(["LRSSemNb0__el_relIso03EAv2Lep", ], "ssem_lr_eliso_nosyst", False, nbin=180, blind=True, docutscan=True, extraoptions={"yaxis_range":[-1,2]}, blowupfakes=2, lepscansystsmap=systs_map)
+
+    plot(["LRSSmmFull__lep_relIso03EAv2LepMaxSS", ], "ssmm_lrfull_lepisomaxss_nosyst", False, nbin=180, blind=True, docutscan=True, extraoptions={"yaxis_range":[-1,2]}, blowupfakes=2, lepscansystsmap=systs_map)
+    plot(["LRSSemFull__el_relIso03EAv2Lep", ], "ssem_lrfull_eliso_nosyst", False, nbin=180, blind=True, docutscan=True, extraoptions={"yaxis_range":[-1,2]}, blowupfakes=2, lepscansystsmap=systs_map)
+
+    # ROC
+    plot(["LRSSmmNb0__lep_relIso03EAv2LepMaxSS", ], "ssmm_lr_lepisomaxss", False, nbin=180, doroc=True, extraoptions={"yaxis_range":[0,1]})
+    plot(["LRSSemNb0__el_relIso03EAv2Lep", ], "ssem_lr_eliso", False, nbin=180, doroc=True, extraoptions={"yaxis_range":[0,1]})
+
+    plot(["LRSSmmFull__lep_relIso03EAv2LepMaxSS", ], "ssmm_lrfull_lepisomaxss", False, nbin=180, doroc=True, extraoptions={"yaxis_range":[0,1]})
+    plot(["LRSSemFull__el_relIso03EAv2Lep", ], "ssem_lrfull_eliso", False, nbin=180, doroc=True, extraoptions={"yaxis_range":[0,1]})
+
+    plot(["LRSSmmNb0__lep_relIso03EAv2LepMaxSS", ], "ssmm_lr_lepisomaxss", False, nbin=40, blind=True, extraoptions={"no_overflow":True}, blowupfakes=2)
+    plot(["LRSSemNb0__el_relIso03EAv2Lep", ], "ssem_lr_eliso", False, nbin=40, blind=True, extraoptions={"no_overflow":True}, blowupfakes=2)
+
+    plot(["LRSSmmFull__lep_relIso03EAv2LepMaxSS", ], "ssmm_lrfull_lepisomaxss", False, nbin=40, blind=True, extraoptions={"no_overflow":True}, blowupfakes=2)
+    plot(["LRSSemFull__el_relIso03EAv2Lep", ], "ssem_lrfull_eliso", False, nbin=40, blind=True, extraoptions={"no_overflow":True}, blowupfakes=2)
+
+    plot("SR", "sr_mc_yield_fake2x", False, caption="Signal region yields with each process-except fakes-set to its background estimation method's prediction.", blowupfakes=2)
+
+#________________________________________________________________________________________________________________________________________
+def fake_est_plots():
+
+    plot(["SRSSmmNj2__lep_pt1", "SRSSemNj2__lep_pt1", "SRSSeeNj2__lep_pt1"], "pr_ss_lep_pt1", False, caption="preselection region sub-leading lepton Pt", nbin=20)
+    plot(["SRSSmmNj2__lep_pt1", "SRSSemNj2__lep_pt1", "SRSSeeNj2__lep_pt1"], "pr_ss_lep_pt1_ddfakes", True, caption="preselection region sub-leading lepton Pt", nbin=20)
+
+    plot(["SRSSmmNb0__lep_pt1", "SRSSemNb0__lep_pt1", "SRSSeeNb0__lep_pt1"], "prnb0_ss_lep_pt1", False, caption="preselection region sub-leading lepton Pt", nbin=20)
+    plot(["SRSSmmNb0__lep_pt1", "SRSSemNb0__lep_pt1", "SRSSeeNb0__lep_pt1"], "prnb0_ss_lep_pt1_ddfakes", True, caption="preselection region sub-leading lepton Pt", nbin=20)
+
+    plot([
+        "ARSSeeFull", 
+        "ARSSemFull",
+        "ARSSmmFull",
+        "ARSSSideeeFull",
+        "ARSSSideemFull",
+        "ARSSSidemmFull",
+        "AR0SFOSFull",
+        "AR1SFOSFull",
+        "AR2SFOSFull",
+        ], "ar_yields", False, caption="application region yields")
+
+    plot([
+        "BTCRSSeeFull", 
+        "BTCRSSemFull",
+        "BTCRSSmmFull",
+        "BTCRSSSideeeFull",
+        "BTCRSSSideemFull",
+        "BTCRSSSidemmFull",
+        "BTCR0SFOSFull",
+        "BTCR1SFOSFull",
+        "BTCR2SFOSFull",
+        ], "btcr_yields", False, caption="b-tagged control region yields")
+
+    plot([
+        "BTCRSSeeFull", 
+        "BTCRSSemFull",
+        "BTCRSSmmFull",
+        "BTCRSSSideeeFull",
+        "BTCRSSSideemFull",
+        "BTCRSSSidemmFull",
+        "BTCR0SFOSFull",
+        "BTCR1SFOSFull",
+        "BTCR2SFOSFull",
+        ], "btcr_yields_ddfakes", True, caption="b-tagged control region yields")
+
+    plot([
+        "LXECRSSeeFull", 
+        "LXECRSSemFull",
+        "LXECRSSmmFull",
+        ], "lxecr_yields", False, caption="b-tagged control region yields")
+
+    plot([
+        "LXECRSSeeFull", 
+        "LXECRSSemFull",
+        "LXECRSSmmFull",
+        ], "lxecr_yields_ddfakes", True, caption="b-tagged control region yields")
+
+    plot([
+        "LXEARCRSSeeFull", 
+        "LXEARCRSSemFull",
+        "LXEARCRSSmmFull",
+        ], "lxear_yields", False, caption="b-tagged control region yields")
 
 
 #----------------===============--------------------------------===============--------------------------------===============----------------
@@ -1036,6 +1198,7 @@ def get_hists(histnames, use_data_driven_fakes=False, docutflow=False, sfs={}, d
     from plottery import utils as u
     for h in hists:
         u.move_in_overflows(hists[h])
+    #    p.remove_overflow(hists[h])
 
     return hists
 
@@ -1065,6 +1228,6 @@ def get_yield_hists(region, use_data_driven_fakes, sfs={}, syst=""):
 
 if __name__ == "__main__":
 
-    test_main()
+    #test_main()
     main()
 

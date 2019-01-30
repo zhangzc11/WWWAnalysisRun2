@@ -1,78 +1,7 @@
-#ifndef process_h
-#define process_h
+#ifndef scalefactors_h
 
 #include "wwwtree.h"
 #include "rooutil/rooutil.h"
-
-//_______________________________________________________________________________________________________
-bool passTrigger2016()
-{
-    if (www.nLlep() < 2)
-        return false;
-
-    const vector<int>& lep_pdgId = www.lep_pdgId();
-    const int mc_HLT_DoubleEl    = www.mc_HLT_DoubleEl();
-    const int mc_HLT_DoubleEl_DZ = www.mc_HLT_DoubleEl_DZ();
-    const int mc_HLT_MuEG        = www.mc_HLT_MuEG();
-    const int mc_HLT_DoubleMu    = www.mc_HLT_DoubleMu();
-    const int nVlep              = www.nVlep();
-    const int nLlep              = www.nLlep();
-
-
-    if (nVlep != 2 && nVlep != 3)
-        return 0;
-
-    if (nLlep != 2 && nLlep != 3)
-        return 0;
-
-    if (lep_pdgId.size() < 2)
-        return 0;
-
-    if (nVlep == 2 && nLlep == 2)
-    {
-        int lepprod = lep_pdgId.at(0)*lep_pdgId.at(1);
-        if (abs(lepprod) == 121)
-            return (mc_HLT_DoubleEl || mc_HLT_DoubleEl_DZ);
-        else if (abs(lepprod) == 143)
-            return mc_HLT_MuEG;
-        else if (abs(lepprod) == 169)
-            return mc_HLT_DoubleMu;
-        else
-            return 0;
-    }
-    else if (nVlep == 3 && nLlep == 3)
-    {
-        int lepprod01 = lep_pdgId.at(0)*lep_pdgId.at(1);
-        if (abs(lepprod01) == 121 && (mc_HLT_DoubleEl || mc_HLT_DoubleEl_DZ))
-            return true;
-        else if (abs(lepprod01) == 143 && mc_HLT_MuEG)
-            return true;
-        else if (abs(lepprod01) == 169 && mc_HLT_DoubleMu)
-            return true;
-
-        int lepprod02 = lep_pdgId.at(0)*lep_pdgId.at(2);
-        if (abs(lepprod02) == 121 && (mc_HLT_DoubleEl || mc_HLT_DoubleEl_DZ))
-            return true;
-        else if (abs(lepprod02) == 143 && mc_HLT_MuEG)
-            return true;
-        else if (abs(lepprod02) == 169 && mc_HLT_DoubleMu)
-            return true;
-
-        int lepprod12 = lep_pdgId.at(1)*lep_pdgId.at(2);
-        if (abs(lepprod12) == 121 && (mc_HLT_DoubleEl || mc_HLT_DoubleEl_DZ))
-            return true;
-        else if (abs(lepprod12) == 143 && mc_HLT_MuEG)
-            return true;
-        else if (abs(lepprod12) == 169 && mc_HLT_DoubleMu)
-            return true;
-
-        return false;
-    }
-    else
-    {
-        return 0;
-    }
-}
 
 //_______________________________________________________________________________________________________
 class LeptonScaleFactors
@@ -177,46 +106,47 @@ class LeptonScaleFactors
             delete histmap_tert_el_isoip_3l_sf;
         }
 
-        std::tuple<float, float, float, float> getScaleFactors(bool is2017, bool doFakeEstimation, bool isData)
+        //std::tuple<float, float, float, float> getScaleFactors(bool is2017, bool doFakeEstimation, bool isData, int variation=0)
+        float getScaleFactors(bool is2017, bool doFakeEstimation, bool isData, int variation=0)
         {
             if (isData)
             {
-                return std::make_tuple(1, 1, 1, 1);
+                return 1;
             }
-            if (is2017)
+            else if (is2017)
             {
                 const double b500 = 499.9;
                 const double b120 = 119.9;
-                float lead_mu_recoid_sf    = histmap_lead_mu_recoid_sf    -> eval(min((double)www.lep_pt()[0],b120)   ,abs((double)www.lep_eta()[0])     );
-                float subl_mu_recoid_sf    = histmap_subl_mu_recoid_sf    -> eval(min((double)www.lep_pt()[1],b120)   ,abs((double)www.lep_eta()[1])     );
-                float lead_el_recoid_sf    = histmap_lead_el_recoid_sf    -> eval(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) );
-                float subl_el_recoid_sf    = histmap_subl_el_recoid_sf    -> eval(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) );
-                float lead_el_mva_sf       = histmap_lead_el_mva_sf       -> eval(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) );
-                float subl_el_mva_sf       = histmap_subl_el_mva_sf       -> eval(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) );
-                float emu_mu_recoid_sf     = histmap_emu_mu_recoid_sf     -> eval(min((double)www.mu_pt(),b120)       ,abs((double)www.mu_eta())         );
-                float emu_el_recoid_sf     = histmap_emu_el_recoid_sf     -> eval(abs((double)www.el_eta())           ,min((double)www.el_pt(),b500)     );
-                float emu_el_mva_sf        = histmap_emu_el_mva_sf        -> eval(abs((double)www.el_eta())           ,min((double)www.el_pt(),b500)     );
-                float lead_mu_recoid_3l_sf = histmap_lead_mu_recoid_3l_sf -> eval(min((double)www.lep_pt()[0],b120)   ,abs((double)www.lep_eta()[0])     );
-                float subl_mu_recoid_3l_sf = histmap_subl_mu_recoid_3l_sf -> eval(min((double)www.lep_pt()[1],b120)   ,abs((double)www.lep_eta()[1])     );
-                float lead_el_recoid_3l_sf = histmap_lead_el_recoid_3l_sf -> eval(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) );
-                float subl_el_recoid_3l_sf = histmap_subl_el_recoid_3l_sf -> eval(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) );
-                float lead_el_mva_3l_sf    = histmap_lead_el_mva_3l_sf    -> eval(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) );
-                float subl_el_mva_3l_sf    = histmap_subl_el_mva_3l_sf    -> eval(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) );
-                float tert_mu_recoid_3l_sf = histmap_tert_mu_recoid_3l_sf -> eval(min((double)www.lep_pt()[2],b120)   ,abs((double)www.lep_eta()[2])     );
-                float tert_el_recoid_3l_sf = histmap_tert_el_recoid_3l_sf -> eval(abs((double)www.lep_eta()[2])       ,min((double)www.lep_pt()[2],b500) );
-                float tert_el_mva_3l_sf    = histmap_tert_el_mva_3l_sf    -> eval(abs((double)www.lep_eta()[2])       ,min((double)www.lep_pt()[2],b500) );
-                float lead_mu_isoip_sf     = histmap_lead_mu_isoip_sf     -> eval(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b120) );
-                float subl_mu_isoip_sf     = histmap_subl_mu_isoip_sf     -> eval(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b120) );
-                float lead_el_isoip_sf     = histmap_lead_el_isoip_sf     -> eval(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) );
-                float subl_el_isoip_sf     = histmap_subl_el_isoip_sf     -> eval(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) );
-                float emu_mu_isoip_sf      = histmap_emu_mu_isoip_sf      -> eval(abs((double)www.mu_eta())           ,min((double)www.mu_pt(),199.99)   );
-                float emu_el_isoip_sf      = histmap_emu_el_isoip_sf      -> eval(abs((double)www.el_eta())           ,min((double)www.el_pt(),b500)     );
-                float lead_mu_isoip_3l_sf  = histmap_lead_mu_isoip_3l_sf  -> eval(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b120) );
-                float subl_mu_isoip_3l_sf  = histmap_subl_mu_isoip_3l_sf  -> eval(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b120) );
-                float lead_el_isoip_3l_sf  = histmap_lead_el_isoip_3l_sf  -> eval(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) );
-                float subl_el_isoip_3l_sf  = histmap_subl_el_isoip_3l_sf  -> eval(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) );
-                float tert_mu_isoip_3l_sf  = histmap_tert_mu_isoip_3l_sf  -> eval(abs((double)www.lep_eta()[2])       ,min((double)www.lep_pt()[2],b120) );
-                float tert_el_isoip_3l_sf  = histmap_tert_el_isoip_3l_sf  -> eval(abs((double)www.lep_eta()[2])       ,min((double)www.lep_pt()[2],b500) );
+                float lead_mu_recoid_sf    = variation > 0 ? histmap_lead_mu_recoid_sf    -> eval_up(min((double)www.lep_pt()[0],b120)   ,abs((double)www.lep_eta()[0])     ) : variation < 0 ? histmap_lead_mu_recoid_sf    -> eval_down(min((double)www.lep_pt()[0],b120)   ,abs((double)www.lep_eta()[0])     ) : histmap_lead_mu_recoid_sf    -> eval(min((double)www.lep_pt()[0],b120)   ,abs((double)www.lep_eta()[0])     );
+                float subl_mu_recoid_sf    = variation > 0 ? histmap_subl_mu_recoid_sf    -> eval_up(min((double)www.lep_pt()[1],b120)   ,abs((double)www.lep_eta()[1])     ) : variation < 0 ? histmap_subl_mu_recoid_sf    -> eval_down(min((double)www.lep_pt()[1],b120)   ,abs((double)www.lep_eta()[1])     ) : histmap_subl_mu_recoid_sf    -> eval(min((double)www.lep_pt()[1],b120)   ,abs((double)www.lep_eta()[1])     );
+                float lead_el_recoid_sf    = variation > 0 ? histmap_lead_el_recoid_sf    -> eval_up(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) ) : variation < 0 ? histmap_lead_el_recoid_sf    -> eval_down(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) ) : histmap_lead_el_recoid_sf    -> eval(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) );
+                float subl_el_recoid_sf    = variation > 0 ? histmap_subl_el_recoid_sf    -> eval_up(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) ) : variation < 0 ? histmap_subl_el_recoid_sf    -> eval_down(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) ) : histmap_subl_el_recoid_sf    -> eval(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) );
+                float lead_el_mva_sf       = variation > 0 ? histmap_lead_el_mva_sf       -> eval_up(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) ) : variation < 0 ? histmap_lead_el_mva_sf       -> eval_down(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) ) : histmap_lead_el_mva_sf       -> eval(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) );
+                float subl_el_mva_sf       = variation > 0 ? histmap_subl_el_mva_sf       -> eval_up(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) ) : variation < 0 ? histmap_subl_el_mva_sf       -> eval_down(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) ) : histmap_subl_el_mva_sf       -> eval(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) );
+                float emu_mu_recoid_sf     = variation > 0 ? histmap_emu_mu_recoid_sf     -> eval_up(min((double)www.mu_pt(),b120)       ,abs((double)www.mu_eta())         ) : variation < 0 ? histmap_emu_mu_recoid_sf     -> eval_down(min((double)www.mu_pt(),b120)       ,abs((double)www.mu_eta())         ) : histmap_emu_mu_recoid_sf     -> eval(min((double)www.mu_pt(),b120)       ,abs((double)www.mu_eta())         );
+                float emu_el_recoid_sf     = variation > 0 ? histmap_emu_el_recoid_sf     -> eval_up(abs((double)www.el_eta())           ,min((double)www.el_pt(),b500)     ) : variation < 0 ? histmap_emu_el_recoid_sf     -> eval_down(abs((double)www.el_eta())           ,min((double)www.el_pt(),b500)     ) : histmap_emu_el_recoid_sf     -> eval(abs((double)www.el_eta())           ,min((double)www.el_pt(),b500)     );
+                float emu_el_mva_sf        = variation > 0 ? histmap_emu_el_mva_sf        -> eval_up(abs((double)www.el_eta())           ,min((double)www.el_pt(),b500)     ) : variation < 0 ? histmap_emu_el_mva_sf        -> eval_down(abs((double)www.el_eta())           ,min((double)www.el_pt(),b500)     ) : histmap_emu_el_mva_sf        -> eval(abs((double)www.el_eta())           ,min((double)www.el_pt(),b500)     );
+                float lead_mu_recoid_3l_sf = variation > 0 ? histmap_lead_mu_recoid_3l_sf -> eval_up(min((double)www.lep_pt()[0],b120)   ,abs((double)www.lep_eta()[0])     ) : variation < 0 ? histmap_lead_mu_recoid_3l_sf -> eval_down(min((double)www.lep_pt()[0],b120)   ,abs((double)www.lep_eta()[0])     ) : histmap_lead_mu_recoid_3l_sf -> eval(min((double)www.lep_pt()[0],b120)   ,abs((double)www.lep_eta()[0])     );
+                float subl_mu_recoid_3l_sf = variation > 0 ? histmap_subl_mu_recoid_3l_sf -> eval_up(min((double)www.lep_pt()[1],b120)   ,abs((double)www.lep_eta()[1])     ) : variation < 0 ? histmap_subl_mu_recoid_3l_sf -> eval_down(min((double)www.lep_pt()[1],b120)   ,abs((double)www.lep_eta()[1])     ) : histmap_subl_mu_recoid_3l_sf -> eval(min((double)www.lep_pt()[1],b120)   ,abs((double)www.lep_eta()[1])     );
+                float lead_el_recoid_3l_sf = variation > 0 ? histmap_lead_el_recoid_3l_sf -> eval_up(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) ) : variation < 0 ? histmap_lead_el_recoid_3l_sf -> eval_down(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) ) : histmap_lead_el_recoid_3l_sf -> eval(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) );
+                float subl_el_recoid_3l_sf = variation > 0 ? histmap_subl_el_recoid_3l_sf -> eval_up(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) ) : variation < 0 ? histmap_subl_el_recoid_3l_sf -> eval_down(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) ) : histmap_subl_el_recoid_3l_sf -> eval(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) );
+                float lead_el_mva_3l_sf    = variation > 0 ? histmap_lead_el_mva_3l_sf    -> eval_up(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) ) : variation < 0 ? histmap_lead_el_mva_3l_sf    -> eval_down(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) ) : histmap_lead_el_mva_3l_sf    -> eval(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) );
+                float subl_el_mva_3l_sf    = variation > 0 ? histmap_subl_el_mva_3l_sf    -> eval_up(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) ) : variation < 0 ? histmap_subl_el_mva_3l_sf    -> eval_down(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) ) : histmap_subl_el_mva_3l_sf    -> eval(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) );
+                float tert_mu_recoid_3l_sf = variation > 0 ? histmap_tert_mu_recoid_3l_sf -> eval_up(min((double)www.lep_pt()[2],b120)   ,abs((double)www.lep_eta()[2])     ) : variation < 0 ? histmap_tert_mu_recoid_3l_sf -> eval_down(min((double)www.lep_pt()[2],b120)   ,abs((double)www.lep_eta()[2])     ) : histmap_tert_mu_recoid_3l_sf -> eval(min((double)www.lep_pt()[2],b120)   ,abs((double)www.lep_eta()[2])     );
+                float tert_el_recoid_3l_sf = variation > 0 ? histmap_tert_el_recoid_3l_sf -> eval_up(abs((double)www.lep_eta()[2])       ,min((double)www.lep_pt()[2],b500) ) : variation < 0 ? histmap_tert_el_recoid_3l_sf -> eval_down(abs((double)www.lep_eta()[2])       ,min((double)www.lep_pt()[2],b500) ) : histmap_tert_el_recoid_3l_sf -> eval(abs((double)www.lep_eta()[2])       ,min((double)www.lep_pt()[2],b500) );
+                float tert_el_mva_3l_sf    = variation > 0 ? histmap_tert_el_mva_3l_sf    -> eval_up(abs((double)www.lep_eta()[2])       ,min((double)www.lep_pt()[2],b500) ) : variation < 0 ? histmap_tert_el_mva_3l_sf    -> eval_down(abs((double)www.lep_eta()[2])       ,min((double)www.lep_pt()[2],b500) ) : histmap_tert_el_mva_3l_sf    -> eval(abs((double)www.lep_eta()[2])       ,min((double)www.lep_pt()[2],b500) );
+                float lead_mu_isoip_sf     = variation > 0 ? histmap_lead_mu_isoip_sf     -> eval_up(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b120) ) : variation < 0 ? histmap_lead_mu_isoip_sf     -> eval_down(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b120) ) : histmap_lead_mu_isoip_sf     -> eval(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b120) );
+                float subl_mu_isoip_sf     = variation > 0 ? histmap_subl_mu_isoip_sf     -> eval_up(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b120) ) : variation < 0 ? histmap_subl_mu_isoip_sf     -> eval_down(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b120) ) : histmap_subl_mu_isoip_sf     -> eval(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b120) );
+                float lead_el_isoip_sf     = variation > 0 ? histmap_lead_el_isoip_sf     -> eval_up(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) ) : variation < 0 ? histmap_lead_el_isoip_sf     -> eval_down(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) ) : histmap_lead_el_isoip_sf     -> eval(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) );
+                float subl_el_isoip_sf     = variation > 0 ? histmap_subl_el_isoip_sf     -> eval_up(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) ) : variation < 0 ? histmap_subl_el_isoip_sf     -> eval_down(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) ) : histmap_subl_el_isoip_sf     -> eval(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) );
+                float emu_mu_isoip_sf      = variation > 0 ? histmap_emu_mu_isoip_sf      -> eval_up(abs((double)www.mu_eta())           ,min((double)www.mu_pt(),199.99)   ) : variation < 0 ? histmap_emu_mu_isoip_sf      -> eval_down(abs((double)www.mu_eta())           ,min((double)www.mu_pt(),199.99)   ) : histmap_emu_mu_isoip_sf      -> eval(abs((double)www.mu_eta())           ,min((double)www.mu_pt(),199.99)   );
+                float emu_el_isoip_sf      = variation > 0 ? histmap_emu_el_isoip_sf      -> eval_up(abs((double)www.el_eta())           ,min((double)www.el_pt(),b500)     ) : variation < 0 ? histmap_emu_el_isoip_sf      -> eval_down(abs((double)www.el_eta())           ,min((double)www.el_pt(),b500)     ) : histmap_emu_el_isoip_sf      -> eval(abs((double)www.el_eta())           ,min((double)www.el_pt(),b500)     );
+                float lead_mu_isoip_3l_sf  = variation > 0 ? histmap_lead_mu_isoip_3l_sf  -> eval_up(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b120) ) : variation < 0 ? histmap_lead_mu_isoip_3l_sf  -> eval_down(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b120) ) : histmap_lead_mu_isoip_3l_sf  -> eval(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b120) );
+                float subl_mu_isoip_3l_sf  = variation > 0 ? histmap_subl_mu_isoip_3l_sf  -> eval_up(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b120) ) : variation < 0 ? histmap_subl_mu_isoip_3l_sf  -> eval_down(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b120) ) : histmap_subl_mu_isoip_3l_sf  -> eval(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b120) );
+                float lead_el_isoip_3l_sf  = variation > 0 ? histmap_lead_el_isoip_3l_sf  -> eval_up(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) ) : variation < 0 ? histmap_lead_el_isoip_3l_sf  -> eval_down(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) ) : histmap_lead_el_isoip_3l_sf  -> eval(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) );
+                float subl_el_isoip_3l_sf  = variation > 0 ? histmap_subl_el_isoip_3l_sf  -> eval_up(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) ) : variation < 0 ? histmap_subl_el_isoip_3l_sf  -> eval_down(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) ) : histmap_subl_el_isoip_3l_sf  -> eval(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) );
+                float tert_mu_isoip_3l_sf  = variation > 0 ? histmap_tert_mu_isoip_3l_sf  -> eval_up(abs((double)www.lep_eta()[2])       ,min((double)www.lep_pt()[2],b120) ) : variation < 0 ? histmap_tert_mu_isoip_3l_sf  -> eval_down(abs((double)www.lep_eta()[2])       ,min((double)www.lep_pt()[2],b120) ) : histmap_tert_mu_isoip_3l_sf  -> eval(abs((double)www.lep_eta()[2])       ,min((double)www.lep_pt()[2],b120) );
+                float tert_el_isoip_3l_sf  = variation > 0 ? histmap_tert_el_isoip_3l_sf  -> eval_up(abs((double)www.lep_eta()[2])       ,min((double)www.lep_pt()[2],b500) ) : variation < 0 ? histmap_tert_el_isoip_3l_sf  -> eval_down(abs((double)www.lep_eta()[2])       ,min((double)www.lep_pt()[2],b500) ) : histmap_tert_el_isoip_3l_sf  -> eval(abs((double)www.lep_eta()[2])       ,min((double)www.lep_pt()[2],b500) );
 
                 // Scale factors
                 float ee_sf = lead_el_recoid_sf * lead_el_mva_sf * lead_el_isoip_sf * subl_el_recoid_sf * subl_el_mva_sf * subl_el_isoip_sf;
@@ -236,12 +166,41 @@ class LeptonScaleFactors
                 em_sf       = doFakeEstimation ? 1 : em_sf;
                 mm_sf       = doFakeEstimation ? 1 : mm_sf;
                 threelep_sf = doFakeEstimation ? 1 : threelep_sf;
-                return std::make_tuple(ee_sf, em_sf, mm_sf, threelep_sf);
+
+                if (www.nVlep() == 2)
+                {
+                    if (abs(www.lep_pdgId()[0]) * abs(www.lep_pdgId()[1]) == 121)
+                    {
+                        return ee_sf;
+                    }
+                    else if (abs(www.lep_pdgId()[0]) * abs(www.lep_pdgId()[1]) == 143)
+                    {
+                        return em_sf;
+                    }
+                    else if (abs(www.lep_pdgId()[0]) * abs(www.lep_pdgId()[1]) == 169)
+                    {
+                        return mm_sf;
+                    }
+                    else
+                    {
+                        std::cout << "Error: should not be here " << __FUNCTION__ << std::endl;
+                        return 1;
+                    }
+                }
+                else if (www.nVlep() == 3)
+                {
+                    return threelep_sf;
+                }
+                else
+                {
+                    return 1;
+                }
+
             }
             else
             {
                 // Set the lepton scale factors based on
-                return std::make_tuple(www.lepsf(), www.lepsf(), www.lepsf(), www.lepsf());
+                return www.lepsf();
             }
         }
 };
@@ -488,14 +447,34 @@ class PileupReweight
 {
     public:
         RooUtil::HistMap* histmap_purwegt;
+        RooUtil::HistMap* histmap_purwegt_up;
+        RooUtil::HistMap* histmap_purwegt_dn;
         PileupReweight()
         {
-            histmap_purwegt = new RooUtil::HistMap("scalefactors/puw_2017.root:puw_central");
+            histmap_purwegt    = new RooUtil::HistMap("scalefactors/puw_2017.root:puw_central");
+            histmap_purwegt_up = new RooUtil::HistMap("scalefactors/puw_2017.root:puw_up");
+            histmap_purwegt_dn = new RooUtil::HistMap("scalefactors/puw_2017.root:puw_down");
         }
         float purewgt()
         {
             return histmap_purwegt->eval(www.nTrueInt());
         }
+        float purewgt_up()
+        {
+            return histmap_purwegt_up->eval(www.nTrueInt());
+        }
+        float purewgt_dn()
+        {
+            return histmap_purwegt_dn->eval(www.nTrueInt());
+        }
 };
+
+#ifndef __CINT__
+// Scale factors tools
+extern LeptonScaleFactors leptonScaleFactors;
+extern FakeRates fakerates;
+extern TheoryWeight theoryweight;
+extern PileupReweight pileupreweight;
+#endif
 
 #endif

@@ -89,6 +89,9 @@ int main(int argc, char** argv)
 //    BkgSampleGlobber.push_back(dirpath + "/MAKER_WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v" + version + "/merged/*.root"); // 37
 
     // : Dataset[dataset] : Background -- number of events passed: 12350 / sum of weights: 38.4503
+    BkgSampleGlobber.push_back(dirpath + "/MAKER_WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
+    BkgSampleGlobber.push_back(dirpath + "/MAKER_WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8_v2_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
+    BkgSampleGlobber.push_back(dirpath + "/MAKER_WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
     BkgSampleGlobber.push_back(dirpath + "/MAKER_WZTo3LNu_0Jets_MLL-4to50_TuneCP5_13TeV-madgraphMLM-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
     BkgSampleGlobber.push_back(dirpath + "/MAKER_WZTo3LNu_0Jets_MLL-50_TuneCP5_13TeV-madgraphMLM-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v3_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
     BkgSampleGlobber.push_back(dirpath + "/MAKER_WZTo3LNu_1Jets_MLL-4to50_TuneCP5_13TeV-madgraphMLM-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_WWW2017_v" + version + "/merged/*.root");
@@ -153,13 +156,15 @@ int main(int argc, char** argv)
     //TCut cut = "(nVlep == 2) * (nLlep == 2) * (nTlep == 2) * (pass_duplicate_ee_em_mm) * (passSSmm) * (nj30 >= 2) * (MllSS > 30.)";
 
     TCut cut = "(firstgoodvertex == 0) * (Flag_AllEventFilters > 0) * (vetophoton == 0) * (evt_passgoodrunlist > 0) * (passTrigger) * (nVlep == 2) * (nLlep == 2) * (nTlep == 2) * (pass_duplicate_ee_em_mm) * (passSSem) * (nj30 >= 2) * (MllSS > 30.) * (nb == 0) * (nisoTrack_mt2_cleaned_VVV_cutbased_veto == 0)";
+    //TCut cut = "(firstgoodvertex == 0) * (Flag_AllEventFilters > 0) * (vetophoton == 0) * (evt_passgoodrunlist > 0) * (passTrigger) * (nVlep == 3) * (nLlep == 3) * (nTlep == 3) * (pass_duplicate_ee_em_mm) * (nSFOS == 0) * (nj <= 1) * (nb == 0)";
 
     //TCut cut = "1";
     //dataloader->PrepareTrainingAndTestTree(cut, cut, "nTest_Signal=100000:nTest_Background=100000:nTrain_Signal=100000:nTrain_Background=100000:SplitMode=random:!V");
     dataloader->PrepareTrainingAndTestTree(cut, cut, "SplitMode=random:!V");
 
     //TString option = "!H:V:NTrees=2000:BoostType=Grad:Shrinkage=1:!UseBaggedGrad:nCuts=20:MinNodeSize=3.%:MaxDepth=3:CreateMVAPdfs:SeparationType=SDivSqrtSPlusB:DoBoostMonitor";
-    TString option = "!H:V:NTrees=250:BoostType=Grad:Shrinkage=1:!UseBaggedGrad:nCuts=20:MinNodeSize=3.%:MaxDepth=3:CreateMVAPdfs:DoBoostMonitor";
+    //TString option = "!H:V:NTrees=250:BoostType=Grad:Shrinkage=1:!UseBaggedGrad:nCuts=20:MinNodeSize=3.%:MaxDepth=3:CreateMVAPdfs:DoBoostMonitor";
+    TString option = "!H:V:DoBoostMonitor:CreateMVAPdfs:NTrees=1000:BoostType=Grad:Shrinkage=0.1:MinNodeSize=15.%:MaxDepth=6";
     factory->BookMethod(dataloader, TMVA::Types::kBDT, "BDT", option);
     factory->TrainAllMethods();
     factory->TestAllMethods();
