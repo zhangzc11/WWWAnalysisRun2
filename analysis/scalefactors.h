@@ -260,7 +260,7 @@ class FakeRates
 
             // Figure out the index by whichever one is the loose but not tight
             int index = -1;
-            for (int ilep = 0; ilep < www.nVlep(); ++ilep)
+            for (int ilep = 0; ilep < www.nLlep(); ++ilep)
             {
                 if (!istight[ilep] && isloose[ilep])
                     index = ilep;

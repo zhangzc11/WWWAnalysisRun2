@@ -146,7 +146,7 @@ for f in $(ls /nfs-7/userdata/phchang/WWW_babies/${VERSION}/skim/*.root); do
     elif [[ $f == *"/data"* ]]; then
 
         # If the sample is for 2017 events or v4 and above for 2016
-        if [[ $f == *"Loose2017"* ]] || [[ $f == *"WWW2017"*  ]] || [[ $f == *"WWW2016_v4"* ]]; then
+        if [[ $f == *"Loose2017"* ]] || [[ $f == *"WWW2017"*  ]] || [[ $f == *"WWW2016_v4"* ]] || [[ $f == *"WWW2016_v5"* ]]; then
 
             # Write out the job command for processing data events
             echo 'if [ ! -f '${OUTPUTDIR}'/t_ss_'$(basename $f)' ]; then ./doAnalysis '$f' 't' '${OUTPUTDIR}'/t_ss_'$(basename $f)' '${NEVENTS}' '${regions} ${dohist}'  > '${OUTPUTDIR}'/'t_ss_$(basename $f)'.log 2>&1; fi' >> .jobs.txt
@@ -210,52 +210,74 @@ TAG=${VERSION}
 DIRPATH=${OUTPUTDIR}
 OUTPATH=${OUTPUTDIR}
 
-lostlep=$(ls $DIRPATH/*t_lostlep_*.root     | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                               ) 
-photon=$(ls $DIRPATH/*t_photon_*.root       | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                               ) 
-qflip=$(ls $DIRPATH/*t_qflip_*.root         | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                               ) 
-ddfakes=$(ls $DIRPATH/*t_ddfakes_*.root     | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                               ) 
-ewksubt=$(ls $DIRPATH/*t_ewksubt_*.root     | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow | grep -v "wjets_incl"        ) 
-fakes=$(ls $DIRPATH/*t_fakes_*.root         | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                               ) 
-prompt=$(ls $DIRPATH/*t_prompt_*.root       | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                               ) 
-vbsww=$(ls $DIRPATH/*t_ss_*vbsww_*.root     | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                               ) 
-ttw=$(ls $DIRPATH/*t_ss_*ttw_*.root         | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                               ) 
-lostlep_fit=$(ls $DIRPATH/*t_lostlep_*.root | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow | grep -v ttw | grep -v vbsww ) 
-photon_fit=$(ls $DIRPATH/*t_photon_*.root   | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow | grep -v ttw | grep -v vbsww ) 
-qflip_fit=$(ls $DIRPATH/*t_qflip_*.root     | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow | grep -v ttw | grep -v vbsww ) 
-fakes_fit=$(ls $DIRPATH/*t_fakes_*.root     | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow | grep -v ttw | grep -v vbsww ) 
-prompt_fit=$(ls $DIRPATH/*t_prompt_*.root   | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow | grep -v ttw | grep -v vbsww ) 
+lostlep=$(ls $DIRPATH/*t_lostlep_*.root                                  | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                               ) 
+photon=$(ls $DIRPATH/*t_photon_*.root                                    | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                               ) 
+qflip=$(ls $DIRPATH/*t_qflip_*.root                                      | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                               ) 
+ddfakes=$(ls $DIRPATH/*t_ddfakes_*.root                                  | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                               ) 
+ewksubt=$(ls $DIRPATH/*t_ewksubt_*.root                                  | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow | grep -v "wjets_incl"        ) 
+fakes=$(ls $DIRPATH/*t_fakes_*.root                                      | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                               ) 
+prompt=$(ls $DIRPATH/*t_prompt_*.root                                    | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                               ) 
+vbsww=$(ls $DIRPATH/*t_ss_*vbsww_*.root $DIRPATH/*t_ss_*wpwpjj_*.root    | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                               ) 
+ttw=$(ls $DIRPATH/*t_ss_*ttw_*.root                                      | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                               ) 
+lostlep_fit=$(ls $DIRPATH/*t_lostlep_*.root                              | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow | grep -v ttw | grep -v vbsww ) 
+photon_fit=$(ls $DIRPATH/*t_photon_*.root                                | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow | grep -v ttw | grep -v vbsww ) 
+qflip_fit=$(ls $DIRPATH/*t_qflip_*.root                                  | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow | grep -v ttw | grep -v vbsww ) 
+fakes_fit=$(ls $DIRPATH/*t_fakes_*.root                                  | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow | grep -v ttw | grep -v vbsww ) 
+prompt_fit=$(ls $DIRPATH/*t_prompt_*.root                                | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow | grep -v ttw | grep -v vbsww ) 
 data=$(ls $DIRPATH/*t_ss_data*.root )
-signal=$(ls $DIRPATH/t_www_vh_ww*.root $DIRPATH/t_www_www_private*.root)
+signal=$(ls $DIRPATH/t_www_vh_ww*.root $DIRPATH/t_www_www_private*.root $DIRPATH/t_www_vh_nonbb*.root $DIRPATH/t_www_www_2l*.root)
 signalofficial=$(ls $DIRPATH/t_www_vh_nonbb*.root $DIRPATH/t_www_www_amc*.root)
 smwwwofficial=$(ls $DIRPATH/t_www_www_amc*.root)
 whwwwofficial=$(ls $DIRPATH/t_www_vh_nonbb*.root)
-smwww=$(ls $DIRPATH/t_www_www_private*.root)
-whwww=$(ls $DIRPATH/t_www_vh_ww*.root)
+smwww=$(ls $DIRPATH/t_www_www_private*.root $DIRPATH/t_www_www_2l*.root)
+whwww=$(ls $DIRPATH/t_www_vh_ww*.root $DIRPATH/t_www_vh_nonbb*.root)
+
+if [ -z "${lostlep}"        ] ; then echo "lostlep is empty"        ; exit ; fi
+if [ -z "${photon}"         ] ; then echo "photon is empty"         ; exit ; fi
+if [ -z "${qflip}"          ] ; then echo "qflip is empty"          ; exit ; fi
+if [ -z "${ddfakes}"        ] ; then echo "ddfakes is empty"        ; exit ; fi
+if [ -z "${ewksubt}"        ] ; then echo "ewksubt is empty"        ; exit ; fi
+if [ -z "${fakes}"          ] ; then echo "fakes is empty"          ; exit ; fi
+if [ -z "${prompt}"         ] ; then echo "prompt is empty"         ; exit ; fi
+if [ -z "${vbsww}"          ] ; then echo "vbsww is empty"          ; exit ; fi
+if [ -z "${ttw}"            ] ; then echo "ttw is empty"            ; exit ; fi
+if [ -z "${lostlep_fit}"    ] ; then echo "lostlep_fit is empty"    ; exit ; fi
+if [ -z "${photon_fit}"     ] ; then echo "photon_fit is empty"     ; exit ; fi
+if [ -z "${qflip_fit}"      ] ; then echo "qflip_fit is empty"      ; exit ; fi
+if [ -z "${fakes_fit}"      ] ; then echo "fakes_fit is empty"      ; exit ; fi
+if [ -z "${prompt_fit}"     ] ; then echo "prompt_fit is empty"     ; exit ; fi
+if [ -z "${data}"           ] ; then echo "data is empty"           ; exit ; fi
+if [ -z "${signal}"         ] ; then echo "signal is empty"         ; exit ; fi
+if [ -z "${signalofficial}" ] ; then echo "signalofficial is empty" ; exit ; fi
+#if [ -z "${smwwwofficial}"  ] ; then echo "smwwwofficial is empty"  ; exit ; fi
+#if [ -z "${whwwwofficial}"  ] ; then echo "whwwwofficial is empty"  ; exit ; fi
+if [ -z "${smwww}"          ] ; then echo "smwww is empty"          ; exit ; fi
+if [ -z "${whwww}"          ] ; then echo "whwww is empty"          ; exit ; fi
 
 # Should already exist but just in case.
 mkdir -p ${OUTPATH}
 
-if [ ! -f ${OUTPATH}/lostlep.root        ]; then hadd ${OUTPATH}/lostlep.root        ${lostlep} & fi
-if [ ! -f ${OUTPATH}/photon.root         ]; then hadd ${OUTPATH}/photon.root         ${photon} & fi
-if [ ! -f ${OUTPATH}/qflip.root          ]; then hadd ${OUTPATH}/qflip.root          ${qflip} & fi
-if [ ! -f ${OUTPATH}/ddfakes.root        ]; then hadd ${OUTPATH}/ddfakes.root        ${ddfakes} & fi
-if [ ! -f ${OUTPATH}/ewksubt.root        ]; then hadd ${OUTPATH}/ewksubt.root        ${ewksubt} & fi
-if [ ! -f ${OUTPATH}/fakes.root          ]; then hadd ${OUTPATH}/fakes.root          ${fakes} & fi
-if [ ! -f ${OUTPATH}/prompt.root         ]; then hadd ${OUTPATH}/prompt.root         ${prompt} & fi
-if [ ! -f ${OUTPATH}/vbsww.root          ]; then hadd ${OUTPATH}/vbsww.root          ${vbsww} & fi
-if [ ! -f ${OUTPATH}/ttw.root            ]; then hadd ${OUTPATH}/ttw.root            ${ttw} & fi
-if [ ! -f ${OUTPATH}/lostlep_fit.root    ]; then hadd ${OUTPATH}/lostlep_fit.root    ${lostlep_fit} & fi
-if [ ! -f ${OUTPATH}/photon_fit.root     ]; then hadd ${OUTPATH}/photon_fit.root     ${photon_fit} & fi
-if [ ! -f ${OUTPATH}/qflip_fit.root      ]; then hadd ${OUTPATH}/qflip_fit.root      ${qflip_fit} & fi
-if [ ! -f ${OUTPATH}/fakes_fit.root      ]; then hadd ${OUTPATH}/fakes_fit.root      ${fakes_fit} & fi
-if [ ! -f ${OUTPATH}/prompt_fit.root     ]; then hadd ${OUTPATH}/prompt_fit.root     ${prompt_fit} & fi
-if [ ! -f ${OUTPATH}/data.root           ]; then hadd ${OUTPATH}/data.root           ${data} & fi
-if [ ! -f ${OUTPATH}/signal.root         ]; then hadd ${OUTPATH}/signal.root         ${signal} & fi
-if [ ! -f ${OUTPATH}/signalofficial.root ]; then hadd ${OUTPATH}/signalofficial.root ${signalofficial} & fi
-if [ ! -f ${OUTPATH}/smwwwofficial.root  ]; then hadd ${OUTPATH}/smwwwofficial.root  ${smwwwofficial} & fi
-if [ ! -f ${OUTPATH}/whwwwofficial.root  ]; then hadd ${OUTPATH}/whwwwofficial.root  ${whwwwofficial} & fi
-if [ ! -f ${OUTPATH}/smwww.root          ]; then hadd ${OUTPATH}/smwww.root          ${smwww} & fi
-if [ ! -f ${OUTPATH}/whwww.root          ]; then hadd ${OUTPATH}/whwww.root          ${whwww} & fi
+if [ ! -f ${OUTPATH}/lostlep.root        ]; then echo "hadd ${OUTPATH}/lostlep.root        ${lostlep}"; hadd ${OUTPATH}/lostlep.root        ${lostlep} & fi
+if [ ! -f ${OUTPATH}/photon.root         ]; then echo "hadd ${OUTPATH}/photon.root         ${photon}"; hadd ${OUTPATH}/photon.root         ${photon} & fi
+if [ ! -f ${OUTPATH}/qflip.root          ]; then echo "hadd ${OUTPATH}/qflip.root          ${qflip}"; hadd ${OUTPATH}/qflip.root          ${qflip} & fi
+if [ ! -f ${OUTPATH}/ddfakes.root        ]; then echo "hadd ${OUTPATH}/ddfakes.root        ${ddfakes}"; hadd ${OUTPATH}/ddfakes.root        ${ddfakes} & fi
+if [ ! -f ${OUTPATH}/ewksubt.root        ]; then echo "hadd ${OUTPATH}/ewksubt.root        ${ewksubt}"; hadd ${OUTPATH}/ewksubt.root        ${ewksubt} & fi
+if [ ! -f ${OUTPATH}/fakes.root          ]; then echo "hadd ${OUTPATH}/fakes.root          ${fakes}"; hadd ${OUTPATH}/fakes.root          ${fakes} & fi
+if [ ! -f ${OUTPATH}/prompt.root         ]; then echo "hadd ${OUTPATH}/prompt.root         ${prompt}"; hadd ${OUTPATH}/prompt.root         ${prompt} & fi
+if [ ! -f ${OUTPATH}/vbsww.root          ]; then echo "hadd ${OUTPATH}/vbsww.root          ${vbsww}"; hadd ${OUTPATH}/vbsww.root          ${vbsww} & fi
+if [ ! -f ${OUTPATH}/ttw.root            ]; then echo "hadd ${OUTPATH}/ttw.root            ${ttw}"; hadd ${OUTPATH}/ttw.root            ${ttw} & fi
+if [ ! -f ${OUTPATH}/lostlep_fit.root    ]; then echo "hadd ${OUTPATH}/lostlep_fit.root    ${lostlep_fit}"; hadd ${OUTPATH}/lostlep_fit.root    ${lostlep_fit} & fi
+if [ ! -f ${OUTPATH}/photon_fit.root     ]; then echo "hadd ${OUTPATH}/photon_fit.root     ${photon_fit}"; hadd ${OUTPATH}/photon_fit.root     ${photon_fit} & fi
+if [ ! -f ${OUTPATH}/qflip_fit.root      ]; then echo "hadd ${OUTPATH}/qflip_fit.root      ${qflip_fit}"; hadd ${OUTPATH}/qflip_fit.root      ${qflip_fit} & fi
+if [ ! -f ${OUTPATH}/fakes_fit.root      ]; then echo "hadd ${OUTPATH}/fakes_fit.root      ${fakes_fit}"; hadd ${OUTPATH}/fakes_fit.root      ${fakes_fit} & fi
+if [ ! -f ${OUTPATH}/prompt_fit.root     ]; then echo "hadd ${OUTPATH}/prompt_fit.root     ${prompt_fit}"; hadd ${OUTPATH}/prompt_fit.root     ${prompt_fit} & fi
+if [ ! -f ${OUTPATH}/data.root           ]; then echo "hadd ${OUTPATH}/data.root           ${data}"; hadd ${OUTPATH}/data.root           ${data} & fi
+if [ ! -f ${OUTPATH}/signal.root         ]; then echo "hadd ${OUTPATH}/signal.root         ${signal}"; hadd ${OUTPATH}/signal.root         ${signal} & fi
+if [ ! -f ${OUTPATH}/signalofficial.root ]; then echo "hadd ${OUTPATH}/signalofficial.root ${signalofficial}"; hadd ${OUTPATH}/signalofficial.root ${signalofficial} & fi
+if [ -n "${smwwwofficial}" ]; then if [ ! -f ${OUTPATH}/smwwwofficial.root  ]; then echo "hadd ${OUTPATH}/smwwwofficial.root  ${smwwwofficial}"; hadd ${OUTPATH}/smwwwofficial.root  ${smwwwofficial} & fi; fi
+if [ -n "${whwwwofficial}" ]; then if [ ! -f ${OUTPATH}/whwwwofficial.root  ]; then echo "hadd ${OUTPATH}/whwwwofficial.root  ${whwwwofficial}"; hadd ${OUTPATH}/whwwwofficial.root  ${whwwwofficial} & fi; fi
+if [ ! -f ${OUTPATH}/smwww.root          ]; then echo "hadd ${OUTPATH}/smwww.root          ${smwww}"; hadd ${OUTPATH}/smwww.root          ${smwww} & fi
+if [ ! -f ${OUTPATH}/whwww.root          ]; then echo "hadd ${OUTPATH}/whwww.root          ${whwww}"; hadd ${OUTPATH}/whwww.root          ${whwww} & fi
 
 wait
 

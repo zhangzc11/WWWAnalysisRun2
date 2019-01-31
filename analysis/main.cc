@@ -33,8 +33,8 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
     addLowMETApplicationRegionCuts(cutflow);
     addPromptControlRegionCuts(cutflow);
     addGammaControlRegionCuts(cutflow);
-    addOppositeSignControlRegionCuts(cutflow);
-    addLooseLeptonControlRegionCuts(cutflow);
+//    addOppositeSignControlRegionCuts(cutflow); // Not needed for main analysis
+//    addLooseLeptonControlRegionCuts(cutflow); // Not needed for main analysis
 
     // Adding systematic cuts
     addSystematicCuts(cutflow);

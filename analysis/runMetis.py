@@ -6,8 +6,6 @@ import os
 
 def main():
 
-    data_year = "2017"
-
 #    job_tag = "test25"
 #    job_tag = "test26" # Using Njet WZ samples
 #    job_tag = "test27" # Testing Loose ntuple
@@ -18,7 +16,8 @@ def main():
 #    job_tag = "test32" # Tried to fix MllOnOff for 3lepton
 #    job_tag = "test33" # Not inverting MT3rd
 #    job_tag = "test34" # Not inverting MT3rd
-    job_tag = "test35" # Not inverting MT3rd
+#    job_tag = "test35" # Not inverting MT3rd
+#    job_tag = "jerstudy_v1" # Not inverting MT3rd
 
 #    input_ntup_tag = "WWW_v1.2.2"
 #    input_ntup_tag = "OS2017_v4.0.5"
@@ -26,7 +25,11 @@ def main():
 #    input_ntup_tag = "WWW2017_v4.0.6"
 #    input_ntup_tag = "WWW2017_v4.0.6.2"
 #    input_ntup_tag = "Loose2017_v4.0.6.2"
-    input_ntup_tag = "WWW2017_v5.0.0"
+#    input_ntup_tag = "WWW2017_v5.0.0"
+
+    # JER Study
+    job_tag = "jerstudy_v1"
+    input_ntup_tag = "WWW2017_v5.0.2"
 
     base_dir_path = "/hadoop/cms/store/user/phchang/metis/wwwbaby/{}/".format(input_ntup_tag)
     tar_files = ["doAnalysis", "setup.sh", "scalefactors/*.root", "scalefactors/*/*/*/*/sf.root"]

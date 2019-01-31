@@ -41,21 +41,18 @@ RooUtil::Histograms createHistograms()
     histograms.addHistogram("lep_relIso03EAv2Lep2"     ,  180 , 0.0     , 0.2    , [&]() { return www.lep_relIso03EAv2Lep()[2] ; });
     histograms.addHistogram("lep_relIso03EAv2LepMaxSS" ,  180 , 0.0     , 0.2    , [&]() { return std::max(www.lep_relIso03EAv2Lep()[0], www.lep_relIso03EAv2Lep()[1]) ; });
     histograms.addHistogram("nj"                       ,  7   , 0.      , 7.     , [&]() { return www.nj()                     ; });
-    histograms.addHistogram("nj_jer"                   ,  7   , 0.      , 7.     , [&]() { return www.nj_jer()                 ; });
-    histograms.addHistogram("nj_jerup"                 ,  7   , 0.      , 7.     , [&]() { return www.nj_jerup()               ; });
-    histograms.addHistogram("nj_jerdn"                 ,  7   , 0.      , 7.     , [&]() { return www.nj_jerdn()               ; });
     histograms.addHistogram("nj30"                     ,  7   , 0.      , 7.     , [&]() { return www.nj30()                   ; });
     histograms.addHistogram("nb"                       ,  5   , 0.      , 5.     , [&]() { return www.nb()                     ; });
     histograms.addHistogram("MTmin"                    ,  180 , 0.      , 300.   , [&]() { return www.MTmin()                  ; });
     histograms.addHistogram("MTmax"                    ,  180 , 0.      , 300.   , [&]() { return www.MTmax()                  ; });
     histograms.addHistogram("MTmax3L"                  ,  180 , 0.      , 300.   , [&]() { return www.MTmax3L()                ; });
     histograms.addHistogram("MT3rd"                    ,  180 , 0.      , 300.   , [&]() { return www.MT3rd()                  ; });
-    histograms.addHistogram("MinMlj"                   ,  180 , 0.      , 300.   , [&]() { return www.MinMlj()                 ; });
-    histograms.addHistogram("MaxMlj"                   ,  180 , 0.      , 1000.  , [&]() { return www.MaxMlj()                 ; });
-    histograms.addHistogram("SumMlj"                   ,  180 , 0.      , 1200.  , [&]() { return www.SumMlj()                 ; });
-    histograms.addHistogram("MinMljj"                  ,  180 , 0.      , 600.   , [&]() { return www.MinMljj()                ; });
-    histograms.addHistogram("MaxMljj"                  ,  180 , 0.      , 1600.  , [&]() { return www.MaxMljj()                ; });
-    histograms.addHistogram("SumMljj"                  ,  180 , 0.      , 1800.  , [&]() { return www.SumMljj()                ; });
+//    histograms.addHistogram("MinMlj"                   ,  180 , 0.      , 300.   , [&]() { return www.MinMlj()                 ; });
+//    histograms.addHistogram("MaxMlj"                   ,  180 , 0.      , 1000.  , [&]() { return www.MaxMlj()                 ; });
+//    histograms.addHistogram("SumMlj"                   ,  180 , 0.      , 1200.  , [&]() { return www.SumMlj()                 ; });
+//    histograms.addHistogram("MinMljj"                  ,  180 , 0.      , 600.   , [&]() { return www.MinMljj()                ; });
+//    histograms.addHistogram("MaxMljj"                  ,  180 , 0.      , 1600.  , [&]() { return www.MaxMljj()                ; });
+//    histograms.addHistogram("SumMljj"                  ,  180 , 0.      , 1800.  , [&]() { return www.SumMljj()                ; });
     histograms.addHistogram("el_relIso03EAv2Lep"       ,  180 , 0.0     , 0.2    , [&]() { return (abs(www.lep_pdgId()[0]) == 11) * (www.lep_relIso03EAv2Lep()[0]) + (abs(www.lep_pdgId()[1]) == 11) * (www.lep_relIso03EAv2Lep()[1]); });
     histograms.addHistogram("mu_relIso03EAv2Lep"       ,  180 , 0.0     , 0.2    , [&]() { return (abs(www.lep_pdgId()[0]) == 13) * (www.lep_relIso03EAv2Lep()[0]) + (abs(www.lep_pdgId()[1]) == 13) * (www.lep_relIso03EAv2Lep()[1]); });
 
