@@ -46,12 +46,12 @@ void addSystematicCuts(RooUtil::Cutflow& cutflow)
         // Declare cut varying systematics to cuts with the patterns provided in the vector
         cutflow.addCutSyst("JESUp"  , {"jj", "MET", "Nj", "Nb", "VBF"});
         cutflow.addCutSyst("JESDown", {"jj", "MET", "Nj", "Nb", "VBF"});
-        if (not is2016_v122)
-        {
-            cutflow.addCutSyst("JER"    , {"jj", "MET", "Nj", "Nb", "VBF"});
-            cutflow.addCutSyst("JERUp"  , {"jj", "MET", "Nj", "Nb", "VBF"});
-            cutflow.addCutSyst("JERDown", {"jj", "MET", "Nj", "Nb", "VBF"});
-        }
+        // if (not is2016_v122)
+        // {
+        //     cutflow.addCutSyst("JER"    , {"jj", "MET", "Nj", "Nb", "VBF"});
+        //     cutflow.addCutSyst("JERUp"  , {"jj", "MET", "Nj", "Nb", "VBF"});
+        //     cutflow.addCutSyst("JERDown", {"jj", "MET", "Nj", "Nb", "VBF"});
+        // }
 
         if (is2017)
         {
