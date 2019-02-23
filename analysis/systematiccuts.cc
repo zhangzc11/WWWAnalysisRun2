@@ -40,18 +40,20 @@ void addSystematicCuts(RooUtil::Cutflow& cutflow)
         }
     }
 
+    bool doJER = false; // TODO fix this to be more general
+
     // Systematics
     if (doSystematics)
     {
         // Declare cut varying systematics to cuts with the patterns provided in the vector
         cutflow.addCutSyst("JESUp"  , {"jj", "MET", "Nj", "Nb", "VBF"});
         cutflow.addCutSyst("JESDown", {"jj", "MET", "Nj", "Nb", "VBF"});
-        // if (not is2016_v122)
-        // {
-        //     cutflow.addCutSyst("JER"    , {"jj", "MET", "Nj", "Nb", "VBF"});
-        //     cutflow.addCutSyst("JERUp"  , {"jj", "MET", "Nj", "Nb", "VBF"});
-        //     cutflow.addCutSyst("JERDown", {"jj", "MET", "Nj", "Nb", "VBF"});
-        // }
+        if (doJER)
+        {
+            cutflow.addCutSyst("JER"    , {"jj", "MET", "Nj", "Nb", "VBF"});
+            cutflow.addCutSyst("JERUp"  , {"jj", "MET", "Nj", "Nb", "VBF"});
+            cutflow.addCutSyst("JERDown", {"jj", "MET", "Nj", "Nb", "VBF"});
+        }
 
         if (is2017)
         {
@@ -603,7 +605,7 @@ void addSystematicCuts(RooUtil::Cutflow& cutflow)
 //        cutflow.setCutSyst("LRSSeeDetajjL"                  , "JESDown" , systematic_cuts["www.DetajjL_dn()<1.5"], UNITY);
 //        cutflow.setCutSyst("LRSSeeMET"                      , "JESDown" , systematic_cuts["www.met_dn_pt()>60."], UNITY);
 
-        if (not is2016_v122)
+        if (doJER)
         {
             // Systematics that affect the raw number of events
             cutflow.setCutSyst("SRSSmmMET"                      , "JER"     , systematic_cuts["1."], UNITY);
@@ -1352,7 +1354,7 @@ void addSystematicCuts(RooUtil::Cutflow& cutflow)
 //        cutflow.setCutSyst("LRSSemNj2"                      , "JESDown" , systematic_cuts["www.nj30_dn()>= 2"], UNITY);
 //        cutflow.setCutSyst("LRSSeeNj2"                      , "JESDown" , systematic_cuts["www.nj30_dn()>= 2"], UNITY);
 
-        if (not is2016_v122)
+        if (doJER)
         {
             cutflow.setCutSyst("SRSSmmNj2"                      , "JER"     , systematic_cuts["www.nj30_jer()>= 2"], UNITY);
             cutflow.setCutSyst("SRSSemNj2"                      , "JER"     , systematic_cuts["www.nj30_jer()>= 2"], UNITY);
@@ -1690,7 +1692,7 @@ void addSystematicCuts(RooUtil::Cutflow& cutflow)
 //        cutflow.setCutSyst("LRSSemNb0"                      , "JESDown" , systematic_cuts["www.nb_dn()==0"], systematic_wgts["btag_sf"] ) ;
 //        cutflow.setCutSyst("LRSSeeNb0"                      , "JESDown" , systematic_cuts["www.nb_dn()==0"], systematic_wgts["btag_sf"] ) ;
 
-        if (not is2016_v122)
+        if (doJER)
         {
 
             cutflow.setCutSyst("SRSSmmNb0"                      , "JER"     , systematic_cuts["www.nb_jer()==0"], systematic_wgts["btag_sf"] ) ;
