@@ -20,3 +20,5 @@ As of Nov. 2018, latest 2017 ntuple baby is:
     python runMetis.py
     # Once the job has finished plot using
     python makeplot.py
+
+If it complains about missing ```.root``` files for some scalefactors, then try deleting ```scalefactors/``` and trying again

@@ -69,6 +69,10 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
     // Save output
     cutflow.saveOutput();
 
+    // TString eventlist_output_file_name = output_file_name;
+    // eventlist_output_file_name.ReplaceAll(".root", "_eventlist.txt");
+    // cutflow.getCut("WZCRSSemFull").writeEventList(eventlist_output_file_name);
+
     return 0;
 }
 

@@ -27,6 +27,22 @@ def process_output_dirpath():
     output_dirpath = "outputs/{}/{}/{}".format("condor" if iscondor else "", input_ntuple, analysis_tag)
     is2017 = "2017" in output_dirpath
 
+def set_to_2016_v122():
+    global input_ntuple
+    global analysis_tag
+    global iscondor
+    global hassyst
+    global hashist
+
+    #---
+    input_ntuple = "WWW_v1.2.2"
+    analysis_tag = "test2"
+    iscondor = False
+
+    hassyst = True
+    hashist = False
+    process_output_dirpath()
+
 # 2016 analysis re-processed
 def set_to_2016():
     global input_ntuple
@@ -127,18 +143,35 @@ def set_bkg_to_5():
     colors = [ colors_map[b] for b in bkg_order ]
 
 #________________________________________________________________________________________________________________________________________
-def test_main():
+def make_test_plots():
+
+    set_to_2016_v122()
+    # set_to_2016()
+
+    plot("SR", "sr_yield", True, caption="Signal region yields with each process set to its background estimation method's prediction.", do_ewksubtraction=False)#, extraoptions={"yaxis_range":[0.,25.]})
+
+    write_datacard()
+    write_datacard_w_control_regions()
+
+    return
+
+    set_to_2017()
+    plot("SR", "sr_yield", True, caption="Signal region yields with each process set to its background estimation method's prediction.", do_ewksubtraction=False)#, extraoptions={"yaxis_range":[0.,25.]})
+
+    write_datacard()
+    return
 
     set_to_2016()
 
     # Money plot
     plot("SR", "sr_yield", True, caption="Signal region yields with each process set to its background estimation method's prediction.", do_ewksubtraction=False, extraoptions={"yaxis_range":[0.,25.]})
-    plot("SR", "sr_rawyield", True, caption="Signal region raw yields with each process set to its background estimation method's prediction.", do_ewksubtraction=False, dorawcutflow=True)
-    plot("AR", "ar_yield_mc", False, caption="Application region yields with WZ set to its bkg. est. method. fake is from MC", do_ewksubtraction=False, extraoptions={"yaxis_range":[0.,500.]})
+    # plot("SR", "sr_rawyield", True, caption="Signal region raw yields with each process set to its background estimation method's prediction.", do_ewksubtraction=False, dorawcutflow=True)
+    # plot("AR", "ar_yield_mc", False, caption="Application region yields with WZ set to its bkg. est. method. fake is from MC", do_ewksubtraction=False, extraoptions={"yaxis_range":[0.,500.]})
+    # plot("WZCR", "wzcr_yield", False, caption="Signal region yields with each process set to its background estimation method's prediction.", do_ewksubtraction=False)
 
-    study_jer_syst()
+    # study_jer_syst()
 
-    write_datacard()
+    #write_datacard()
 
     # MVA preselection
     #plot(["SRSSeeFull(10)", "SRSSemFull(9)", "SRSSmmFull(9)"], "pr_yield", False, caption="Preselection region yields with MC estimation on yields.", dorawcutflow=True)
@@ -168,14 +201,23 @@ def test_main():
 
     return
 
+#________________________________________________________________________________________________________________________________________
+def make_2016_v122_plots():
+
+    set_to_2016_v122()
+    produce_main_plots()
 
 #________________________________________________________________________________________________________________________________________
-def main():
+def make_2017_plots():
 
     set_to_2017()
+    produce_main_plots()
+
+#________________________________________________________________________________________________________________________________________
+def produce_main_plots():
 
     # Money plot
-    plot("SR", "sr_yield", True, caption="Signal region yields with each process set to its background estimation method's prediction.")
+    plot("SR", "sr_yield", True, caption="Signal region yields with each process set to its background estimation method's prediction.", do_ewksubtraction=True if "v1.2.2" not in input_ntuple else False)
     plot("SR", "sr_yield_mc", False, caption="Signal region yields with WZ set to its bkg. est. method. fake is from MC")
 
     # Plot lost lepton yields
@@ -207,6 +249,7 @@ def main():
 
     # Writing datacards
     write_datacard()
+    write_datacard_w_control_regions()
 
 #________________________________________________________________________________________________________________________________________
 # Writing statistics datacards
@@ -224,10 +267,69 @@ def write_datacard():
     bgs = [ hists[x] for x in bkg_order ]
 
     # Write to the datacard
-    d = dw.DataCardWriter(sig=hists["www"], bgs=bgs, data=None, datacard_filename="datacard.txt", systs=systs, no_stat_procs=["lostlep"])
+    # d = dw.DataCardWriter(sig=hists["www"], bgs=bgs, data=None, datacard_filename="datacard.txt", systs=systs, no_stat_procs=["lostlep"])
+    d = dw.DataCardWriter(sig=hists["www"], bgs=bgs, data=hists["data"], datacard_filename="datacard.txt", systs=systs, no_stat_procs=["lostlep"])
 
     # Region names
     reg_names = [ "SRSSee", "SRSSem", "SRSSmm", "SRSSSideee", "SRSSSideem", "SRSSSidemm", "SR0SFOS", "SR1SFOS", "SR2SFOS" ]
+
+    # Write the datacards for each regions
+    for i, reg_name in enumerate(reg_names):
+        d.set_bin(i+1) # TH1 bin indices start with 1
+        d.set_region_name(reg_name)
+        d.write("plots/{}/{}/datacard_{}.txt".format(input_ntuple, analysis_tag, reg_name))
+
+#________________________________________________________________________________________________________________________________________
+# Writing statistics datacards
+def write_datacard_w_control_regions():
+
+    #
+    # Signal region
+    #
+
+    global bkg_order
+    bkg_order = ["fakes", "photon", "lostlep", "qflip", "prompt", "ttw", "vbsww"]
+
+    # Get the main yield
+    lostlep_sf = get_lostlep_sf() # Get the lost lepton scale factors
+    # hists = get_yield_hists("SR", True, lostlep_sf) # Get the main yields with lost lepton scale factors applied
+    hists = get_yield_hists("SR", True) # Get the main yields with lost lepton scale factors applied
+    systs = get_systs(apply_lostlep_sf=False) # Get all systematic histograms
+
+    # putting together the background histograms
+    bgs = [ hists[x] for x in bkg_order ]
+
+    # Write to the datacard
+    # d = dw.DataCardWriter(sig=hists["www"], bgs=bgs, data=None, datacard_filename="datacard.txt", systs=systs)
+    d = dw.DataCardWriter(sig=hists["www"], bgs=bgs, data=hists["data"], datacard_filename="datacard.txt", systs=systs)
+
+    # Region names
+    reg_names = [ "v2_SRSSee", "v2_SRSSem", "v2_SRSSmm", "v2_SRSSSideee", "v2_SRSSSideem", "v2_SRSSSidemm", "v2_SR0SFOS", "v2_SR1SFOS", "v2_SR2SFOS" ]
+
+    # Write the datacards for each regions
+    for i, reg_name in enumerate(reg_names):
+        d.set_bin(i+1) # TH1 bin indices start with 1
+        d.set_region_name(reg_name)
+        d.write("plots/{}/{}/datacard_{}.txt".format(input_ntuple, analysis_tag, reg_name))
+
+    #
+    # Lost Lep Control region
+    #
+
+    # Get the main yield
+    lostlep_sf = get_lostlep_sf() # Get the lost lepton scale factors
+    hists = get_yield_hists("WZCR", True) # Get the main yields with lost lepton scale factors applied
+    systs = get_systs("WZCR") # Get all systematic histograms
+
+    # putting together the background histograms
+    bgs = [ hists[x] for x in bkg_order ]
+
+    # Write to the datacard
+    # d = dw.DataCardWriter(sig=hists["www"], bgs=bgs, data=None, datacard_filename="datacard.txt", systs=systs)
+    d = dw.DataCardWriter(sig=hists["www"], bgs=bgs, data=hists["data"], datacard_filename="datacard.txt", systs=systs)
+
+    # Region names
+    reg_names = [ "v2_WZCRSSee", "v2_WZCRSSem", "v2_WZCRSSmm", "v2_WZCR1SFOS", "v2_WZCR2SFOS" ]
 
     # Write the datacards for each regions
     for i, reg_name in enumerate(reg_names):
@@ -285,23 +387,38 @@ def get_lostlep_sf():
 #           ('WW_norm', 'gmN', [TH1], {'qqWW': TH1, 'ggWW': TH1, 'ggH': TH1, 'others': TH1}),
 #           ('WW_norm', 'gmN', [TH1], {'qqWW': [float,..], 'ggWW': [float,..], 'ggH': [float,..], 'others': [float,..]}),
 # ]
-def get_systs():
+def get_systs(region="SR", apply_lostlep_sf=True):
 
     # Get the main yield
-    lostlep_sf = get_lostlep_sf()
-    hists = get_yield_hists("SR", True, lostlep_sf)
+    lostlep_sf = get_lostlep_sf() if region == "SR" and apply_lostlep_sf else {}
+    hists = get_yield_hists(region, True, lostlep_sf)
 
     systs = []
 
     # Usual systematic variations for both signal and backgrounds
-    syst_names = ["JES", "LepSF", "TrigSF", "BTagLF", "BTagHF", "Pileup", "JER"]
+    syst_names = ["JES", "LepSF", "TrigSF", "BTagLF", "BTagHF", "Pileup"]
+    if "v1.2.2" not in input_ntuple:
+        syst_names += ["JER"]
     for sys in syst_names:
-        sys_hists_up = get_yield_hists("SR", True, lostlep_sf, sys+"Up")
-        sys_hists_dn = get_yield_hists("SR", True, lostlep_sf, sys+"Down")
+        sys_hists_up = get_yield_hists(region, True, lostlep_sf, sys+"Up")
+        sys_hists_dn = get_yield_hists(region, True, lostlep_sf, sys+"Down")
         systval = {}
-        for proc in ["www"] + bkg_order:
+        for proc in ["www"] + bkg_order + ["lostlep"]:
             if proc in ["www", "qflip", "prompt", "photon", "ttw", "vbsww"]:
                 systval[proc] = [sys_hists_up[proc], sys_hists_dn[proc]]
+            # elif proc == "lostlep":
+            #     lostlep_yield_sysup = get_yield_hists(region, True, lostlep_sf)
+            #     lostlep_yield_sysdn = get_yield_hists(region, True, lostlep_sf)
+            #     lostlep_alpha_nom = get_lostlep_alpha()
+            #     lostlep_alpha_sysup = get_lostlep_alpha(sys+"Up")
+            #     lostlep_alpha_sysdn = get_lostlep_alpha(sys+"Down")
+            #     lostlep_alpha_sysup.Divide(lostlep_alpha_nom)
+            #     lostlep_alpha_sysdn.Divide(lostlep_alpha_nom)
+            #     lostlep_alpha_sysup.SetBinContent(7, lostlep_alpha_sysup.GetBinContent(8))
+            #     lostlep_alpha_sysdn.SetBinContent(7, lostlep_alpha_sysdn.GetBinContent(8))
+            #     lostlep_yield_sysup[proc].Multiply(lostlep_alpha_sysup)
+            #     lostlep_yield_sysdn[proc].Multiply(lostlep_alpha_sysdn)
+            #     systval[proc] = [lostlep_yield_sysup[proc], lostlep_yield_sysdn[proc]] 
             else:
                 systval[proc] = 0
         syst_datacard_data = (sys, 'lnN', [], systval)
@@ -309,8 +426,8 @@ def get_systs():
 
     # Fake systematics
     for sys in ["FakeRateEl", "FakeRateMu", "FakeClosureEl", "FakeClosureMu"]:
-        sys_hists_up = get_yield_hists("SR", True, lostlep_sf, sys+"Up")
-        sys_hists_dn = get_yield_hists("SR", True, lostlep_sf, sys+"Down")
+        sys_hists_up = get_yield_hists(region, True, lostlep_sf, sys+"Up")
+        sys_hists_dn = get_yield_hists(region, True, lostlep_sf, sys+"Down")
         systval = {}
         for proc in ["www"] + bkg_order:
             if proc in ["fakes"]:
@@ -322,8 +439,8 @@ def get_systs():
 
     # Signal systematics
     for sys in ["PDF", "Qsq", "AlphaS"]:
-        sys_hists_up = get_yield_hists("SR", True, lostlep_sf, sys+"Up")
-        sys_hists_dn = get_yield_hists("SR", True, lostlep_sf, sys+"Down")
+        sys_hists_up = get_yield_hists(region, True, lostlep_sf, sys+"Up")
+        sys_hists_dn = get_yield_hists(region, True, lostlep_sf, sys+"Down")
         systval = {}
         for proc in ["www"] + bkg_order:
             if proc in ["www"]:
@@ -333,26 +450,61 @@ def get_systs():
         syst_datacard_data = (sys, 'lnN', [], systval)
         systs.append(syst_datacard_data)
 
-    # WZ CR Stats
-    lostlep_alpha = get_lostlep_alpha()
-    data_yield = get_yield_hists("WZCR", False)
-    systnames = ["WZCRSSeeFull_CRstat", "WZCRSSemFull_CRstat", "WZCRSSmmFull_CRstat", "WZCR1SFOSFull_CRstat", "WZCR2SFOSFull_CRstat"]
-    syst_relevant_bins = {
-            "WZCRSSeeFull_CRstat": [1, 4],
-            "WZCRSSemFull_CRstat": [2, 5],
-            "WZCRSSmmFull_CRstat": [3, 6],
-            "WZCR1SFOSFull_CRstat":[8],
-            "WZCR2SFOSFull_CRstat":[9]
-            }
-    for sys in systnames:
-        systval = {}
-        for proc in ["www"] + bkg_order:
-            if proc in ["lostlep"]:
-                systval[proc] = [ "{:.4f}".format(lostlep_alpha.GetBinContent(i)) if i in syst_relevant_bins[sys] else "-" for i in xrange(1, lostlep_alpha.GetNbinsX()+1) ]
-            else:
-                systval[proc] = 0
-        syst_datacard_data = (sys, 'gmN', [data_yield["data"]], systval)
-        systs.append(syst_datacard_data)
+    # LostLep alpha MC statistical error
+    if apply_lostlep_sf:
+        hists = get_yield_hists(region, True)
+        h_mcstat_alpha = hists["lostlep"].Clone()
+        hnom = get_yield_hists(region, True, lostlep_sf)["lostlep"].Clone()
+        hnom_raw = hnom.Clone()
+        h_mcstat_alpha.Divide(get_yield_hists("WZCR", True)["lostlep"])
+        for i in xrange(len(h_mcstat_alpha)):
+            h_mcstat_alpha.SetBinContent(i+1, 1 + (h_mcstat_alpha.GetBinError(i+1) / h_mcstat_alpha.GetBinContent(i+1) if h_mcstat_alpha.GetBinContent(i+1) != 0 else 0))
+        h_mcstat_alpha.SetBinContent(7, h_mcstat_alpha.GetBinContent(8))
+        hnom.Multiply(h_mcstat_alpha)
+        systnames = ["llalpha_SRSSee_stat", "llalpha_SRSSem_stat", "llalpha_SRSSmm_stat", "llalpha_Sideee_stat", "llalpha_Sideem_stat", "llalpha_Sidemm_stat", "llalpha_SR0SFOS_stat", "llalpha_SR1SFOS_stat", "llalpha_SR2SFOS_stat"]
+        syst_relevant_bins = {
+                "llalpha_SRSSee_stat"  : [1],
+                "llalpha_SRSSem_stat"  : [2],
+                "llalpha_SRSSmm_stat"  : [3],
+                "llalpha_Sideee_stat"  : [4],
+                "llalpha_Sideem_stat"  : [5],
+                "llalpha_Sidemm_stat"  : [6],
+                "llalpha_SR0SFOS_stat" : [7],
+                "llalpha_SR1SFOS_stat" : [8],
+                "llalpha_SR2SFOS_stat" : [9],
+                }
+        for sys in systnames:
+            systval = {}
+            for proc in ["www"] + bkg_order:
+                if proc == "lostlep":
+                    systval[proc] = [ "{:.4f}".format((hnom.GetBinContent(i)/hnom_raw.GetBinContent(i) if hnom_raw.GetBinContent(i) > 0 else 1)) if i in syst_relevant_bins[sys] else "-" for i in xrange(1, hnom.GetNbinsX()+1) ]
+                else:
+                    systval[proc] = 0
+            syst_datacard_data = (sys, 'lnN', [], systval)
+            systs.append(syst_datacard_data)
+
+    # LostLep CR Stats (only for SR)
+    if region == "SR" and apply_lostlep_sf:
+        lostlep_alpha_nominal = get_lostlep_alpha()
+        lostlep_alpha = lostlep_alpha_nominal
+        data_yield = get_yield_hists("WZCR", False)
+        systnames = ["WZCRSSeeFull_CRstat", "WZCRSSemFull_CRstat", "WZCRSSmmFull_CRstat", "WZCR1SFOSFull_CRstat", "WZCR2SFOSFull_CRstat"]
+        syst_relevant_bins = {
+                "WZCRSSeeFull_CRstat": [1, 4],
+                "WZCRSSemFull_CRstat": [2, 5],
+                "WZCRSSmmFull_CRstat": [3, 6],
+                "WZCR1SFOSFull_CRstat":[8],
+                "WZCR2SFOSFull_CRstat":[9]
+                }
+        for sys in systnames:
+            systval = {}
+            for proc in ["www"] + bkg_order:
+                if proc in ["lostlep"]:
+                    systval[proc] = [ "{:.4f}".format(lostlep_alpha.GetBinContent(i)) if i in syst_relevant_bins[sys] else "-" for i in xrange(1, lostlep_alpha.GetNbinsX()+1) ]
+                else:
+                    systval[proc] = 0
+            syst_datacard_data = (sys, 'gmN', [data_yield["data"]], systval)
+            systs.append(syst_datacard_data)
 
     # Lost-Lep extrapolation factor (alpha) error
     systval = {}
@@ -452,16 +604,19 @@ def get_systs():
 # Compute the extrapolation factor
 # This will be the value that will be put into the datacards.
 # Alpha = (data - non-lost-lep) * (lost-lep-SR / lost-lep-CR) / data
-def get_lostlep_alpha():
-    hists = get_yield_hists("WZCR", False)
+def get_lostlep_alpha(syst=""):
+    hists_nosyst = get_yield_hists("WZCR", False)
+    hists = get_yield_hists("WZCR", False, syst=syst)
     bgs = [ hists[x] for x in bkg_order ]
-    histsSR = get_yield_hists("SR", False)
-    alpha = ru.get_alpha(histsSR["lostlep"], hists["lostlep"], hists["data"], [hists["photon"], hists["qflip"], hists["fakes"], hists["prompt"], hists["ttw"], hists["vbsww"]])
+    histsSR = get_yield_hists("SR", False, syst=syst)
+    alpha = ru.get_alpha(histsSR["lostlep"], hists["lostlep"], hists_nosyst["data"], [hists["photon"], hists["qflip"], hists["fakes"], hists["prompt"], hists["ttw"], hists["vbsww"]])
     return alpha
 
 #________________________________________________________________________________________________________________________________________
 # Main plotting script
 def plot(histnames, outputfilename, use_data_driven_fakes=False, nbin=12, caption="", dorawcutflow=False, blind=False, extraoptions={}, docutscan=False, blowupfakes=1, lepscansystsmap={}, doroc=False, do_ewksubtraction=True):
+
+    sfs = get_lostlep_sf() if histnames == "SR" else {}
 
     # If provided histnames are just a string indicating a region, then get the list of cutflow table histograms, and plot the yields.
     if isinstance(histnames, str):
@@ -470,7 +625,7 @@ def plot(histnames, outputfilename, use_data_driven_fakes=False, nbin=12, captio
         histnames.sort(key=region_index) # Sort pretty
 
     # Now obtain the list of histograms
-    hists = get_hists(histnames, use_data_driven_fakes, "_cutflow" in histnames[0], sfs=(get_lostlep_sf() if histnames == "SR" else {}), dorawcutflow=dorawcutflow, do_ewksubtraction=do_ewksubtraction)
+    hists = get_hists(histnames, use_data_driven_fakes, "_cutflow" in histnames[0], sfs=sfs, dorawcutflow=dorawcutflow, do_ewksubtraction=do_ewksubtraction)
 
     if blowupfakes != 1:
         hists["fakes"].Scale(blowupfakes)
@@ -488,7 +643,8 @@ def plot(histnames, outputfilename, use_data_driven_fakes=False, nbin=12, captio
                 "print_yield": True,
                 "yield_prec": 3,
                 "yield_table_caption": caption,
-                "blind": True if ("SR" in histnames[0] and "Full" in histnames[0]) else blind,
+                #"blind": True if ("SR" in histnames[0] and "Full" in histnames[0]) else blind,
+                "blind": False,
                 "lumi_value": "41.3" if is2017 else "35.9",
                 #"yaxis_range": [0., 30],
                 #"yaxis_log": True,
@@ -1069,18 +1225,22 @@ def fake_est_plots():
 def study_jer_syst():
 
     global bkg_order
-    bkg_order = ["www", "photon", "qflip", "prompt", "ttw", "vbsww"]
+    bkg_order = ["www", "photon", "qflip", "prompt", "ttw", "vbsww", "lostlep"]
 
     # Get the main yield
     lostlep_sf = get_lostlep_sf() # Get the lost lepton scale factors
-    hists = get_yield_hists("SR", True, lostlep_sf, "JER")
-    hists_jerup = get_yield_hists("SR", True, lostlep_sf, "JERUp")
-    hists_jerdn = get_yield_hists("SR", True, lostlep_sf, "JERDown")
+    hists = get_yield_hists("WZCR", True, lostlep_sf, "JER")
+    hists_jerup = get_yield_hists("WZCR", True, lostlep_sf, "JERUp")
+    hists_jerdn = get_yield_hists("WZCR", True, lostlep_sf, "JERDown")
+    hists_nom = get_yield_hists("WZCR", True, lostlep_sf) # JES nominal
+    hists_jesup = get_yield_hists("WZCR", True, lostlep_sf, "JESUp") # JES up
+    hists_jesdn = get_yield_hists("WZCR", True, lostlep_sf, "JESDown") # JES down
 
     # aggregate a list of backgrounds from the "hists"
     bgs = [ hists[x] for x in bkg_order ]
 
     for x in bkg_order:
+
         # Set the option for plotting
         alloptions= {
                     "ratio_range":[0.0,2.2],
@@ -1092,7 +1252,7 @@ def study_jer_syst():
                     "print_yield": True,
                     "yield_prec": 3,
                     "lumi_value": "41.3" if is2017 else "35.9",
-                    #"yaxis_range": [0., 30],
+                    "yaxis_range": [0., 2.7],
                     #"yaxis_log": True,
                     }
 
@@ -1104,6 +1264,45 @@ def study_jer_syst():
         varup.Divide(hists[x])
         vardn.Divide(hists[x])
         nom = hists[x].Clone()
+        nom.Divide(nom)
+
+        # p.plot_hist(
+        #         sigs = [hists_jerup[x], hists_jerdn[x]],
+        #         bgs  = [hists[x]],
+        #         data = None,
+        #         colors = [2001],
+        #         options=alloptions)
+
+        p.plot_hist(
+                sigs = [varup, vardn],
+                bgs  = [nom],
+                data = None,
+                colors = [2001],
+                options=alloptions)
+
+        # Set the option for plotting
+        alloptions= {
+                    "ratio_range":[0.0,2.2],
+                    "autobin": False,
+                    "legend_scalex": 1.8,
+                    "legend_scaley": 1.1,
+                    "bkg_sort_method": "unsorted",
+                    "no_ratio": False,
+                    "print_yield": True,
+                    "yield_prec": 3,
+                    "lumi_value": "41.3" if is2017 else "35.9",
+                    "yaxis_range": [0., 2.7],
+                    #"yaxis_log": True,
+                    }
+
+        alloptions["output_name"] = "plots/{}/{}/{}.pdf".format(input_ntuple, analysis_tag, x + "_jes_study")
+        print alloptions["output_name"]
+
+        varup = hists_jesup[x].Clone()
+        vardn = hists_jesdn[x].Clone()
+        varup.Divide(hists_nom[x])
+        vardn.Divide(hists_nom[x])
+        nom = hists_nom[x].Clone()
         nom.Divide(nom)
 
         # p.plot_hist(
@@ -1232,6 +1431,10 @@ def get_hists(histnames, use_data_driven_fakes=False, docutflow=False, sfs={}, d
     whwww_list = glob.glob(output_dirpath+"/whwww.root")
     smwwwofficial_list = glob.glob(output_dirpath+"/smwwwofficial.root")
     whwwwofficial_list = glob.glob(output_dirpath+"/whwwwofficial.root")
+    if len(smwwwofficial_list) == 0:
+        smwwwofficial_list = glob.glob(output_dirpath+"/smwww.root")
+    if len(whwwwofficial_list) == 0:
+        whwwwofficial_list = glob.glob(output_dirpath+"/whwww.root")
 
     do_retrieve_data_event_based_histograms = ("Up" not in histnames[0] and "Down" not in histnames[0]) or ("Fake" in histnames[0])
 
@@ -1345,6 +1548,7 @@ def get_yield_hists(region, use_data_driven_fakes, sfs={}, syst=""):
 
 if __name__ == "__main__":
 
-    test_main()
-    #main()
+    make_test_plots()
+    #make_2016_v122_plots()
+    #make_2017_plots()
 

@@ -12,7 +12,7 @@
 help()
 {
     echo "Error - Usage:"
-    echo "$0 INPUT_BABY_VERSION TAG_FOR_ANALYSIS_RUN [REGIONS]"
+    echo "$0 INPUT_BABY_VERSION TAG_FOR_ANALYSIS_RUN [REGIONS=all]"
     exit
 }
 
@@ -191,7 +191,6 @@ for f in $(ls /nfs-7/userdata/phchang/WWW_babies/${VERSION}/skim/*.root); do
     fi
 done
 
-
 #_____________________________________________________________________________________________
 
 ####################
@@ -210,20 +209,20 @@ TAG=${VERSION}
 DIRPATH=${OUTPUTDIR}
 OUTPATH=${OUTPUTDIR}
 
-lostlep=$(ls $DIRPATH/*t_lostlep_*.root                                  | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                               ) 
-photon=$(ls $DIRPATH/*t_photon_*.root                                    | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                               ) 
-qflip=$(ls $DIRPATH/*t_qflip_*.root                                      | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                               ) 
-ddfakes=$(ls $DIRPATH/*t_ddfakes_*.root                                  | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                               ) 
-ewksubt=$(ls $DIRPATH/*t_ewksubt_*.root                                  | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow | grep -v "wjets_incl"        ) 
-fakes=$(ls $DIRPATH/*t_fakes_*.root                                      | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                               ) 
-prompt=$(ls $DIRPATH/*t_prompt_*.root                                    | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                               ) 
-vbsww=$(ls $DIRPATH/*t_ss_*vbsww_*.root $DIRPATH/*t_ss_*wpwpjj_*.root    | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                               ) 
-ttw=$(ls $DIRPATH/*t_ss_*ttw_*.root                                      | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                               ) 
-lostlep_fit=$(ls $DIRPATH/*t_lostlep_*.root                              | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow | grep -v ttw | grep -v vbsww ) 
-photon_fit=$(ls $DIRPATH/*t_photon_*.root                                | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow | grep -v ttw | grep -v vbsww ) 
-qflip_fit=$(ls $DIRPATH/*t_qflip_*.root                                  | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow | grep -v ttw | grep -v vbsww ) 
-fakes_fit=$(ls $DIRPATH/*t_fakes_*.root                                  | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow | grep -v ttw | grep -v vbsww ) 
-prompt_fit=$(ls $DIRPATH/*t_prompt_*.root                                | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow | grep -v ttw | grep -v vbsww ) 
+lostlep=$(ls $DIRPATH/*t_lostlep_*.root                                  | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                                                  ) 
+photon=$(ls $DIRPATH/*t_photon_*.root                                    | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                                                  ) 
+qflip=$(ls $DIRPATH/*t_qflip_*.root                                      | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                                                  ) 
+ddfakes=$(ls $DIRPATH/*t_ddfakes_*.root                                  | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                                                  ) 
+ewksubt=$(ls $DIRPATH/*t_ewksubt_*.root                                  | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow | grep -v "wjets_incl"                           ) 
+fakes=$(ls $DIRPATH/*t_fakes_*.root                                      | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                                                  ) 
+prompt=$(ls $DIRPATH/*t_prompt_*.root                                    | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                                                  ) 
+vbsww=$(ls $DIRPATH/*t_ss_*vbsww_*.root $DIRPATH/*t_ss_*wpwpjj_*.root    | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                                                  ) 
+ttw=$(ls $DIRPATH/*t_ss_*ttw_*.root                                      | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow                                                  ) 
+lostlep_fit=$(ls $DIRPATH/*t_lostlep_*.root                              | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow | grep -v _ttw_ | grep -v vbsww | grep -v wpwpjj ) 
+photon_fit=$(ls $DIRPATH/*t_photon_*.root                                | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow | grep -v _ttw_ | grep -v vbsww | grep -v wpwpjj ) 
+qflip_fit=$(ls $DIRPATH/*t_qflip_*.root                                  | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow | grep -v _ttw_ | grep -v vbsww | grep -v wpwpjj ) 
+fakes_fit=$(ls $DIRPATH/*t_fakes_*.root                                  | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow | grep -v _ttw_ | grep -v vbsww | grep -v wpwpjj ) 
+prompt_fit=$(ls $DIRPATH/*t_prompt_*.root                                | grep -v wz_incl | grep -v wz_3lv_amc | grep -v wz_3lv_pow | grep -v _ttw_ | grep -v vbsww | grep -v wpwpjj ) 
 data=$(ls $DIRPATH/*t_ss_data*.root )
 signal=$(ls $DIRPATH/t_www_vh_ww*.root $DIRPATH/t_www_www_private*.root $DIRPATH/t_www_vh_nonbb*.root $DIRPATH/t_www_www_2l*.root)
 signalofficial=$(ls $DIRPATH/t_www_vh_nonbb*.root $DIRPATH/t_www_www_amc*.root)
