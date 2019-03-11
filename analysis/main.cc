@@ -45,6 +45,9 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
     // Print the cut structure for review
     cutflow.printCuts();
 
+    // For cutflow challenge, load the list of eventlist.txt
+    RooUtil::EventList eventlist("eventlist.txt");
+
     //
     //
     // Looping events
@@ -64,6 +67,19 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
 
         // Once every cut bits are set, now fill the cutflows that are booked
         cutflow.fill();
+
+        // Must come after .fill() so that the cuts are all evaulated
+        if (eventlist.has(www.run(), www.lumi(), www.evt()))
+        {
+            std::cout <<  "***************************" << std::endl;
+            std::cout <<  "**** Cutflow Challenge ****" << std::endl;
+            std::cout <<  "***************************" << std::endl;
+            std::cout <<  " Checking following events:" << std::endl;
+            std::cout <<  " www.run(): " << www.run() <<  " www.lumi(): " << www.lumi() <<  " www.evt(): " << www.evt() <<  std::endl;
+            std::cout <<  " Below shows whether it passes or fails the cuts" << std::endl;
+            cutflow.printCuts();
+        }
+
     }
 
     // Save output

@@ -148,6 +148,7 @@ def make_test_plots():
     set_to_2016_v122()
     # set_to_2016()
 
+    study_lostlep()
     plot("SR", "sr_yield", True, caption="Signal region yields with each process set to its background estimation method's prediction.", do_ewksubtraction=False)#, extraoptions={"yaxis_range":[0.,25.]})
 
     write_datacard()

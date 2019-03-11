@@ -7,7 +7,7 @@
 [submodule "wwwbabymaker"]
 	path = wwwbabymaker
 	url = git@github.com:cmstas/VVVBabyMaker.git
-	branch = 2017
+	branch = master
 [submodule "fakerate/plottery"]
 	path = fakerate/plottery
 	url = git@github.com:aminnj/plottery.git
