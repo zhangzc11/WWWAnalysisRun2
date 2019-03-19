@@ -20,6 +20,7 @@ ROOTLIBS   = $(shell root-config --libs)
 ROOTCFLAGS = $(shell root-config --cflags)
 CXXFLAGS  += $(ROOTCFLAGS)
 CFLAGS     = $(ROOTCFLAGS) -Wall -Wno-unused-function $(DEBUG) -O2 -fPIC -fno-var-tracking
+EXTRACFLAGS = $(shell rooutil-config)
 EXTRAFLAGS = -fPIC -ITMultiDrawTreePlayer -Wunused-variable -lTMVA -lEG -lGenVector -lXMLIO -lMLP -lTreePlayer
 
 #.PHONY: check-env
@@ -28,7 +29,7 @@ $(EXE): $(OBJECTS) wwwtree.o
 	$(LD) $(CXXFLAGS) $(LDFLAGS) $(OBJECTS) $(ROOTLIBS) $(EXTRAFLAGS) -o $@
 
 %.o: %.cc
-	$(CC) $(CFLAGS) $< -c
+	$(CC) $(CFLAGS) $(EXTRACFLAGS) $< -c
 
 clean:
 	rm -f *.o $(EXE)

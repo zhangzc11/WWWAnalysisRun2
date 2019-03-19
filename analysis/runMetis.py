@@ -32,8 +32,8 @@ def main():
     # input_ntup_tag = "WWW2017_v5.0.2"
 
     # JER Study
-    job_tag = "test36"
-    input_ntup_tag = "WWW2017_v5.0.2"
+    job_tag = "test100"
+    input_ntup_tag = "Loose2017_v5.1.3"
 
     base_dir_path = "/hadoop/cms/store/user/phchang/metis/wwwbaby/{}/".format(input_ntup_tag)
     tar_files = ["doAnalysis", "setup.sh", "scalefactors/*.root", "scalefactors/*/*/*/*/sf.root"]
@@ -68,23 +68,32 @@ def main():
         return False
 
     # Bkg sample
-    for sample_dir_path in [ x for x in all_samples if "MAKER_WWW_" not in x and "_Run201" not in x and is_good_bkg_sample(x) ]:
+    for sample_dir_path in [ x for x in all_samples if "WWW_" not in x and "_Run201" not in x and is_good_bkg_sample(x) ]:
         for tree in trees + ["t_ss"]:
-            sample_name = sample_dir_path.split("MAKER_")[1].split("_"+input_ntup_tag)[0] + "_" + tree
+            if "MAKER_" in sample_dir_path:
+                sample_name = sample_dir_path.split("MAKER_")[1].split("_"+input_ntup_tag)[0] + "_" + tree
+            else:
+                sample_name = sample_dir_path.split("_"+input_ntup_tag)[0] + "_" + tree
             samples_map[sample_name] = sample_dir_path
             arguments_map[sample_name] = "{} {} {} {}".format(tree, tree, regions, dohist)
 
     # Signal sample
     for sample_dir_path in [ x for x in all_samples if is_good_sig_sample(x) ]:
         tree = "t" if "OS" in input_ntup_tag else "t_www"
-        sample_name = sample_dir_path.split("MAKER_")[1].split("_"+input_ntup_tag)[0] + "_" + tree
+        if "MAKER_" in sample_dir_path:
+            sample_name = sample_dir_path.split("MAKER_")[1].split("_"+input_ntup_tag)[0] + "_" + tree
+        else:
+            sample_name = sample_dir_path.split("_"+input_ntup_tag)[0] + "_" + tree
         samples_map[sample_name] = sample_dir_path
         arguments_map[sample_name] = "{} {} {} {}".format(tree, tree, regions, dohist)
 
     # Data sample
     for sample_dir_path in [ x for x in all_samples if "_Run201" in x ]:
         tree = "t" if "OS" in input_ntup_tag else "t_ss"
-        sample_name = sample_dir_path.split("MAKER_")[1].split("_"+input_ntup_tag)[0] + "_" + tree
+        if "MAKER_" in sample_dir_path:
+            sample_name = sample_dir_path.split("MAKER_")[1].split("_"+input_ntup_tag)[0] + "_" + tree
+        else:
+            sample_name = sample_dir_path.split("_"+input_ntup_tag)[0] + "_" + tree
         samples_map[sample_name] = sample_dir_path
         arguments_map[sample_name] = "{} {} {} {}".format(tree, tree, regions, dohist)
 
@@ -93,14 +102,20 @@ def main():
         # Data-driven fake sample
         for sample_dir_path in [ x for x in all_samples if "_Run201" in x ]:
             tree = "t_ddfakes"
-            sample_name = sample_dir_path.split("MAKER_")[1].split("_"+input_ntup_tag)[0] + "_" + tree
+            if "MAKER_" in sample_dir_path:
+                sample_name = sample_dir_path.split("MAKER_")[1].split("_"+input_ntup_tag)[0] + "_" + tree
+            else:
+                sample_name = sample_dir_path.split("_"+input_ntup_tag)[0] + "_" + tree
             samples_map[sample_name] = sample_dir_path
             arguments_map[sample_name] = "{} {} {} {}".format("t_ss", tree, regions, dohist)
 
         # Electroweak subtraction in data-drivek fake estimate
         for sample_dir_path in [ x for x in all_samples if "_Run201" not in x and is_good_bkg_sample(x) ]:
             tree = "t_ewksubt"
-            sample_name = sample_dir_path.split("MAKER_")[1].split("_"+input_ntup_tag)[0] + "_" + tree
+            if "MAKER_" in sample_dir_path:
+                sample_name = sample_dir_path.split("MAKER_")[1].split("_"+input_ntup_tag)[0] + "_" + tree
+            else:
+                sample_name = sample_dir_path.split("_"+input_ntup_tag)[0] + "_" + tree
             samples_map[sample_name] = sample_dir_path
             arguments_map[sample_name] = "{} {} {} {}".format("t_ss", tree, regions, dohist)
 

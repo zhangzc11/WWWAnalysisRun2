@@ -15,3 +15,5 @@ export LD_LIBRARY_PATH=$DIR:$LD_LIBRARY_PATH
 if [ ! -d ./scalefactors/ ]; then
     cp -r /home/users/phchang/public_html/analysis/www/code/WWWAnalysis/WWWAnalysis/scalefactors .
 fi
+
+source ./rooutil/thisrooutil.sh

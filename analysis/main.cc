@@ -1,10 +1,17 @@
 #include "main.h"
+#include "cxxopts.h"
 
 //_______________________________________________________________________________________________________
 int process(const char* input_paths, const char* input_tree_name, const char* output_file_name, int nEvents, TString regions)
 {
     // Creating output file where we will put the outputs of the processing
     TFile* ofile = new TFile(output_file_name, "create");
+
+    if (not ofile->IsOpen())
+    {
+        std::cout << "ERROR: output already exists! provide new output name or delete old file. OUTPUTFILE=" << output_file_name << std::endl;
+        exit(1);
+    }
 
     // Create a TChain of the input files
     // The input files can be comma separated (e.g. "file1.root,file2.root")
@@ -33,8 +40,8 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
     addLowMETApplicationRegionCuts(cutflow);
     addPromptControlRegionCuts(cutflow);
     addGammaControlRegionCuts(cutflow);
-//    addOppositeSignControlRegionCuts(cutflow); // Not needed for main analysis
     addLooseLeptonControlRegionCuts(cutflow); // Not needed for main analysis
+//    addOppositeSignControlRegionCuts(cutflow); // Not needed for main analysis
 
     // Adding systematic cuts
     // addSystematicCuts(cutflow);
