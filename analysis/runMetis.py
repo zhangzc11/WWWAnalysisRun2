@@ -27,8 +27,12 @@ def main():
 #    input_ntup_tag = "Loose2017_v4.0.6.2"
 #    input_ntup_tag = "WWW2017_v5.0.0"
 
+    # # JER Study
+    # job_tag = "jerstudy_v1"
+    # input_ntup_tag = "WWW2017_v5.0.2"
+
     # JER Study
-    job_tag = "jerstudy_v1"
+    job_tag = "test36"
     input_ntup_tag = "WWW2017_v5.0.2"
 
     base_dir_path = "/hadoop/cms/store/user/phchang/metis/wwwbaby/{}/".format(input_ntup_tag)

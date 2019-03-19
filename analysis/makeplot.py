@@ -114,6 +114,11 @@ def set_to_2017():
     analysis_tag = "test35"
     iscondor = True
 
+    #---
+    input_ntuple = "WWW2017_v5.0.0"
+    analysis_tag = "test1"
+    iscondor = False
+
     hassyst = True
     hashist = False
     process_output_dirpath()
@@ -144,6 +149,11 @@ def set_bkg_to_5():
 
 #________________________________________________________________________________________________________________________________________
 def make_test_plots():
+
+    set_to_2017()
+    plot(["SRSSmmNb0__lep_pt1"], "SRSSmmNb0__lep_pt1", False, caption="", do_ewksubtraction=False)#, extraoptions={"yaxis_range":[0.,25.]})
+
+    return
 
     set_to_2016_v122()
     # set_to_2016()
@@ -1444,7 +1454,7 @@ def get_hists(histnames, use_data_driven_fakes=False, docutflow=False, sfs={}, d
         hists["lostlep"] = ru.get_summed_histogram(bkg_lists["lostlep"] , histnames , sfs=sfs)
         hists["photon"]  = ru.get_summed_histogram(bkg_lists["photon"]  , histnames , sfs=sfs)
         hists["qflip"]   = ru.get_summed_histogram(bkg_lists["qflip"]   , histnames , sfs=sfs)
-        hists["ewksubt"] = ru.get_summed_histogram(bkg_lists["ewksubt"] , histnames , sfs=sfs)
+        # hists["ewksubt"] = ru.get_summed_histogram(bkg_lists["ewksubt"] , histnames , sfs=sfs)
         hists["prompt"]  = ru.get_summed_histogram(bkg_lists["prompt"]  , histnames , sfs=sfs)
         hists["vbsww"]   = ru.get_summed_histogram(bkg_lists["vbsww"]   , histnames , sfs=sfs)
         hists["ttw"]     = ru.get_summed_histogram(bkg_lists["ttw"]     , histnames , sfs=sfs)
@@ -1465,7 +1475,7 @@ def get_hists(histnames, use_data_driven_fakes=False, docutflow=False, sfs={}, d
         hists["lostlep"] = ru.get_yield_histogram(bkg_lists["lostlep"] , histnames , labels=labels, sfs=sfs, hsuffix=("_cutflow" if not dorawcutflow else "_rawcutflow"))
         hists["photon"]  = ru.get_yield_histogram(bkg_lists["photon"]  , histnames , labels=labels, sfs=sfs, hsuffix=("_cutflow" if not dorawcutflow else "_rawcutflow"))
         hists["qflip"]   = ru.get_yield_histogram(bkg_lists["qflip"]   , histnames , labels=labels, sfs=sfs, hsuffix=("_cutflow" if not dorawcutflow else "_rawcutflow"))
-        hists["ewksubt"] = ru.get_yield_histogram(bkg_lists["ewksubt"] , histnames , labels=labels, sfs=sfs, hsuffix=("_cutflow" if not dorawcutflow else "_rawcutflow"))
+        # hists["ewksubt"] = ru.get_yield_histogram(bkg_lists["ewksubt"] , histnames , labels=labels, sfs=sfs, hsuffix=("_cutflow" if not dorawcutflow else "_rawcutflow"))
         hists["prompt"]  = ru.get_yield_histogram(bkg_lists["prompt"]  , histnames , labels=labels, sfs=sfs, hsuffix=("_cutflow" if not dorawcutflow else "_rawcutflow"))
         hists["vbsww"]   = ru.get_yield_histogram(bkg_lists["vbsww"]   , histnames , labels=labels, sfs=sfs, hsuffix=("_cutflow" if not dorawcutflow else "_rawcutflow"))
         hists["ttw"]     = ru.get_yield_histogram(bkg_lists["ttw"]     , histnames , labels=labels, sfs=sfs, hsuffix=("_cutflow" if not dorawcutflow else "_rawcutflow"))
@@ -1551,5 +1561,5 @@ if __name__ == "__main__":
 
     make_test_plots()
     #make_2016_v122_plots()
-    #make_2017_plots()
+    # make_2017_plots()
 

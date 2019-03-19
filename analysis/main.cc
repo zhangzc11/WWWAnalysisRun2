@@ -4,7 +4,7 @@
 int process(const char* input_paths, const char* input_tree_name, const char* output_file_name, int nEvents, TString regions)
 {
     // Creating output file where we will put the outputs of the processing
-    TFile* ofile = new TFile(output_file_name, "recreate");
+    TFile* ofile = new TFile(output_file_name, "create");
 
     // Create a TChain of the input files
     // The input files can be comma separated (e.g. "file1.root,file2.root")
@@ -34,10 +34,10 @@ int process(const char* input_paths, const char* input_tree_name, const char* ou
     addPromptControlRegionCuts(cutflow);
     addGammaControlRegionCuts(cutflow);
 //    addOppositeSignControlRegionCuts(cutflow); // Not needed for main analysis
-   addLooseLeptonControlRegionCuts(cutflow); // Not needed for main analysis
+    addLooseLeptonControlRegionCuts(cutflow); // Not needed for main analysis
 
     // Adding systematic cuts
-    addSystematicCuts(cutflow);
+    // addSystematicCuts(cutflow);
 
     // Now book the cutflow and histogram jobs
     bookCutflowsAndHistogramsForGivenRegions(cutflow, histograms, regions);

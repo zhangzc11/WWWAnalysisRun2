@@ -228,8 +228,8 @@ signal=$(ls $DIRPATH/t_www_vh_ww*.root $DIRPATH/t_www_www_private*.root $DIRPATH
 signalofficial=$(ls $DIRPATH/t_www_vh_nonbb*.root $DIRPATH/t_www_www_amc*.root)
 smwwwofficial=$(ls $DIRPATH/t_www_www_amc*.root)
 whwwwofficial=$(ls $DIRPATH/t_www_vh_nonbb*.root)
-smwww=$(ls $DIRPATH/t_www_www_private*.root $DIRPATH/t_www_www_2l*.root)
-whwww=$(ls $DIRPATH/t_www_vh_ww*.root $DIRPATH/t_www_vh_nonbb*.root)
+smwww=$(ls $DIRPATH/t_www_www_private*.root $DIRPATH/t_www_www_2l*.root $DIRPATH/t_www_www_amcatnlo_private*.root)
+whwww=$(ls $DIRPATH/t_www_vh_ww*.root $DIRPATH/t_www_vh_nonbb*.root $DIRPATH/t_www_www_amcatnlo.root)
 
 if [ -z "${lostlep}"        ] ; then echo "lostlep is empty"        ; exit ; fi
 if [ -z "${photon}"         ] ; then echo "photon is empty"         ; exit ; fi
