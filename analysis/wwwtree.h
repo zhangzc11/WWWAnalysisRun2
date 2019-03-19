@@ -2581,5 +2581,5 @@ namespace tas {
   const float &Mll_higgs();
   const float &MT_higgs();
 }
-#include "rooutil/rooutil.h"
+#include "rooutil.h"
 #endif
