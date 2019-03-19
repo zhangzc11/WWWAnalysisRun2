@@ -389,18 +389,18 @@ void addSystematicCuts(RooUtil::Cutflow& cutflow)
 //        cutflow.setCutSyst("OSCReeMjjL"            , "JESUp" , systematic_cuts["www.MjjL_up()<400."]                                    , UNITY);
 //        cutflow.setCutSyst("OSCReeDetajjL"         , "JESUp" , systematic_cuts["www.DetajjL_up()<1.5" ]                                 , UNITY);
 //        cutflow.setCutSyst("OSCReeMET"             , "JESUp" , systematic_cuts["www.met_up_pt()>60."]                                   , UNITY);
-//        cutflow.setCutSyst("LRSSmmMET"             , "JESUp" , systematic_cuts["1."]                                                    , UNITY);
-//        cutflow.setCutSyst("LRSSmmMjjW"            , "JESUp" , systematic_cuts["fabs(www.Mjj_up()-80.)<15."]                            , UNITY);
-//        cutflow.setCutSyst("LRSSmmMjjL"            , "JESUp" , systematic_cuts["www.MjjL_up()<400."]                                    , UNITY);
-//        cutflow.setCutSyst("LRSSmmDetajjL"         , "JESUp" , systematic_cuts["www.DetajjL_up()<1.5" ]                                 , UNITY);
-//        cutflow.setCutSyst("LRSSemMjjW"            , "JESUp" , systematic_cuts["fabs(www.Mjj_up()-80.)<15."]                            , UNITY);
-//        cutflow.setCutSyst("LRSSemMjjL"            , "JESUp" , systematic_cuts["www.MjjL_up()<400."]                                    , UNITY);
-//        cutflow.setCutSyst("LRSSemDetajjL"         , "JESUp" , systematic_cuts["www.DetajjL_up()<1.5" ]                                 , UNITY);
-//        cutflow.setCutSyst("LRSSemMET"             , "JESUp" , systematic_cuts["www.met_up_pt()>60."]                                   , UNITY);
-//        cutflow.setCutSyst("LRSSeeMjjW"            , "JESUp" , systematic_cuts["fabs(www.Mjj_up()-80.)<15."]                            , UNITY);
-//        cutflow.setCutSyst("LRSSeeMjjL"            , "JESUp" , systematic_cuts["www.MjjL_up()<400."]                                    , UNITY);
-//        cutflow.setCutSyst("LRSSeeDetajjL"         , "JESUp" , systematic_cuts["www.DetajjL_up()<1.5" ]                                 , UNITY);
-//        cutflow.setCutSyst("LRSSeeMET"             , "JESUp" , systematic_cuts["www.met_up_pt()>60."]                                   , UNITY);
+        cutflow.setCutSyst("LRSSmmMET"             , "JESUp" , systematic_cuts["1."]                                                    , UNITY);
+        cutflow.setCutSyst("LRSSmmMjjW"            , "JESUp" , systematic_cuts["fabs(www.Mjj_up()-80.)<15."]                            , UNITY);
+        cutflow.setCutSyst("LRSSmmMjjL"            , "JESUp" , systematic_cuts["www.MjjL_up()<400."]                                    , UNITY);
+        cutflow.setCutSyst("LRSSmmDetajjL"         , "JESUp" , systematic_cuts["www.DetajjL_up()<1.5" ]                                 , UNITY);
+        cutflow.setCutSyst("LRSSemMjjW"            , "JESUp" , systematic_cuts["fabs(www.Mjj_up()-80.)<15."]                            , UNITY);
+        cutflow.setCutSyst("LRSSemMjjL"            , "JESUp" , systematic_cuts["www.MjjL_up()<400."]                                    , UNITY);
+        cutflow.setCutSyst("LRSSemDetajjL"         , "JESUp" , systematic_cuts["www.DetajjL_up()<1.5" ]                                 , UNITY);
+        cutflow.setCutSyst("LRSSemMET"             , "JESUp" , systematic_cuts["www.met_up_pt()>60."]                                   , UNITY);
+        cutflow.setCutSyst("LRSSeeMjjW"            , "JESUp" , systematic_cuts["fabs(www.Mjj_up()-80.)<15."]                            , UNITY);
+        cutflow.setCutSyst("LRSSeeMjjL"            , "JESUp" , systematic_cuts["www.MjjL_up()<400."]                                    , UNITY);
+        cutflow.setCutSyst("LRSSeeDetajjL"         , "JESUp" , systematic_cuts["www.DetajjL_up()<1.5" ]                                 , UNITY);
+        cutflow.setCutSyst("LRSSeeMET"             , "JESUp" , systematic_cuts["www.met_up_pt()>60."]                                   , UNITY);
 
         cutflow.setCutSyst("SRSSmmMET"                      , "JESDown" , systematic_cuts["1."], UNITY);
         cutflow.setCutSyst("SRSSmmMjjW"                     , "JESDown" , systematic_cuts["fabs(www.Mjj_dn()-80.)<15."], UNITY);
@@ -592,18 +592,18 @@ void addSystematicCuts(RooUtil::Cutflow& cutflow)
 //        cutflow.setCutSyst("OSCReeMjjL"                     , "JESDown" , systematic_cuts["www.MjjL_dn()<400."], UNITY);
 //        cutflow.setCutSyst("OSCReeDetajjL"                  , "JESDown" , systematic_cuts["www.DetajjL_dn()<1.5"], UNITY);
 //        cutflow.setCutSyst("OSCReeMET"                      , "JESDown" , systematic_cuts["www.met_dn_pt()>60."], UNITY);
-//        cutflow.setCutSyst("LRSSmmMET"                      , "JESDown" , systematic_cuts["1."], UNITY);
-//        cutflow.setCutSyst("LRSSmmMjjW"                     , "JESDown" , systematic_cuts["fabs(www.Mjj_dn()-80.)<15."], UNITY);
-//        cutflow.setCutSyst("LRSSmmMjjL"                     , "JESDown" , systematic_cuts["www.MjjL_dn()<400."], UNITY);
-//        cutflow.setCutSyst("LRSSmmDetajjL"                  , "JESDown" , systematic_cuts["www.DetajjL_dn()<1.5"], UNITY);
-//        cutflow.setCutSyst("LRSSemMjjW"                     , "JESDown" , systematic_cuts["fabs(www.Mjj_dn()-80.)<15."], UNITY);
-//        cutflow.setCutSyst("LRSSemMjjL"                     , "JESDown" , systematic_cuts["www.MjjL_dn()<400."], UNITY);
-//        cutflow.setCutSyst("LRSSemDetajjL"                  , "JESDown" , systematic_cuts["www.DetajjL_dn()<1.5"], UNITY);
-//        cutflow.setCutSyst("LRSSemMET"                      , "JESDown" , systematic_cuts["www.met_dn_pt()>60."], UNITY);
-//        cutflow.setCutSyst("LRSSeeMjjW"                     , "JESDown" , systematic_cuts["fabs(www.Mjj_dn()-80.)<15."], UNITY);
-//        cutflow.setCutSyst("LRSSeeMjjL"                     , "JESDown" , systematic_cuts["www.MjjL_dn()<400."], UNITY);
-//        cutflow.setCutSyst("LRSSeeDetajjL"                  , "JESDown" , systematic_cuts["www.DetajjL_dn()<1.5"], UNITY);
-//        cutflow.setCutSyst("LRSSeeMET"                      , "JESDown" , systematic_cuts["www.met_dn_pt()>60."], UNITY);
+        cutflow.setCutSyst("LRSSmmMET"                      , "JESDown" , systematic_cuts["1."], UNITY);
+        cutflow.setCutSyst("LRSSmmMjjW"                     , "JESDown" , systematic_cuts["fabs(www.Mjj_dn()-80.)<15."], UNITY);
+        cutflow.setCutSyst("LRSSmmMjjL"                     , "JESDown" , systematic_cuts["www.MjjL_dn()<400."], UNITY);
+        cutflow.setCutSyst("LRSSmmDetajjL"                  , "JESDown" , systematic_cuts["www.DetajjL_dn()<1.5"], UNITY);
+        cutflow.setCutSyst("LRSSemMjjW"                     , "JESDown" , systematic_cuts["fabs(www.Mjj_dn()-80.)<15."], UNITY);
+        cutflow.setCutSyst("LRSSemMjjL"                     , "JESDown" , systematic_cuts["www.MjjL_dn()<400."], UNITY);
+        cutflow.setCutSyst("LRSSemDetajjL"                  , "JESDown" , systematic_cuts["www.DetajjL_dn()<1.5"], UNITY);
+        cutflow.setCutSyst("LRSSemMET"                      , "JESDown" , systematic_cuts["www.met_dn_pt()>60."], UNITY);
+        cutflow.setCutSyst("LRSSeeMjjW"                     , "JESDown" , systematic_cuts["fabs(www.Mjj_dn()-80.)<15."], UNITY);
+        cutflow.setCutSyst("LRSSeeMjjL"                     , "JESDown" , systematic_cuts["www.MjjL_dn()<400."], UNITY);
+        cutflow.setCutSyst("LRSSeeDetajjL"                  , "JESDown" , systematic_cuts["www.DetajjL_dn()<1.5"], UNITY);
+        cutflow.setCutSyst("LRSSeeMET"                      , "JESDown" , systematic_cuts["www.met_dn_pt()>60."], UNITY);
 
         if (doJER)
         {
@@ -798,18 +798,18 @@ void addSystematicCuts(RooUtil::Cutflow& cutflow)
             // cutflow.setCutSyst("OSCReeMjjL"                     , "JER"     , systematic_cuts["www.MjjL_jer()<400."], UNITY);
             // cutflow.setCutSyst("OSCReeDetajjL"                  , "JER"     , systematic_cuts["www.DetajjL_jer()<1.5"], UNITY);
             // cutflow.setCutSyst("OSCReeMET"                      , "JER"     , systematic_cuts["www.met_jer_pt()>60."], UNITY);
-            // cutflow.setCutSyst("LRSSmmMET"                      , "JER"     , systematic_cuts["1."], UNITY);
-            // cutflow.setCutSyst("LRSSmmMjjW"                     , "JER"     , systematic_cuts["fabs(www.Mjj_jer()-80.)<15."], UNITY);
-            // cutflow.setCutSyst("LRSSmmMjjL"                     , "JER"     , systematic_cuts["www.MjjL_jer()<400."], UNITY);
-            // cutflow.setCutSyst("LRSSmmDetajjL"                  , "JER"     , systematic_cuts["www.DetajjL_jer()<1.5"], UNITY);
-            // cutflow.setCutSyst("LRSSemMjjW"                     , "JER"     , systematic_cuts["fabs(www.Mjj_jer()-80.)<15."], UNITY);
-            // cutflow.setCutSyst("LRSSemMjjL"                     , "JER"     , systematic_cuts["www.MjjL_jer()<400."], UNITY);
-            // cutflow.setCutSyst("LRSSemDetajjL"                  , "JER"     , systematic_cuts["www.DetajjL_jer()<1.5"], UNITY);
-            // cutflow.setCutSyst("LRSSemMET"                      , "JER"     , systematic_cuts["www.met_jer_pt()>60."], UNITY);
-            // cutflow.setCutSyst("LRSSeeMjjW"                     , "JER"     , systematic_cuts["fabs(www.Mjj_jer()-80.)<15."], UNITY);
-            // cutflow.setCutSyst("LRSSeeMjjL"                     , "JER"     , systematic_cuts["www.MjjL_jer()<400."], UNITY);
-            // cutflow.setCutSyst("LRSSeeDetajjL"                  , "JER"     , systematic_cuts["www.DetajjL_jer()<1.5"], UNITY);
-            // cutflow.setCutSyst("LRSSeeMET"                      , "JER"     , systematic_cuts["www.met_jer_pt()>60."], UNITY);
+            cutflow.setCutSyst("LRSSmmMET"                      , "JER"     , systematic_cuts["1."], UNITY);
+            cutflow.setCutSyst("LRSSmmMjjW"                     , "JER"     , systematic_cuts["fabs(www.Mjj_jer()-80.)<15."], UNITY);
+            cutflow.setCutSyst("LRSSmmMjjL"                     , "JER"     , systematic_cuts["www.MjjL_jer()<400."], UNITY);
+            cutflow.setCutSyst("LRSSmmDetajjL"                  , "JER"     , systematic_cuts["www.DetajjL_jer()<1.5"], UNITY);
+            cutflow.setCutSyst("LRSSemMjjW"                     , "JER"     , systematic_cuts["fabs(www.Mjj_jer()-80.)<15."], UNITY);
+            cutflow.setCutSyst("LRSSemMjjL"                     , "JER"     , systematic_cuts["www.MjjL_jer()<400."], UNITY);
+            cutflow.setCutSyst("LRSSemDetajjL"                  , "JER"     , systematic_cuts["www.DetajjL_jer()<1.5"], UNITY);
+            cutflow.setCutSyst("LRSSemMET"                      , "JER"     , systematic_cuts["www.met_jer_pt()>60."], UNITY);
+            cutflow.setCutSyst("LRSSeeMjjW"                     , "JER"     , systematic_cuts["fabs(www.Mjj_jer()-80.)<15."], UNITY);
+            cutflow.setCutSyst("LRSSeeMjjL"                     , "JER"     , systematic_cuts["www.MjjL_jer()<400."], UNITY);
+            cutflow.setCutSyst("LRSSeeDetajjL"                  , "JER"     , systematic_cuts["www.DetajjL_jer()<1.5"], UNITY);
+            cutflow.setCutSyst("LRSSeeMET"                      , "JER"     , systematic_cuts["www.met_jer_pt()>60."], UNITY);
 
             // Systematics that affect the raw number of events
             cutflow.setCutSyst("SRSSmmMET"                      , "JERUp"   , systematic_cuts["1."], UNITY);
@@ -1002,18 +1002,18 @@ void addSystematicCuts(RooUtil::Cutflow& cutflow)
             // cutflow.setCutSyst("OSCReeMjjL"                     , "JERUp"   , systematic_cuts["www.MjjL_jerup()<400."], UNITY);
             // cutflow.setCutSyst("OSCReeDetajjL"                  , "JERUp"   , systematic_cuts["www.DetajjL_jerup()<1.5"], UNITY);
             // cutflow.setCutSyst("OSCReeMET"                      , "JERUp"   , systematic_cuts["www.met_jerup_pt()>60."], UNITY);
-            // cutflow.setCutSyst("LRSSmmMET"                      , "JERUp"   , systematic_cuts["1."], UNITY);
-            // cutflow.setCutSyst("LRSSmmMjjW"                     , "JERUp"   , systematic_cuts["fabs(www.Mjj_jerup()-80.)<15."], UNITY);
-            // cutflow.setCutSyst("LRSSmmMjjL"                     , "JERUp"   , systematic_cuts["www.MjjL_jerup()<400."], UNITY);
-            // cutflow.setCutSyst("LRSSmmDetajjL"                  , "JERUp"   , systematic_cuts["www.DetajjL_jerup()<1.5"], UNITY);
-            // cutflow.setCutSyst("LRSSemMjjW"                     , "JERUp"   , systematic_cuts["fabs(www.Mjj_jerup()-80.)<15."], UNITY);
-            // cutflow.setCutSyst("LRSSemMjjL"                     , "JERUp"   , systematic_cuts["www.MjjL_jerup()<400."], UNITY);
-            // cutflow.setCutSyst("LRSSemDetajjL"                  , "JERUp"   , systematic_cuts["www.DetajjL_jerup()<1.5"], UNITY);
-            // cutflow.setCutSyst("LRSSemMET"                      , "JERUp"   , systematic_cuts["www.met_jerup_pt()>60."], UNITY);
-            // cutflow.setCutSyst("LRSSeeMjjW"                     , "JERUp"   , systematic_cuts["fabs(www.Mjj_jerup()-80.)<15."], UNITY);
-            // cutflow.setCutSyst("LRSSeeMjjL"                     , "JERUp"   , systematic_cuts["www.MjjL_jerup()<400."], UNITY);
-            // cutflow.setCutSyst("LRSSeeDetajjL"                  , "JERUp"   , systematic_cuts["www.DetajjL_jerup()<1.5"], UNITY);
-            // cutflow.setCutSyst("LRSSeeMET"                      , "JERUp"   , systematic_cuts["www.met_jerup_pt()>60."], UNITY);
+            cutflow.setCutSyst("LRSSmmMET"                      , "JERUp"   , systematic_cuts["1."], UNITY);
+            cutflow.setCutSyst("LRSSmmMjjW"                     , "JERUp"   , systematic_cuts["fabs(www.Mjj_jerup()-80.)<15."], UNITY);
+            cutflow.setCutSyst("LRSSmmMjjL"                     , "JERUp"   , systematic_cuts["www.MjjL_jerup()<400."], UNITY);
+            cutflow.setCutSyst("LRSSmmDetajjL"                  , "JERUp"   , systematic_cuts["www.DetajjL_jerup()<1.5"], UNITY);
+            cutflow.setCutSyst("LRSSemMjjW"                     , "JERUp"   , systematic_cuts["fabs(www.Mjj_jerup()-80.)<15."], UNITY);
+            cutflow.setCutSyst("LRSSemMjjL"                     , "JERUp"   , systematic_cuts["www.MjjL_jerup()<400."], UNITY);
+            cutflow.setCutSyst("LRSSemDetajjL"                  , "JERUp"   , systematic_cuts["www.DetajjL_jerup()<1.5"], UNITY);
+            cutflow.setCutSyst("LRSSemMET"                      , "JERUp"   , systematic_cuts["www.met_jerup_pt()>60."], UNITY);
+            cutflow.setCutSyst("LRSSeeMjjW"                     , "JERUp"   , systematic_cuts["fabs(www.Mjj_jerup()-80.)<15."], UNITY);
+            cutflow.setCutSyst("LRSSeeMjjL"                     , "JERUp"   , systematic_cuts["www.MjjL_jerup()<400."], UNITY);
+            cutflow.setCutSyst("LRSSeeDetajjL"                  , "JERUp"   , systematic_cuts["www.DetajjL_jerup()<1.5"], UNITY);
+            cutflow.setCutSyst("LRSSeeMET"                      , "JERUp"   , systematic_cuts["www.met_jerup_pt()>60."], UNITY);
 
             // Systematics that affect the raw number of events
             cutflow.setCutSyst("SRSSmmMET"                      , "JERDown" , systematic_cuts["1."], UNITY);
@@ -1206,18 +1206,18 @@ void addSystematicCuts(RooUtil::Cutflow& cutflow)
             // cutflow.setCutSyst("OSCReeMjjL"                     , "JERDown" , systematic_cuts["www.MjjL_jerdn()<400."], UNITY);
             // cutflow.setCutSyst("OSCReeDetajjL"                  , "JERDown" , systematic_cuts["www.DetajjL_jerdn()<1.5"], UNITY);
             // cutflow.setCutSyst("OSCReeMET"                      , "JERDown" , systematic_cuts["www.met_jerdn_pt()>60."], UNITY);
-            // cutflow.setCutSyst("LRSSmmMET"                      , "JERDown" , systematic_cuts["1."], UNITY);
-            // cutflow.setCutSyst("LRSSmmMjjW"                     , "JERDown" , systematic_cuts["fabs(www.Mjj_jerdn()-80.)<15."], UNITY);
-            // cutflow.setCutSyst("LRSSmmMjjL"                     , "JERDown" , systematic_cuts["www.MjjL_jerdn()<400."], UNITY);
-            // cutflow.setCutSyst("LRSSmmDetajjL"                  , "JERDown" , systematic_cuts["www.DetajjL_jerdn()<1.5"], UNITY);
-            // cutflow.setCutSyst("LRSSemMjjW"                     , "JERDown" , systematic_cuts["fabs(www.Mjj_jerdn()-80.)<15."], UNITY);
-            // cutflow.setCutSyst("LRSSemMjjL"                     , "JERDown" , systematic_cuts["www.MjjL_jerdn()<400."], UNITY);
-            // cutflow.setCutSyst("LRSSemDetajjL"                  , "JERDown" , systematic_cuts["www.DetajjL_jerdn()<1.5"], UNITY);
-            // cutflow.setCutSyst("LRSSemMET"                      , "JERDown" , systematic_cuts["www.met_jerdn_pt()>60."], UNITY);
-            // cutflow.setCutSyst("LRSSeeMjjW"                     , "JERDown" , systematic_cuts["fabs(www.Mjj_jerdn()-80.)<15."], UNITY);
-            // cutflow.setCutSyst("LRSSeeMjjL"                     , "JERDown" , systematic_cuts["www.MjjL_jerdn()<400."], UNITY);
-            // cutflow.setCutSyst("LRSSeeDetajjL"                  , "JERDown" , systematic_cuts["www.DetajjL_jerdn()<1.5"], UNITY);
-            // cutflow.setCutSyst("LRSSeeMET"                      , "JERDown" , systematic_cuts["www.met_jerdn_pt()>60."], UNITY);
+            cutflow.setCutSyst("LRSSmmMET"                      , "JERDown" , systematic_cuts["1."], UNITY);
+            cutflow.setCutSyst("LRSSmmMjjW"                     , "JERDown" , systematic_cuts["fabs(www.Mjj_jerdn()-80.)<15."], UNITY);
+            cutflow.setCutSyst("LRSSmmMjjL"                     , "JERDown" , systematic_cuts["www.MjjL_jerdn()<400."], UNITY);
+            cutflow.setCutSyst("LRSSmmDetajjL"                  , "JERDown" , systematic_cuts["www.DetajjL_jerdn()<1.5"], UNITY);
+            cutflow.setCutSyst("LRSSemMjjW"                     , "JERDown" , systematic_cuts["fabs(www.Mjj_jerdn()-80.)<15."], UNITY);
+            cutflow.setCutSyst("LRSSemMjjL"                     , "JERDown" , systematic_cuts["www.MjjL_jerdn()<400."], UNITY);
+            cutflow.setCutSyst("LRSSemDetajjL"                  , "JERDown" , systematic_cuts["www.DetajjL_jerdn()<1.5"], UNITY);
+            cutflow.setCutSyst("LRSSemMET"                      , "JERDown" , systematic_cuts["www.met_jerdn_pt()>60."], UNITY);
+            cutflow.setCutSyst("LRSSeeMjjW"                     , "JERDown" , systematic_cuts["fabs(www.Mjj_jerdn()-80.)<15."], UNITY);
+            cutflow.setCutSyst("LRSSeeMjjL"                     , "JERDown" , systematic_cuts["www.MjjL_jerdn()<400."], UNITY);
+            cutflow.setCutSyst("LRSSeeDetajjL"                  , "JERDown" , systematic_cuts["www.DetajjL_jerdn()<1.5"], UNITY);
+            cutflow.setCutSyst("LRSSeeMET"                      , "JERDown" , systematic_cuts["www.met_jerdn_pt()>60."], UNITY);
         }
 
         cutflow.setCutSyst("SRSSmmNj2"                      , "JESUp"   , systematic_cuts["www.nj30_up()>= 2"], UNITY);
@@ -1283,9 +1283,9 @@ void addSystematicCuts(RooUtil::Cutflow& cutflow)
 //        cutflow.setCutSyst("OSCRmmNj2"                      , "JESUp"   , systematic_cuts["www.nj30_up()>= 2"], UNITY);
 //        cutflow.setCutSyst("OSCRemNj2"                      , "JESUp"   , systematic_cuts["www.nj30_up()>= 2"], UNITY);
 //        cutflow.setCutSyst("OSCReeNj2"                      , "JESUp"   , systematic_cuts["www.nj30_up()>= 2"], UNITY);
-//        cutflow.setCutSyst("LRSSmmNj2"                      , "JESUp"   , systematic_cuts["www.nj30_up()>= 2"], UNITY);
-//        cutflow.setCutSyst("LRSSemNj2"                      , "JESUp"   , systematic_cuts["www.nj30_up()>= 2"], UNITY);
-//        cutflow.setCutSyst("LRSSeeNj2"                      , "JESUp"   , systematic_cuts["www.nj30_up()>= 2"], UNITY);
+        cutflow.setCutSyst("LRSSmmNj2"                      , "JESUp"   , systematic_cuts["www.nj30_up()>= 2"], UNITY);
+        cutflow.setCutSyst("LRSSemNj2"                      , "JESUp"   , systematic_cuts["www.nj30_up()>= 2"], UNITY);
+        cutflow.setCutSyst("LRSSeeNj2"                      , "JESUp"   , systematic_cuts["www.nj30_up()>= 2"], UNITY);
 
         cutflow.setCutSyst("SRSSmmNj2"                      , "JESDown" , systematic_cuts["www.nj30_dn()>= 2"], UNITY);
         cutflow.setCutSyst("SRSSemNj2"                      , "JESDown" , systematic_cuts["www.nj30_dn()>= 2"], UNITY);
@@ -1350,9 +1350,9 @@ void addSystematicCuts(RooUtil::Cutflow& cutflow)
 //        cutflow.setCutSyst("OSCRmmNj2"                      , "JESDown" , systematic_cuts["www.nj30_dn()>= 2"], UNITY);
 //        cutflow.setCutSyst("OSCRemNj2"                      , "JESDown" , systematic_cuts["www.nj30_dn()>= 2"], UNITY);
 //        cutflow.setCutSyst("OSCReeNj2"                      , "JESDown" , systematic_cuts["www.nj30_dn()>= 2"], UNITY);
-//        cutflow.setCutSyst("LRSSmmNj2"                      , "JESDown" , systematic_cuts["www.nj30_dn()>= 2"], UNITY);
-//        cutflow.setCutSyst("LRSSemNj2"                      , "JESDown" , systematic_cuts["www.nj30_dn()>= 2"], UNITY);
-//        cutflow.setCutSyst("LRSSeeNj2"                      , "JESDown" , systematic_cuts["www.nj30_dn()>= 2"], UNITY);
+        cutflow.setCutSyst("LRSSmmNj2"                      , "JESDown" , systematic_cuts["www.nj30_dn()>= 2"], UNITY);
+        cutflow.setCutSyst("LRSSemNj2"                      , "JESDown" , systematic_cuts["www.nj30_dn()>= 2"], UNITY);
+        cutflow.setCutSyst("LRSSeeNj2"                      , "JESDown" , systematic_cuts["www.nj30_dn()>= 2"], UNITY);
 
         if (doJER)
         {
@@ -1419,9 +1419,9 @@ void addSystematicCuts(RooUtil::Cutflow& cutflow)
             //        cutflow.setCutSyst("OSCRmmNj2"                      , "JER"     , systematic_cuts["www.nj30_jer()>= 2"], UNITY);
             //        cutflow.setCutSyst("OSCRemNj2"                      , "JER"     , systematic_cuts["www.nj30_jer()>= 2"], UNITY);
             //        cutflow.setCutSyst("OSCReeNj2"                      , "JER"     , systematic_cuts["www.nj30_jer()>= 2"], UNITY);
-            //        cutflow.setCutSyst("LRSSmmNj2"                      , "JER"     , systematic_cuts["www.nj30_jer()>= 2"], UNITY);
-            //        cutflow.setCutSyst("LRSSemNj2"                      , "JER"     , systematic_cuts["www.nj30_jer()>= 2"], UNITY);
-            //        cutflow.setCutSyst("LRSSeeNj2"                      , "JER"     , systematic_cuts["www.nj30_jer()>= 2"], UNITY);
+            cutflow.setCutSyst("LRSSmmNj2"                      , "JER"     , systematic_cuts["www.nj30_jer()>= 2"], UNITY);
+            cutflow.setCutSyst("LRSSemNj2"                      , "JER"     , systematic_cuts["www.nj30_jer()>= 2"], UNITY);
+            cutflow.setCutSyst("LRSSeeNj2"                      , "JER"     , systematic_cuts["www.nj30_jer()>= 2"], UNITY);
 
             cutflow.setCutSyst("SRSSmmNj2"                      , "JERUp"   , systematic_cuts["www.nj30_jerup()>= 2"], UNITY);
             cutflow.setCutSyst("SRSSemNj2"                      , "JERUp"   , systematic_cuts["www.nj30_jerup()>= 2"], UNITY);
@@ -1486,9 +1486,9 @@ void addSystematicCuts(RooUtil::Cutflow& cutflow)
             //        cutflow.setCutSyst("OSCRmmNj2"                      , "JERUp"   , systematic_cuts["www.nj30_jerup()>= 2"], UNITY);
             //        cutflow.setCutSyst("OSCRemNj2"                      , "JERUp"   , systematic_cuts["www.nj30_jerup()>= 2"], UNITY);
             //        cutflow.setCutSyst("OSCReeNj2"                      , "JERUp"   , systematic_cuts["www.nj30_jerup()>= 2"], UNITY);
-            //        cutflow.setCutSyst("LRSSmmNj2"                      , "JERUp"   , systematic_cuts["www.nj30_jerup()>= 2"], UNITY);
-            //        cutflow.setCutSyst("LRSSemNj2"                      , "JERUp"   , systematic_cuts["www.nj30_jerup()>= 2"], UNITY);
-            //        cutflow.setCutSyst("LRSSeeNj2"                      , "JERUp"   , systematic_cuts["www.nj30_jerup()>= 2"], UNITY);
+            cutflow.setCutSyst("LRSSmmNj2"                      , "JERUp"   , systematic_cuts["www.nj30_jerup()>= 2"], UNITY);
+            cutflow.setCutSyst("LRSSemNj2"                      , "JERUp"   , systematic_cuts["www.nj30_jerup()>= 2"], UNITY);
+            cutflow.setCutSyst("LRSSeeNj2"                      , "JERUp"   , systematic_cuts["www.nj30_jerup()>= 2"], UNITY);
 
             cutflow.setCutSyst("SRSSmmNj2"                      , "JERDown" , systematic_cuts["www.nj30_jerdn()>= 2"], UNITY);
             cutflow.setCutSyst("SRSSemNj2"                      , "JERDown" , systematic_cuts["www.nj30_jerdn()>= 2"], UNITY);
@@ -1553,9 +1553,9 @@ void addSystematicCuts(RooUtil::Cutflow& cutflow)
             //        cutflow.setCutSyst("OSCRmmNj2"                      , "JERDown" , systematic_cuts["www.nj30_jerdn()>= 2"], UNITY);
             //        cutflow.setCutSyst("OSCRemNj2"                      , "JERDown" , systematic_cuts["www.nj30_jerdn()>= 2"], UNITY);
             //        cutflow.setCutSyst("OSCReeNj2"                      , "JERDown" , systematic_cuts["www.nj30_jerdn()>= 2"], UNITY);
-            //        cutflow.setCutSyst("LRSSmmNj2"                      , "JERDown" , systematic_cuts["www.nj30_jerdn()>= 2"], UNITY);
-            //        cutflow.setCutSyst("LRSSemNj2"                      , "JERDown" , systematic_cuts["www.nj30_jerdn()>= 2"], UNITY);
-            //        cutflow.setCutSyst("LRSSeeNj2"                      , "JERDown" , systematic_cuts["www.nj30_jerdn()>= 2"], UNITY);
+            cutflow.setCutSyst("LRSSmmNj2"                      , "JERDown" , systematic_cuts["www.nj30_jerdn()>= 2"], UNITY);
+            cutflow.setCutSyst("LRSSemNj2"                      , "JERDown" , systematic_cuts["www.nj30_jerdn()>= 2"], UNITY);
+            cutflow.setCutSyst("LRSSeeNj2"                      , "JERDown" , systematic_cuts["www.nj30_jerdn()>= 2"], UNITY);
         }
 
         cutflow.setCutSyst("SRSSmmNb0"                      , "JESUp"   , systematic_cuts["www.nb_up()==0"], systematic_wgts["btag_sf"] ) ;
@@ -1621,9 +1621,9 @@ void addSystematicCuts(RooUtil::Cutflow& cutflow)
 //        cutflow.setCutSyst("OSCRmmNb0"                      , "JESUp"   , systematic_cuts["www.nb_up()==0"], systematic_wgts["btag_sf"] ) ;
 //        cutflow.setCutSyst("OSCRemNb0"                      , "JESUp"   , systematic_cuts["www.nb_up()==0"], systematic_wgts["btag_sf"] ) ;
 //        cutflow.setCutSyst("OSCReeNb0"                      , "JESUp"   , systematic_cuts["www.nb_up()==0"], systematic_wgts["btag_sf"] ) ;
-//        cutflow.setCutSyst("LRSSmmNb0"                      , "JESUp"   , systematic_cuts["www.nb_up()==0"], systematic_wgts["btag_sf"] ) ;
-//        cutflow.setCutSyst("LRSSemNb0"                      , "JESUp"   , systematic_cuts["www.nb_up()==0"], systematic_wgts["btag_sf"] ) ;
-//        cutflow.setCutSyst("LRSSeeNb0"                      , "JESUp"   , systematic_cuts["www.nb_up()==0"], systematic_wgts["btag_sf"] ) ;
+        cutflow.setCutSyst("LRSSmmNb0"                      , "JESUp"   , systematic_cuts["www.nb_up()==0"], systematic_wgts["btag_sf"] ) ;
+        cutflow.setCutSyst("LRSSemNb0"                      , "JESUp"   , systematic_cuts["www.nb_up()==0"], systematic_wgts["btag_sf"] ) ;
+        cutflow.setCutSyst("LRSSeeNb0"                      , "JESUp"   , systematic_cuts["www.nb_up()==0"], systematic_wgts["btag_sf"] ) ;
 
         cutflow.setCutSyst("SRSSmmNb0"                      , "JESDown" , systematic_cuts["www.nb_dn()==0"], systematic_wgts["btag_sf"] ) ;
         cutflow.setCutSyst("SRSSemNb0"                      , "JESDown" , systematic_cuts["www.nb_dn()==0"], systematic_wgts["btag_sf"] ) ;
@@ -1688,9 +1688,9 @@ void addSystematicCuts(RooUtil::Cutflow& cutflow)
 //        cutflow.setCutSyst("OSCRmmNb0"                      , "JESDown" , systematic_cuts["www.nb_dn()==0"], systematic_wgts["btag_sf"] ) ;
 //        cutflow.setCutSyst("OSCRemNb0"                      , "JESDown" , systematic_cuts["www.nb_dn()==0"], systematic_wgts["btag_sf"] ) ;
 //        cutflow.setCutSyst("OSCReeNb0"                      , "JESDown" , systematic_cuts["www.nb_dn()==0"], systematic_wgts["btag_sf"] ) ;
-//        cutflow.setCutSyst("LRSSmmNb0"                      , "JESDown" , systematic_cuts["www.nb_dn()==0"], systematic_wgts["btag_sf"] ) ;
-//        cutflow.setCutSyst("LRSSemNb0"                      , "JESDown" , systematic_cuts["www.nb_dn()==0"], systematic_wgts["btag_sf"] ) ;
-//        cutflow.setCutSyst("LRSSeeNb0"                      , "JESDown" , systematic_cuts["www.nb_dn()==0"], systematic_wgts["btag_sf"] ) ;
+        cutflow.setCutSyst("LRSSmmNb0"                      , "JESDown" , systematic_cuts["www.nb_dn()==0"], systematic_wgts["btag_sf"] ) ;
+        cutflow.setCutSyst("LRSSemNb0"                      , "JESDown" , systematic_cuts["www.nb_dn()==0"], systematic_wgts["btag_sf"] ) ;
+        cutflow.setCutSyst("LRSSeeNb0"                      , "JESDown" , systematic_cuts["www.nb_dn()==0"], systematic_wgts["btag_sf"] ) ;
 
         if (doJER)
         {
@@ -1758,9 +1758,9 @@ void addSystematicCuts(RooUtil::Cutflow& cutflow)
             //        cutflow.setCutSyst("OSCRmmNb0"                      , "JER"     , systematic_cuts["www.nb_jer()==0"], systematic_wgts["btag_sf"] ) ;
             //        cutflow.setCutSyst("OSCRemNb0"                      , "JER"     , systematic_cuts["www.nb_jer()==0"], systematic_wgts["btag_sf"] ) ;
             //        cutflow.setCutSyst("OSCReeNb0"                      , "JER"     , systematic_cuts["www.nb_jer()==0"], systematic_wgts["btag_sf"] ) ;
-            //        cutflow.setCutSyst("LRSSmmNb0"                      , "JER"     , systematic_cuts["www.nb_jer()==0"], systematic_wgts["btag_sf"] ) ;
-            //        cutflow.setCutSyst("LRSSemNb0"                      , "JER"     , systematic_cuts["www.nb_jer()==0"], systematic_wgts["btag_sf"] ) ;
-            //        cutflow.setCutSyst("LRSSeeNb0"                      , "JER"     , systematic_cuts["www.nb_jer()==0"], systematic_wgts["btag_sf"] ) ;
+            cutflow.setCutSyst("LRSSmmNb0"                      , "JER"     , systematic_cuts["www.nb_jer()==0"], systematic_wgts["btag_sf"] ) ;
+            cutflow.setCutSyst("LRSSemNb0"                      , "JER"     , systematic_cuts["www.nb_jer()==0"], systematic_wgts["btag_sf"] ) ;
+            cutflow.setCutSyst("LRSSeeNb0"                      , "JER"     , systematic_cuts["www.nb_jer()==0"], systematic_wgts["btag_sf"] ) ;
 
             cutflow.setCutSyst("SRSSmmNb0"                      , "JERUp"   , systematic_cuts["www.nb_jerup()==0"], systematic_wgts["btag_sf"] ) ;
             cutflow.setCutSyst("SRSSemNb0"                      , "JERUp"   , systematic_cuts["www.nb_jerup()==0"], systematic_wgts["btag_sf"] ) ;
@@ -1825,9 +1825,9 @@ void addSystematicCuts(RooUtil::Cutflow& cutflow)
             //        cutflow.setCutSyst("OSCRmmNb0"                      , "JERUp"   , systematic_cuts["www.nb_jerup()==0"], systematic_wgts["btag_sf"] ) ;
             //        cutflow.setCutSyst("OSCRemNb0"                      , "JERUp"   , systematic_cuts["www.nb_jerup()==0"], systematic_wgts["btag_sf"] ) ;
             //        cutflow.setCutSyst("OSCReeNb0"                      , "JERUp"   , systematic_cuts["www.nb_jerup()==0"], systematic_wgts["btag_sf"] ) ;
-            //        cutflow.setCutSyst("LRSSmmNb0"                      , "JERUp"   , systematic_cuts["www.nb_jerup()==0"], systematic_wgts["btag_sf"] ) ;
-            //        cutflow.setCutSyst("LRSSemNb0"                      , "JERUp"   , systematic_cuts["www.nb_jerup()==0"], systematic_wgts["btag_sf"] ) ;
-            //        cutflow.setCutSyst("LRSSeeNb0"                      , "JERUp"   , systematic_cuts["www.nb_jerup()==0"], systematic_wgts["btag_sf"] ) ;
+            cutflow.setCutSyst("LRSSmmNb0"                      , "JERUp"   , systematic_cuts["www.nb_jerup()==0"], systematic_wgts["btag_sf"] ) ;
+            cutflow.setCutSyst("LRSSemNb0"                      , "JERUp"   , systematic_cuts["www.nb_jerup()==0"], systematic_wgts["btag_sf"] ) ;
+            cutflow.setCutSyst("LRSSeeNb0"                      , "JERUp"   , systematic_cuts["www.nb_jerup()==0"], systematic_wgts["btag_sf"] ) ;
 
             cutflow.setCutSyst("SRSSmmNb0"                      , "JERDown" , systematic_cuts["www.nb_jerdn()==0"], systematic_wgts["btag_sf"] ) ;
             cutflow.setCutSyst("SRSSemNb0"                      , "JERDown" , systematic_cuts["www.nb_jerdn()==0"], systematic_wgts["btag_sf"] ) ;
@@ -1892,9 +1892,9 @@ void addSystematicCuts(RooUtil::Cutflow& cutflow)
             //        cutflow.setCutSyst("OSCRmmNb0"                      , "JERDown" , systematic_cuts["www.nb_jerdn()==0"], systematic_wgts["btag_sf"] ) ;
             //        cutflow.setCutSyst("OSCRemNb0"                      , "JERDown" , systematic_cuts["www.nb_jerdn()==0"], systematic_wgts["btag_sf"] ) ;
             //        cutflow.setCutSyst("OSCReeNb0"                      , "JERDown" , systematic_cuts["www.nb_jerdn()==0"], systematic_wgts["btag_sf"] ) ;
-            //        cutflow.setCutSyst("LRSSmmNb0"                      , "JERDown" , systematic_cuts["www.nb_jerdn()==0"], systematic_wgts["btag_sf"] ) ;
-            //        cutflow.setCutSyst("LRSSemNb0"                      , "JERDown" , systematic_cuts["www.nb_jerdn()==0"], systematic_wgts["btag_sf"] ) ;
-            //        cutflow.setCutSyst("LRSSeeNb0"                      , "JERDown" , systematic_cuts["www.nb_jerdn()==0"], systematic_wgts["btag_sf"] ) ;
+            cutflow.setCutSyst("LRSSmmNb0"                      , "JERDown" , systematic_cuts["www.nb_jerdn()==0"], systematic_wgts["btag_sf"] ) ;
+            cutflow.setCutSyst("LRSSemNb0"                      , "JERDown" , systematic_cuts["www.nb_jerdn()==0"], systematic_wgts["btag_sf"] ) ;
+            cutflow.setCutSyst("LRSSeeNb0"                      , "JERDown" , systematic_cuts["www.nb_jerdn()==0"], systematic_wgts["btag_sf"] ) ;
         }
 
 //        // Systematics that affect the raw number of events
