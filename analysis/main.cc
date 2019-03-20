@@ -279,10 +279,17 @@ int main(int argc, char** argv)
                 // Pileup reweighting weights
                 //
                 float purewgt = 1;
-                if (input.year == 2017 or input.year == 2018)
-                    purewgt = pileupreweight.purewgt();
-                if (input.year == 2016)
-                    purewgt = www.purewgt(); // 2016 ntuples have the weights already defined in the baby ntuples
+                if (input.is_data)
+                {
+                    purewgt = 1;
+                }
+                else
+                {
+                    if (input.year == 2017 or input.year == 2018)
+                        purewgt = pileupreweight.purewgt();
+                    if (input.year == 2016)
+                        purewgt = www.purewgt(); // 2016 ntuples have the weights already defined in the baby ntuples
+                }
 
                 //
                 // Fake factor (= fake-rate / (1 - fake-rate)) weights 
@@ -308,12 +315,19 @@ int main(int argc, char** argv)
                 // Integrated luminosity
                 //
                 float lumi = 1;
-                if (input.year == 2016)
-                    lumi = 35.9;
-                if (input.year == 2017)
-                    lumi = 41.3;
-                if (input.year == 2018)
-                    lumi = 59.74;
+                if (input.is_data)
+                {
+                    lumi = 1;
+                }
+                else
+                {
+                    if (input.year == 2016)
+                        lumi = 35.9;
+                    if (input.year == 2017)
+                        lumi = 41.3;
+                    if (input.year == 2018)
+                        lumi = 59.74;
+                }
 
                 // The final weight is then:
                 // n.b. In a lot of the cases, ffwgt = 1. cause this is only set when the looper is trying to estimate fake
