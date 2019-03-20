@@ -4,42 +4,53 @@
 int main(int argc, char** argv)
 {
 
-    //********************************************************************************
-    //
-    // Configuration classes
-    //
-    //********************************************************************************
+//********************************************************************************
+//
+// 0. Configuration classes
+//
+//********************************************************************************
 
     // The following class instance contains configuration that persists through the entire run time.
+    // (e.g. number of events, the input file name list, etc. that will not change through run time)
+    // (see AnalysisConfig.h to get a feeling)
     AnalysisConfig ana;
 
     // The following class instance contains configuration that persists only through a single ROOT file in the chain of input ROOT files.
     // Everytime looper loads new file, the configuration in this class is reconfigured to handle sample dependent behaviors.
+    // (e.g. is_data? is_sig? is_bkg? etc.)
+    // (see InputConfig.h to get a feeling)
     InputConfig input;
 
-    //********************************************************************************
-    //
-    // Parsing options
-    //
-    //********************************************************************************
+//********************************************************************************
+//
+// 1. Parsing options
+//
+//********************************************************************************
+
+    // cxxopts is just a tool to parse argc, and argv easily
 
     // Grand option setting
     cxxopts::Options options("\n  $ doAnalysis",  "\n         **********************\n         *                    *\n         * Run 2 WWW Analysis *\n         *                    *\n         **********************\n");
 
+    // Read the options 
     options.add_options()
-        ("i,input", "Comma separated input file list", cxxopts::value<std::string>())
-        ("o,output", "Output file name", cxxopts::value<std::string>())
-        ("n,nevents", "N events to loop over", cxxopts::value<int>()->default_value("-1"))
-        ("t,test", "Run test job. i.e. overrides output option to 'test.root' and 'recreate's the file.")
-        ("T,tree", "Name of the TTree to loop over per input file", cxxopts::value<std::string>())
-        ("H,hist", "Book histogram")
-        ("C,cutflow", "Book cutflows")
-        ("S,systematics", "Also consider systematics")
-        ("F,fake", "The event weight will be multiplied by fake weights")
-        ("h,help", "Print help")
+        ("i,input"       , "Comma separated input file list OR if just a directory is provided it will glob all in the directory BUT must end with '/' for the path", cxxopts::value<std::string>())
+        ("T,tree"        , "Name of the TTree in the input file to loop over"                                                    , cxxopts::value<std::string>())
+        ("o,output"      , "Output file name"                                                                                    , cxxopts::value<std::string>())
+        ("n,nevents"     , "N events to loop over"                                                                               , cxxopts::value<int>()->default_value("-1"))
+        ("t,test"        , "Run test job. i.e. overrides output option to 'test.root' and 'recreate's the file.")
+        ("H,hist"        , "Book histogram")
+        ("C,cutflow"     , "Book cutflows")
+        ("S,systematics" , "Also consider systematics")
+        ("F,fake"        , "The event weight will be multiplied by fake weights")
+        ("h,help"        , "Print help")
         ;
 
     auto result = options.parse(argc, argv);
+
+    // NOTE: When an option was provided (e.g. -i or --input), then the result.count("<option name>") is more than 0
+    // Therefore, the option can be parsed easily by asking the condition if (result.count("<option name>");
+    // That's how the several options are parsed below
 
     //_______________________________________________________________________________
     // --help
@@ -151,7 +162,9 @@ int main(int argc, char** argv)
         ana.do_fake_estimation = false;
     }
 
+    //
     // Printing out the option settings overview
+    //
     std::cout <<  "=========================================================" << std::endl;
     std::cout <<  " Setting of the analysis job based on provided arguments " << std::endl;
     std::cout <<  "---------------------------------------------------------" << std::endl;
@@ -164,11 +177,11 @@ int main(int argc, char** argv)
     std::cout <<  " ana.do_fake_estimation: " << ana.do_fake_estimation <<  std::endl;
     std::cout <<  "=========================================================" << std::endl;
 
-    //********************************************************************************
-    //
-    // Opening input baby files
-    //
-    //********************************************************************************
+//********************************************************************************
+//
+// 2. Opening input baby files
+//
+//********************************************************************************
 
     // Create the TChain that holds the TTree's of the baby ntuples
     ana.events_tchain = RooUtil::FileUtil::createTChain(ana.input_tree_name, ana.input_file_list_tstring);
@@ -185,11 +198,11 @@ int main(int argc, char** argv)
     // This is a standard thing SNT does pretty much every looper we use
     ana.looper.init(ana.events_tchain, &www, ana.n_events);
 
-    //********************************************************************************
-    //
-    // Creating the analysis using RooUtil::Cutflow class
-    //
-    //********************************************************************************
+//********************************************************************************
+//
+// 3. Creating the analysis using RooUtil::Cutflow class (This is a custom class built by P. Chang)
+//
+//********************************************************************************
 
     // Set the cutflow object output file
     ana.cutflow.setTFile(ana.output_tfile);
@@ -466,7 +479,13 @@ int main(int argc, char** argv)
             UNITY);
 
     //************************************************************************************************************************************************************************************************
+    //
+    //
+    //
     // SIGNAL REGION CUTS
+    //
+    //
+    //
     //************************************************************************************************************************************************************************************************
 
     // Same-sign Mjj on-W region
@@ -581,7 +600,13 @@ int main(int argc, char** argv)
     ana.cutflow.addCutToLastActiveCut("SR2SFOSFull"           , [&]() { return 1                                                                  ; }, UNITY                                 );
 
     //************************************************************************************************************************************************************************************************
+    //
+    //
+    //
     // WZ CONTROL REGION CUTS
+    //
+    //
+    //
     //************************************************************************************************************************************************************************************************
 
     // Same-sign WZ CR
@@ -663,7 +688,13 @@ int main(int argc, char** argv)
     ana.cutflow.addCutToLastActiveCut("WZVR2SFOSMllOnOffFull" , [&]() { return (abs(www.Mll3L()-91.1876)<20.||abs(www.Mll3L1()-91.1876)<20.)                         ; } , [&]() { return 1 ; } ) ;
 
     //************************************************************************************************************************************************************************************************
+    //
+    //
+    //
     // APPLICATION REGION CUTS
+    //
+    //
+    //
     //************************************************************************************************************************************************************************************************
 
     // Same-sign Mjj on-W region
@@ -777,11 +808,11 @@ int main(int argc, char** argv)
     ana.cutflow.addCutToLastActiveCut("AR2SFOSZVt"            , [&]() { return www.nSFOSinZ() == 0                              ; }        , UNITY                                  ); 
     ana.cutflow.addCutToLastActiveCut("AR2SFOSFull"           , [&]() { return 1                                                ; }        , UNITY                                  ); 
 
-    //********************************************************************************
-    //
-    // Defining histograms
-    //
-    //********************************************************************************
+//********************************************************************************
+//
+// 4. Defining histograms
+//
+//********************************************************************************
 
     // The RooUtil::Histograms class holds the definitions of histograms with the lambda expression for the variable
     // Then this is used in conjunction with RooUtil::Cutflow to book histograms at different cut stage
@@ -830,14 +861,80 @@ int main(int argc, char** argv)
     ana.histograms.addHistogram("el_relIso03EAv2Lep"       ,  180 , 0.0     , 0.2    , [&]() { return (abs(www.lep_pdgId()[0]) == 11) * (www.lep_relIso03EAv2Lep()[0]) + (abs(www.lep_pdgId()[1]) == 11) * (www.lep_relIso03EAv2Lep()[1]); });
     ana.histograms.addHistogram("mu_relIso03EAv2Lep"       ,  180 , 0.0     , 0.2    , [&]() { return (abs(www.lep_pdgId()[0]) == 13) * (www.lep_relIso03EAv2Lep()[0]) + (abs(www.lep_pdgId()[1]) == 13) * (www.lep_relIso03EAv2Lep()[1]); });
 
-    //*************************************************************************************************************
+//*************************************************************************************************************
+//
+// 5. Booking histograms and cutflows
+//
+//*************************************************************************************************************
+
+    // So far we have defined a tree structure of cuts (RooUtil::Cutflow object)
+    // Also we defined a list of histograms (RooUtil::Histograms)
+
+    // Now we book cutflow histograms by calling RooUtil::Cutflow::bookCutflows())
+    // This function looks through the terminating nodes of the tree structured cut tree. and creates a histogram that will fill the yields
+    // e.g.
     //
-    // Booking histograms and cutflows
+    //              Root
+    //                |
+    //            CutWeight
+    //            |       |
+    //     CutPreSel1    CutPreSel2
+    //       |                  |
+    //     CutSel1           CutSel2
     //
-    //*************************************************************************************************************
+    // There are two terminationg nodes, "CutSel1", and "CutSel2"
+    //
+    // So in this case Root::Cutflow::bookCutflows() will create two histograms. (Actually four histograms.)
+    //
+    //  - TH1F* type object :  CutSel1_cutflow (4 bins, with first bin labeled "Root", second bin labeled "CutWeight", third bin labeled "CutPreSel1", fourth bin labeled "CutSel1")
+    //  - TH1F* type object :  CutSel2_cutflow (...)
+    //  - TH1F* type object :  CutSel1_rawcutflow (...)
+    //  - TH1F* type object :  CutSel2_rawcutflow (...)
+    //
+    //                                ^
+    //                                |
+    // NOTE: There is only one underscore "_" between <CutName>_cutflow or <CutName>_rawcutflow
+    //
+    // And later in the loop when RooUtil::Cutflow::fill() function is called, the tree structure will be traversed through and the appropriate yields will be filled into the histograms
+    //
+    // After running the loop check for the histograms in the output root file
+    //
 
     // Book cutflows
     ana.cutflow.bookCutflows();
+
+    // Now we book histograms at each cut stage by calling RooUtil::Cutflow::bookHistogramsForCut(histograms, "<name of the cut>") or RooUtil::Cutflow::bookHistogramsForCutAndBelow(histograms, "<name of the cut>")
+    // Where histograms is an object of RooUtil::Histograms. (NOTE: although in this code there are only one "ana.histograms" one could have defined several different groups of RooUtil::Histograms.
+    //
+    // Let's suppose we have a RooUtil::Histograms histograms with the following histogram definitions
+    //
+    // e.g.
+    //
+    //   RooUtil::Histograms histograms;
+    //   histograms.addHistogram("mll"     , 180 , 0 , 1 , [&]() { return mll;     });
+    //   histograms.addHistogram("mjj"     , 180 , 0 , 1 , [&]() { return mjj;     });
+    //   histograms.addHistogram("lep_pt0" , 180 , 0 , 1 , [&]() { return lep_pt0; });
+    //   histograms.addHistogram("lep_pt1" , 180 , 0 , 1 , [&]() { return lep_pt1; });
+    //
+    // Then calling the following function will internally create the following histograms
+    //
+    //   cutflow.bookHistogramsForCut(histograms, "CutSel1");
+    //
+    //  - TH1F* type object : CutSel1__mll;
+    //  - TH1F* type object : CutSel1__mjj;
+    //  - TH1F* type object : CutSel1__lep_pt0;
+    //  - TH1F* type object : CutSel1__lep_pt1;
+    //
+    //                               ^^
+    //                               ||
+    // NOTE: There are two underscores "__" between <CutName>__<HistogramName>
+    //
+    // And later in the loop when RooUtil::CutName::fill() function is called, the tree structure will be traversed through and the appropriate histograms will be filled with appropriate variables
+    //
+    // After running the loop check for the histograms in the output root file
+    //
+    // And when bookHistogramsForCutAndBelow() is called instead, it will start from the cut and go all the way down to terminating node (or nodes) and create histograms at every nodes and all the histograms will be properly filled during RooUtil::Cutflow::fill()
+    //
 
     // Book histograms
     ana.cutflow.bookHistogramsForCutAndBelow(ana.histograms, "CutSRDilep");
@@ -846,7 +943,71 @@ int main(int argc, char** argv)
     ana.cutflow.bookHistogramsForCut(ana.histograms, "CutARDilep");
     ana.cutflow.bookHistogramsForCut(ana.histograms, "CutARTrilep");
 
+    //
     // Print cut structure before starting the loop just to visually see it
+    //
+    // The following function will print out the tree structure for example
+    //
+    // RooUtil::Cutflow::printCuts();
+    //
+    // <Program is running>
+    // ...
+    // ...
+    // ...
+    // RooUtil:: Cut name                                                     |pass|weight|systs
+    // RooUtil:: ======================================================================================
+    // RooUtil:: Root                                                         | 0 | 0.000000|
+    // RooUtil::   CutWeight                                                  | 0 | 0.000000|
+    // RooUtil::     CutPreliminary                                           | 0 | 0.000000|
+    // RooUtil::       CutTrigger                                             | 0 | 0.000000|
+    // RooUtil::        +CutSRDilep                                           | 0 | 0.000000|
+    // RooUtil::        | +SRSSmm                                             | 0 | 0.000000|
+    // RooUtil::        | |  SRSSmmTVeto                                      | 0 | 0.000000|
+    // RooUtil::        | |    SRSSmmNj2                                      | 0 | 0.000000|
+    // RooUtil::        | |      SRSSmmNb0                                    | 0 | 0.000000|
+    // RooUtil::        | |        SRSSmmMjjW                                 | 0 | 0.000000|
+    // RooUtil::        | |          SRSSmmMjjL                               | 0 | 0.000000|
+    // RooUtil::        | |            SRSSmmDetajjL                          | 0 | 0.000000|
+    // RooUtil::        | |              SRSSmmMET                            | 0 | 0.000000|
+    // RooUtil::        | |                SRSSmmMllSS                        | 0 | 0.000000|
+    // RooUtil::        | |                  SRSSmmFull                       | 0 | 0.000000|
+    // RooUtil::        | +SRSSem                                             | 0 | 0.000000|
+    // RooUtil::        | |  SRSSemTVeto                                      | 0 | 0.000000|
+    // RooUtil::        | |    SRSSemNj2                                      | 0 | 0.000000|
+    // RooUtil::        | |      SRSSemNb0                                    | 0 | 0.000000|
+    // RooUtil::        | |        SRSSemMjjW                                 | 0 | 0.000000|
+    // RooUtil::        | |          SRSSemMjjL                               | 0 | 0.000000|
+    // RooUtil::        | |            SRSSemDetajjL                          | 0 | 0.000000|
+    // RooUtil::        | |              SRSSemMET                            | 0 | 0.000000|
+    // RooUtil::        | |                SRSSemMllSS                        | 0 | 0.000000|
+    // RooUtil::        | |                  SRSSemMTmax                      | 0 | 0.000000|
+    // RooUtil::        | |                    SRSSemFull                     | 0 | 0.000000|
+    // RooUtil::        | +SRSSee                                             | 0 | 0.000000|
+    // RooUtil::        | |  SRSSeeZeeVt                                      | 0 | 0.000000|
+    // RooUtil::        | |    SRSSeeTVeto                                    | 0 | 0.000000|
+    // RooUtil::        | |      SRSSeeNj2                                    | 0 | 0.000000|
+    // RooUtil::        | |        SRSSeeNb0                                  | 0 | 0.000000|
+    // RooUtil::        | |          SRSSeeMjjW                               | 0 | 0.000000|
+    // RooUtil::        | |            SRSSeeMjjL                             | 0 | 0.000000|
+    // RooUtil::        | |              SRSSeeDetajjL                        | 0 | 0.000000|
+    // RooUtil::        | |                SRSSeeMET                          | 0 | 0.000000|
+    // RooUtil::        | |                  SRSSeeMllSS                      | 0 | 0.000000|
+    // RooUtil::        | |                    SRSSeeFull                     | 0 | 0.000000|
+    // ...
+    // ...
+    // ...
+    // 
+    // Also, for debugging purpose, one could print this per event.
+    // If printCuts() is called AFTER "RooUtil::Cutflow::fill()" is called,
+    // Then, the "pass|weight" columns on the right will be filled with whether at certain cut stage event passes or not.
+    // along with event weights
+    //
+    // NOTE: TODO: Implement systematic variations
+    // The "systs" columns will be more advanced usage when we get to dealing with systematics
+    // Right now, I turned this off (March 19) while cleaning up the code since systematics can make the code run a lot more slower.
+    //
+
+    // Print once before starting any loop (at this point, "pass|weight" columns will be entirely empty since it's not showing for a any specific event
     ana.cutflow.printCuts();
 
     //*************************************************************************************************************
