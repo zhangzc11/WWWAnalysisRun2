@@ -13,6 +13,14 @@ As of Mar. 2019, latest 2017 ntuple baby is:
     /nfs-7/userdata/phchang/WWW_babies/WWW2017_v5.0.0/grouped/bkg
     /nfs-7/userdata/phchang/WWW_babies/WWW2017_v5.0.0/grouped/data
 
+## Understanding the code
+
+I recommend reading ```main.cc```. I really tried putting a lot of comments to help user understand what is going on.
+
+If you have any questions, ask <philip@ucsd.edu>.
+
+After reading main.cc, If there is a specific non-trivial task that isn't clear how to do from existing examples, let me know as well.
+
 ## Quick start
 
     git clone --recurse-submodules https://github.com/cmstas/WWWAnalysisRun2.git
@@ -38,12 +46,4 @@ And cut names are defined in ```main.cc``` with various "addCut" functions,
 
 And histogram names are defined in ```main.cc``` with various "addHistogram" functions.
 
-However, __I really recommend reading through ```main.cc```__.
-
-## Understanding the code
-
-I recommend reading ```main.cc```. I really tried putting a lot of comments to help user understand what is going on.
-
-If you have any questions, ask <philip@ucsd.edu>.
-
-After reading main.cc, If there is a specific non-trivial task that isn't clear how to do from existing examples, let me know as well.
+However, __I really recommend reading through ```main.cc```__ as I mentioned in previous section.
