@@ -14,3 +14,5 @@ mkdir -p outputs/WWW2017_v5.0.0/test1/
 ./doAnalysis -i /nfs-7/userdata/phchang/WWW_babies/WWW2017_v5.0.0/grouped/sigofficial/  -o outputs/WWW2017_v5.0.0/test1/signal.root         -T t_www     > outputs/WWW2017_v5.0.0/test1/signal.log         2>&1 & # Official CMS sample
 
 wait
+
+tail -n 3 outputs/WWW2017_v5.0.0/test1/*.log
