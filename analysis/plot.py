@@ -127,6 +127,32 @@ if filter_pattern:
 
 else:
     #__________________________________________________________________________________
+    # Draw the lost lepton control region plot (the 5 bin plot)
+    p.plot_yields(
+            fnames=bkg_fnames,
+            sig_fnames=sig_fnames,
+            data_fname="{}/data.root".format(input_dir),
+            regions=[ "WZCRSSeeFull", "WZCRSSemFull", "WZCRSSmmFull", "WZCR1SFOSFull", "WZCR2SFOSFull" ],
+            binlabels=[ "ee", "em", "mm", "1SFOS", "2SFOS", ],
+            dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
+            output_name="wzcr_yield",
+            legend_labels=legend_labels,
+            donorm=False,
+            filter_pattern=filter_pattern,
+            signal_scale=sig_scale,
+            extraoptions={
+                "bkg_sort_method": "unsorted",
+                "legend_scalex": 1.8,
+                "legend_scaley": 1.1,
+                "lumi_value": lumi,
+                "print_yield": True,
+                "blind": False,
+                "ratio_range": [0., 2.],
+                },
+            usercolors=[920, 2007, 2005, 2003, 2001],
+            )
+
+    #__________________________________________________________________________________
     # Draw the money plot (the 9 bin plot)
     p.plot_yields(
             fnames=bkg_fnames,
@@ -134,7 +160,7 @@ else:
             data_fname="{}/data.root".format(input_dir),
             regions=[ "SRSSeeFull", "SRSSemFull", "SRSSmmFull", "SRSSSideeeFull", "SRSSSideemFull", "SRSSSidemmFull", "SR0SFOSFull", "SR1SFOSFull", "SR2SFOSFull", ],
             binlabels=[ "ee", "em", "mm", "side-ee", "side-em", "side-mm", "0SFOS", "1SFOS", "2SFOS", ],
-            dirname=output_dir,
+            dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             output_name="yield",
             legend_labels=legend_labels,
             donorm=False,
