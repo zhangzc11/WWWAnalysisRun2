@@ -57,7 +57,7 @@ If you have any questions let me know
                    [-l] [-s SIG_SCALE] [-u] [-S] [-P]
                    [FILTER_PATTERN [FILTER_PATTERN ...]]
     
-    Plot dumper from Run 2 Boosted Higgs Analysis
+    Plot dumper from Run 2 WWW Analysis
     
     positional arguments:
       FILTER_PATTERN        patterns to use to filter histograms to dump

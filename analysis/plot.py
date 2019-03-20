@@ -3,7 +3,7 @@
 # option parser
 import argparse
 
-parser = argparse.ArgumentParser(description="Plot dumper from Run 2 Boosted Higgs Analysis")
+parser = argparse.ArgumentParser(description="Plot dumper from Run 2 WWW Analysis")
 parser.add_argument('-i' , '--input_dir'              , dest='input_dir'  , help='input dir path (where hists are)'                               , required=True      ) 
 parser.add_argument('-o' , '--output_dir'             , dest='output_dir' , help='output dir path'                        , default='plots'                            ) 
 parser.add_argument('-n' , '--nbins'                  , dest='nbins'      , help='number of bins for the histograms'      , default=30                                 ) 
