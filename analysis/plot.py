@@ -100,7 +100,7 @@ else:
     sig_fnames = ["{}/signal.root".format(input_dir)]
 
 # legend_labels
-legend_labels = ["Non-prompt", "Irredu.", "Lost/three lep", "Charge mis-id", "#gamma#rightarrowl", "All WWW (stacked)"]
+legend_labels = ["#gamma#rightarrowl", "Charge mis-id", "Non-prompt", "Lost/three lep", "Irredu.", "All WWW (stacked)"]
 
 # If a histogram filter pattern was provided then plot the requested plots
 if filter_pattern:
