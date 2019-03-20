@@ -16,7 +16,7 @@ As of Mar. 2019, latest 2017 ntuple baby is:
 ## Quick start
 
     git clone --recurse-submodules git@github.com:sgnoohc/WWWAnalysisRun2.git
-    cd WWWAnalysis/analysis/
+    cd WWWAnalysisRun2/analysis/
     source setup.sh
     make clean
     make -j
