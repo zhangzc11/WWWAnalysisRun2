@@ -831,6 +831,7 @@ int main(int argc, char** argv)
     // The RooUtil::Histograms class holds the definitions of histograms with the lambda expression for the variable
     // Then this is used in conjunction with RooUtil::Cutflow to book histograms at different cut stage
     // This is so that the users don't have to copy paste a thousands lines of codes if they want to book more histograms at different cut stages
+
     ana.histograms.addHistogram("MllSS"                    ,  180 , 0.      , 300.   , [&]() { return www.MllSS()                  ; });
     ana.histograms.addHistogram("MllSS_wide"               ,  180 , 0.      , 2000.  , [&]() { return www.MllSS()                  ; });
     ana.histograms.addHistogram("MllZ"                     ,  180 , 60.     , 120.   , [&]() { return www.MllSS()                  ; });
@@ -1023,6 +1024,68 @@ int main(int argc, char** argv)
 
     // Print once before starting any loop (at this point, "pass|weight" columns will be entirely empty since it's not showing for a any specific event
     ana.cutflow.printCuts();
+
+//*************************************************************************************************************
+//
+// 6. User Customization
+//
+//*************************************************************************************************************
+
+    // NOTE: If you want to change the cuts, go above and change the cuts prior to calling RooUtil::Cutflow::bookCutflows()
+    // I have not put a fool-proof protection of not clashing when user mixes up the order of 1. adding cuts and then 2. booking histograms, and then 3. adding cuts again.
+    // So be careful!
+    // Hopefully, the code so far is clean enough to understand what's going on
+    // If there is something you'd like to do that is unclear, let me know (philip@ucsd.edu)
+
+    // Adding new histogram to a specific cut
+
+    // Let's utilize what we learned so far.
+    // Let's try to use a new histogram object instead of using what's already used above
+    // So let's create a new RooUtil::Histograms, instead of using the RooUtil::Histograms ana.histogram.
+
+    // Creating user's histogram
+    RooUtil::Histograms user_histograms;
+
+    // Now add a new histogram. (This is a variable Yifan is looking into.)
+    // This is going to plot a new variable where it plots the minimum DR of the two opposite sign leptons.
+    // This is the variable that WH->WW analysis in HIG uses to fit to extract signal.
+    // As you can see in this example, even if the varialbe is not computed you can use lambda expression to compute it on the fly.
+    user_histograms.addHistogram("minDRllOS", 180, 0., 4.,
+            [&]()
+            {
+                // "www" objects contain lepton 4-vectors and pdgID
+                std::vector<LV> lep_p4 = www.lep_p4();
+                std::vector<int> lep_pdgId = www.lep_pdgId();
+
+                // Loop over and for each opposite sign pair compute DR and choose the smallest
+                float minDR = 999;
+                bool os_pair_found = false;
+                for (unsigned int ii = 0; ii < lep_pdgId.size(); ++ii)
+                {
+                    for (unsigned int jj = ii + 1; jj < lep_pdgId.size(); ++jj)
+                    {
+                        if (lep_pdgId[ii] * lep_pdgId[jj] < 0) // If opposite sign lepton
+                        {
+                            os_pair_found = true;
+                            float thisDR = RooUtil::Calc::DeltaR(lep_p4[ii], lep_p4[jj]);
+                            if (thisDR < minDR)
+                            {
+                                minDR = thisDR;
+                            }
+                        }
+                    }
+                }
+
+                if (not os_pair_found) // If same-sign event it will not find anything, then set to -999
+                    minDR = -999;
+                return minDR;
+            });
+
+    // Now let's book this to a cutflow
+    // Since there is no point of booking to same sign dilepton events let's book only to SR0SFOS/1SFOS/2SFOS and below
+    ana.cutflow.bookHistogramsForCutAndBelow(user_histograms, "SR0SFOS");
+    ana.cutflow.bookHistogramsForCutAndBelow(user_histograms, "SR1SFOS");
+    ana.cutflow.bookHistogramsForCutAndBelow(user_histograms, "SR2SFOS");
 
     //*************************************************************************************************************
     //
