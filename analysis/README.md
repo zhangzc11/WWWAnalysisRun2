@@ -47,3 +47,36 @@ And cut names are defined in ```main.cc``` with various "addCut" functions,
 And histogram names are defined in ```main.cc``` with various "addHistogram" functions.
 
 However, __I really recommend reading through ```main.cc```__ as I mentioned in previous section.
+
+## Plotting options
+
+If you have any questions let me know
+
+    $ python plot.py -h
+    usage: plot.py [-h] -i INPUT_DIR [-o OUTPUT_DIR] [-n NBINS] [-y YAXIS_RANGE]
+                   [-l] [-s SIG_SCALE] [-u] [-S] [-P]
+                   [FILTER_PATTERN [FILTER_PATTERN ...]]
+    
+    Plot dumper from Run 2 Boosted Higgs Analysis
+    
+    positional arguments:
+      FILTER_PATTERN        patterns to use to filter histograms to dump
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      -i INPUT_DIR, --input_dir INPUT_DIR
+                            input dir path (where hists are)
+      -o OUTPUT_DIR, --output_dir OUTPUT_DIR
+                            output dir path
+      -n NBINS, --nbins NBINS
+                            number of bins for the histograms
+      -y YAXIS_RANGE, --yaxis_range YAXIS_RANGE
+                            Y-axis range set by user
+      -l, --yaxis_log       Y-axis set to log
+      -s SIG_SCALE, --sig_scale SIG_SCALE
+                            Signal scale
+      -u, --rm_udflow       Remove underflow
+      -S, --do_scan         Do cut scan
+      -P, --use_private_sig_sample
+                            Use private signal sample
+
