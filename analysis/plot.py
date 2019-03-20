@@ -4,17 +4,18 @@
 import argparse
 
 parser = argparse.ArgumentParser(description="Plot dumper from Run 2 WWW Analysis")
-parser.add_argument('-i' , '--input_dir'              , dest='input_dir'   , help='input dir path (where hists are)'                               , required=True      ) 
-parser.add_argument('-o' , '--output_dir'             , dest='output_dir'  , help='output dir path'                        , default='plots'                            ) 
-parser.add_argument('-n' , '--nbins'                  , dest='nbins'       , help='number of bins for the histograms'      , default=30                                 ) 
-parser.add_argument('-y' , '--yaxis_range'            , dest='yaxis_range' , help='Y-axis range set by user'               , default=None                               ) 
-parser.add_argument('-l' , '--yaxis_log'              , dest='yaxis_log'   , help='Y-axis set to log'                      , default=False         , action='store_true') 
-parser.add_argument('-s' , '--sig_scale'              , dest='sig_scale'   , help='Signal scale'                           , default=1                                  ) 
-parser.add_argument('-u' , '--rm_udflow'              , dest='rm_udflow'   , help='Remove underflow'                       , default=False         , action='store_true') 
-parser.add_argument('-S' , '--do_scan'                , dest='do_scan'     , help='Do cut scan'                            , default=False         , action='store_true') 
-parser.add_argument('-b' , '--blind'                  , dest='blind'       , help='Blind data'                             , default=False         , action='store_true') 
-parser.add_argument('-v' , '--split_signal'           , dest='split_signal', help='Split signal'                           , default=False         , action='store_true') 
-parser.add_argument('-P' , '--use_private_sig_sample' , dest='use_private' , help='Use private signal sample'              , default=False         , action='store_true') 
+parser.add_argument('-i' , '--input_dir'              , dest='input_dir'       , help='input dir path (where hists are)'                               , required=True      ) 
+parser.add_argument('-o' , '--output_dir'             , dest='output_dir'      , help='output dir path'                        , default='plots'                            ) 
+parser.add_argument('-n' , '--nbins'                  , dest='nbins'           , help='number of bins for the histograms'      , default=30                                 ) 
+parser.add_argument('-y' , '--yaxis_range'            , dest='yaxis_range'     , help='Y-axis range set by user'               , default=None                               ) 
+parser.add_argument('-l' , '--yaxis_log'              , dest='yaxis_log'       , help='Y-axis set to log'                      , default=False         , action='store_true') 
+parser.add_argument('-s' , '--sig_scale'              , dest='sig_scale'       , help='Signal scale'                           , default=1                                  ) 
+parser.add_argument('-u' , '--rm_udflow'              , dest='rm_udflow'       , help='Remove underflow'                       , default=False         , action='store_true') 
+parser.add_argument('-S' , '--do_scan'                , dest='do_scan'         , help='Do cut scan'                            , default=False         , action='store_true') 
+parser.add_argument('-b' , '--blind'                  , dest='blind'           , help='Blind data'                             , default=False         , action='store_true') 
+parser.add_argument('-v' , '--split_signal'           , dest='split_signal'    , help='Split signal'                           , default=False         , action='store_true') 
+parser.add_argument('-m' , '--use_mc_fake'            , dest='use_mc_fake'     , help='use_mc_fake'                            , default=False         , action='store_true') 
+parser.add_argument('-P' , '--use_private_sig_sample' , dest='use_private'     , help='Use private signal sample'              , default=False         , action='store_true') 
 
 parser.add_argument('filter_patterns', metavar='FILTER_PATTERN', type=str, nargs='*', help='patterns to use to filter histograms to dump')
 
@@ -71,7 +72,7 @@ if "2018" in input_dir:
 bkg_fnames = [
     "{}/photon.root".format(input_dir),
     "{}/qflip.root".format(input_dir),
-    "{}/ddfakes.root".format(input_dir),
+    ("{}/fakes.root".format(input_dir) if args.use_mc_fake else "{}/ddfakes.root".format(input_dir)),
     "{}/lostlep.root".format(input_dir),
     "{}/prompt.root".format(input_dir),
     ]
@@ -87,7 +88,7 @@ if args.use_private:
         bkg_fnames = [
             "{}/photon.root".format(input_dir),
             "{}/qflip.root".format(input_dir),
-            "{}/ddfakes.root".format(input_dir),
+            ("{}/fakes.root".format(input_dir) if args.use_mc_fake else "{}/ddfakes.root".format(input_dir)),
             "{}/lostlep.root".format(input_dir),
             "{}/prompt.root".format(input_dir),
             "{}/signal_private.root".format(input_dir),
@@ -100,7 +101,7 @@ else:
     sig_fnames = ["{}/signal.root".format(input_dir)]
 
 # legend_labels
-legend_labels = ["#gamma#rightarrowl", "Charge mis-id", "Non-prompt", "Lost/three lep", "Irredu.", "All WWW (stacked)"]
+legend_labels = ["#gamma#rightarrowl", "Charge mis-id", ("Non-prompt (MC)" if args.use_mc_fake else "Non-prompt"), "Lost/three lep", "Irredu.", "All WWW (stacked)"]
 
 # If a histogram filter pattern was provided then plot the requested plots
 if filter_pattern:
@@ -126,6 +127,7 @@ if filter_pattern:
                 "bkg_sort_method": "unsorted",
                 "lumi_value": lumi,
                 "blind": args.blind,
+                "ratio_range": [0., 2.],
                 },
             usercolors=[920, 2007, 2005, 2003, 2001, 2011],
             )
