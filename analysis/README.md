@@ -25,6 +25,8 @@ After reading main.cc, If there is a specific non-trivial task that isn't clear 
 
     git clone --recurse-submodules https://github.com/cmstas/WWWAnalysisRun2.git
     cd WWWAnalysisRun2/analysis/
+    git fetch && git fetch --tags
+    git checkout looper_instruction
     git submodule update --init --recursive
     source ./setup.sh
     make clean
