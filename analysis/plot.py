@@ -80,9 +80,17 @@ bkg_fnames = [
 if args.use_private:
     if args.split_signal:
         sig_fnames = [
-            "{}/signal_private.root".format(input_dir),
-            "{}/vh_private.root".format(input_dir),
+            # "{}/signal_private.root".format(input_dir),
             "{}/www_private.root".format(input_dir),
+            "{}/vh_private.root".format(input_dir),
+            ]
+        bkg_fnames = [
+            "{}/photon.root".format(input_dir),
+            "{}/qflip.root".format(input_dir),
+            "{}/ddfakes.root".format(input_dir),
+            "{}/lostlep.root".format(input_dir),
+            "{}/prompt.root".format(input_dir),
+            "{}/signal_private.root".format(input_dir),
             ]
     else:
         sig_fnames = [
@@ -92,7 +100,7 @@ else:
     sig_fnames = ["{}/signal.root".format(input_dir)]
 
 # legend_labels
-legend_labels = ["Non-prompt", "Irredu.", "Lost/three lep", "Charge mis-id", "#gamma#rightarrowl"]
+legend_labels = ["Non-prompt", "Irredu.", "Lost/three lep", "Charge mis-id", "#gamma#rightarrowl", "All WWW (stacked)"]
 
 # If a histogram filter pattern was provided then plot the requested plots
 if filter_pattern:
@@ -102,7 +110,7 @@ if filter_pattern:
             data_fname="{}/data.root".format(input_dir),
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             legend_labels=legend_labels,
-            signal_labels=["WWW", "VH", "WWW"],
+            signal_labels=["WWW", "VH"],
             donorm=False,
             filter_pattern=filter_pattern,
             signal_scale=sig_scale,
@@ -119,7 +127,7 @@ if filter_pattern:
                 "lumi_value": lumi,
                 "blind": args.blind,
                 },
-            usercolors=[920, 2007, 2005, 2003, 2001],
+            usercolors=[920, 2007, 2005, 2003, 2001, 2011],
             )
     
     # scan optimization
@@ -148,7 +156,7 @@ else:
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             output_name="wzcr_yield",
             legend_labels=legend_labels,
-            signal_labels=["WWW", "VH", "WWW"],
+            signal_labels=["WWW", "VH"],
             donorm=False,
             filter_pattern=filter_pattern,
             signal_scale=sig_scale,
@@ -175,7 +183,7 @@ else:
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             output_name="yield",
             legend_labels=legend_labels,
-            signal_labels=["WWW", "VH", "WWW"],
+            signal_labels=["WWW", "VH"],
             donorm=False,
             filter_pattern=filter_pattern,
             signal_scale=sig_scale,
