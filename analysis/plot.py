@@ -4,16 +4,17 @@
 import argparse
 
 parser = argparse.ArgumentParser(description="Plot dumper from Run 2 WWW Analysis")
-parser.add_argument('-i' , '--input_dir'              , dest='input_dir'  , help='input dir path (where hists are)'                               , required=True      ) 
-parser.add_argument('-o' , '--output_dir'             , dest='output_dir' , help='output dir path'                        , default='plots'                            ) 
-parser.add_argument('-n' , '--nbins'                  , dest='nbins'      , help='number of bins for the histograms'      , default=30                                 ) 
-parser.add_argument('-y' , '--yaxis_range'            , dest='yaxis_range', help='Y-axis range set by user'               , default=None                               ) 
-parser.add_argument('-l' , '--yaxis_log'              , dest='yaxis_log'  , help='Y-axis set to log'                      , default=False         , action='store_true') 
-parser.add_argument('-s' , '--sig_scale'              , dest='sig_scale'  , help='Signal scale'                           , default=1                                  ) 
-parser.add_argument('-u' , '--rm_udflow'              , dest='rm_udflow'  , help='Remove underflow'                       , default=False         , action='store_true') 
-parser.add_argument('-S' , '--do_scan'                , dest='do_scan'    , help='Do cut scan'                            , default=False         , action='store_true') 
-parser.add_argument('-b' , '--blind'                  , dest='blind'      , help='Blind data'                             , default=False         , action='store_true') 
-parser.add_argument('-P' , '--use_private_sig_sample' , dest='use_private', help='Use private signal sample'              , default=False         , action='store_true') 
+parser.add_argument('-i' , '--input_dir'              , dest='input_dir'   , help='input dir path (where hists are)'                               , required=True      ) 
+parser.add_argument('-o' , '--output_dir'             , dest='output_dir'  , help='output dir path'                        , default='plots'                            ) 
+parser.add_argument('-n' , '--nbins'                  , dest='nbins'       , help='number of bins for the histograms'      , default=30                                 ) 
+parser.add_argument('-y' , '--yaxis_range'            , dest='yaxis_range' , help='Y-axis range set by user'               , default=None                               ) 
+parser.add_argument('-l' , '--yaxis_log'              , dest='yaxis_log'   , help='Y-axis set to log'                      , default=False         , action='store_true') 
+parser.add_argument('-s' , '--sig_scale'              , dest='sig_scale'   , help='Signal scale'                           , default=1                                  ) 
+parser.add_argument('-u' , '--rm_udflow'              , dest='rm_udflow'   , help='Remove underflow'                       , default=False         , action='store_true') 
+parser.add_argument('-S' , '--do_scan'                , dest='do_scan'     , help='Do cut scan'                            , default=False         , action='store_true') 
+parser.add_argument('-b' , '--blind'                  , dest='blind'       , help='Blind data'                             , default=False         , action='store_true') 
+parser.add_argument('-v' , '--split_signal'           , dest='split_signal', help='Split signal'                           , default=False         , action='store_true') 
+parser.add_argument('-P' , '--use_private_sig_sample' , dest='use_private' , help='Use private signal sample'              , default=False         , action='store_true') 
 
 parser.add_argument('filter_patterns', metavar='FILTER_PATTERN', type=str, nargs='*', help='patterns to use to filter histograms to dump')
 
@@ -77,7 +78,16 @@ bkg_fnames = [
 
 # Signal file names
 if args.use_private:
-    sig_fnames = ["{}/signal_private.root".format(input_dir)]
+    if args.split_signal:
+        sig_fnames = [
+            "{}/signal_private.root".format(input_dir),
+            "{}/vh_private.root".format(input_dir),
+            "{}/www_private.root".format(input_dir),
+            ]
+    else:
+        sig_fnames = [
+            "{}/signal_private.root".format(input_dir),
+            ]
 else:
     sig_fnames = ["{}/signal.root".format(input_dir)]
 
@@ -92,6 +102,7 @@ if filter_pattern:
             data_fname="{}/data.root".format(input_dir),
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             legend_labels=legend_labels,
+            signal_labels=["WWW", "VH", "WWW"],
             donorm=False,
             filter_pattern=filter_pattern,
             signal_scale=sig_scale,
@@ -137,6 +148,7 @@ else:
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             output_name="wzcr_yield",
             legend_labels=legend_labels,
+            signal_labels=["WWW", "VH", "WWW"],
             donorm=False,
             filter_pattern=filter_pattern,
             signal_scale=sig_scale,
@@ -163,6 +175,7 @@ else:
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             output_name="yield",
             legend_labels=legend_labels,
+            signal_labels=["WWW", "VH", "WWW"],
             donorm=False,
             filter_pattern=filter_pattern,
             signal_scale=sig_scale,
