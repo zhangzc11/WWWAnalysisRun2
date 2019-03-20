@@ -25,15 +25,15 @@ After reading main.cc, If there is a specific non-trivial task that isn't clear 
 
     git clone --recurse-submodules https://github.com/cmstas/WWWAnalysisRun2.git
     cd WWWAnalysisRun2/analysis/
-    source setup.sh
+    source ./setup.sh
     make clean
     make -j
-    time sh process.sh -i WWW2017_v5.0.0 -t test1 # should take about ~2 mins
-    python plot.py --use_private_sig_sample -i outputs/WWW2017_v5.0.0/test1 "SRSSmmNb0__lep_pt1"             # To plot sub-leading lepton pt in mm channel at b-veto cut stage
+    time sh ./process.sh -i WWW2017_v5.0.0 -t test1 # should take about ~2 mins
+    python ./plot.py --use_private_sig_sample -i outputs/WWW2017_v5.0.0/test1 "SRSSmmNb0__lep_pt1"             # To plot sub-leading lepton pt in mm channel at b-veto cut stage
     # Make sure to run the following command with -b,--blind option because it gets awfully close to signal region and we do not want to see data
-    python plot.py --use_private_sig_sample -i outputs/WWW2017_v5.0.0/test1 "SR0SFOSNb0__minDRllOS"  --blind # To plot Yifan's new variable she's studying for separating WH v. WWW
-    python plot.py --use_private_sig_sample -i outputs/WWW2017_v5.0.0/test1 "SR0SFOSFull__minDRllOS" --blind # To plot Yifan's new variable she's studying for separating WH v. WWW
-    python plot.py --use_private_sig_sample -i outputs/WWW2017_v5.0.0/test1                                  # To plot 9 bin SR yield plot and 5 bin lost lep CR plot
+    python ./plot.py --use_private_sig_sample -i outputs/WWW2017_v5.0.0/test1 "SR0SFOSNb0__minDRllOS"  --blind # To plot Yifan's new variable she's studying for separating WH v. WWW
+    python ./plot.py --use_private_sig_sample -i outputs/WWW2017_v5.0.0/test1 "SR0SFOSFull__minDRllOS" --blind # To plot Yifan's new variable she's studying for separating WH v. WWW
+    python ./plot.py --use_private_sig_sample -i outputs/WWW2017_v5.0.0/test1                                  # To plot 9 bin SR yield plot and 5 bin lost lep CR plot
 
 The yield plot produced from the last command should more or less match the result presented at CMS Week Feb. (https://indico.cern.ch/event/795443/)
 
