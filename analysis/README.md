@@ -21,9 +21,10 @@ As of Mar. 2019, latest 2017 ntuple baby is:
     make clean
     make -j
     time sh process.sh # should take about ~2 mins
-    python plot.py -i outputs/WWW2017_v5.0.0/test1                      # To plot 9 bin SR yield plot
-    python plot.py -i outputs/WWW2017_v5.0.0/test1 "SRSSmmNb0__lep_pt1" # To plot sub-leading lepton pt in mm channel at b-veto cut stage
+    python plot.py --use_private_sig_sample -i outputs/WWW2017_v5.0.0/test1 "SRSSmmNb0__lep_pt1" # To plot sub-leading lepton pt in mm channel at b-veto cut stage
+    python plot.py --use_private_sig_sample -i outputs/WWW2017_v5.0.0/test1                      # To plot 9 bin SR yield plot
 
+The yield plot produced from the last command should more or less match the result presented at CMS Week Feb. (https://indico.cern.ch/event/795443/)
 
 If it complains about missing ```.root``` files for some scalefactors, then try deleting ```scalefactors/``` and trying again
 
