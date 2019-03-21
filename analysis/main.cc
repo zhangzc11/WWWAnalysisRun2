@@ -43,6 +43,7 @@ int main(int argc, char** argv)
         ("C,cutflow"     , "Book cutflows")
         ("S,systematics" , "Also consider systematics")
         ("F,fake"        , "The event weight will be multiplied by fake weights")
+        ("u,user_study"  , "Enable user_study function for analyzers to make their own studies")
         ("h,help"        , "Print help")
         ;
 
@@ -162,6 +163,17 @@ int main(int argc, char** argv)
         ana.do_fake_estimation = false;
     }
 
+    //_______________________________________________________________________________
+    // --user_study
+    if (result.count("user_study"))
+    {
+        ana.do_user_study = true;
+    }
+    else
+    {
+        ana.do_user_study = false;
+    }
+
     //
     // Printing out the option settings overview
     //
@@ -175,6 +187,7 @@ int main(int argc, char** argv)
     std::cout <<  " ana.do_histograms: " << ana.do_histograms <<  std::endl;
     std::cout <<  " ana.do_systematics: " << ana.do_systematics <<  std::endl;
     std::cout <<  " ana.do_fake_estimation: " << ana.do_fake_estimation <<  std::endl;
+    std::cout <<  " ana.do_user_study: " << ana.do_user_study <<  std::endl;
     std::cout <<  "=========================================================" << std::endl;
 
 //********************************************************************************
@@ -204,21 +217,18 @@ int main(int argc, char** argv)
 //
 //********************************************************************************
 
-    // Set the cutflow object output file
-    ana.cutflow.setTFile(ana.output_tfile);
-
     // ~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
     // Quick tutorial on RooUtil::Cutflow object cut tree formation
     // ~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
     //
-    // NOTE: The RooUtil::Cutflow object facilitates creating a tree structure of cuts
+    // The RooUtil::Cutflow object facilitates creating a tree structure of cuts
     //
-    // To add cuts to each node of the tree with cuts defined, use "addCut" or "addCutToLastActiveCut".
-    // The "addCut" or "addCutToLastActiveCut" accepts three argument, <name>, and two lambda's that define the cut selection, and the weight to apply to that cut stage.
+    // To add cuts to each node of the tree with cuts defined, use "addCut" or "addCutToLastActiveCut"
+    // The "addCut" or "addCutToLastActiveCut" accepts three argument, <name>, and two lambda's that define the cut selection, and the weight to apply to that cut stage
     //
     // e.g. To create following cut-tree structure one does
     //
-    //              Root <--- Always exists as soon as RooUtil::Cutflow object is created
+    //             (Root) <--- Always exists as soon as RooUtil::Cutflow object is created. But this is basically hidden underneath and users do not have to care
     //                |
     //            CutWeight
     //            |       |
@@ -229,7 +239,7 @@ int main(int argc, char** argv)
     //
     //   code:
     //
-    //      // Create the object (Root is already created at this point)
+    //      // Create the object (Root node is created as soon as the instance is created)
     //      RooUtil::Cutflow cutflow; 
     //
     //      cutflow.addCut("CutWeight"                 , <lambda> , <lambda>); // CutWeight is added below "Root"-node
@@ -240,9 +250,100 @@ int main(int argc, char** argv)
     //      cutflow.addCutToLastActiveCut("CutPresel2" , <lambda> , <lambda>); // The last "active" cut is "CutWeight" since I "getCut" on it. So "CutPresel2" is added below "CutWeight"
     //      cutflow.addCutToLastActiveCut("CutSel2"    , <lambda> , <lambda>); // The last "active" cut is "CutPresel2" since I just added that. So "CutSel2" is added below "CutPresel1"
     //
-    // "UNITY" lambda is defined to just return 1.
-    // This so that use don't have to type [&]() {return 1;} so many times
+    // (Side note: "UNITY" lambda is defined in the framework to just return 1. This so that use don't have to type [&]() {return 1;} so many times.)
     //
+    // Once the cutflow is formed, create cutflow histograms can be created by calling RooUtil::Cutflow::bookCutflows())
+    // This function looks through the terminating nodes of the tree structured cut tree. and creates a histogram that will fill the yields
+    // For the example above, there are two terminationg nodes, "CutSel1", and "CutSel2"
+    // So in this case Root::Cutflow::bookCutflows() will create two histograms. (Actually four histograms.)
+    //
+    //  - TH1F* type object :  CutSel1_cutflow (4 bins, with first bin labeled "Root", second bin labeled "CutWeight", third bin labeled "CutPreSel1", fourth bin labeled "CutSel1")
+    //  - TH1F* type object :  CutSel2_cutflow (...)
+    //  - TH1F* type object :  CutSel1_rawcutflow (...)
+    //  - TH1F* type object :  CutSel2_rawcutflow (...)
+    //                                ^
+    //                                |
+    // NOTE: There is only one underscore "_" between <CutName>_cutflow or <CutName>_rawcutflow
+    //
+    // And later in the loop when RooUtil::Cutflow::fill() function is called, the tree structure will be traversed through and the appropriate yields will be filled into the histograms
+    //
+    // After running the loop check for the histograms in the output root file
+
+    // ~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
+    // Quick tutorial on RooUtil::Histograms object
+    // ~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
+    //
+    // The RooUtil::Histograms object facilitates book keeping histogram definitions
+    // And in conjunction with RooUtil::Cutflow object, one can book same histograms across different cut stages easily without copy pasting codes many times by hand.
+    //
+    // The histogram addition happens in two steps.
+    // 1. Defining histograms
+    // 2. Booking histograms to cuts
+    //
+    // Histograms are defined via following functions
+    //
+    //      RooUtil::Histograms::addHistogram       : Typical 1D histogram (TH1F*) "Fill()" called once per event
+    //      RooUtil::Histograms::addVecHistogram    : Typical 1D histogram (TH1F*) "Fill()" called multiple times per event
+    //      RooUtil::Histograms::add2DHistogram     : Typical 2D histogram (TH2F*) "Fill()" called once per event
+    //      RooUtil::Histograms::add2DVecHistogram  : Typical 2D histogram (TH2F*) "Fill()" called multiple times per event
+    // e.g. 
+    //
+    //    RooUtil::Histograms histograms;
+    //    histograms.addHistogram   ("MllSS"    , 180 , 0. , 300. , [&]() { return www.MllSS()  ; }); // The lambda returns float
+    //    histograms.addVecHistogram("AllLepPt" , 180 , 0. , 300. , [&]() { return www.lep_pt() ; }); // The lambda returns vector<float>
+    //
+    // The addVecHistogram will have lambda to return vector<float> and it will loop over the values and call TH1F::Fill() for each item
+    //
+    // To book histograms to cuts one uses
+    //
+    //      RooUtil::Cutflow::bookHistogramsForCut()
+    //      RooUtil::Cutflow::bookHistogramsForCutAndBelow()
+    //      RooUtil::Cutflow::bookHistogramsForCutAndAbove()
+    //      RooUtil::Cutflow::bookHistogramsForEndCuts()
+    //
+    // e.g. Given a tree like the following, we can book histograms to various cuts as we want
+    //
+    //              Root
+    //                |
+    //            CutWeight
+    //            |       |
+    //     CutPreSel1    CutPreSel2
+    //       |                  |
+    //     CutSel1           CutSel2
+    //
+    // For example,
+    //
+    //    1. book a set of histograms to one cut:
+    //
+    //       cutflow.bookHistogramsForCut(histograms, "CutPreSel2")
+    //
+    //    2. book a set of histograms to a cut and below
+    //
+    //       cutflow.bookHistogramsForCutAndBelow(histograms, "CutWeight") // will book a set of histograms to CutWeight, CutPreSel1, CutPreSel2, CutSel1, and CutSel2
+    //
+    //    3. book a set of histograms to a cut and above (... useless...?)
+    //
+    //       cutflow.bookHistogramsForCutAndAbove(histograms, "CutPreSel2") // will book a set of histograms to CutPreSel2, CutWeight (nothing happens to Root node)
+    //
+    //    4. book a set of histograms to a terminating nodes
+    //
+    //       cutflow.bookHistogramsForEndCuts(histograms) // will book a set of histograms to CutSel1 and CutSel2
+    //
+    // The naming convention of the booked histograms are as follows
+    //
+    //   cutflow.bookHistogramsForCut(histograms, "CutSel1");
+    //
+    //  - TH1F* type object : CutSel1__MllSS;
+    //  - TH1F* type object : CutSel1__AllLepPt;
+    //                               ^^
+    //                               ||
+    // NOTE: There are two underscores "__" between <CutName>__<HistogramName>
+    //
+    // And later in the loop when RooUtil::CutName::fill() function is called, the tree structure will be traversed through and the appropriate histograms will be filled with appropriate variables
+    // After running the loop check for the histograms in the output root file
+
+    // Set the cutflow object output file
+    ana.cutflow.setTFile(ana.output_tfile);
 
     //_______________________________________________________________________________
     //
@@ -822,6 +923,7 @@ int main(int argc, char** argv)
     ana.cutflow.addCutToLastActiveCut("AR2SFOSZVt"            , [&]() { return www.nSFOSinZ() == 0                              ; }        , UNITY                                  ); 
     ana.cutflow.addCutToLastActiveCut("AR2SFOSFull"           , [&]() { return 1                                                ; }        , UNITY                                  ); 
 
+
 //********************************************************************************
 //
 // 4. Defining histograms
@@ -855,6 +957,12 @@ int main(int argc, char** argv)
     ana.histograms.addHistogram("DetajjVBS"                ,  180 , 0.      , 3.     , [&]() { return www.DetajjL()                ; });
     ana.histograms.addHistogram("MET"                      ,  180 , 0.      , 180.   , [&]() { return www.met_pt()                 ; });
     ana.histograms.addHistogram("METWide"                  ,  180 , 0.      , 300.   , [&]() { return www.met_pt()                 ; });
+    ana.histograms.addHistogram("jets_pt0"                 ,  180 , 0.      , 250    , [&]() { return www.jets_p4()[0].pt()        ; });
+    ana.histograms.addHistogram("jets_pt1"                 ,  180 , 0.      , 150    , [&]() { return www.jets_p4()[1].pt()        ; });
+    ana.histograms.addHistogram("jets_pt2"                 ,  180 , 0.      , 150    , [&]() { return www.jets_p4()[2].pt()        ; });
+    ana.histograms.addHistogram("jets_eta0"                ,  180 , -5.0    , 5.0    , [&]() { return www.jets_p4()[0].eta()       ; });
+    ana.histograms.addHistogram("jets_eta1"                ,  180 , -5.0    , 5.0    , [&]() { return www.jets_p4()[1].eta()       ; });
+    ana.histograms.addHistogram("jets_eta2"                ,  180 , -5.0    , 5.0    , [&]() { return www.jets_p4()[2].eta()       ; });
     ana.histograms.addHistogram("lep_pt0"                  ,  180 , 0.      , 250    , [&]() { return www.lep_pt()[0]              ; });
     ana.histograms.addHistogram("lep_pt1"                  ,  180 , 0.      , 150    , [&]() { return www.lep_pt()[1]              ; });
     ana.histograms.addHistogram("lep_pt2"                  ,  180 , 0.      , 150    , [&]() { return www.lep_pt()[2]              ; });
@@ -865,7 +973,6 @@ int main(int argc, char** argv)
     ana.histograms.addHistogram("lep_relIso03EAv2Lep0"     ,  180 , 0.0     , 0.2    , [&]() { return www.lep_relIso03EAv2Lep()[0] ; });
     ana.histograms.addHistogram("lep_relIso03EAv2Lep1"     ,  180 , 0.0     , 0.2    , [&]() { return www.lep_relIso03EAv2Lep()[1] ; });
     ana.histograms.addHistogram("lep_relIso03EAv2Lep2"     ,  180 , 0.0     , 0.2    , [&]() { return www.lep_relIso03EAv2Lep()[2] ; });
-    ana.histograms.addHistogram("lep_relIso03EAv2LepMaxSS" ,  180 , 0.0     , 0.2    , [&]() { return std::max(www.lep_relIso03EAv2Lep()[0], www.lep_relIso03EAv2Lep()[1]) ; });
     ana.histograms.addHistogram("nj"                       ,  7   , 0.      , 7.     , [&]() { return www.nj()                     ; });
     ana.histograms.addHistogram("nj30"                     ,  7   , 0.      , 7.     , [&]() { return www.nj30()                   ; });
     ana.histograms.addHistogram("nb"                       ,  5   , 0.      , 5.     , [&]() { return www.nb()                     ; });
@@ -873,90 +980,105 @@ int main(int argc, char** argv)
     ana.histograms.addHistogram("MTmax"                    ,  180 , 0.      , 300.   , [&]() { return www.MTmax()                  ; });
     ana.histograms.addHistogram("MTmax3L"                  ,  180 , 0.      , 300.   , [&]() { return www.MTmax3L()                ; });
     ana.histograms.addHistogram("MT3rd"                    ,  180 , 0.      , 300.   , [&]() { return www.MT3rd()                  ; });
-    ana.histograms.addHistogram("el_relIso03EAv2Lep"       ,  180 , 0.0     , 0.2    , [&]() { return (abs(www.lep_pdgId()[0]) == 11) * (www.lep_relIso03EAv2Lep()[0]) + (abs(www.lep_pdgId()[1]) == 11) * (www.lep_relIso03EAv2Lep()[1]); });
-    ana.histograms.addHistogram("mu_relIso03EAv2Lep"       ,  180 , 0.0     , 0.2    , [&]() { return (abs(www.lep_pdgId()[0]) == 13) * (www.lep_relIso03EAv2Lep()[0]) + (abs(www.lep_pdgId()[1]) == 13) * (www.lep_relIso03EAv2Lep()[1]); });
+
+    // Because it uses lambda you can compute much more complicated variables on the fly
+    // Let's define a complex histogram. (This is a variable Yifan is looking into.)
+    // This is going to plot a new variable where it plots the minimum DR of the two opposite sign leptons.
+    // This is the variable that WH->WW analysis in HIG uses to fit to extract signal.
+    //
+    // If the user expects the function to be computationally heavy you can either use memoization or static variables to cache results
+    // The example below illustrates this
+    ana.histograms.addHistogram("minDRllOS", 180, 0., 4.,
+            [&]()
+            {
+                // To cache result the caching will be determined by run/lumi/evt of the event
+                // run/lumi/evt can provide unique identifier per event. (upto within the same sample.)
+                // Since this program MAY run over multiple different samples, there is a very very miniscule
+                // chance that run/lumi/evt is SAME between the last event of a sample to the first event of another sample.
+                // But the rate of such occurence is probably faster than proton decay.... or something like that. idk...
+                static float result;
+                static int run;
+                static int lumi;
+                static unsigned long long evt;
+
+                // Check if I can just use cached result
+                if (www.run() == run and www.lumi() == lumi and www.evt() == evt)
+                {
+                    return result;
+                }
+
+                // "www" objects contain lepton 4-vectors and pdgID
+                std::vector<LV> lep_p4 = www.lep_p4();
+                std::vector<int> lep_pdgId = www.lep_pdgId();
+
+                // Loop over and for each opposite sign pair compute DR and choose the smallest
+                float minDR = 999;
+                bool os_pair_found = false;
+                for (unsigned int ii = 0; ii < lep_pdgId.size(); ++ii)
+                {
+                    for (unsigned int jj = ii + 1; jj < lep_pdgId.size(); ++jj)
+                    {
+                        if (lep_pdgId[ii] * lep_pdgId[jj] < 0) // If opposite sign lepton
+                        {
+                            os_pair_found = true;
+                            float thisDR = RooUtil::Calc::DeltaR(lep_p4[ii], lep_p4[jj]);
+                            if (thisDR < minDR)
+                            {
+                                minDR = thisDR;
+                            }
+                        }
+                    }
+                }
+
+                if (not os_pair_found) // If same-sign event it will not find anything, then set to -999
+                    minDR = -999;
+
+                // Cache result
+                result = minDR;
+                run = www.run();
+                lumi = www.lumi();
+                evt = www.evt();
+
+                return result;
+            });
 
 //*************************************************************************************************************
 //
-// 5. Booking histograms and cutflows
+// 5. User customization on cutflows
+//
+//*************************************************************************************************************
+
+    // Here I create hook for users to add various cuts and histograms of their choice to make their own studies
+    // The separation between the main parts and the user_study helps to not make main analysis code too bloated
+    // An example of how to add new cuts are shown in template_user_study.h
+    // Copy the file template_user_study.h -> user_study.h after implementing user's additional cutflows
+    // Then recompile the code and provide the option -u,--user_study as the option to the ./doAnalysis
+    // OR just use process.sh script with option -u which will relay the --user_study option to the ./doAnalysis
+    auto user_study = [&] ()
+    {
+        #if __has_include ("user_study.h")
+        #include "user_study.h"
+        #endif
+    };
+
+    if (ana.do_user_study)
+        user_study();
+
+//*************************************************************************************************************
+//
+// 6. Booking histograms and cutflows
 //
 //*************************************************************************************************************
 
     // So far we have defined a tree structure of cuts (RooUtil::Cutflow object)
     // Also we defined a list of histograms (RooUtil::Histograms)
 
-    // Now we book cutflow histograms by calling RooUtil::Cutflow::bookCutflows())
-    // This function looks through the terminating nodes of the tree structured cut tree. and creates a histogram that will fill the yields
-    // e.g.
-    //
-    //              Root
-    //                |
-    //            CutWeight
-    //            |       |
-    //     CutPreSel1    CutPreSel2
-    //       |                  |
-    //     CutSel1           CutSel2
-    //
-    // There are two terminationg nodes, "CutSel1", and "CutSel2"
-    //
-    // So in this case Root::Cutflow::bookCutflows() will create two histograms. (Actually four histograms.)
-    //
-    //  - TH1F* type object :  CutSel1_cutflow (4 bins, with first bin labeled "Root", second bin labeled "CutWeight", third bin labeled "CutPreSel1", fourth bin labeled "CutSel1")
-    //  - TH1F* type object :  CutSel2_cutflow (...)
-    //  - TH1F* type object :  CutSel1_rawcutflow (...)
-    //  - TH1F* type object :  CutSel2_rawcutflow (...)
-    //
-    //                                ^
-    //                                |
-    // NOTE: There is only one underscore "_" between <CutName>_cutflow or <CutName>_rawcutflow
-    //
-    // And later in the loop when RooUtil::Cutflow::fill() function is called, the tree structure will be traversed through and the appropriate yields will be filled into the histograms
-    //
-    // After running the loop check for the histograms in the output root file
-    //
-
-    // Book cutflows
-    ana.cutflow.bookCutflows();
-
-    // Now we book histograms at each cut stage by calling RooUtil::Cutflow::bookHistogramsForCut(histograms, "<name of the cut>") or RooUtil::Cutflow::bookHistogramsForCutAndBelow(histograms, "<name of the cut>")
-    // Where histograms is an object of RooUtil::Histograms. (NOTE: although in this code there are only one "ana.histograms" one could have defined several different groups of RooUtil::Histograms.
-    //
-    // Let's suppose we have a RooUtil::Histograms histograms with the following histogram definitions
-    //
-    // e.g.
-    //
-    //   RooUtil::Histograms histograms;
-    //   histograms.addHistogram("mll"     , 180 , 0 , 1 , [&]() { return mll;     });
-    //   histograms.addHistogram("mjj"     , 180 , 0 , 1 , [&]() { return mjj;     });
-    //   histograms.addHistogram("lep_pt0" , 180 , 0 , 1 , [&]() { return lep_pt0; });
-    //   histograms.addHistogram("lep_pt1" , 180 , 0 , 1 , [&]() { return lep_pt1; });
-    //
-    // Then calling the following function will internally create the following histograms
-    //
-    //   cutflow.bookHistogramsForCut(histograms, "CutSel1");
-    //
-    //  - TH1F* type object : CutSel1__mll;
-    //  - TH1F* type object : CutSel1__mjj;
-    //  - TH1F* type object : CutSel1__lep_pt0;
-    //  - TH1F* type object : CutSel1__lep_pt1;
-    //
-    //                               ^^
-    //                               ||
-    // NOTE: There are two underscores "__" between <CutName>__<HistogramName>
-    //
-    // And later in the loop when RooUtil::CutName::fill() function is called, the tree structure will be traversed through and the appropriate histograms will be filled with appropriate variables
-    //
-    // After running the loop check for the histograms in the output root file
-    //
-    // And when bookHistogramsForCutAndBelow() is called instead, it will start from the cut and go all the way down to terminating node (or nodes) and create histograms at every nodes and all the histograms will be properly filled during RooUtil::Cutflow::fill()
-    //
-
     // Book histograms
     ana.cutflow.bookHistogramsForCutAndBelow(ana.histograms, "CutSRDilep");
     ana.cutflow.bookHistogramsForCutAndBelow(ana.histograms, "CutSRTrilep");
-    ana.cutflow.bookHistogramsForCut(ana.histograms, "CutWZCRTrilep");
-    ana.cutflow.bookHistogramsForCut(ana.histograms, "CutARDilep");
-    ana.cutflow.bookHistogramsForCut(ana.histograms, "CutARTrilep");
+    ana.cutflow.bookHistogramsForCutAndBelow(ana.histograms, "CutWZCRTrilep");
+    ana.cutflow.bookHistogramsForCutAndBelow(ana.histograms, "CutARDilep");
+    ana.cutflow.bookHistogramsForCutAndBelow(ana.histograms, "CutARTrilep");
 
     //
     // Print cut structure before starting the loop just to visually see it
@@ -1022,70 +1144,11 @@ int main(int argc, char** argv)
     // Right now, I turned this off (March 19) while cleaning up the code since systematics can make the code run a lot more slower.
     //
 
+    // Book cutflows
+    ana.cutflow.bookCutflows();
+
     // Print once before starting any loop (at this point, "pass|weight" columns will be entirely empty since it's not showing for a any specific event
     ana.cutflow.printCuts();
-
-//*************************************************************************************************************
-//
-// 6. User Customization
-//
-//*************************************************************************************************************
-
-    // NOTE: If you want to change the cuts, go above and change the cuts prior to calling RooUtil::Cutflow::bookCutflows()
-    // I have not put a fool-proof protection of not clashing when user mixes up the order of 1. adding cuts and then 2. booking histograms, and then 3. adding cuts again.
-    // So be careful!
-    // Hopefully, the code so far is clean enough to understand what's going on
-    // If there is something you'd like to do that is unclear, let me know (philip@ucsd.edu)
-
-    // Adding new histogram to a specific cut
-
-    // Let's utilize what we learned so far.
-    // Let's try to use a new histogram object instead of using what's already used above
-    // So let's create a new RooUtil::Histograms, instead of using the RooUtil::Histograms ana.histogram.
-
-    // Creating user's histogram
-    RooUtil::Histograms user_histograms;
-
-    // Now add a new histogram. (This is a variable Yifan is looking into.)
-    // This is going to plot a new variable where it plots the minimum DR of the two opposite sign leptons.
-    // This is the variable that WH->WW analysis in HIG uses to fit to extract signal.
-    // As you can see in this example, even if the varialbe is not computed you can use lambda expression to compute it on the fly.
-    user_histograms.addHistogram("minDRllOS", 180, 0., 4.,
-            [&]()
-            {
-                // "www" objects contain lepton 4-vectors and pdgID
-                std::vector<LV> lep_p4 = www.lep_p4();
-                std::vector<int> lep_pdgId = www.lep_pdgId();
-
-                // Loop over and for each opposite sign pair compute DR and choose the smallest
-                float minDR = 999;
-                bool os_pair_found = false;
-                for (unsigned int ii = 0; ii < lep_pdgId.size(); ++ii)
-                {
-                    for (unsigned int jj = ii + 1; jj < lep_pdgId.size(); ++jj)
-                    {
-                        if (lep_pdgId[ii] * lep_pdgId[jj] < 0) // If opposite sign lepton
-                        {
-                            os_pair_found = true;
-                            float thisDR = RooUtil::Calc::DeltaR(lep_p4[ii], lep_p4[jj]);
-                            if (thisDR < minDR)
-                            {
-                                minDR = thisDR;
-                            }
-                        }
-                    }
-                }
-
-                if (not os_pair_found) // If same-sign event it will not find anything, then set to -999
-                    minDR = -999;
-                return minDR;
-            });
-
-    // Now let's book this to a cutflow
-    // Since there is no point of booking to same sign dilepton events let's book only to SR0SFOS/1SFOS/2SFOS and below
-    ana.cutflow.bookHistogramsForCutAndBelow(user_histograms, "SR0SFOS");
-    ana.cutflow.bookHistogramsForCutAndBelow(user_histograms, "SR1SFOS");
-    ana.cutflow.bookHistogramsForCutAndBelow(user_histograms, "SR2SFOS");
 
 //*************************************************************************************************************
 //

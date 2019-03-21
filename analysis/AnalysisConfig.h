@@ -39,6 +39,11 @@ public:
     // Boolean flag to determine whether the fake rate weights will be applied to the weights
     bool do_fake_estimation;
 
+    // Boolean flag to determine whether the user_study function will be called
+    // The user_study function will be where analyzers can implement new cuts and histograms to make their own studies
+    // Once the study shows promising results, we can port them to the main work flow
+    bool do_user_study;
+
     // The TChain that holds the input TTree's
     TChain* events_tchain;
 

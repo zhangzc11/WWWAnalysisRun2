@@ -16,6 +16,8 @@ parser.add_argument('-b' , '--blind'                  , dest='blind'           ,
 parser.add_argument('-v' , '--split_signal'           , dest='split_signal'    , help='Split signal'                           , default=False         , action='store_true') 
 parser.add_argument('-m' , '--use_mc_fake'            , dest='use_mc_fake'     , help='use_mc_fake'                            , default=False         , action='store_true') 
 parser.add_argument('-P' , '--use_private_sig_sample' , dest='use_private'     , help='Use private signal sample'              , default=False         , action='store_true') 
+parser.add_argument('-a' , '--sum_hists'              , dest='sum_hists'       , help='Sum all hists that passes filter'       , default=False         , action='store_true') 
+parser.add_argument('-O' , '--output_name'            , dest='output_name'     , help='output file name when using sum_hists'  , default=None                               ) 
 
 parser.add_argument('filter_patterns', metavar='FILTER_PATTERN', type=str, nargs='*', help='patterns to use to filter histograms to dump')
 
@@ -129,6 +131,8 @@ if filter_pattern:
                 "blind": args.blind,
                 "ratio_range": [0., 2.],
                 },
+            do_sum=args.sum_hists,
+            output_name=args.output_name if args.sum_hists else None,
             usercolors=[920, 2007, 2005, 2003, 2001, 2011],
             )
     
@@ -171,7 +175,7 @@ else:
                 "blind": False,
                 "ratio_range": [0., 2.],
                 },
-            usercolors=[920, 2007, 2005, 2003, 2001],
+            usercolors=[920, 2007, 2005, 2003, 2001, 2011],
             )
 
     #__________________________________________________________________________________
@@ -197,7 +201,7 @@ else:
                 "print_yield": True,
                 "blind": True, # BE CAREFUL!!!!!!!!!!!!!!!!!!
                 },
-            usercolors=[920, 2007, 2005, 2003, 2001],
+            usercolors=[920, 2007, 2005, 2003, 2001, 2011],
             )
 
 
