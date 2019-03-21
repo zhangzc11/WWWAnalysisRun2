@@ -181,6 +181,18 @@
     ana.histograms.addHistogram("Mjj3020", 180, 0., 300.,
             [&]()
             {
+                // To cache result the caching will be determined by run/lumi/evt of the event
+                static float result;
+                static int run;
+                static int lumi;
+                static unsigned long long evt;
+
+                // Check if I can just use cached result
+                if (www.run() == run and www.lumi() == lumi and www.evt() == evt)
+                {
+                    return result;
+                }
+
                 // "www" objects contain jets 4-vectors
                 std::vector<LV> jets_p4 = www.jets_p4();
 
@@ -208,6 +220,13 @@
 
                 if (not os_pair_found) // If same-sign event it will not find anything, then set to -999
                     Mjj = -999;
-                return Mjj;
+
+                // Cache result
+                result = Mjj;
+                run = www.run();
+                lumi = www.lumi();
+                evt = www.evt();
+
+                return result;
             });
 
