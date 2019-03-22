@@ -1,5 +1,7 @@
 #include "InputConfig.h"
 
+InputConfig input;
+
 // The function to determine all the configuration above
 void InputConfig::determine_input_settings(TString file_path, TString tree_name)
 {

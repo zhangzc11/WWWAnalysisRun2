@@ -230,3 +230,6 @@
                 return result;
             });
 
+    ana.cutflow.bookHistogramsForCutAndBelow(ana.histograms, "CutLRDilep");
+    ana.cutflow.bookHistogramsForCutAndBelow(ana.histograms, "CutLRTrilep");
+

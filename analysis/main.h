@@ -7,8 +7,8 @@
 #include "AnalysisConfig.h"
 #include "InputConfig.h"
 #include "scalefactors.h"
+#include "lambdas.h"
 
-bool passTrigger2016();
 
 // #include "applicationregioncuts.h"
 // #include "basecuts.h"

@@ -28,6 +28,9 @@ EXTRAFLAGS = -fPIC -ITMultiDrawTreePlayer -Wunused-variable -lTMVA -lEG -lGenVec
 $(EXE): $(OBJECTS) wwwtree.o
 	$(LD) $(CXXFLAGS) $(LDFLAGS) $(OBJECTS) $(ROOTLIBS) $(EXTRAFLAGS) -o $@
 
+main.o: main.cc user_study.h
+	$(CC) $(CFLAGS) $(EXTRACFLAGS) $< -c
+
 %.o: %.cc
 	$(CC) $(CFLAGS) $(EXTRACFLAGS) $< -c
 

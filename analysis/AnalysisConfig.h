@@ -8,6 +8,7 @@
 
 // Analysis
 #include "rooutil.h"
+#include "wwwtree.h"
 
 // These are configurations that does not change through out the entire loop
 class AnalysisConfig
@@ -59,5 +60,7 @@ public:
     RooUtil::Histograms histograms;
 
 };
+
+extern AnalysisConfig ana;
 
 #endif

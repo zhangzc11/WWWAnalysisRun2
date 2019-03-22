@@ -66,4 +66,6 @@ private:
 
 };
 
+extern InputConfig input;
+
 #endif

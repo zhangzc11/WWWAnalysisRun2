@@ -74,7 +74,7 @@ if "2018" in input_dir:
 bkg_fnames = [
     "{}/photon.root".format(input_dir),
     "{}/qflip.root".format(input_dir),
-    ("{}/fakes.root".format(input_dir) if args.use_mc_fake else "{}/ddfakes.root".format(input_dir)),
+     ("{}/fakes.root".format(input_dir) if args.use_mc_fake else "{}/ddfakes.root".format(input_dir)),
     "{}/lostlep.root".format(input_dir),
     "{}/prompt.root".format(input_dir),
     ]
@@ -83,9 +83,9 @@ bkg_fnames = [
 if args.use_private:
     if args.split_signal:
         sig_fnames = [
-            # "{}/signal_private.root".format(input_dir),
             "{}/www_private.root".format(input_dir),
-            "{}/vh_private.root".format(input_dir),
+            "{}/vh_www_private.root".format(input_dir),
+            # "{}/vh_private.root".format(input_dir),
             ]
         bkg_fnames = [
             "{}/photon.root".format(input_dir),
@@ -130,6 +130,7 @@ if filter_pattern:
                 "lumi_value": lumi,
                 "blind": args.blind,
                 "ratio_range": [0., 2.],
+                "yaxis_range": [0., 40.],
                 },
             do_sum=args.sum_hists,
             output_name=args.output_name if args.sum_hists else None,
