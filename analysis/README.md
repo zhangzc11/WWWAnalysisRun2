@@ -80,7 +80,7 @@ However, since for 2016 we had an almost perfect aggreement in data v. MC yields
     ln -s my_user_study.h user_study.h
     make clean
     make -j
-    time sh ./process.sh -i WWW2017_v1.2.2 -t test -u # should take about ~30 seconds
+    time sh ./process.sh -i WWW2016_v1.2.2 -t test -u # should take about ~30 seconds
     ## To Print plotting options
     python ./plot.py -h
     ## Read the options for more information
