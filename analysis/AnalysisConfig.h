@@ -48,6 +48,13 @@ public:
     // The TChain that holds the input TTree's
     TChain* events_tchain;
 
+    // Jobs to split (if this number is positive, then we will skip certain number of events)
+    // If there are N events, and was asked to split 2 ways, then depending on job_index, it will run over first half or latter half
+    int nsplit_jobs;
+
+    // Job index (assuming nsplit_jobs is set, the job_index determine where to loop over)
+    int job_index;
+
     // The RooUtil::Looper class takes in a list of TChain and loops them over
     // The code can be simpliifed to while (looper.nextEvent()) instead of using a for-based loop
     RooUtil::Looper<wwwtree> looper;

@@ -130,7 +130,7 @@ if filter_pattern:
                 "lumi_value": lumi,
                 "blind": args.blind,
                 "ratio_range": [0., 2.],
-                "yaxis_range": [0., 40.],
+                # "yaxis_range": [0., 40.],
                 },
             do_sum=args.sum_hists,
             output_name=args.output_name if args.sum_hists else None,

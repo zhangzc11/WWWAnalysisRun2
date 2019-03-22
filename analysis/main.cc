@@ -6,9 +6,11 @@ int main(int argc, char** argv)
 
 //********************************************************************************
 //
-// 0. Configuration classes and global TTree reader class
+// 0. Notes on global configuration classes and global TTree reader class
 //
 //********************************************************************************
+
+    // 1. 
 
     // There is a global variable defined in AnalysisConfig.cc
     //
@@ -18,6 +20,8 @@ int main(int argc, char** argv)
     // (e.g. number of events, the input file name list, etc. that will not change through run time)
     // (see AnalysisConfig.h to get a feeling)
 
+    // 2. 
+
     // There is a global variable defined in AnalysisConfig.cc
     //
     //   InputConfig input;
@@ -26,6 +30,8 @@ int main(int argc, char** argv)
     // Everytime looper loads new file, the configuration in this class is reconfigured to handle sample dependent behaviors.
     // (e.g. is_data? is_sig? is_bkg? etc.)
     // (see InputConfig.h to get a feeling)
+
+    // 3. 
 
     // Then there is a global variable defined in wwwtree.cc
     //
@@ -39,6 +45,8 @@ int main(int argc, char** argv)
     //
     // and no need for "SetBranchAddress" and declaring variable shenanigans necessary.
     // This is a standard thing SNT does pretty much every looper we use.
+
+    // 4. 
 
     // The there are a few scale factor reader classes that are also globally defined
     // Those are defined in scalefactors.h
@@ -67,6 +75,8 @@ int main(int argc, char** argv)
         ("S,systematics" , "Also consider systematics")
         ("F,fake"        , "The event weight will be multiplied by fake weights")
         ("u,user_study"  , "Enable user_study function for analyzers to make their own studies")
+        ("j,nsplit_jobs" , "Enable splitting jobs by N blocks (--job_index must be set)", cxxopts::value<int>())
+        ("I,job_index"   , "job_index of split jobs (--nsplit_jobs must be set. index starts from 0. i.e. 0, 1, 2, 3, etc...)", cxxopts::value<int>())
         ("h,help"        , "Print help")
         ;
 
@@ -81,7 +91,7 @@ int main(int argc, char** argv)
     if (result.count("help"))
     {
         std::cout << options.help() << std::endl;
-        exit(0);
+        exit(1);
     }
 
     //_______________________________________________________________________________
@@ -197,6 +207,65 @@ int main(int argc, char** argv)
         ana.do_user_study = false;
     }
 
+    //_______________________________________________________________________________
+    // --nsplit_jobs
+    if (result.count("nsplit_jobs"))
+    {
+        ana.nsplit_jobs = result["nsplit_jobs"].as<int>();
+        if (ana.nsplit_jobs <= 0)
+        {
+            std::cout << options.help() << std::endl;
+            std::cout << "ERROR: option string --nsplit_jobs" << ana.nsplit_jobs << " has zero or negative value!" << std::endl;
+            std::cout << "I am not sure what this means..." << std::endl;
+            exit(1);
+        }
+    }
+    else
+    {
+        ana.nsplit_jobs = -1;
+    }
+
+    //_______________________________________________________________________________
+    // --nsplit_jobs
+    if (result.count("job_index"))
+    {
+        ana.job_index = result["job_index"].as<int>();
+        if (ana.job_index < 0)
+        {
+            std::cout << options.help() << std::endl;
+            std::cout << "ERROR: option string --job_index" << ana.job_index << " has negative value!" << std::endl;
+            std::cout << "I am not sure what this means..." << std::endl;
+            exit(1);
+        }
+    }
+    else
+    {
+        ana.job_index = -1;
+    }
+
+
+    // Sanity check for split jobs (if one is set the other must be set too)
+    if (result.count("job_index") or result.count("nsplit_jobs"))
+    {
+        // If one is not provided then throw error
+        if ( not (result.count("job_index") and result.count("nsplit_jobs")))
+        {
+            std::cout << options.help() << std::endl;
+            std::cout << "ERROR: option string --job_index and --nsplit_jobs must be set at the same time!" << std::endl;
+            exit(1);
+        }
+        // If it is set then check for sanity
+        else
+        {
+            if (ana.job_index >= ana.nsplit_jobs)
+            {
+                std::cout << options.help() << std::endl;
+                std::cout << "ERROR: --job_index >= --nsplit_jobs ! This does not make sense..." << std::endl;
+                exit(1);
+            }
+        }
+    }
+
     //
     // Printing out the option settings overview
     //
@@ -211,6 +280,8 @@ int main(int argc, char** argv)
     std::cout <<  " ana.do_systematics: " << ana.do_systematics <<  std::endl;
     std::cout <<  " ana.do_fake_estimation: " << ana.do_fake_estimation <<  std::endl;
     std::cout <<  " ana.do_user_study: " << ana.do_user_study <<  std::endl;
+    std::cout <<  " ana.nsplit_jobs: " << ana.nsplit_jobs <<  std::endl;
+    std::cout <<  " ana.job_index: " << ana.job_index <<  std::endl;
     std::cout <<  "=========================================================" << std::endl;
 
 //********************************************************************************
@@ -236,7 +307,7 @@ int main(int argc, char** argv)
 
 //********************************************************************************
 //
-// Interlude....
+// Interlude... notes on RooUtil framework (This is a custom thing built by P. Chang)
 //
 //********************************************************************************
 
@@ -375,55 +446,55 @@ int main(int argc, char** argv)
     // Then this is used in conjunction with RooUtil::Cutflow to book histograms at different cut stage
     // This is so that the users don't have to copy paste a thousands lines of codes if they want to book more histograms at different cut stages
 
-    ana.histograms.addHistogram("MllSS"                    ,  180 , 0.      , 300.   , [&]() { return www.MllSS()                  ; });
-    ana.histograms.addHistogram("MllSS_wide"               ,  180 , 0.      , 2000.  , [&]() { return www.MllSS()                  ; });
-    ana.histograms.addHistogram("MllZ"                     ,  180 , 60.     , 120.   , [&]() { return www.MllSS()                  ; });
-    ana.histograms.addHistogram("MllZZoom"                 ,  180 , 80.     , 100.   , [&]() { return www.MllSS()                  ; });
+    ana.histograms.addHistogram("MllSS"                    ,  180 , 0.      , 300.   , [&]() { return www.MllSS()                                                                  ; });
+    ana.histograms.addHistogram("MllSS_wide"               ,  180 , 0.      , 2000.  , [&]() { return www.MllSS()                                                                  ; });
+    ana.histograms.addHistogram("MllZ"                     ,  180 , 60.     , 120.   , [&]() { return www.MllSS()                                                                  ; });
+    ana.histograms.addHistogram("MllZZoom"                 ,  180 , 80.     , 100.   , [&]() { return www.MllSS()                                                                  ; });
     ana.histograms.addHistogram("MllOnOff"                 ,  180 , 30.     , 150.   , [&]() { return fabs(www.Mll3L()-91.1876)<fabs(www.Mll3L1()-91.1876)?www.Mll3L():www.Mll3L1(); });
-    ana.histograms.addHistogram("Mll3L"                    ,  180 , 0.      , 300.   , [&]() { return www.Mll3L()                  ; });
-    ana.histograms.addHistogram("Mll3L1"                   ,  180 , 0.      , 300.   , [&]() { return www.Mll3L1()                 ; });
-    ana.histograms.addHistogram("nSFOSinZ"                 ,  3   , 0.      , 3.     , [&]() { return www.nSFOSinZ()               ; });
-    ana.histograms.addHistogram("M3l"                      ,  180 , 0.      , 150.   , [&]() { return www.M3l()                    ; });
-    ana.histograms.addHistogram("Pt3lGCR"                  ,  180 , 0.      , 100.   , [&]() { return www.Pt3l()                   ; });
-    ana.histograms.addHistogram("Pt3l"                     ,  180 , 0.      , 300.   , [&]() { return www.Pt3l()                   ; });
-    ana.histograms.addHistogram("Ptll"                     ,  180 , 0.      , 300.   , [&]() { return www.Pt3l()                   ; });
-    ana.histograms.addHistogram("nvtx"                     ,  60  , 0.      , 60.    , [&]() { return www.nVert()                  ; });
-    ana.histograms.addHistogram("MjjZoom"                  ,  180 , 0.      , 150.   , [&]() { return www.Mjj()                    ; });
-    ana.histograms.addHistogram("Mjj"                      ,  180 , 1.      , 300.   , [&]() { return www.Mjj()                    ; });
-    ana.histograms.addHistogram("MjjLZoom"                 ,  180 , 0.      , 300.   , [&]() { return www.MjjL()                   ; });
-    ana.histograms.addHistogram("MjjL"                     ,  180 , 0.      , 750.   , [&]() { return www.MjjL()                   ; });
-    ana.histograms.addHistogram("DetajjL"                  ,  180 , 0.      , 5.     , [&]() { return www.DetajjL()                ; });
-    ana.histograms.addHistogram("MjjVBF"                   ,  180 , 0.      , 750.   , [&]() { return www.MjjVBF()                 ; });
-    ana.histograms.addHistogram("DetajjVBF"                ,  180 , 0.      , 8.     , [&]() { return www.DetajjVBF()              ; });
-    ana.histograms.addHistogram("MjjVBS"                   ,  180 , 0.      , 750.   , [&]() { return www.Mjj()                    ; });
-    ana.histograms.addHistogram("DetajjVBS"                ,  180 , 0.      , 3.     , [&]() { return www.DetajjL()                ; });
-    ana.histograms.addHistogram("MET"                      ,  180 , 0.      , 180.   , [&]() { return www.met_pt()                 ; });
-    ana.histograms.addHistogram("METWide"                  ,  180 , 0.      , 300.   , [&]() { return www.met_pt()                 ; });
-    ana.histograms.addHistogram("jets_pt0"                 ,  180 , 0.      , 250    , [&]() { return www.jets_p4()[0].pt()        ; });
-    ana.histograms.addHistogram("jets_pt1"                 ,  180 , 0.      , 150    , [&]() { return www.jets_p4()[1].pt()        ; });
-    ana.histograms.addHistogram("jets_pt2"                 ,  180 , 0.      , 150    , [&]() { return www.jets_p4()[2].pt()        ; });
-    ana.histograms.addHistogram("jets_eta0"                ,  180 , -5.0    , 5.0    , [&]() { return www.jets_p4()[0].eta()       ; });
-    ana.histograms.addHistogram("jets_eta1"                ,  180 , -5.0    , 5.0    , [&]() { return www.jets_p4()[1].eta()       ; });
-    ana.histograms.addHistogram("jets_eta2"                ,  180 , -5.0    , 5.0    , [&]() { return www.jets_p4()[2].eta()       ; });
-    ana.histograms.addHistogram("lep_pt0"                  ,  180 , 0.      , 250    , [&]() { return www.lep_pt()[0]              ; });
-    ana.histograms.addHistogram("lep_pt1"                  ,  180 , 0.      , 150    , [&]() { return www.lep_pt()[1]              ; });
-    ana.histograms.addHistogram("lep_pt2"                  ,  180 , 0.      , 150    , [&]() { return www.lep_pt()[2]              ; });
-    ana.histograms.addHistogram("lep_eta0"                 ,  180 , -2.5    , 2.5    , [&]() { return www.lep_eta()[0]             ; });
-    ana.histograms.addHistogram("lep_eta1"                 ,  180 , -2.5    , 2.5    , [&]() { return www.lep_eta()[1]             ; });
-    ana.histograms.addHistogram("lep_phi0"                 ,  180 , -3.1416 , 3.1416 , [&]() { return www.lep_phi()[0]             ; });
-    ana.histograms.addHistogram("lep_phi1"                 ,  180 , -3.1416 , 3.1416 , [&]() { return www.lep_phi()[1]             ; });
-    ana.histograms.addHistogram("lep_relIso03EAv2Lep0"     ,  180 , 0.0     , 0.4    , [&]() { return www.lep_relIso03EAv2Lep()[0] ; });
-    ana.histograms.addHistogram("lep_relIso03EAv2Lep1"     ,  180 , 0.0     , 0.4    , [&]() { return www.lep_relIso03EAv2Lep()[1] ; });
-    ana.histograms.addHistogram("lep_relIso03EAv2Lep2"     ,  180 , 0.0     , 0.4    , [&]() { return www.lep_relIso03EAv2Lep()[2] ; });
-    ana.histograms.addHistogram("nj"                       ,  7   , 0.      , 7.     , [&]() { return www.nj()                     ; });
-    ana.histograms.addHistogram("nj30"                     ,  7   , 0.      , 7.     , [&]() { return www.nj30()                   ; });
-    ana.histograms.addHistogram("nb"                       ,  5   , 0.      , 5.     , [&]() { return www.nb()                     ; });
-    ana.histograms.addHistogram("MTmin"                    ,  180 , 0.      , 300.   , [&]() { return www.MTmin()                  ; });
-    ana.histograms.addHistogram("MTmax"                    ,  180 , 0.      , 300.   , [&]() { return www.MTmax()                  ; });
-    ana.histograms.addHistogram("MTmax3L"                  ,  180 , 0.      , 300.   , [&]() { return www.MTmax3L()                ; });
-    ana.histograms.addHistogram("MT3rd"                    ,  180 , 0.      , 300.   , [&]() { return www.MT3rd()                  ; });
+    ana.histograms.addHistogram("Mll3L"                    ,  180 , 0.      , 300.   , [&]() { return www.Mll3L()                                                                  ; });
+    ana.histograms.addHistogram("Mll3L1"                   ,  180 , 0.      , 300.   , [&]() { return www.Mll3L1()                                                                 ; });
+    ana.histograms.addHistogram("nSFOSinZ"                 ,  3   , 0.      , 3.     , [&]() { return www.nSFOSinZ()                                                               ; });
+    ana.histograms.addHistogram("M3l"                      ,  180 , 0.      , 150.   , [&]() { return www.M3l()                                                                    ; });
+    ana.histograms.addHistogram("Pt3lGCR"                  ,  180 , 0.      , 100.   , [&]() { return www.Pt3l()                                                                   ; });
+    ana.histograms.addHistogram("Pt3l"                     ,  180 , 0.      , 300.   , [&]() { return www.Pt3l()                                                                   ; });
+    ana.histograms.addHistogram("Ptll"                     ,  180 , 0.      , 300.   , [&]() { return www.Pt3l()                                                                   ; });
+    ana.histograms.addHistogram("nvtx"                     ,  60  , 0.      , 60.    , [&]() { return www.nVert()                                                                  ; });
+    ana.histograms.addHistogram("MjjZoom"                  ,  180 , 0.      , 150.   , [&]() { return www.Mjj()                                                                    ; });
+    ana.histograms.addHistogram("Mjj"                      ,  180 , 1.      , 300.   , [&]() { return www.Mjj()                                                                    ; });
+    ana.histograms.addHistogram("MjjLZoom"                 ,  180 , 0.      , 300.   , [&]() { return www.MjjL()                                                                   ; });
+    ana.histograms.addHistogram("MjjL"                     ,  180 , 0.      , 750.   , [&]() { return www.MjjL()                                                                   ; });
+    ana.histograms.addHistogram("DetajjL"                  ,  180 , 0.      , 5.     , [&]() { return www.DetajjL()                                                                ; });
+    ana.histograms.addHistogram("MjjVBF"                   ,  180 , 0.      , 750.   , [&]() { return www.MjjVBF()                                                                 ; });
+    ana.histograms.addHistogram("DetajjVBF"                ,  180 , 0.      , 8.     , [&]() { return www.DetajjVBF()                                                              ; });
+    ana.histograms.addHistogram("MjjVBS"                   ,  180 , 0.      , 750.   , [&]() { return www.Mjj()                                                                    ; });
+    ana.histograms.addHistogram("DetajjVBS"                ,  180 , 0.      , 3.     , [&]() { return www.DetajjL()                                                                ; });
+    ana.histograms.addHistogram("MET"                      ,  180 , 0.      , 180.   , [&]() { return www.met_pt()                                                                 ; });
+    ana.histograms.addHistogram("METWide"                  ,  180 , 0.      , 300.   , [&]() { return www.met_pt()                                                                 ; });
+    ana.histograms.addHistogram("jets_pt0"                 ,  180 , 0.      , 250    , [&]() { return www.jets_p4()[0].pt()                                                        ; });
+    ana.histograms.addHistogram("jets_pt1"                 ,  180 , 0.      , 150    , [&]() { return www.jets_p4()[1].pt()                                                        ; });
+    ana.histograms.addHistogram("jets_pt2"                 ,  180 , 0.      , 150    , [&]() { return www.jets_p4()[2].pt()                                                        ; });
+    ana.histograms.addHistogram("jets_eta0"                ,  180 , -5.0    , 5.0    , [&]() { return www.jets_p4()[0].eta()                                                       ; });
+    ana.histograms.addHistogram("jets_eta1"                ,  180 , -5.0    , 5.0    , [&]() { return www.jets_p4()[1].eta()                                                       ; });
+    ana.histograms.addHistogram("jets_eta2"                ,  180 , -5.0    , 5.0    , [&]() { return www.jets_p4()[2].eta()                                                       ; });
+    ana.histograms.addHistogram("lep_pt0"                  ,  180 , 0.      , 250    , [&]() { return www.lep_pt()[0]                                                              ; });
+    ana.histograms.addHistogram("lep_pt1"                  ,  180 , 0.      , 150    , [&]() { return www.lep_pt()[1]                                                              ; });
+    ana.histograms.addHistogram("lep_pt2"                  ,  180 , 0.      , 150    , [&]() { return www.lep_pt()[2]                                                              ; });
+    ana.histograms.addHistogram("lep_eta0"                 ,  180 , -2.5    , 2.5    , [&]() { return www.lep_eta()[0]                                                             ; });
+    ana.histograms.addHistogram("lep_eta1"                 ,  180 , -2.5    , 2.5    , [&]() { return www.lep_eta()[1]                                                             ; });
+    ana.histograms.addHistogram("lep_phi0"                 ,  180 , -3.1416 , 3.1416 , [&]() { return www.lep_phi()[0]                                                             ; });
+    ana.histograms.addHistogram("lep_phi1"                 ,  180 , -3.1416 , 3.1416 , [&]() { return www.lep_phi()[1]                                                             ; });
+    ana.histograms.addHistogram("lep_relIso03EAv2Lep0"     ,  180 , 0.0     , 0.4    , [&]() { return www.lep_relIso03EAv2Lep()[0]                                                 ; });
+    ana.histograms.addHistogram("lep_relIso03EAv2Lep1"     ,  180 , 0.0     , 0.4    , [&]() { return www.lep_relIso03EAv2Lep()[1]                                                 ; });
+    ana.histograms.addHistogram("lep_relIso03EAv2Lep2"     ,  180 , 0.0     , 0.4    , [&]() { return www.lep_relIso03EAv2Lep()[2]                                                 ; });
+    ana.histograms.addHistogram("nj"                       ,  7   , 0.      , 7.     , [&]() { return www.nj()                                                                     ; });
+    ana.histograms.addHistogram("nj30"                     ,  7   , 0.      , 7.     , [&]() { return www.nj30()                                                                   ; });
+    ana.histograms.addHistogram("nb"                       ,  5   , 0.      , 5.     , [&]() { return www.nb()                                                                     ; });
+    ana.histograms.addHistogram("MTmin"                    ,  180 , 0.      , 300.   , [&]() { return www.MTmin()                                                                  ; });
+    ana.histograms.addHistogram("MTmax"                    ,  180 , 0.      , 300.   , [&]() { return www.MTmax()                                                                  ; });
+    ana.histograms.addHistogram("MTmax3L"                  ,  180 , 0.      , 300.   , [&]() { return www.MTmax3L()                                                                ; });
+    ana.histograms.addHistogram("MT3rd"                    ,  180 , 0.      , 300.   , [&]() { return www.MT3rd()                                                                  ; });
 
-    // Because it uses lambda you can compute much more complicated variables on the fly
+    // Because RooUtil::Histograms uses lambda you can compute much more complicated variables on the fly your need
     // Let's define a complex histogram. (This is a variable Yifan is looking into.)
     // This is going to plot a new variable where it plots the minimum DR of the two opposite sign leptons.
     // This is the variable that WH->WW analysis in HIG uses to fit to extract signal.
@@ -431,62 +502,48 @@ int main(int argc, char** argv)
     // If the user expects the function to be computationally heavy you can either use memoization or static variables to cache results
     // The example below illustrates this
     ana.histograms.addHistogram("minDRllOS", 180, 0., 4.,
-            [&]()
-            {
-                // To cache result the caching will be determined by run/lumi/evt of the event
-                // run/lumi/evt can provide unique identifier per event. (upto within the same sample.)
-                // Since this program MAY run over multiple different samples, there is a very very miniscule
-                // chance that run/lumi/evt is SAME between the last event of a sample to the first event of another sample.
-                // But the rate of such occurence is probably faster than proton decay.... or something like that. idk...
-                static float result;
-                static int run;
-                static int lumi;
-                static unsigned long long evt;
 
-                // Check if I can just use cached result
-                if (www.run() == run and www.lumi() == lumi and www.evt() == evt)
+            // memoize is for caching results so that this function is not computed more than once per event
+            // It is defined in lambdas.cc. It is an implementation of trick called "memoization"
+            // When implementing new histograms that are going to be computationally heavy, I recommend using memoize to not slow down the program
+            memoize( 
+
+                [&]()
                 {
-                    return result;
-                }
 
-                // "www" objects contain lepton 4-vectors and pdgID
-                std::vector<LV> lep_p4 = www.lep_p4();
-                std::vector<int> lep_pdgId = www.lep_pdgId();
+                    // "www" objects contain lepton 4-vectors and pdgID
+                    std::vector<LV> lep_p4 = www.lep_p4();
+                    std::vector<int> lep_pdgId = www.lep_pdgId();
 
-                // Loop over and for each opposite sign pair compute DR and choose the smallest
-                float minDR = 999;
-                bool os_pair_found = false;
-                for (unsigned int ii = 0; ii < lep_pdgId.size(); ++ii)
-                {
-                    for (unsigned int jj = ii + 1; jj < lep_pdgId.size(); ++jj)
+                    // Loop over and for each opposite sign pair compute DR and choose the smallest
+                    float minDR = 999;
+                    bool os_pair_found = false;
+                    for (unsigned int ii = 0; ii < lep_pdgId.size(); ++ii)
                     {
-                        if (lep_pdgId[ii] * lep_pdgId[jj] < 0) // If opposite sign lepton
+                        for (unsigned int jj = ii + 1; jj < lep_pdgId.size(); ++jj)
                         {
-                            os_pair_found = true;
-                            float thisDR = RooUtil::Calc::DeltaR(lep_p4[ii], lep_p4[jj]);
-                            if (thisDR < minDR)
+                            if (lep_pdgId[ii] * lep_pdgId[jj] < 0) // If opposite sign lepton
                             {
-                                minDR = thisDR;
+                                os_pair_found = true;
+                                float thisDR = RooUtil::Calc::DeltaR(lep_p4[ii], lep_p4[jj]);
+                                if (thisDR < minDR)
+                                {
+                                    minDR = thisDR;
+                                }
                             }
                         }
                     }
+
+                    if (not os_pair_found) // If same-sign event it will not find anything, then set to -999
+                        minDR = -999;
+
+                    return minDR;
                 }
-
-                if (not os_pair_found) // If same-sign event it will not find anything, then set to -999
-                    minDR = -999;
-
-                // Cache result
-                result = minDR;
-                run = www.run();
-                lumi = www.lumi();
-                evt = www.evt();
-
-                return result;
-            });
+            ));
 
 //********************************************************************************
 //
-// 4. Creating the analysis using RooUtil::Cutflow class (This is a custom class built by P. Chang)
+// 4. Creating the analysis using RooUtil::Cutflow class
 //
 //********************************************************************************
 
@@ -555,6 +612,7 @@ int main(int argc, char** argv)
         #endif
 
     }
+    // If --user_study option is not provided, it defaults to main analysis
     else
     {
 
@@ -587,7 +645,7 @@ int main(int argc, char** argv)
         ana.cutflow.addCutToLastActiveCut("SRSSemLowMjj"    , Lambdas::LowMjj          , UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSSemFull"      , Lambdas::MjjIn           , UNITY);
         ana.cutflow.getCut("SRSSemLowMjj");
-        ana.cutflow.addCutToLastActiveCut("SRSSSidemeFull"  , Lambdas::MjjOut          , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSSideemFull"  , Lambdas::MjjOut          , UNITY);
 
         ana.cutflow.getCut("CutSRDilep");
         ana.cutflow.addCutToLastActiveCut("SRSSmm"          , Lambdas::isSRSSmmChannel , UNITY);
@@ -598,7 +656,8 @@ int main(int argc, char** argv)
         ana.cutflow.addCutToLastActiveCut("SRSSmmLowMjj"    , Lambdas::LowMjj          , UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSSmmFull"      , Lambdas::MjjIn           , UNITY);
         ana.cutflow.getCut("SRSSmmLowMjj");
-        ana.cutflow.addCutToLastActiveCut("SRSSSidmmeFull"  , Lambdas::MjjOut          , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSSidemmMET"   , Lambdas::SRSSSidemmSel   , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSSidemmFull"  , Lambdas::MjjOut          , UNITY);
 
         ana.cutflow.getCut("CutSRTrilep");
         ana.cutflow.addCutToLastActiveCut("SR0SFOS"         , Lambdas::is0SFOS        , UNITY);
@@ -732,335 +791,6 @@ int main(int argc, char** argv)
         ana.cutflow.addCutToLastActiveCut("AR2SFOSZVeto"    , Lambdas::ZVeto3L        , UNITY);
         ana.cutflow.addCutToLastActiveCut("AR2SFOSFull"     , Lambdas::KinSel2SFOS    , UNITY);
 
-        ////************************************************************************************************************************************************************************************************
-        ////
-        ////
-        ////
-        //// SIGNAL REGION CUTS
-        ////
-        ////
-        ////
-        ////************************************************************************************************************************************************************************************************
-
-        //// Same-sign Mjj on-W region
-        //ana.cutflow.getCut("CutSRDilep");
-        //ana.cutflow.addCutToLastActiveCut("SRSSmm"                , [&]() { return (www.passSSmm())*(www.MllSS()>40.)                                 ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSmmTVeto"           , [&]() { return www.nisoTrack_mt2_cleaned_VVV_cutbased_veto()==0                   ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSmmNb0"             , [&]() { return www.nb()==0                                                        ; }, [&]() { return www.weight_btagsf(); } );
-        //ana.cutflow.addCutToLastActiveCut("SRSSmmNj2"             , [&]() { return www.nj30()>= 2                                                     ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSmmMjjW"            , [&]() { return fabs(www.Mjj()-80.)<15.                                            ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSmmMjjL"            , [&]() { return www.MjjL()<400.                                                    ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSmmDetajjL"         , [&]() { return www.DetajjL()<1.5                                                  ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSmmMET"             , [&]() { return 1.                                                                 ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSmmMllSS"           , [&]() { return www.MllSS()>40.                                                    ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSmmFull"            , [&]() { return 1                                                                  ; }, UNITY                                 );
-        //ana.cutflow.getCut("CutSRDilep")                                                                                                              ;
-        //ana.cutflow.addCutToLastActiveCut("SRSSem"                , [&]() { return (www.passSSem())*(www.MllSS()>30.)                                 ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSemTVeto"           , [&]() { return www.nisoTrack_mt2_cleaned_VVV_cutbased_veto()==0                   ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSemNb0"             , [&]() { return www.nb()==0                                                        ; }, [&]() { return www.weight_btagsf(); } );
-        //ana.cutflow.addCutToLastActiveCut("SRSSemNj2"             , [&]() { return www.nj30()>= 2                                                     ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSemMjjW"            , [&]() { return fabs(www.Mjj()-80.)<15.                                            ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSemMjjL"            , [&]() { return www.MjjL()<400.                                                    ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSemDetajjL"         , [&]() { return www.DetajjL()<1.5                                                  ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSemMET"             , [&]() { return www.met_pt()>60.                                                   ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSemMllSS"           , [&]() { return www.MllSS()>30.                                                    ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSemMTmax"           , [&]() { return www.MTmax()>90.                                                    ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSemFull"            , [&]() { return 1                                                                  ; }, UNITY                                 );
-        //ana.cutflow.getCut("CutSRDilep")                                                                                                              ;
-        //ana.cutflow.addCutToLastActiveCut("SRSSee"                , [&]() { return (www.passSSee())*(1)*(www.MllSS()>40.)                             ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSeeZeeVt"           , [&]() { return fabs(www.MllSS()-91.1876)>10.                                      ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSeeTVeto"           , [&]() { return www.nisoTrack_mt2_cleaned_VVV_cutbased_veto()==0                   ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSeeNb0"             , [&]() { return www.nb()==0                                                        ; }, [&]() { return www.weight_btagsf(); } );
-        //ana.cutflow.addCutToLastActiveCut("SRSSeeNj2"             , [&]() { return www.nj30()>= 2                                                     ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSeeMjjW"            , [&]() { return fabs(www.Mjj()-80.)<15.                                            ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSeeMjjL"            , [&]() { return www.MjjL()<400.                                                    ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSeeDetajjL"         , [&]() { return www.DetajjL()<1.5                                                  ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSeeMET"             , [&]() { return www.met_pt()>60.                                                   ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSeeMllSS"           , [&]() { return www.MllSS()>40.                                                    ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSeeFull"            , [&]() { return 1                                                                  ; }, UNITY                                 );
-
-        //// Same-sign Mjj off-W region
-        //ana.cutflow.getCut("CutSRDilep")                                                                                                              ;
-        //ana.cutflow.addCutToLastActiveCut("SRSSSidemm"            , [&]() { return (www.passSSmm())*(www.MllSS()>40.)                                 ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSSidemmTVeto"       , [&]() { return www.nisoTrack_mt2_cleaned_VVV_cutbased_veto()==0                   ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSSidemmNb0"         , [&]() { return www.nb()==0                                                        ; }, [&]() { return www.weight_btagsf(); } );
-        //ana.cutflow.addCutToLastActiveCut("SRSSSidemmNj2"         , [&]() { return www.nj30()>= 2                                                     ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSSidemmMjjW"        , [&]() { return fabs(www.Mjj()-80.)>=15.                                           ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSSidemmMjjL"        , [&]() { return www.MjjL()<400.                                                    ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSSidemmDetajjL"     , [&]() { return www.DetajjL()<1.5                                                  ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSSidemmMET"         , [&]() { return www.met_pt()>60.                                                   ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSSidemmMllSS"       , [&]() { return www.MllSS()>40.                                                    ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSSidemmFull"        , [&]() { return 1                                                                  ; }, UNITY                                 );
-        //ana.cutflow.getCut("CutSRDilep")                                                                                                              ;
-        //ana.cutflow.addCutToLastActiveCut("SRSSSideem"            , [&]() { return (www.passSSem())*(www.MllSS()>30.)                                 ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSSideemTVeto"       , [&]() { return www.nisoTrack_mt2_cleaned_VVV_cutbased_veto()==0                   ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSSideemNb0"         , [&]() { return www.nb()==0                                                        ; }, [&]() { return www.weight_btagsf(); } );
-        //ana.cutflow.addCutToLastActiveCut("SRSSSideemNj2"         , [&]() { return www.nj30()>= 2                                                     ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSSideemMjjW"        , [&]() { return fabs(www.Mjj()-80.)>=15.                                           ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSSideemMjjL"        , [&]() { return www.MjjL()<400.                                                    ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSSideemDetajjL"     , [&]() { return www.DetajjL()<1.5                                                  ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSSideemMET"         , [&]() { return www.met_pt()>60.                                                   ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSSideemMllSS"       , [&]() { return www.MllSS()>30.                                                    ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSSideemMTmax"       , [&]() { return www.MTmax()>90.                                                    ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSSideemFull"        , [&]() { return 1                                                                  ; }, UNITY                                 );
-        //ana.cutflow.getCut("CutSRDilep")                                                                                                              ;
-        //ana.cutflow.addCutToLastActiveCut("SRSSSideee"            , [&]() { return (www.passSSee())*(1)*(www.MllSS()>40.)                             ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSSideeeZeeVt"       , [&]() { return fabs(www.MllSS()-91.1876)>10.                                      ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSSideeeTVeto"       , [&]() { return www.nisoTrack_mt2_cleaned_VVV_cutbased_veto()==0                   ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSSideeeNb0"         , [&]() { return www.nb()==0                                                        ; }, [&]() { return www.weight_btagsf(); } );
-        //ana.cutflow.addCutToLastActiveCut("SRSSSideeeNj2"         , [&]() { return www.nj30()>= 2                                                     ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSSideeeMjjW"        , [&]() { return fabs(www.Mjj()-80.)>=15.                                           ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSSideeeMjjL"        , [&]() { return www.MjjL()<400.                                                    ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSSideeeDetajjL"     , [&]() { return www.DetajjL()<1.5                                                  ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSSideeeMET"         , [&]() { return www.met_pt()>60.                                                   ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSSideeeMllSS"       , [&]() { return www.MllSS()>40.                                                    ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SRSSSideeeFull"        , [&]() { return 1                                                                  ; }, UNITY                                 );
-
-        //// Trilep regions
-        //ana.cutflow.getCut("CutSRTrilep")                                                                                                             ;
-        //ana.cutflow.addCutToLastActiveCut("SR0SFOS"               , [&]() { return (www.nSFOS()==0)                                                   ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SR0SFOSNj1"            , [&]() { return www.nj()<=1                                                        ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SR0SFOSNb0"            , [&]() { return www.nb()==0                                                        ; }, [&]() { return www.weight_btagsf(); } );
-        //ana.cutflow.addCutToLastActiveCut("SR0SFOSPt3l"           , [&]() { return 1.                                                                 ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SR0SFOSDPhi3lMET"      , [&]() { return www.DPhi3lMET()>2.5                                                ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SR0SFOSMET"            , [&]() { return www.met_pt()>30.                                                   ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SR0SFOSMll"            , [&]() { return www.Mll3L() > 20.                                                  ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SR0SFOSM3l"            , [&]() { return abs(www.M3l()-91.1876) > 10.                                       ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SR0SFOSZVt"            , [&]() { return abs(www.Mee3L()-91.1876) > 15.                                     ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SR0SFOSMTmax"          , [&]() { return www.MTmax3L()>90.                                                  ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SR0SFOSFull"           , [&]() { return 1                                                                  ; }, UNITY                                 );
-        //ana.cutflow.getCut("CutSRTrilep")                                                                                                             ;
-        //ana.cutflow.addCutToLastActiveCut("SR1SFOS"               , [&]() { return (www.nSFOS()==1)                                                   ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SR1SFOSNj1"            , [&]() { return www.nj()<=1                                                        ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SR1SFOSNb0"            , [&]() { return www.nb()==0                                                        ; }, [&]() { return www.weight_btagsf(); } );
-        //ana.cutflow.addCutToLastActiveCut("SR1SFOSPt3l"           , [&]() { return www.Pt3l()>60.                                                     ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SR1SFOSDPhi3lMET"      , [&]() { return www.DPhi3lMET()>2.5                                                ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SR1SFOSMET"            , [&]() { return www.met_pt()>40.                                                   ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SR1SFOSMll"            , [&]() { return www.Mll3L() > 20.                                                  ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SR1SFOSM3l"            , [&]() { return abs(www.M3l()-91.1876) > 10.                                       ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SR1SFOSZVt"            , [&]() { return www.nSFOSinZ() == 0                                                ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SR1SFOSMT3rd"          , [&]() { return www.MT3rd()>90.                                                    ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SR1SFOSFull"           , [&]() { return 1                                                                  ; }, UNITY                                 );
-        //ana.cutflow.getCut("CutSRTrilep")                                                                                                             ;
-        //ana.cutflow.addCutToLastActiveCut("SR2SFOS"               , [&]() { return (www.nSFOS()==2)                                                   ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SR2SFOSNj1"            , [&]() { return www.nj()<=1                                                        ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SR2SFOSNb0"            , [&]() { return www.nb()==0                                                        ; }, [&]() { return www.weight_btagsf(); } );
-        //ana.cutflow.addCutToLastActiveCut("SR2SFOSPt3l"           , [&]() { return www.Pt3l()>60.                                                     ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SR2SFOSDPhi3lMET"      , [&]() { return www.DPhi3lMET()>2.5                                                ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SR2SFOSMET"            , [&]() { return www.met_pt()>55.                                                   ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SR2SFOSMll"            , [&]() { return (www.Mll3L() > 20. && www.Mll3L1() > 20.)                          ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SR2SFOSM3l"            , [&]() { return abs(www.M3l()-91.1876) > 10.                                       ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SR2SFOSZVt"            , [&]() { return www.nSFOSinZ() == 0                                                ; }, UNITY                                 );
-        //ana.cutflow.addCutToLastActiveCut("SR2SFOSFull"           , [&]() { return 1                                                                  ; }, UNITY                                 );
-
-        ////************************************************************************************************************************************************************************************************
-        ////
-        ////
-        ////
-        ////  WZ CONTROL REGION CUTS
-        ////
-        ////
-        ////
-        ////************************************************************************************************************************************************************************************************
-
-        //// Same-sign WZ CR
-        //ana.cutflow.getCut("CutWZCRTrilep");
-        //ana.cutflow.addCutToLastActiveCut("WZCRSSmm"              , [&]() { return (www.passSSmm())*(www.MllSS()>40.)                            ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCRSSmmTVeto"         , [&]() { return www.nisoTrack_mt2_cleaned_VVV_cutbased_veto()==0              ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCRSSmmNj2"           , [&]() { return www.nj30()>= 2                                                ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCRSSmmNb0"           , [&]() { return www.nb()==0                                                   ; }, [&]() { return www.weight_btagsf() ; } );
-        //ana.cutflow.addCutToLastActiveCut("WZCRSSmmMjjL"          , [&]() { return www.MjjL()<400.                                               ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCRSSmmDetajjL"       , [&]() { return www.DetajjL()<1.5                                             ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCRSSmmMET"           , [&]() { return 1.                                                            ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCRSSmmMllSS"         , [&]() { return www.MllSS()>40.                                               ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCRSSmmFull"          , [&]() { return (abs(www.Mll3L()-91.1876)<10.||abs(www.Mll3L1()-91.1876)<10.) ; }, UNITY                                  );
-        //ana.cutflow.getCut("CutWZCRTrilep");
-        //ana.cutflow.addCutToLastActiveCut("WZCRSSem"              , [&]() { return (www.passSSem())*(www.MllSS()>30.)                            ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCRSSemTVeto"         , [&]() { return www.nisoTrack_mt2_cleaned_VVV_cutbased_veto()==0              ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCRSSemNj2"           , [&]() { return www.nj30()>= 2                                                ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCRSSemNb0"           , [&]() { return www.nb()==0                                                   ; }, [&]() { return www.weight_btagsf() ; } );
-        //ana.cutflow.addCutToLastActiveCut("WZCRSSemMjjL"          , [&]() { return www.MjjL()<400.                                               ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCRSSemDetajjL"       , [&]() { return www.DetajjL()<1.5                                             ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCRSSemMET"           , [&]() { return www.met_pt()>60.                                              ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCRSSemMllSS"         , [&]() { return www.MllSS()>30.                                               ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCRSSemMTmax"         , [&]() { return www.MTmax()>90.                                               ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCRSSemFull"          , [&]() { return (abs(www.Mll3L()-91.1876)<10.||abs(www.Mll3L1()-91.1876)<10.) ; }, UNITY                                  );
-        //ana.cutflow.getCut("CutWZCRTrilep");
-        //ana.cutflow.addCutToLastActiveCut("WZCRSSee"              , [&]() { return (www.passSSee())*(1)*(www.MllSS()>40.)                        ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCRSSeeZeeVt"         , [&]() { return fabs(www.MllSS()-91.1876)>10.                                 ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCRSSeeTVeto"         , [&]() { return www.nisoTrack_mt2_cleaned_VVV_cutbased_veto()==0              ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCRSSeeNj2"           , [&]() { return www.nj30()>= 2                                                ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCRSSeeNb0"           , [&]() { return www.nb()==0                                                   ; }, [&]() { return www.weight_btagsf() ; } );
-        //ana.cutflow.addCutToLastActiveCut("WZCRSSeeMjjL"          , [&]() { return www.MjjL()<400.                                               ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCRSSeeDetajjL"       , [&]() { return www.DetajjL()<1.5                                             ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCRSSeeMET"           , [&]() { return www.met_pt()>60.                                              ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCRSSeeMllSS"         , [&]() { return www.MllSS()>40.                                               ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCRSSeeFull"          , [&]() { return (abs(www.Mll3L()-91.1876)<10.||abs(www.Mll3L1()-91.1876)<10.) ; }, UNITY                                  );
-
-        //// Mjj selection validation region
-        //ana.cutflow.getCut("WZCRSSeeMllSS");
-        //ana.cutflow.addCutToLastActiveCut("WZVRSSee"    , [&]() { return (abs(www.Mll3L()-91.1876)<10.||abs(www.Mll3L1()-91.1876)<10.);} ,  [&]() { return 1; } );
-        //ana.cutflow.addCutToLastActiveCut("WZVRSSeeFull", [&]() { return fabs(www.Mjj()-80.)<15.; } ,  [&]() { return 1; } );
-        //ana.cutflow.getCut("WZCRSSemMTmax");
-        //ana.cutflow.addCutToLastActiveCut("WZVRSSem"    , [&]() { return (abs(www.Mll3L()-91.1876)<10.||abs(www.Mll3L1()-91.1876)<10.);} ,  [&]() { return 1; } );
-        //ana.cutflow.addCutToLastActiveCut("WZVRSSemFull", [&]() { return fabs(www.Mjj()-80.)<15.; } ,  [&]() { return 1; } );
-        //ana.cutflow.getCut("WZCRSSmmMllSS");
-        //ana.cutflow.addCutToLastActiveCut("WZVRSSmm"    , [&]() { return (abs(www.Mll3L()-91.1876)<10.||abs(www.Mll3L1()-91.1876)<10.);} ,  [&]() { return 1; } );
-        //ana.cutflow.addCutToLastActiveCut("WZVRSSmmFull", [&]() { return fabs(www.Mjj()-80.)<15.; } ,  [&]() { return 1; } );
-
-        //// Trilep WZ CR
-        //ana.cutflow.getCut("CutWZCRTrilep");
-        //ana.cutflow.addCutToLastActiveCut("WZCR1SFOS"             , [&]() { return (www.nSFOS()==1)                                              ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCR1SFOSNj1"          , [&]() { return www.nj()<=1                                                   ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCR1SFOSNb0"          , [&]() { return www.nb()==0                                                   ; }, [&]() { return www.weight_btagsf() ; } );
-        //ana.cutflow.addCutToLastActiveCut("WZCR1SFOSPt3l"         , [&]() { return www.Pt3l()>60.                                                ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCR1SFOSDPhi3lMET"    , [&]() { return www.DPhi3lMET()>2.5                                           ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCR1SFOSMET"          , [&]() { return www.met_pt()>40.                                              ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCR1SFOSMll"          , [&]() { return www.Mll3L() > 20.                                             ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCR1SFOSM3l"          , [&]() { return abs(www.M3l()-91.1876) > 10.                                  ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCR1SFOSMT3rd"        , [&]() { return www.MT3rd()>90.                                               ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCR1SFOSZVt"          , [&]() { return (abs(www.Mll3L()-91.1876)<20.||abs(www.Mll3L1()-91.1876)<20.) ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCR1SFOSFull"         , [&]() { return 1                                                             ; }, UNITY                                  );
-        //ana.cutflow.getCut("CutWZCRTrilep");
-        //ana.cutflow.addCutToLastActiveCut("WZCR2SFOS"             , [&]() { return (www.nSFOS()==2)                                              ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCR2SFOSNj1"          , [&]() { return www.nj()<=1                                                   ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCR2SFOSNb0"          , [&]() { return www.nb()==0                                                   ; }, [&]() { return www.weight_btagsf() ; } );
-        //ana.cutflow.addCutToLastActiveCut("WZCR2SFOSPt3l"         , [&]() { return www.Pt3l()>60.                                                ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCR2SFOSDPhi3lMET"    , [&]() { return www.DPhi3lMET()>2.5                                           ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCR2SFOSMET"          , [&]() { return www.met_pt()>55.                                              ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCR2SFOSMll"          , [&]() { return (www.Mll3L() > 20. && www.Mll3L1() > 20.)                     ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCR2SFOSM3l"          , [&]() { return abs(www.M3l()-91.1876) > 10.                                  ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCR2SFOSZVt"          , [&]() { return (abs(www.Mll3L()-91.1876)<20.||abs(www.Mll3L1()-91.1876)<20.) ; }, UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("WZCR2SFOSFull"         , [&]() { return 1                                                             ; }, UNITY                                  );
-
-        //// Invert met_pt
-        //ana.cutflow.getCut("WZCR1SFOSNb0");
-        //ana.cutflow.addCutToLastActiveCut("WZVR1SFOSMllOnOff"     , [&]() { return ((www.Pt3l()<60.)+(www.DPhi3lMET()<2.5)+(www.met_pt()<40.)+(www.MT3rd()<90.))*(www.Mll3L()>20.)*(abs(www.M3l()-91.1876)>10.) ; } , [&]() { return 1 ; } ) ;
-        //ana.cutflow.addCutToLastActiveCut("WZVR1SFOSMllOnOffFull" , [&]() { return (abs(www.Mll3L()-91.1876)<20.||abs(www.Mll3L1()-91.1876)<20.)                       ; } , [&]() { return 1 ; } ) ;
-        //ana.cutflow.getCut("WZCR2SFOSNb0");
-        //ana.cutflow.addCutToLastActiveCut("WZVR2SFOSMllOnOff"     , [&]() { return ((www.Pt3l()<60.)+(www.DPhi3lMET()<2.5)+(www.met_pt()<55.))*((www.Mll3L()>20.&&www.Mll3L1()>20.))*(abs(www.M3l()-91.1876)>10.) ; } , [&]() { return 1 ; } ) ;
-        //ana.cutflow.addCutToLastActiveCut("WZVR2SFOSMllOnOffFull" , [&]() { return (abs(www.Mll3L()-91.1876)<20.||abs(www.Mll3L1()-91.1876)<20.)                         ; } , [&]() { return 1 ; } ) ;
-
-        ////************************************************************************************************************************************************************************************************
-        ////
-        ////
-        ////
-        //// APPLICATION REGION CUTS
-        ////
-        ////
-        ////
-        ////************************************************************************************************************************************************************************************************
-
-        //// Same-sign Mjj on-W region
-        //ana.cutflow.getCut("CutARDilep");
-        //ana.cutflow.addCutToLastActiveCut("ARSSmm"                , [&]() { return (www.passSSmm())*(www.MllSS()>40.)               ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSmmTVeto"           , [&]() { return www.nisoTrack_mt2_cleaned_VVV_cutbased_veto()==0 ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSmmNj2"             , [&]() { return www.nj30()>= 2                                   ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSmmNb0"             , [&]() { return www.nb()==0                                      ; }        , [&]() { return www.weight_btagsf() ; } );
-        //ana.cutflow.addCutToLastActiveCut("ARSSmmMjjW"            , [&]() { return fabs(www.Mjj()-80.)<15.                          ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSmmMjjL"            , [&]() { return www.MjjL()<400.                                  ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSmmDetajjL"         , [&]() { return www.DetajjL()<1.5                                ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSmmMET"             , [&]() { return 1.                                               ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSmmMllSS"           , [&]() { return www.MllSS()>40.                                  ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSmmFull"            , [&]() { return 1                                                ; }        , UNITY                                  );
-        //ana.cutflow.getCut("CutARDilep");
-        //ana.cutflow.addCutToLastActiveCut("ARSSem"                , [&]() { return (www.passSSem())*(www.MllSS()>30.)               ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSemTVeto"           , [&]() { return www.nisoTrack_mt2_cleaned_VVV_cutbased_veto()==0 ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSemNj2"             , [&]() { return www.nj30()>= 2                                   ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSemNb0"             , [&]() { return www.nb()==0                                      ; }        , [&]() { return www.weight_btagsf() ; } );
-        //ana.cutflow.addCutToLastActiveCut("ARSSemMjjW"            , [&]() { return fabs(www.Mjj()-80.)<15.                          ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSemMjjL"            , [&]() { return www.MjjL()<400.                                  ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSemDetajjL"         , [&]() { return www.DetajjL()<1.5                                ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSemMET"             , [&]() { return www.met_pt()>60.                                 ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSemMllSS"           , [&]() { return www.MllSS()>30.                                  ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSemMTmax"           , [&]() { return www.MTmax()>90.                                  ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSemFull"            , [&]() { return 1                                                ; }        , UNITY                                  );
-        //ana.cutflow.getCut("CutARDilep");
-        //ana.cutflow.addCutToLastActiveCut("ARSSee"                , [&]() { return (www.passSSee())*(1)*(www.MllSS()>40.)           ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSeeZeeVt"           , [&]() { return fabs(www.MllSS()-91.1876)>10.                    ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSeeTVeto"           , [&]() { return www.nisoTrack_mt2_cleaned_VVV_cutbased_veto()==0 ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSeeNj2"             , [&]() { return www.nj30()>= 2                                   ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSeeNb0"             , [&]() { return www.nb()==0                                      ; }        , [&]() { return www.weight_btagsf() ; } );
-        //ana.cutflow.addCutToLastActiveCut("ARSSeeMjjW"            , [&]() { return fabs(www.Mjj()-80.)<15.                          ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSeeMjjL"            , [&]() { return www.MjjL()<400.                                  ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSeeDetajjL"         , [&]() { return www.DetajjL()<1.5                                ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSeeMET"             , [&]() { return www.met_pt()>60.                                 ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSeeMllSS"           , [&]() { return www.MllSS()>40.                                  ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSeeFull"            , [&]() { return 1                                                ; }        , UNITY                                  );
-
-        //// Same-sign Mjj off-W region
-        //ana.cutflow.getCut("CutARDilep");
-        //ana.cutflow.addCutToLastActiveCut("ARSSSidemm"            , [&]() { return (www.passSSmm())*(www.MllSS()>40.)               ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSSidemmTVeto"       , [&]() { return www.nisoTrack_mt2_cleaned_VVV_cutbased_veto()==0 ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSSidemmNj2"         , [&]() { return www.nj30()>= 2                                   ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSSidemmNb0"         , [&]() { return www.nb()==0                                      ; }        , [&]() { return www.weight_btagsf() ; } );
-        //ana.cutflow.addCutToLastActiveCut("ARSSSidemmMjjW"        , [&]() { return fabs(www.Mjj()-80.)>=15.                         ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSSidemmMjjL"        , [&]() { return www.MjjL()<400.                                  ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSSidemmDetajjL"     , [&]() { return www.DetajjL()<1.5                                ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSSidemmMET"         , [&]() { return www.met_pt()>60.                                 ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSSidemmMllSS"       , [&]() { return www.MllSS()>40.                                  ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSSidemmFull"        , [&]() { return 1                                                ; }        , UNITY                                  );
-        //ana.cutflow.getCut("CutARDilep");
-        //ana.cutflow.addCutToLastActiveCut("ARSSSideem"            , [&]() { return (www.passSSem())*(www.MllSS()>30.)               ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSSideemTVeto"       , [&]() { return www.nisoTrack_mt2_cleaned_VVV_cutbased_veto()==0 ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSSideemNj2"         , [&]() { return www.nj30()>= 2                                   ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSSideemNb0"         , [&]() { return www.nb()==0                                      ; }        , [&]() { return www.weight_btagsf() ; } );
-        //ana.cutflow.addCutToLastActiveCut("ARSSSideemMjjW"        , [&]() { return fabs(www.Mjj()-80.)>=15.                         ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSSideemMjjL"        , [&]() { return www.MjjL()<400.                                  ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSSideemDetajjL"     , [&]() { return www.DetajjL()<1.5                                ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSSideemMET"         , [&]() { return www.met_pt()>60.                                 ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSSideemMllSS"       , [&]() { return www.MllSS()>30.                                  ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSSideemMTmax"       , [&]() { return www.MTmax()>90.                                  ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSSideemFull"        , [&]() { return 1                                                ; }        , UNITY                                  );
-        //ana.cutflow.getCut("CutARDilep");
-        //ana.cutflow.addCutToLastActiveCut("ARSSSideee"            , [&]() { return (www.passSSee())*(1)*(www.MllSS()>40.)           ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSSideeeZeeVt"       , [&]() { return fabs(www.MllSS()-91.1876)>10.                    ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSSideeeTVeto"       , [&]() { return www.nisoTrack_mt2_cleaned_VVV_cutbased_veto()==0 ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSSideeeNj2"         , [&]() { return www.nj30()>= 2                                   ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSSideeeNb0"         , [&]() { return www.nb()==0                                      ; }        , [&]() { return www.weight_btagsf() ; } );
-        //ana.cutflow.addCutToLastActiveCut("ARSSSideeeMjjW"        , [&]() { return fabs(www.Mjj()-80.)>=15.                         ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSSideeeMjjL"        , [&]() { return www.MjjL()<400.                                  ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSSideeeDetajjL"     , [&]() { return www.DetajjL()<1.5                                ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSSideeeMET"         , [&]() { return www.met_pt()>60.                                 ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSSideeeMllSS"       , [&]() { return www.MllSS()>40.                                  ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("ARSSSideeeFull"        , [&]() { return 1                                                ; }        , UNITY                                  );
-
-        //// Trilep regions
-        //ana.cutflow.getCut("CutARTrilep");
-        //ana.cutflow.addCutToLastActiveCut("AR0SFOS"               , [&]() { return (www.nSFOS()==0)                                 ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("AR0SFOSNj1"            , [&]() { return www.nj()<=1                                      ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("AR0SFOSNb0"            , [&]() { return www.nb()==0                                      ; }        , [&]() { return www.weight_btagsf() ; } );
-        //ana.cutflow.addCutToLastActiveCut("AR0SFOSPt3l"           , [&]() { return 1.                                               ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("AR0SFOSDPhi3lMET"      , [&]() { return www.DPhi3lMET()>2.5                              ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("AR0SFOSMET"            , [&]() { return www.met_pt()>30.                                 ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("AR0SFOSMll"            , [&]() { return www.Mll3L() > 20.                                ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("AR0SFOSM3l"            , [&]() { return abs(www.M3l()-91.1876) > 10.                     ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("AR0SFOSZVt"            , [&]() { return abs(www.Mee3L()-91.1876) > 15.                   ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("AR0SFOSMTmax"          , [&]() { return www.MTmax3L()>90.                                ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("AR0SFOSFull"           , [&]() { return 1                                                ; }        , UNITY                                  );
-        //ana.cutflow.getCut("CutARTrilep");
-        //ana.cutflow.addCutToLastActiveCut("AR1SFOS"               , [&]() { return (www.nSFOS()==1)                                 ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("AR1SFOSNj1"            , [&]() { return www.nj()<=1                                      ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("AR1SFOSNb0"            , [&]() { return www.nb()==0                                      ; }        , [&]() { return www.weight_btagsf() ; } );
-        //ana.cutflow.addCutToLastActiveCut("AR1SFOSPt3l"           , [&]() { return www.Pt3l()>60.                                   ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("AR1SFOSDPhi3lMET"      , [&]() { return www.DPhi3lMET()>2.5                              ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("AR1SFOSMET"            , [&]() { return www.met_pt()>40.                                 ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("AR1SFOSMll"            , [&]() { return www.Mll3L() > 20.                                ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("AR1SFOSM3l"            , [&]() { return abs(www.M3l()-91.1876) > 10.                     ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("AR1SFOSZVt"            , [&]() { return www.nSFOSinZ() == 0                              ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("AR1SFOSMT3rd"          , [&]() { return www.MT3rd()>90.                                  ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("AR1SFOSFull"           , [&]() { return 1                                                ; }        , UNITY                                  );
-        //ana.cutflow.getCut("CutARTrilep");
-        //ana.cutflow.addCutToLastActiveCut("AR2SFOS"               , [&]() { return (www.nSFOS()==2)                                 ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("AR2SFOSNj1"            , [&]() { return www.nj()<=1                                      ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("AR2SFOSNb0"            , [&]() { return www.nb()==0                                      ; }        , [&]() { return www.weight_btagsf() ; } );
-        //ana.cutflow.addCutToLastActiveCut("AR2SFOSPt3l"           , [&]() { return www.Pt3l()>60.                                   ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("AR2SFOSDPhi3lMET"      , [&]() { return www.DPhi3lMET()>2.5                              ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("AR2SFOSMET"            , [&]() { return www.met_pt()>55.                                 ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("AR2SFOSMll"            , [&]() { return (www.Mll3L() > 20. && www.Mll3L1() > 20.)        ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("AR2SFOSM3l"            , [&]() { return abs(www.M3l()-91.1876) > 10.                     ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("AR2SFOSZVt"            , [&]() { return www.nSFOSinZ() == 0                              ; }        , UNITY                                  );
-        //ana.cutflow.addCutToLastActiveCut("AR2SFOSFull"           , [&]() { return 1                                                ; }        , UNITY                                  );
 
     }
 
@@ -1138,6 +868,8 @@ int main(int argc, char** argv)
     // ...
     // ...
     //
+    // (note, the above printout was from an older version of the code, so the cut structure changed a little bit)
+    //
     // Also, for debugging purpose, one could print this per event.
     // If printCuts() is called AFTER "RooUtil::Cutflow::fill()" is called,
     // Then, the "pass|weight" columns on the right will be filled with whether at certain cut stage event passes or not.
@@ -1164,11 +896,23 @@ int main(int argc, char** argv)
     while (ana.looper.nextEvent())
     {
 
+        // If splitting jobs are requested then determine whether to process the event or not based on remainder
+        if (result.count("job_index") and result.count("nsplit_jobs"))
+        {
+            if (ana.looper.getNEventsProcessed() % ana.nsplit_jobs != (unsigned int) ana.job_index)
+                continue;
+        }
+
         // If a new file was opened after "looper.nextEvent" was called configure the sample dependent settings in class InputConfig;
         if (ana.looper.isNewFileInChain())
         {
             input.determine_input_settings(ana.looper.getCurrentFileName(), ana.input_tree_name);
         }
+
+        // For memoize function. This is to cache results for each event. this_run/lumi/evt is a global variable defined in lambdas.cc
+        this_run = www.run();
+        this_lumi = www.lumi();
+        this_evt = www.evt();
 
         // // Theory related weights from h_neventsinfile in each input root file but only set files when new file opens
         // // NOTE if there was a continue statement prior to this it can mess it up
