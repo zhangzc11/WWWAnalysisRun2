@@ -22,13 +22,14 @@ CXXFLAGS  += $(ROOTCFLAGS)
 CFLAGS     = $(ROOTCFLAGS) -Wall -Wno-unused-function $(DEBUG) -O2 -fPIC -fno-var-tracking
 EXTRACFLAGS = $(shell rooutil-config)
 EXTRAFLAGS = -fPIC -ITMultiDrawTreePlayer -Wunused-variable -lTMVA -lEG -lGenVector -lXMLIO -lMLP -lTreePlayer
+USERSTUDY  = $(wildcard user_study.h)
 
 #.PHONY: check-env
 
 $(EXE): $(OBJECTS) wwwtree.o
 	$(LD) $(CXXFLAGS) $(LDFLAGS) $(OBJECTS) $(ROOTLIBS) $(EXTRAFLAGS) -o $@
 
-main.o: main.cc user_study.h
+main.o: main.cc $(USERSTUDY)
 	$(CC) $(CFLAGS) $(EXTRACFLAGS) $< -c
 
 %.o: %.cc
