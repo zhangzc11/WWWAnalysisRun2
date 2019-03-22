@@ -62,7 +62,7 @@ And histogram names are defined in ```main.cc``` with various "addHistogram" fun
 However, __I really recommend reading through ```main.cc```__ as I mentioned in previous section.
 
 
-## Quick start to get 2016 results
+## Quick start to reproduce 2016 results
 
 The following script will run the 2016 looper and produce the 9 bin SR plot and 5 bin WZCR plots.
 
@@ -73,22 +73,16 @@ However, since for 2016 we had an almost perfect aggreement in data v. MC yields
     git clone --recurse-submodules https://github.com/cmstas/WWWAnalysisRun2.git
     cd WWWAnalysisRun2/analysis/
     git fetch && git fetch --tags
-    git checkout looper_instruction_v2
+    git checkout looper_instruction_v3
     git submodule update --init --recursive
     source ./setup.sh
     make clean
     make -j
-    time sh ./process.sh -i WWW2017_v5.0.0 -t test1 # should take about a minute
+    time sh ./process.sh -i WWW2017_v1.2.2 -t test # should take about ~30 seconds
     ## To Print plotting options
     python ./plot.py -h
     ## Read the options for more information
     ## Brlow are some examples for plotting
-    python ./plot.py --use_private_sig_sample -i outputs/WWW2017_v5.0.0/test1 "SRSSmmNj2__lep_pt0" -n 30 -S -v                                                 # To plot leading lepton pt in mm channel at preselection
-    python ./plot.py --use_private_sig_sample -i outputs/WWW2017_v5.0.0/test1 "SRSSmmNj2__lep_pt1" -n 30 -S -v -m                                              # To plot sub-leading lepton pt in mm channel at preselection (Where fake is from MC directly, toggle option -m to see data-driven v. MC estimate)
-    python ./plot.py --use_private_sig_sample -i outputs/WWW2017_v5.0.0/test1 "SRSSmmNj2__Mjj" -n 30 -S -v                                                     # To plot Mjj in mm channel at preselection
-    python ./plot.py --use_private_sig_sample -i outputs/WWW2017_v5.0.0/test1 "SRSSmmNj2__Mjj,SRSSemNj2__Mjj,SRSSeeNj2__Mjj" -n 30 -S -v -a -O SRSSNj2__Mjj    # To plot Mjj in ee,em,mm channel combined at preselection and rename it "SRSSNj2__Mjj"
-    python ./plot.py --use_private_sig_sample -i outputs/WWW2017_v5.0.0/test1 "SRSSmmNj2__Mjj" -n 30 -S -v                                                     # To plot Mjj in mm channel at preselection
-    python ./plot.py --use_private_sig_sample -i outputs/WWW2017_v5.0.0/test1 "SR0SFOSDYVeto__minDRllOS" -n 6 -S -v                                            # To plot Yifan's new variable she's studying for separating WH v. WWW
-    python ./plot.py --use_private_sig_sample -i outputs/WWW2017_v5.0.0/test1 "SR0SFOSFull__minDRllOS"  -n 3 -S -v                                             # To plot Yifan's new variable she's studying for separating WH v. WWW
-    python ./plot.py --use_private_sig_sample -i outputs/WWW2017_v5.0.0/test1                                                                                  # To plot 9 bin SR and and 5 bin lost-lepton CR plots
+    python ./plot.py -i outputs/WWW2016_v1.2.2/test/ --use_private_sig_sample --draw_data # To plot 9 bin SR and and 5 bin lost-lepton CR plots (--draw_data option unblinds it)
 
+Read ```main.cc```
