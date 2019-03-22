@@ -76,13 +76,14 @@ However, since for 2016 we had an almost perfect aggreement in data v. MC yields
     git checkout looper_instruction_v3
     git submodule update --init --recursive
     source ./setup.sh
+    cp template_user_study.h my_user_study.h
+    ln -s my_user_study.h user_study.h
     make clean
     make -j
-    time sh ./process.sh -i WWW2017_v1.2.2 -t test # should take about ~30 seconds
+    time sh ./process.sh -i WWW2017_v1.2.2 -t test -u # should take about ~30 seconds
     ## To Print plotting options
     python ./plot.py -h
     ## Read the options for more information
     ## Brlow are some examples for plotting
     python ./plot.py -i outputs/WWW2016_v1.2.2/test/ --use_private_sig_sample --draw_data # To plot 9 bin SR and and 5 bin lost-lepton CR plots (--draw_data option unblinds it)
-
-Read ```main.cc```
+    python ./plot.py -i outputs/WWW2016_v1.2.2/test/ --use_private_sig_sample --draw_data SRSSmmFullPP__Mlljj # To plot Mlljj in mu+mu+ region Mjj-in
