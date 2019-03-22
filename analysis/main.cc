@@ -470,22 +470,22 @@ int main(int argc, char** argv)
     ana.histograms.addHistogram("DetajjVBS"                ,  180 , 0.      , 3.     , [&]() { return www.DetajjL()                                                                ; });
     ana.histograms.addHistogram("MET"                      ,  180 , 0.      , 180.   , [&]() { return www.met_pt()                                                                 ; });
     ana.histograms.addHistogram("METWide"                  ,  180 , 0.      , 300.   , [&]() { return www.met_pt()                                                                 ; });
-    ana.histograms.addHistogram("jets_pt0"                 ,  180 , 0.      , 250    , [&]() { return www.jets_p4()[0].pt()                                                        ; });
-    ana.histograms.addHistogram("jets_pt1"                 ,  180 , 0.      , 150    , [&]() { return www.jets_p4()[1].pt()                                                        ; });
-    ana.histograms.addHistogram("jets_pt2"                 ,  180 , 0.      , 150    , [&]() { return www.jets_p4()[2].pt()                                                        ; });
-    ana.histograms.addHistogram("jets_eta0"                ,  180 , -5.0    , 5.0    , [&]() { return www.jets_p4()[0].eta()                                                       ; });
-    ana.histograms.addHistogram("jets_eta1"                ,  180 , -5.0    , 5.0    , [&]() { return www.jets_p4()[1].eta()                                                       ; });
-    ana.histograms.addHistogram("jets_eta2"                ,  180 , -5.0    , 5.0    , [&]() { return www.jets_p4()[2].eta()                                                       ; });
-    ana.histograms.addHistogram("lep_pt0"                  ,  180 , 0.      , 250    , [&]() { return www.lep_pt()[0]                                                              ; });
-    ana.histograms.addHistogram("lep_pt1"                  ,  180 , 0.      , 150    , [&]() { return www.lep_pt()[1]                                                              ; });
-    ana.histograms.addHistogram("lep_pt2"                  ,  180 , 0.      , 150    , [&]() { return www.lep_pt()[2]                                                              ; });
-    ana.histograms.addHistogram("lep_eta0"                 ,  180 , -2.5    , 2.5    , [&]() { return www.lep_eta()[0]                                                             ; });
-    ana.histograms.addHistogram("lep_eta1"                 ,  180 , -2.5    , 2.5    , [&]() { return www.lep_eta()[1]                                                             ; });
-    ana.histograms.addHistogram("lep_phi0"                 ,  180 , -3.1416 , 3.1416 , [&]() { return www.lep_phi()[0]                                                             ; });
-    ana.histograms.addHistogram("lep_phi1"                 ,  180 , -3.1416 , 3.1416 , [&]() { return www.lep_phi()[1]                                                             ; });
-    ana.histograms.addHistogram("lep_relIso03EAv2Lep0"     ,  180 , 0.0     , 0.4    , [&]() { return www.lep_relIso03EAv2Lep()[0]                                                 ; });
-    ana.histograms.addHistogram("lep_relIso03EAv2Lep1"     ,  180 , 0.0     , 0.4    , [&]() { return www.lep_relIso03EAv2Lep()[1]                                                 ; });
-    ana.histograms.addHistogram("lep_relIso03EAv2Lep2"     ,  180 , 0.0     , 0.4    , [&]() { return www.lep_relIso03EAv2Lep()[2]                                                 ; });
+    ana.histograms.addHistogram("jets_pt0"                 ,  180 , 0.      , 250    , [&]() { return www.jets_p4().size() > 0 ? www.jets_p4()[0].pt()  : -999                     ; });
+    ana.histograms.addHistogram("jets_pt1"                 ,  180 , 0.      , 150    , [&]() { return www.jets_p4().size() > 1 ? www.jets_p4()[1].pt()  : -999                     ; });
+    ana.histograms.addHistogram("jets_pt2"                 ,  180 , 0.      , 150    , [&]() { return www.jets_p4().size() > 2 ? www.jets_p4()[2].pt()  : -999                     ; });
+    ana.histograms.addHistogram("jets_eta0"                ,  180 , -5.0    , 5.0    , [&]() { return www.jets_p4().size() > 0 ? www.jets_p4()[0].eta() : -999                     ; });
+    ana.histograms.addHistogram("jets_eta1"                ,  180 , -5.0    , 5.0    , [&]() { return www.jets_p4().size() > 1 ? www.jets_p4()[1].eta() : -999                     ; });
+    ana.histograms.addHistogram("jets_eta2"                ,  180 , -5.0    , 5.0    , [&]() { return www.jets_p4().size() > 2 ? www.jets_p4()[2].eta() : -999                     ; });
+    ana.histograms.addHistogram("lep_pt0"                  ,  180 , 0.      , 250    , [&]() { return www.lep_pt().size() > 0 ? www.lep_pt()[0]  : -999                            ; });
+    ana.histograms.addHistogram("lep_pt1"                  ,  180 , 0.      , 150    , [&]() { return www.lep_pt().size() > 1 ? www.lep_pt()[1]  : -999                            ; });
+    ana.histograms.addHistogram("lep_pt2"                  ,  180 , 0.      , 150    , [&]() { return www.lep_pt().size() > 2 ? www.lep_pt()[2]  : -999                            ; });
+    ana.histograms.addHistogram("lep_eta0"                 ,  180 , -2.5    , 2.5    , [&]() { return www.lep_pt().size() > 0 ? www.lep_eta()[0] : -999                            ; });
+    ana.histograms.addHistogram("lep_eta1"                 ,  180 , -2.5    , 2.5    , [&]() { return www.lep_pt().size() > 1 ? www.lep_eta()[1] : -999                            ; });
+    ana.histograms.addHistogram("lep_phi0"                 ,  180 , -3.1416 , 3.1416 , [&]() { return www.lep_pt().size() > 0 ? www.lep_phi()[0] : -999                            ; });
+    ana.histograms.addHistogram("lep_phi1"                 ,  180 , -3.1416 , 3.1416 , [&]() { return www.lep_pt().size() > 1 ? www.lep_phi()[1] : -999                            ; });
+    ana.histograms.addHistogram("lep_relIso03EAv2Lep0"     ,  180 , 0.0     , 0.4    , [&]() { return www.lep_pt().size() > 0 ? www.lep_relIso03EAv2Lep()[0] : -999                ; });
+    ana.histograms.addHistogram("lep_relIso03EAv2Lep1"     ,  180 , 0.0     , 0.4    , [&]() { return www.lep_pt().size() > 1 ? www.lep_relIso03EAv2Lep()[1] : -999                ; });
+    ana.histograms.addHistogram("lep_relIso03EAv2Lep2"     ,  180 , 0.0     , 0.4    , [&]() { return www.lep_pt().size() > 2 ? www.lep_relIso03EAv2Lep()[2] : -999                ; });
     ana.histograms.addHistogram("nj"                       ,  7   , 0.      , 7.     , [&]() { return www.nj()                                                                     ; });
     ana.histograms.addHistogram("nj30"                     ,  7   , 0.      , 7.     , [&]() { return www.nj30()                                                                   ; });
     ana.histograms.addHistogram("nb"                       ,  5   , 0.      , 5.     , [&]() { return www.nb()                                                                     ; });
@@ -498,16 +498,7 @@ int main(int argc, char** argv)
     // Let's define a complex histogram. (This is a variable Yifan is looking into.)
     // This is going to plot a new variable where it plots the minimum DR of the two opposite sign leptons.
     // This is the variable that WH->WW analysis in HIG uses to fit to extract signal.
-    //
-    // If the user expects the function to be computationally heavy you can either use memoization or static variables to cache results
-    // The example below illustrates this
     ana.histograms.addHistogram("minDRllOS", 180, 0., 4.,
-
-            // memoize is for caching results so that this function is not computed more than once per event
-            // It is defined in lambdas.cc. It is an implementation of trick called "memoization"
-            // When implementing new histograms that are going to be computationally heavy, I recommend using memoize to not slow down the program
-            memoize( 
-
                 [&]()
                 {
 
@@ -539,7 +530,122 @@ int main(int argc, char** argv)
 
                     return minDR;
                 }
-            ));
+            );
+
+    // Another new variable where we compute max(Mlj) for the lepton with minimum dphi
+    ana.histograms.addHistogram("maxMljminDPhi", 180, 0., 300.,
+                [&]()
+                {
+
+                    float result = -999;
+                    // If less than two leptons don't even bother
+                    if (www.lep_p4().size() < 2)
+                        return result;
+
+                    // "www" objects contain lepton 4-vectors and pdgID
+                    std::vector<LV> lep_p4 = www.lep_p4();
+                    std::vector<LV> jets_p4 = www.jets_p4();
+
+                    // For the jet selected as W-jets (minDR of central >30 GeV jets)
+                    float minDR = 999;
+                    int ii_selected = -1;
+                    int jj_selected = -1;
+                    for (unsigned int ii = 0; ii < jets_p4.size(); ++ii)
+                    {
+                        for (unsigned int jj = ii + 1; jj < jets_p4.size(); ++jj)
+                        {
+
+                            if (jets_p4[ii].pt() > 30. and jets_p4[jj].pt() > 30. and abs(jets_p4[ii].eta()) < 2.5 and abs(jets_p4[jj].eta()) < 2.5) // If pt condition met
+                            {
+                                float thisDR = RooUtil::Calc::DeltaR(jets_p4[ii], jets_p4[jj]);
+                                if (thisDR < minDR)
+                                {
+                                    minDR = thisDR;
+                                    ii_selected = ii;
+                                    jj_selected = jj;
+                                }
+                            }
+                        }
+                    }
+
+                    // If no two jets found then don't bother
+                    if (ii_selected < 0 or jj_selected < 0)
+                        return result;
+
+                    // Now tag the lepton with min-dphi to the tagged boson
+                    LV Wboson = jets_p4[ii_selected] + jets_p4[jj_selected];
+                    float dphi0 = fabs(RooUtil::Calc::DeltaPhi(lep_p4[0], Wboson));
+                    float dphi1 = fabs(RooUtil::Calc::DeltaPhi(lep_p4[1], Wboson));
+
+                    LV lep = dphi0 < dphi1 ? lep_p4[0] : lep_p4[1];
+
+                    float mlj0 = (lep + jets_p4[ii_selected]).mass();
+                    float mlj1 = (lep + jets_p4[jj_selected]).mass();
+
+                    result = mlj0 > mlj1 ? mlj0 : mlj1;
+
+                    return result;
+
+                }
+            );
+
+    // Another new variable where we compute min(Mlj) for the lepton with minimum DR
+    ana.histograms.addHistogram("maxMljminDR", 180, 0., 300.,
+                [&]()
+                {
+
+                    float result = -999;
+                    // If less than two leptons don't even bother
+                    if (www.lep_p4().size() < 2)
+                        return result;
+
+                    // "www" objects contain lepton 4-vectors and pdgID
+                    std::vector<LV> lep_p4 = www.lep_p4();
+                    std::vector<LV> jets_p4 = www.jets_p4();
+
+                    // For the jet selected as W-jets (minDR of central >30 GeV jets)
+                    float minDR = 999;
+                    int ii_selected = -1;
+                    int jj_selected = -1;
+                    for (unsigned int ii = 0; ii < jets_p4.size(); ++ii)
+                    {
+                        for (unsigned int jj = ii + 1; jj < jets_p4.size(); ++jj)
+                        {
+
+                            if (jets_p4[ii].pt() > 30. and jets_p4[jj].pt() > 30. and abs(jets_p4[ii].eta()) < 2.5 and abs(jets_p4[jj].eta()) < 2.5) // If pt condition met
+                            {
+                                float thisDR = RooUtil::Calc::DeltaR(jets_p4[ii], jets_p4[jj]);
+                                if (thisDR < minDR)
+                                {
+                                    minDR = thisDR;
+                                    ii_selected = ii;
+                                    jj_selected = jj;
+                                }
+                            }
+                        }
+                    }
+
+                    // If no two jets found then don't bother
+                    if (ii_selected < 0 or jj_selected < 0)
+                        return result;
+
+                    // Now tag the lepton with min-dphi to the tagged boson
+                    LV Wboson = jets_p4[ii_selected] + jets_p4[jj_selected];
+                    float dphi0 = fabs(RooUtil::Calc::DeltaR(lep_p4[0], Wboson));
+                    float dphi1 = fabs(RooUtil::Calc::DeltaR(lep_p4[1], Wboson));
+
+                    LV lep = dphi0 < dphi1 ? lep_p4[0] : lep_p4[1];
+
+                    float mlj0 = (lep + jets_p4[ii_selected]).mass();
+                    float mlj1 = (lep + jets_p4[jj_selected]).mass();
+
+                    result = mlj0 > mlj1 ? mlj0 : mlj1;
+
+                    return result;
+
+                }
+            );
+
 
 //********************************************************************************
 //
@@ -909,10 +1015,10 @@ int main(int argc, char** argv)
             input.determine_input_settings(ana.looper.getCurrentFileName(), ana.input_tree_name);
         }
 
-        // For memoize function. This is to cache results for each event. this_run/lumi/evt is a global variable defined in lambdas.cc
-        this_run = www.run();
-        this_lumi = www.lumi();
-        this_evt = www.evt();
+        // // For memoize function. This is to cache results for each event. this_run/lumi/evt is a global variable defined in lambdas.cc
+        // this_run = www.run();
+        // this_lumi = www.lumi();
+        // this_evt = www.evt();
 
         // // Theory related weights from h_neventsinfile in each input root file but only set files when new file opens
         // // NOTE if there was a continue statement prior to this it can mess it up

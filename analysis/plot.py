@@ -12,7 +12,7 @@ parser.add_argument('-l' , '--yaxis_log'              , dest='yaxis_log'       ,
 parser.add_argument('-s' , '--sig_scale'              , dest='sig_scale'       , help='Signal scale'                           , default=1                                  ) 
 parser.add_argument('-u' , '--rm_udflow'              , dest='rm_udflow'       , help='Remove underflow'                       , default=False         , action='store_true') 
 parser.add_argument('-S' , '--do_scan'                , dest='do_scan'         , help='Do cut scan'                            , default=False         , action='store_true') 
-parser.add_argument('-b' , '--blind'                  , dest='blind'           , help='Blind data'                             , default=False         , action='store_true') 
+parser.add_argument('-d' , '--draw_data'              , dest='draw_data'       , help='Draw data'                              , default=False         , action='store_true') 
 parser.add_argument('-v' , '--split_signal'           , dest='split_signal'    , help='Split signal'                           , default=False         , action='store_true') 
 parser.add_argument('-m' , '--use_mc_fake'            , dest='use_mc_fake'     , help='use_mc_fake'                            , default=False         , action='store_true') 
 parser.add_argument('-P' , '--use_private_sig_sample' , dest='use_private'     , help='Use private signal sample'              , default=False         , action='store_true') 
@@ -84,8 +84,8 @@ if args.use_private:
     if args.split_signal:
         sig_fnames = [
             "{}/www_private.root".format(input_dir),
-            "{}/vh_www_private.root".format(input_dir),
-            # "{}/vh_private.root".format(input_dir),
+            "{}/vh_private.root".format(input_dir),
+            # "{}/vh_www_private.root".format(input_dir),
             ]
         bkg_fnames = [
             "{}/photon.root".format(input_dir),
@@ -128,7 +128,7 @@ if filter_pattern:
                 "remove_underflow":args.rm_udflow,
                 "bkg_sort_method": "unsorted",
                 "lumi_value": lumi,
-                "blind": args.blind,
+                "blind": not args.draw_data,
                 "ratio_range": [0., 2.],
                 # "yaxis_range": [0., 40.],
                 },
