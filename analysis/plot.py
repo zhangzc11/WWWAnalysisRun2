@@ -200,7 +200,7 @@ else:
                 "legend_scaley": 1.1,
                 "lumi_value": lumi,
                 "print_yield": True,
-                "blind": True, # BE CAREFUL!!!!!!!!!!!!!!!!!!
+                "blind": not args.draw_data, # BE CAREFUL!!!!!!!!!!!!!!!!!!
                 },
             usercolors=[920, 2007, 2005, 2003, 2001, 2011],
             )

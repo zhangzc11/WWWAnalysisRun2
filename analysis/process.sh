@@ -52,6 +52,10 @@ echo "INPUT_BABY_VERSION  : ${INPUT_BABY_VERSION}"
 echo "JOB_TAG             : ${JOB_TAG}"
 echo "================================================"
 
+DDFAKEDIR=bkgdata/
+if [[ ${INPUT_BABY_VERSION} == *"2016"* ]]; then
+    DDFAKEDIR=data/
+fi
 
 mkdir -p outputs/${INPUT_BABY_VERSION}/${JOB_TAG}/
 
@@ -61,11 +65,9 @@ echo "(below are individual bash commands)"
 (set -x ;./doAnalysis ${CUTFLOW} -H ${DO_USER_STUDY} -i /nfs-7/userdata/phchang/WWW_babies/${INPUT_BABY_VERSION}/grouped/bkg/          -o outputs/${INPUT_BABY_VERSION}/${JOB_TAG}/lostlep_0.root      -T t_lostlep -j 3 -I 0 > outputs/${INPUT_BABY_VERSION}/${JOB_TAG}/lostlep_0.log      2>&1) &
 (set -x ;./doAnalysis ${CUTFLOW} -H ${DO_USER_STUDY} -i /nfs-7/userdata/phchang/WWW_babies/${INPUT_BABY_VERSION}/grouped/bkg/          -o outputs/${INPUT_BABY_VERSION}/${JOB_TAG}/lostlep_1.root      -T t_lostlep -j 3 -I 1 > outputs/${INPUT_BABY_VERSION}/${JOB_TAG}/lostlep_1.log      2>&1) &
 (set -x ;./doAnalysis ${CUTFLOW} -H ${DO_USER_STUDY} -i /nfs-7/userdata/phchang/WWW_babies/${INPUT_BABY_VERSION}/grouped/bkg/          -o outputs/${INPUT_BABY_VERSION}/${JOB_TAG}/lostlep_2.root      -T t_lostlep -j 3 -I 2 > outputs/${INPUT_BABY_VERSION}/${JOB_TAG}/lostlep_2.log      2>&1) &
-(set -x ;./doAnalysis ${CUTFLOW} -H ${DO_USER_STUDY} -i /nfs-7/userdata/phchang/WWW_babies/${INPUT_BABY_VERSION}/grouped/bkgdata/      -o outputs/${INPUT_BABY_VERSION}/${JOB_TAG}/ddfakes_0.root      -T t_ss -F   -j 3 -I 0 > outputs/${INPUT_BABY_VERSION}/${JOB_TAG}/ddfakes_0.log      2>&1) & # fake estimation
-(set -x ;./doAnalysis ${CUTFLOW} -H ${DO_USER_STUDY} -i /nfs-7/userdata/phchang/WWW_babies/${INPUT_BABY_VERSION}/grouped/bkgdata/      -o outputs/${INPUT_BABY_VERSION}/${JOB_TAG}/ddfakes_1.root      -T t_ss -F   -j 3 -I 1 > outputs/${INPUT_BABY_VERSION}/${JOB_TAG}/ddfakes_1.log      2>&1) & # fake estimation
-(set -x ;./doAnalysis ${CUTFLOW} -H ${DO_USER_STUDY} -i /nfs-7/userdata/phchang/WWW_babies/${INPUT_BABY_VERSION}/grouped/bkgdata/      -o outputs/${INPUT_BABY_VERSION}/${JOB_TAG}/ddfakes_2.root      -T t_ss -F   -j 3 -I 2 > outputs/${INPUT_BABY_VERSION}/${JOB_TAG}/ddfakes_2.log      2>&1) & # fake estimation
-# (set -x ;./doAnalysis ${CUTFLOW} -H ${DO_USER_STUDY} -i /nfs-7/userdata/phchang/WWW_babies/${INPUT_BABY_VERSION}/grouped/bkg/          -o outputs/${INPUT_BABY_VERSION}/${JOB_TAG}/lostlep.root        -T t_lostlep           > outputs/${INPUT_BABY_VERSION}/${JOB_TAG}/lostlep.log        2>&1) &
-# (set -x ;./doAnalysis ${CUTFLOW} -H ${DO_USER_STUDY} -i /nfs-7/userdata/phchang/WWW_babies/${INPUT_BABY_VERSION}/grouped/bkgdata/      -o outputs/${INPUT_BABY_VERSION}/${JOB_TAG}/ddfakes.root        -T t_ss -F             > outputs/${INPUT_BABY_VERSION}/${JOB_TAG}/ddfakes.log        2>&1) & # fake estimation
+(set -x ;./doAnalysis ${CUTFLOW} -H ${DO_USER_STUDY} -i /nfs-7/userdata/phchang/WWW_babies/${INPUT_BABY_VERSION}/grouped/${DDFAKEDIR}  -o outputs/${INPUT_BABY_VERSION}/${JOB_TAG}/ddfakes_0.root      -T t_ss -F   -j 3 -I 0 > outputs/${INPUT_BABY_VERSION}/${JOB_TAG}/ddfakes_0.log      2>&1) & # fake estimation
+(set -x ;./doAnalysis ${CUTFLOW} -H ${DO_USER_STUDY} -i /nfs-7/userdata/phchang/WWW_babies/${INPUT_BABY_VERSION}/grouped/${DDFAKEDIR}  -o outputs/${INPUT_BABY_VERSION}/${JOB_TAG}/ddfakes_1.root      -T t_ss -F   -j 3 -I 1 > outputs/${INPUT_BABY_VERSION}/${JOB_TAG}/ddfakes_1.log      2>&1) & # fake estimation
+(set -x ;./doAnalysis ${CUTFLOW} -H ${DO_USER_STUDY} -i /nfs-7/userdata/phchang/WWW_babies/${INPUT_BABY_VERSION}/grouped/${DDFAKEDIR}  -o outputs/${INPUT_BABY_VERSION}/${JOB_TAG}/ddfakes_2.root      -T t_ss -F   -j 3 -I 2 > outputs/${INPUT_BABY_VERSION}/${JOB_TAG}/ddfakes_2.log      2>&1) & # fake estimation
 (set -x ;./doAnalysis ${CUTFLOW} -H ${DO_USER_STUDY} -i /nfs-7/userdata/phchang/WWW_babies/${INPUT_BABY_VERSION}/grouped/bkg/          -o outputs/${INPUT_BABY_VERSION}/${JOB_TAG}/qflip.root          -T t_qflip             > outputs/${INPUT_BABY_VERSION}/${JOB_TAG}/qflip.log          2>&1) &
 (set -x ;./doAnalysis ${CUTFLOW} -H ${DO_USER_STUDY} -i /nfs-7/userdata/phchang/WWW_babies/${INPUT_BABY_VERSION}/grouped/bkg/          -o outputs/${INPUT_BABY_VERSION}/${JOB_TAG}/prompt.root         -T t_prompt            > outputs/${INPUT_BABY_VERSION}/${JOB_TAG}/prompt.log         2>&1) &
 (set -x ;./doAnalysis ${CUTFLOW} -H ${DO_USER_STUDY} -i /nfs-7/userdata/phchang/WWW_babies/${INPUT_BABY_VERSION}/grouped/bkg/          -o outputs/${INPUT_BABY_VERSION}/${JOB_TAG}/fakes.root          -T t_fakes             > outputs/${INPUT_BABY_VERSION}/${JOB_TAG}/fakes.log          2>&1) &
