@@ -10,3 +10,4 @@ cd $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit
 git fetch origin
 git checkout v7.0.12
 scramv1 b clean; scramv1 b # always make a clean build
+cd $CMSSW_BASE/../

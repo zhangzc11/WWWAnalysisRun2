@@ -6,6 +6,13 @@ import glob
 import ROOT as r
 import os
 
+# option parser
+import argparse
+
+parser = argparse.ArgumentParser(description="Higgs Combine Datacard dumper for Run 2 WWW Analysis")
+parser.add_argument('-i' , '--input_dir' , dest='input_dir' , help='input dir path (where hists are) NOTE: pattern MUST be hists/${BABY_VERSION}/${TAG}/', required=True ) 
+args = parser.parse_args()
+
 # Global variables
 config = {
 
@@ -13,7 +20,7 @@ config = {
         "bkg_order": ["fakes", "photon", "lostlep", "qflip", "prompt", "ttw", "vbsww"],
 
         # The input dirpath which is the output of the looper
-        "input_dirpath": "hists/WWW2016_v1.2.2/test/",
+        "input_dirpath": args.input_dir,
 
         # Signal sample root name
         "signal_filename" : "signal_private.root"
@@ -78,6 +85,8 @@ def write_datacard():
         d.set_bin(i+1) # TH1 bin indices start with 1
         d.set_region_name(reg_name)
         d.write("{}/datacard_{}.txt".format(output_dir, reg_name))
+
+    print "Wrote datacards to {}".format(output_dir)
 
 #________________________________________________________________________________________________________________________________________
 # Get the lost lepton scale factors to be applied

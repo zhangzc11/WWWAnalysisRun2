@@ -36,14 +36,14 @@ After reading main.cc, If there is a specific non-trivial task that isn't clear 
     python ./plot.py -h
     ## Read the options for more information
     ## Brlow are some examples for plotting
-    python ./plot.py --use_private_sig_sample -i outputs/WWW2017_v5.0.0/test1 "SRSSmmNj2__lep_pt0" -n 30 -S -v                                                 # To plot leading lepton pt in mm channel at preselection
-    python ./plot.py --use_private_sig_sample -i outputs/WWW2017_v5.0.0/test1 "SRSSmmNj2__lep_pt1" -n 30 -S -v -m                                              # To plot sub-leading lepton pt in mm channel at preselection (Where fake is from MC directly, toggle option -m to see data-driven v. MC estimate)
-    python ./plot.py --use_private_sig_sample -i outputs/WWW2017_v5.0.0/test1 "SRSSmmNj2__Mjj" -n 30 -S -v                                                     # To plot Mjj in mm channel at preselection
-    python ./plot.py --use_private_sig_sample -i outputs/WWW2017_v5.0.0/test1 "SRSSmmNj2__Mjj,SRSSemNj2__Mjj,SRSSeeNj2__Mjj" -n 30 -S -v -a -O SRSSNj2__Mjj    # To plot Mjj in ee,em,mm channel combined at preselection and rename it "SRSSNj2__Mjj"
-    python ./plot.py --use_private_sig_sample -i outputs/WWW2017_v5.0.0/test1 "SRSSmmNj2__Mjj" -n 30 -S -v                                                     # To plot Mjj in mm channel at preselection
-    python ./plot.py --use_private_sig_sample -i outputs/WWW2017_v5.0.0/test1 "SR0SFOSDYVeto__minDRllOS" -n 6 -S -v                                            # To plot Yifan's new variable she's studying for separating WH v. WWW
-    python ./plot.py --use_private_sig_sample -i outputs/WWW2017_v5.0.0/test1 "SR0SFOSFull__minDRllOS"  -n 3 -S -v                                             # To plot Yifan's new variable she's studying for separating WH v. WWW
-    python ./plot.py --use_private_sig_sample -i outputs/WWW2017_v5.0.0/test1                                                                                  # To plot 9 bin SR and and 5 bin lost-lepton CR plots
+    python ./plot.py --use_private_sig_sample -i hists/WWW2017_v5.0.0/test1 "SRSSmmNj2__lep_pt0" -n 30 -S -v                                                 # To plot leading lepton pt in mm channel at preselection
+    python ./plot.py --use_private_sig_sample -i hists/WWW2017_v5.0.0/test1 "SRSSmmNj2__lep_pt1" -n 30 -S -v -m                                              # To plot sub-leading lepton pt in mm channel at preselection (Where fake is from MC directly, toggle option -m to see data-driven v. MC estimate)
+    python ./plot.py --use_private_sig_sample -i hists/WWW2017_v5.0.0/test1 "SRSSmmNj2__Mjj" -n 30 -S -v                                                     # To plot Mjj in mm channel at preselection
+    python ./plot.py --use_private_sig_sample -i hists/WWW2017_v5.0.0/test1 "SRSSmmNj2__Mjj,SRSSemNj2__Mjj,SRSSeeNj2__Mjj" -n 30 -S -v -a -O SRSSNj2__Mjj    # To plot Mjj in ee,em,mm channel combined at preselection and rename it "SRSSNj2__Mjj"
+    python ./plot.py --use_private_sig_sample -i hists/WWW2017_v5.0.0/test1 "SRSSmmNj2__Mjj" -n 30 -S -v                                                     # To plot Mjj in mm channel at preselection
+    python ./plot.py --use_private_sig_sample -i hists/WWW2017_v5.0.0/test1 "SR0SFOSDYVeto__minDRllOS" -n 6 -S -v                                            # To plot Yifan's new variable she's studying for separating WH v. WWW
+    python ./plot.py --use_private_sig_sample -i hists/WWW2017_v5.0.0/test1 "SR0SFOSFull__minDRllOS"  -n 3 -S -v                                             # To plot Yifan's new variable she's studying for separating WH v. WWW
+    python ./plot.py --use_private_sig_sample -i hists/WWW2017_v5.0.0/test1                                                                                  # To plot 9 bin SR and and 5 bin lost-lepton CR plots
 
 The yield plot produced from the last command should more or less match the result presented at CMS Week Feb. (https://indico.cern.ch/event/795443/)
 
@@ -85,11 +85,101 @@ However, since for 2016 we had an almost perfect aggreement in data v. MC yields
     python ./plot.py -h
     ## Read the options for more information
     ## Brlow are some examples for plotting
-    python ./plot.py -i outputs/WWW2016_v1.2.2/test/ --use_private_sig_sample --draw_data # To plot 9 bin SR and and 5 bin lost-lepton CR plots (--draw_data option unblinds it)
-    python ./plot.py -i outputs/WWW2016_v1.2.2/test/ --use_private_sig_sample --draw_data SRSSmmMjjInPP__Mlljj -n 5 # To plot Mlljj in mu+mu+ region Mjj-in
+    python ./plot.py -i hists/WWW2016_v1.2.2/test/ --use_private_sig_sample --draw_data # To plot 9 bin SR and and 5 bin lost-lepton CR plots (--draw_data option unblinds it)
+    python ./plot.py -i hists/WWW2016_v1.2.2/test/ --use_private_sig_sample --draw_data SRSSmmMjjInPP__Mlljj -n 5 # To plot Mlljj in mu+mu+ region Mjj-in
 
-When running again, it will complain that the ```outputs/WWW2016_v1.2.2/test/*.root``` already exists.
+When running again, it will complain that the ```hists/WWW2016_v1.2.2/test/*.root``` already exists.
 
-Either delete the previous outputs or run with a new tag ```-t newtest``` for ```./process.sh```
+Either delete the previous output histograms or run with a new tag ```-t newtest``` for ```./process.sh```
+
+## Statistical interpretation
+
+The ```write_datacards.py``` scripts will write the datacards and in ```stats/``` directory there are few scripts to compute significances.
+
+### Writing 9 individual data cards
+
+Assuming histograms are created by running the looper.
+
+    python ./write_datacards.py -i hists/WWW2016_v1.2.2/test/
+
+Then, datacards will be written out to
+
+    ls datacards/WWW2016_v1.2.2/test/
+        datacard_b1.txt
+        datacard_b2.txt
+        datacard_b3.txt
+        datacard_b4.txt
+        datacard_b5.txt
+        datacard_b6.txt
+        datacard_b7.txt
+        datacard_b8.txt
+        datacard_b9.txt
+
+Notice, that all 9 bins are written separately. (the order is in-ee, in-em, in-mm, out-ee, out-em, out-mm, 0, 1, 2)
+
+We will combine this later with Higgs Combine Tool
+
+### Higgs Combine Tool
+
+#### Setting up the first time
+In a separate terminal run the following to install the Higgs Combined Limit Tool. (Because the ROOT version is different one needs a new terminal environment.)
+
+    cd stats/
+    source ./setup_higgs_combine.sh
+
+This only has to be done one time, and it takes about the time for you get a cup of coffee.
+
+#### Setup up script after re-logging in
+
+Next time logging into the terminal, run to setup the appropriate environment
+
+    cd stats/
+    source setup.sh    
+
+#### Combining individual datacards
+
+Then, to combine all 9 SR bins into a one giant datacards, we run
+
+    sh combinecards.sh /path/to/where/your/datacards/WWW2016_v1.2.2/test/
+
+Now you should have
+
+    ls datacards/WWW2016_v1.2.2/test/
+        datacard_b1.txt
+        datacard_b2.txt
+        datacard_b3.txt
+        datacard_b4.txt
+        datacard_b5.txt
+        datacard_b6.txt
+        datacard_b7.txt
+        datacard_b8.txt
+        datacard_b9.txt
+        datacard_combined.txt     # new file
+        datacard_combined_ss.txt  # new file
+        datacard_combined_3l.txt  # new file
+
+#### Expected sensitivity
+
+To compute expected sensitivity
+
+    sh doSensitivity.sh /path/to/your/datacard.txt
+
+e.g.
+
+    $ cd stats/
+    $ sh doSensitivity.sh ../datacards/WWW2016_v1.2.2/test/datacard_combined.txt
+     <<< Combine >>>
+     WARNING --  From combine v7, method ProfileLikelihood has been renamed to Significance
+    >>> including systematics
+    >>> method used is ProfileLikelihood
+    >>> random number generator seed is 123456
+    Computing results starting from expected outcome (a-priori)
+    
+     -- Significance --
+    Significance: 1.86216
+    Done in 0.01 min (cpu), 0.01 min (real)
+
+NOTE: I have not verified whether the datacards that is written out currently is validated against what I had for 2016 yet, so some systematics maybe missing hence the slight "improvement" over public result.
+But to first order things looked OK generally looked OK.
 
 
