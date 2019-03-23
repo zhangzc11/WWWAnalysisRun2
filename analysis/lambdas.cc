@@ -372,11 +372,17 @@ std::function<float()> Lambdas::PileupVariation(Variation::Var var)
 
 //______________________________________________________________________________________________
 // Fake factor variation
-std::function<float()> Lambdas::FakeFactorVariation(Variation::FakeVar fakevar, Variation::Var var)
+std::function<float()> Lambdas::FakeFactorVariation(Variation::FakeVar fakevar_, Variation::Var var_)
 {
 
-    return [&]()
+    return [&, fakevar_, var_]()
     {
+        static Variation::FakeVar fakevar;
+        static Variation::Var var;
+
+        fakevar = fakevar_;
+        var = var_;
+
         if (fakevar == Variation::Full)
         {
             if (input.year == 2016)

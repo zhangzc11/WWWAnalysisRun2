@@ -1009,18 +1009,32 @@ int main(int argc, char** argv)
             ana.cutflow.addWgtSyst("FakeClosureMuUp"   , Lambdas::FakeFactorVariation(Variation::ClosureMu , Variation::Up  ));
             ana.cutflow.addWgtSyst("FakeClosureMuDown" , Lambdas::FakeFactorVariation(Variation::ClosureMu , Variation::Down));
         }
+        else
+        {
+            ana.cutflow.addWgtSyst("FakeUp"            , UNITY);
+            ana.cutflow.addWgtSyst("FakeDown"          , UNITY);
+            ana.cutflow.addWgtSyst("FakeRateUp"        , UNITY);
+            ana.cutflow.addWgtSyst("FakeRateDown"      , UNITY);
+            ana.cutflow.addWgtSyst("FakeRateElUp"      , UNITY);
+            ana.cutflow.addWgtSyst("FakeRateElDown"    , UNITY);
+            ana.cutflow.addWgtSyst("FakeRateMuUp"      , UNITY);
+            ana.cutflow.addWgtSyst("FakeRateMuDown"    , UNITY);
+            ana.cutflow.addWgtSyst("FakeClosureUp"     , UNITY);
+            ana.cutflow.addWgtSyst("FakeClosureDown"   , UNITY);
+            ana.cutflow.addWgtSyst("FakeClosureElUp"   , UNITY);
+            ana.cutflow.addWgtSyst("FakeClosureElDown" , UNITY);
+            ana.cutflow.addWgtSyst("FakeClosureMuUp"   , UNITY);
+            ana.cutflow.addWgtSyst("FakeClosureMuDown" , UNITY);
+        }
 
         // Declare cut varying systematics to cuts with the patterns provided in the vector
         ana.cutflow.addCutSyst("JESUp"    , {"jj", "PreSel", "Nj", "KinSel", "SidemmMET"});
         ana.cutflow.addCutSyst("JESDown"  , {"jj", "PreSel", "Nj", "KinSel", "SidemmMET"});
 
-        // 2016 v1.2.2 baby ntuple does not have jer variation
-        if (input.year != 2016)
-        {
-            ana.cutflow.addCutSyst("JER"      , {"jj", "PreSel", "Nj", "KinSel", "SidemmMET"});
-            ana.cutflow.addCutSyst("JERUp"    , {"jj", "PreSel", "Nj", "KinSel", "SidemmMET"});
-            ana.cutflow.addCutSyst("JERDown"  , {"jj", "PreSel", "Nj", "KinSel", "SidemmMET"});
-        }
+        // // 2016 v1.2.2 baby ntuple does not have jer variation
+        // ana.cutflow.addCutSyst("JER"      , {"jj", "PreSel", "Nj", "KinSel", "SidemmMET"});
+        // ana.cutflow.addCutSyst("JERUp"    , {"jj", "PreSel", "Nj", "KinSel", "SidemmMET"});
+        // ana.cutflow.addCutSyst("JERDown"  , {"jj", "PreSel", "Nj", "KinSel", "SidemmMET"});
 
         // Lambda to add variations
         auto set_syst_cuts = [&](TString systname, Variation::ExpSyst expsyst, Variation::Var var)
@@ -1106,13 +1120,10 @@ int main(int argc, char** argv)
         set_syst_cuts("JESUp", Variation::JES, Variation::Up);
         set_syst_cuts("JESDown", Variation::JES, Variation::Down);
 
-        // If newer year also set JER
-        if (input.year != 2016)
-        {
-            set_syst_cuts("JER", Variation::JER, Variation::Nominal);
-            set_syst_cuts("JERUp", Variation::JER, Variation::Up);
-            set_syst_cuts("JERDown", Variation::JER, Variation::Down);
-        }
+        // // If newer year also set JER
+        // set_syst_cuts("JER", Variation::JER, Variation::Nominal);
+        // set_syst_cuts("JERUp", Variation::JER, Variation::Up);
+        // set_syst_cuts("JERDown", Variation::JER, Variation::Down);
 
     }
 
@@ -1238,17 +1249,17 @@ int main(int argc, char** argv)
     while (ana.looper.nextEvent())
     {
 
+        // If a new file was opened after "looper.nextEvent" was called configure the sample dependent settings in class InputConfig;
+        if (ana.looper.isNewFileInChain())
+        {
+            input.determine_input_settings(ana.looper.getCurrentFileName(), ana.input_tree_name);
+        }
+
         // If splitting jobs are requested then determine whether to process the event or not based on remainder
         if (result.count("job_index") and result.count("nsplit_jobs"))
         {
             if (ana.looper.getNEventsProcessed() % ana.nsplit_jobs != (unsigned int) ana.job_index)
                 continue;
-        }
-
-        // If a new file was opened after "looper.nextEvent" was called configure the sample dependent settings in class InputConfig;
-        if (ana.looper.isNewFileInChain())
-        {
-            input.determine_input_settings(ana.looper.getCurrentFileName(), ana.input_tree_name);
         }
 
         // // For memoize function. This is to cache results for each event. this_run/lumi/evt is a global variable defined in lambdas.cc

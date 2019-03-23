@@ -18,6 +18,7 @@ parser.add_argument('-m' , '--use_mc_fake'            , dest='use_mc_fake'     ,
 parser.add_argument('-P' , '--use_private_sig_sample' , dest='use_private'     , help='Use private signal sample'              , default=False         , action='store_true') 
 parser.add_argument('-a' , '--sum_hists'              , dest='sum_hists'       , help='Sum all hists that passes filter'       , default=False         , action='store_true') 
 parser.add_argument('-O' , '--output_name'            , dest='output_name'     , help='output file name when using sum_hists'  , default=None                               ) 
+parser.add_argument('-t' , '--syst'                   , dest='syst'            , help='Specific syst variation'                , default=""                                 ) 
 
 parser.add_argument('filter_patterns', metavar='FILTER_PATTERN', type=str, nargs='*', help='patterns to use to filter histograms to dump')
 
@@ -158,7 +159,7 @@ else:
             fnames=bkg_fnames,
             sig_fnames=sig_fnames,
             data_fname="{}/data.root".format(input_dir),
-            regions=[ "WZCRSSeeFull", "WZCRSSemFull", "WZCRSSmmFull", "WZCR1SFOSFull", "WZCR2SFOSFull" ],
+            regions=[ "WZCRSSeeFull{}(1)".format(args.syst), "WZCRSSemFull{}(1)".format(args.syst), "WZCRSSmmFull{}(1)".format(args.syst), "WZCR1SFOSFull{}(1)".format(args.syst), "WZCR2SFOSFull{}(1)".format(args.syst) ],
             binlabels=[ "ee", "em", "mm", "1SFOS", "2SFOS", ],
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             output_name="wzcr_yield",
@@ -167,6 +168,7 @@ else:
             donorm=False,
             filter_pattern=filter_pattern,
             signal_scale=sig_scale,
+            hsuffix="__nb",
             extraoptions={
                 "bkg_sort_method": "unsorted",
                 "legend_scalex": 1.8,
@@ -185,7 +187,7 @@ else:
             fnames=bkg_fnames,
             sig_fnames=sig_fnames,
             data_fname="{}/data.root".format(input_dir),
-            regions=[ "SRSSeeFull", "SRSSemFull", "SRSSmmFull", "SRSSSideeeFull", "SRSSSideemFull", "SRSSSidemmFull", "SR0SFOSFull", "SR1SFOSFull", "SR2SFOSFull", ],
+            regions=[ "SRSSeeFull{}(1)".format(args.syst), "SRSSemFull{}(1)".format(args.syst), "SRSSmmFull{}(1)".format(args.syst), "SRSSSideeeFull{}(1)".format(args.syst), "SRSSSideemFull{}(1)".format(args.syst), "SRSSSidemmFull{}(1)".format(args.syst), "SR0SFOSFull{}(1)".format(args.syst), "SR1SFOSFull{}(1)".format(args.syst), "SR2SFOSFull{}(1)".format(args.syst), ],
             binlabels=[ "ee", "em", "mm", "side-ee", "side-em", "side-mm", "0SFOS", "1SFOS", "2SFOS", ],
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             output_name="yield",
@@ -194,6 +196,7 @@ else:
             donorm=False,
             filter_pattern=filter_pattern,
             signal_scale=sig_scale,
+            hsuffix="__nb",
             extraoptions={
                 "bkg_sort_method": "unsorted",
                 "legend_scalex": 1.8,
