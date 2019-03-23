@@ -37,6 +37,9 @@ public:
     // Boolean flag to whether or not book histograms and cutflows for systematic variations
     bool do_systematics;
 
+    // Boolean flag to whether to force all histograms and cutflows and ignore whether do_systematics is true or not
+    bool do_force;
+
     // Boolean flag to determine whether the fake rate weights will be applied to the weights
     bool do_fake_estimation;
 

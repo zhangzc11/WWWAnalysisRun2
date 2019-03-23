@@ -10,7 +10,7 @@ int main(int argc, char** argv)
 //
 //********************************************************************************
 
-    // 1. 
+    // 1.
 
     // There is a global variable defined in AnalysisConfig.cc
     //
@@ -20,7 +20,7 @@ int main(int argc, char** argv)
     // (e.g. number of events, the input file name list, etc. that will not change through run time)
     // (see AnalysisConfig.h to get a feeling)
 
-    // 2. 
+    // 2.
 
     // There is a global variable defined in AnalysisConfig.cc
     //
@@ -31,7 +31,7 @@ int main(int argc, char** argv)
     // (e.g. is_data? is_sig? is_bkg? etc.)
     // (see InputConfig.h to get a feeling)
 
-    // 3. 
+    // 3.
 
     // Then there is a global variable defined in wwwtree.cc
     //
@@ -46,7 +46,7 @@ int main(int argc, char** argv)
     // and no need for "SetBranchAddress" and declaring variable shenanigans necessary.
     // This is a standard thing SNT does pretty much every looper we use.
 
-    // 4. 
+    // 4.
 
     // The there are a few scale factor reader classes that are also globally defined
     // Those are defined in scalefactors.h
@@ -72,7 +72,8 @@ int main(int argc, char** argv)
         ("t,test"        , "Run test job. i.e. overrides output option to 'test.root' and 'recreate's the file.")
         ("H,hist"        , "Book histogram")
         ("C,cutflow"     , "Book cutflows")
-        ("S,systematics" , "Also consider systematics")
+        ("S,systematics" , "Also consider systematics (NOTE: Generally, this limits the number of histograms and cutflows. use -f,--force to run all.)")
+        ("f,force"       , "force process all and not limit any number of histograms and cutflows")
         ("F,fake"        , "The event weight will be multiplied by fake weights")
         ("u,user_study"  , "Enable user_study function for analyzers to make their own studies")
         ("j,nsplit_jobs" , "Enable splitting jobs by N blocks (--job_index must be set)", cxxopts::value<int>())
@@ -186,6 +187,17 @@ int main(int argc, char** argv)
     }
 
     //_______________________________________________________________________________
+    // --force
+    if (result.count("force"))
+    {
+        ana.do_force = true;
+    }
+    else
+    {
+        ana.do_force = false;
+    }
+
+    //_______________________________________________________________________________
     // --fake
     if (result.count("fake"))
     {
@@ -278,6 +290,7 @@ int main(int argc, char** argv)
     std::cout <<  " ana.do_cutflow: " << ana.do_cutflow <<  std::endl;
     std::cout <<  " ana.do_histograms: " << ana.do_histograms <<  std::endl;
     std::cout <<  " ana.do_systematics: " << ana.do_systematics <<  std::endl;
+    std::cout <<  " ana.do_force: " << ana.do_force <<  std::endl;
     std::cout <<  " ana.do_fake_estimation: " << ana.do_fake_estimation <<  std::endl;
     std::cout <<  " ana.do_user_study: " << ana.do_user_study <<  std::endl;
     std::cout <<  " ana.nsplit_jobs: " << ana.nsplit_jobs <<  std::endl;
@@ -910,6 +923,63 @@ int main(int argc, char** argv)
 
     }
 
+//*************************************************************************************************************
+//
+// 6. Book systematic variations
+//
+//*************************************************************************************************************
+
+    // The systematics can be booked using various funcitons:
+    //
+    //   RooUtil::Cutflow::addCutSyst
+    //   RooUtil::Cutflow::addWgtSyst
+    //
+    // There are two types of systematics where one only affects the weighting of each events
+    // And another that affects which events passes certain cuts or not
+    //
+    // 1. Weight variations
+    //
+    //   The addWgtSyst("NameOfWgtSystUpOrDown", <lambda>);
+    //
+    //   The lambda is the weight that modifies the event weight (i.e. lepsf_up / lepsf) and not just the up variation weight alone (i.e. not lepsf_up alone)
+    //
+    // 2. Cut variations
+    //
+    //   This happens in two steps
+    //   First, add a variation to a specific cut that gets affected by it
+    //   For example, let's say
+    //
+    //     - SRSS*Pre, SRSS*Nj2, SRSS*LowDetajj, are affected by it.
+    //
+    //   then one can call, addCutSyst("JESUp", {"Pre", "Nj2", "LowDetajj", ... });
+    //   too let RooUtil::Cutflow object know that there are JESUp variations for these cuts
+    //   Later, when printCuts() function is called to print the cut structure user can see the booked systematic variations on the right side of the print out.
+    //
+    //   Then once these variations are booked to each cut, one defines them later using RooUtil::Cutflow::setCutSyst()
+    //
+    //   setCutSyst("SRSSmmPre", "JESUp", <lambda for cut>, <lambda for weight>);
+    //
+
+    if (ana.do_systematics)
+    {
+        ana.cutflow.addWgtSyst("LepSFUp"    , Lambdas::LepSFVariation     (Variation::Up   ));
+        ana.cutflow.addWgtSyst("LepSFDown"  , Lambdas::LepSFVariation     (Variation::Down ));
+        ana.cutflow.addWgtSyst("TrigSFUp"   , Lambdas::TriggerSFVariation (Variation::Up   ));
+        ana.cutflow.addWgtSyst("TrigSFDown" , Lambdas::TriggerSFVariation (Variation::Down ));
+        ana.cutflow.addWgtSyst("BTagLFUp"   , Lambdas::BTagLFVariation    (Variation::Up   ));
+        ana.cutflow.addWgtSyst("BTagLFDown" , Lambdas::BTagLFVariation    (Variation::Down ));
+        ana.cutflow.addWgtSyst("BTagHFUp"   , Lambdas::BTagHFVariation    (Variation::Up   ));
+        ana.cutflow.addWgtSyst("BTagHFDown" , Lambdas::BTagHFVariation    (Variation::Down ));
+        ana.cutflow.addWgtSyst("PileupUp"   , Lambdas::PileupVariation    (Variation::Up   ));
+        ana.cutflow.addWgtSyst("PileupDown" , Lambdas::PileupVariation    (Variation::Down ));
+        ana.cutflow.addWgtSyst("PDFUp"      , Lambdas::PDFVariation       (Variation::Up   ));
+        ana.cutflow.addWgtSyst("PDFDown"    , Lambdas::PDFVariation       (Variation::Down ));
+        ana.cutflow.addWgtSyst("QsqUp"      , Lambdas::QsqVariation       (Variation::Up   ));
+        ana.cutflow.addWgtSyst("QsqDown"    , Lambdas::QsqVariation       (Variation::Down ));
+        ana.cutflow.addWgtSyst("AlphaSUp"   , Lambdas::AlphaSVariation    (Variation::Up   ));
+        ana.cutflow.addWgtSyst("AlphaSDown" , Lambdas::AlphaSVariation    (Variation::Down ));
+    }
+
 
 //*************************************************************************************************************
 //
@@ -920,18 +990,48 @@ int main(int argc, char** argv)
     // So far we have defined a tree structure of cuts (RooUtil::Cutflow object)
     // Also we defined a list of histograms (RooUtil::Histograms)
 
-    // Book histograms
-    if (ana.do_histograms)
+    // Now we need to book the histograms for cutflows and variable distribution histograms
+    // So during the loop it actually fills them
+
+    // First of all, if the ana.do_systematics == true, we are not going to run all cutflows, nor all histograms
+    // We will only run histograms at the very end of the cuts, this is to speed things up
+
+    // NOTE: Booking cutflows generally take longer than booking a lot of histograms only at the end cut level
+    // This is because it's faster to skip events rather than doing a lot of calculation for small number of events
+
+    // If --force was provided skip this special if statement and go to else statement and do things normally
+    if (ana.do_systematics and not ana.do_force)
     {
-        ana.cutflow.bookHistogramsForCutAndBelow(ana.histograms, "CutSRDilep");
-        ana.cutflow.bookHistogramsForCutAndBelow(ana.histograms, "CutSRTrilep");
-        ana.cutflow.bookHistogramsForCutAndBelow(ana.histograms, "CutWZCRTrilep");
-        ana.cutflow.bookHistogramsForCutAndBelow(ana.histograms, "CutARDilep");
-        ana.cutflow.bookHistogramsForCutAndBelow(ana.histograms, "CutARTrilep");
+        // Book histograms only at the end cuts
+        ana.cutflow.bookHistogramsForEndCuts(ana.histograms);
+
+        // And NO book cutflows!
+    }
+    else
+    {
+
+        // Book histograms
+        if (ana.do_histograms)
+        {
+            ana.cutflow.bookHistogramsForCutAndBelow(ana.histograms, "CutSRDilep");
+            ana.cutflow.bookHistogramsForCutAndBelow(ana.histograms, "CutSRTrilep");
+            ana.cutflow.bookHistogramsForCutAndBelow(ana.histograms, "CutWZCRTrilep");
+            ana.cutflow.bookHistogramsForCutAndBelow(ana.histograms, "CutARDilep");
+            ana.cutflow.bookHistogramsForCutAndBelow(ana.histograms, "CutARTrilep");
+        }
+
+        // Book cutflows
+        if (ana.do_cutflow)
+            ana.cutflow.bookCutflows();
+
     }
 
     //
     // Print cut structure before starting the loop just to visually see it
+    //
+    // Print once before starting any loop (at this point, "pass|weight" columns will be entirely empty since it's not showing for a any specific event
+    ana.cutflow.printCuts();
+
     //
     // The following function will print out the tree structure for example
     //
@@ -991,17 +1091,6 @@ int main(int argc, char** argv)
     // Then, the "pass|weight" columns on the right will be filled with whether at certain cut stage event passes or not.
     // along with event weights
     //
-    // NOTE: TODO: Implement systematic variations
-    // The "systs" columns will be more advanced usage when we get to dealing with systematics
-    // Right now, I turned this off (March 19) while cleaning up the code since systematics can make the code run a lot more slower.
-    //
-
-    // Book cutflows
-    if (ana.do_cutflow)
-        ana.cutflow.bookCutflows();
-
-    // Print once before starting any loop (at this point, "pass|weight" columns will be entirely empty since it's not showing for a any specific event
-    ana.cutflow.printCuts();
 
 //*************************************************************************************************************
 //

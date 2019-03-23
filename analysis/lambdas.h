@@ -15,6 +15,15 @@
 // If it is not, then compute and save to "result" and update run/lumi/evt
 std::function<float()> memoize(std::function<float()> foo);
 
+namespace Variation
+{
+    enum Var
+    {
+        Up = 1,
+        Down = -1
+    };
+}
+
 namespace Lambdas
 {
 
@@ -43,6 +52,33 @@ namespace Lambdas
 
     // B-tagging scale factor
     extern std::function<float()> BTagScaleFactor;
+
+    //************************************************
+    // Weight systematic variations
+    //************************************************
+    // Lepton scale factor variations
+    std::function<float()> LepSFVariation(Variation::Var var);
+
+    // Trigger scale factor variations
+    std::function<float()> TriggerSFVariation(Variation::Var var);
+
+    // Btagging LF scale factor variations
+    std::function<float()> BTagLFVariation(Variation::Var var);
+
+    // Btagging HF scale factor variations
+    std::function<float()> BTagHFVariation(Variation::Var var);
+
+    // Pileup reweighting variations
+    std::function<float()> PileupVariation(Variation::Var var);
+
+    // PDF weight variations
+    std::function<float()> PDFVariation(Variation::Var var);
+
+    // Qsq weight variations
+    std::function<float()> QsqVariation(Variation::Var var);
+
+    // AlphaS weight variations
+    std::function<float()> AlphaSVariation(Variation::Var var);
 
     //************************************************
     // Lepton multiplicity related selections

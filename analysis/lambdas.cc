@@ -205,6 +205,214 @@ std::function<float()> Lambdas::LeptonScaleFactor = [&]()
 // B-tagging scale factors
 std::function<float()> Lambdas::BTagScaleFactor = [&]() { return www.weight_btagsf(); };
 
+
+
+
+
+
+//***************************************************************************************************************
+//
+//
+// Scale Factors
+//
+//
+//***************************************************************************************************************
+
+//______________________________________________________________________________________________
+// Lepton scale factor variations
+std::function<float()> Lambdas::LepSFVariation(Variation::Var var)
+{
+    return [&]()
+    {
+        if (input.year == 2016)
+        {
+            if (var == Variation::Up)
+                return www.lepsf() == 0 ? 0 : www.lepsf_up() / www.lepsf() ;
+            else // else if (var == Variation::Down)
+                return www.lepsf() == 0 ? 0 : www.lepsf_dn() / www.lepsf() ;
+        }
+        else if (input.year == 2017)
+        {
+            if (var == Variation::Up)
+            {
+                float lepsf = leptonScaleFactors.getScaleFactors(true, ana.do_fake_estimation, input.is_data);
+                return lepsf == 0 ? 0 : leptonScaleFactors.getScaleFactors(true, ana.do_fake_estimation, input.is_data, 1) / lepsf ;
+            }
+            else // else if (var == Variation::Down)
+            {
+                float lepsf = leptonScaleFactors.getScaleFactors(true, ana.do_fake_estimation, input.is_data);
+                return lepsf == 0 ? 0 : leptonScaleFactors.getScaleFactors(true, ana.do_fake_estimation, input.is_data, -1) / lepsf ;
+            }
+        }
+        else // else if (input.year == 2018) // TODO 2018 scale factor is not provided yet
+        {
+            if (var == Variation::Up)
+            {
+                // TODO UPDATE THIS
+                return float(1);
+            }
+            else // else if (var == Variation::Down)
+            {
+                // TODO UPDATE THIS
+                return float(1);
+            }
+        }
+    };
+}
+
+//______________________________________________________________________________________________
+// Trigger scale factor variations
+std::function<float()> Lambdas::TriggerSFVariation(Variation::Var var)
+{
+    return [&]()
+    {
+        if (input.year == 2016)
+        {
+            if (var == Variation::Up)
+                return www.trigsf() == 0 ? 0 : www.trigsf_up() / www.trigsf();
+            else // else if (var == Variation::Down)
+                return www.trigsf() == 0 ? 0 : www.trigsf_dn() / www.trigsf();
+        }
+        else if (input.year == 2017)
+        {
+            if (var == Variation::Up)
+            {
+                // TODO UPDATE THIS
+                return float(1);
+            }
+            else // else if (var == Variation::Down)
+            {
+                // TODO UPDATE THIS
+                return float(1);
+            }
+        }
+        else // else if (input.year == 2018) // TODO 2018 scale factor is not provided yet
+        {
+            if (var == Variation::Up)
+            {
+                // TODO UPDATE THIS
+                return float(1);
+            }
+            else // else if (var == Variation::Down)
+            {
+                // TODO UPDATE THIS
+                return float(1);
+            }
+        }
+    };
+}
+
+//______________________________________________________________________________________________
+// Btagging LF scale factor variations
+std::function<float()> Lambdas::BTagLFVariation(Variation::Var var)
+{
+    return [&]()
+    {
+        // Regardless of each year the babymaker uses same structure to put the systematic variations
+        if (var == Variation::Up)
+            return www.weight_btagsf() == 0 ? 0 : www.weight_btagsf_light_UP() / www.weight_btagsf();
+        else // else if (var == Variation::Down)
+            return www.weight_btagsf() == 0 ? 0 : www.weight_btagsf_light_DN() / www.weight_btagsf();
+    };
+}
+
+//______________________________________________________________________________________________
+// Btagging HF scale factor variations
+std::function<float()> Lambdas::BTagHFVariation(Variation::Var var)
+{
+    return [&]()
+    {
+        // Regardless of each year the babymaker uses same structure to put the systematic variations
+        if (var == Variation::Up)
+            return www.weight_btagsf() == 0 ? 0 : www.weight_btagsf_heavy_UP() / www.weight_btagsf();
+        else // else if (var == Variation::Down)
+            return www.weight_btagsf() == 0 ? 0 : www.weight_btagsf_heavy_DN() / www.weight_btagsf();
+    };
+}
+
+//______________________________________________________________________________________________
+// Pileup reweighting variations
+std::function<float()> Lambdas::PileupVariation(Variation::Var var)
+{
+    return [&]()
+    {
+        if (input.year == 2016)
+        {
+            if (var == Variation::Up)
+                return www.purewgt() == 0 ? 0 : www.purewgt_up() / www.purewgt();
+            else // else if (var == Variation::Down)
+                return www.purewgt() == 0 ? 0 : www.purewgt_dn() / www.purewgt();
+        }
+        else if (input.year == 2017)
+        {
+            if (var == Variation::Up)
+            {
+                return pileupreweight.purewgt() == 0 ? 0 : pileupreweight.purewgt_up() / pileupreweight.purewgt();
+            }
+            else // else if (var == Variation::Down)
+            {
+                return pileupreweight.purewgt() == 0 ? 0 : pileupreweight.purewgt_dn() / pileupreweight.purewgt();
+            }
+        }
+        else // else if (input.year == 2018) // TODO 2018 scale factor is not provided yet
+        {
+            if (var == Variation::Up)
+            {
+                // TODO UPDATE THIS
+                return float(1);
+            }
+            else // else if (var == Variation::Down)
+            {
+                // TODO UPDATE THIS
+                return float(1);
+            }
+        }
+    };
+}
+
+//______________________________________________________________________________________________
+// PDF weight variations
+std::function<float()> Lambdas::PDFVariation(Variation::Var var)
+{
+    return [&]()
+    {
+        if (var == Variation::Up)
+            return www.weight_fr_r1_f1() == 0 or theoryweight.pdfup() == 0 ? 0 : www.weight_pdf_up() / www.weight_fr_r1_f1() * theoryweight.nominal() / theoryweight.pdfup();
+        else // else if (var == Variation::Down)
+            return www.weight_fr_r1_f1() == 0 or theoryweight.pdfdn() == 0 ? 0 : www.weight_pdf_down() / www.weight_fr_r1_f1() * theoryweight.nominal() / theoryweight.pdfdn();
+    };
+}
+
+//______________________________________________________________________________________________
+// Qsq weight variations
+std::function<float()> Lambdas::QsqVariation(Variation::Var var)
+{
+    return [&]()
+    {
+        if (var == Variation::Up)
+            return www.weight_fr_r1_f1() == 0 or theoryweight.qsqup() == 0 ? 0 : www.weight_fr_r2_f2() / www.weight_fr_r1_f1() * theoryweight.nominal() / theoryweight.qsqup();
+        else // else if (var == Variation::Down)
+            return www.weight_fr_r1_f1() == 0 or theoryweight.qsqdn() == 0 ? 0 : www.weight_fr_r0p5_f0p5() / www.weight_fr_r1_f1() * theoryweight.nominal() / theoryweight.qsqdn();
+    };
+}
+
+//______________________________________________________________________________________________
+// AlphaS weight variations
+std::function<float()> Lambdas::AlphaSVariation(Variation::Var var)
+{
+    return [&]()
+    {
+        if (var == Variation::Up)
+            return www.weight_fr_r1_f1() == 0 or theoryweight.alsup() == 0 ? 0 : www.weight_alphas_up() / www.weight_fr_r1_f1() * theoryweight.nominal() / theoryweight.alsup();
+        else // else if (var == Variation::Down)
+            return www.weight_fr_r1_f1() == 0 or theoryweight.alsdn() == 0 ? 0 : www.weight_alphas_down() / www.weight_fr_r1_f1() * theoryweight.nominal() / theoryweight.alsdn();
+    };
+}
+
+
+
+
+
 //***************************************************************************************************************
 //
 //
