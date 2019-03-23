@@ -38,9 +38,6 @@ def write_datacard():
     # d = dw.DataCardWriter(sig=hists["www"], bgs=bgs, data=None, datacard_filename="datacard.txt", systs=systs, no_stat_procs=["lostlep"])
     d = dw.DataCardWriter(sig=hists["www"], bgs=bgs, data=hists["data"], datacard_filename="datacard.txt", systs=systs, no_stat_procs=["lostlep"])
 
-    # Region names
-    reg_names = [ "SRSSee", "SRSSem", "SRSSmm", "SRSSSideee", "SRSSSideem", "SRSSSidemm", "SR0SFOS", "SR1SFOS", "SR2SFOS" ]
-
     # Parse the input_dirpath to get the baby version and job tag
 
     # path to where the histogram files are sitting at
@@ -72,6 +69,9 @@ def write_datacard():
 
     # Create output directory
     os.system("mkdir -p {}".format(output_dir))
+
+    # Region names
+    reg_names = [ "b{}".format(index) for index in xrange(1, 10) ]
 
     # Write the datacards for each regions
     for i, reg_name in enumerate(reg_names):

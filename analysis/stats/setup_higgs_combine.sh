@@ -1,15 +1,12 @@
-source /code/osgcode/cmssoft/cmsset_default.sh  > /dev/null 2>&1
-export SCRAM_ARCH=slc6_amd64_gcc491
-cmsrel CMSSW_7_4_7
-cd CMSSW_7_4_7/src 
+export SCRAM_ARCH=slc6_amd64_gcc530
+export CMSSW_VERSION=CMSSW_8_1_0
+source /cvmfs/cms.cern.ch/cmsset_default.sh
+cmsrel CMSSW_8_1_0
+cd CMSSW_8_1_0/src 
 cmsenv
 git clone https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsAnalysis/CombinedLimit
 cd HiggsAnalysis/CombinedLimit
 cd $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit
 git fetch origin
-git checkout v6.3.1
-scramv1 b clean; scramv1 b # always make a clean build, as scram doesn't always see updates to src/LinkDef.h
-git clone via ssh:
-bash <(curl -s https://raw.githubusercontent.com/cms-analysis/CombineHarvester/master/CombineTools/scripts/sparse-checkout-ssh.sh)
-git clone via https:
-bash <(curl -s https://raw.githubusercontent.com/cms-analysis/CombineHarvester/master/CombineTools/scripts/sparse-checkout-https.sh)
+git checkout v7.0.12
+scramv1 b clean; scramv1 b # always make a clean build
