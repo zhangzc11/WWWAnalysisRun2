@@ -19,8 +19,26 @@ namespace Variation
 {
     enum Var
     {
+        Nominal = 0,
         Up = 1,
         Down = -1
+    };
+
+    enum FakeVar
+    {
+        Full = 1,
+        Rate,
+        RateEl,
+        RateMu,
+        Closure,
+        ClosureEl,
+        ClosureMu,
+    };
+
+    enum ExpSyst
+    {
+        JES = 1,
+        JER
     };
 }
 
@@ -80,6 +98,9 @@ namespace Lambdas
     // AlphaS weight variations
     std::function<float()> AlphaSVariation(Variation::Var var);
 
+    // Fake factor variation
+    std::function<float()> FakeFactorVariation(Variation::FakeVar fakevar, Variation::Var var);
+
     //************************************************
     // Lepton multiplicity related selections
     //************************************************
@@ -95,34 +116,44 @@ namespace Lambdas
     // Event selections
     //************************************************
 
+    // Helper functions to concisely define JES/JER variations
+    std::function<float()> jetVar(Variation::ExpSyst, Variation::Var,
+            std::function<float()>, // Nominal JES
+            std::function<float()>, // JES Up
+            std::function<float()>, // JES Down
+            std::function<float()>, // Nominal JER
+            std::function<float()>, // JER Up
+            std::function<float()>  // JER Down
+            );
+
     // Split by channel
     extern std::function<float()> isSRSSeeChannel;
     extern std::function<float()> isSRSSemChannel;
     extern std::function<float()> isSRSSmmChannel;
 
-    extern std::function<float()> TwoCenJet30; // Two central jets above 30 GeV 
-    extern std::function<float()> LowDEtajj; // Low Detajj
-    extern std::function<float()> LowMjj; // Low Mjj
+    std::function<float()> TwoCenJet30(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal); // Two central jets above 30 GeV 
+    std::function<float()> LowDEtajj(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal); // Low Detajj
+    std::function<float()> LowMjj(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal); // Low Mjj
 
-    extern std::function<float()> MjjIn; // Mjj-in ee
-    extern std::function<float()> MjjOut; // Mjj-out ee
+    std::function<float()> MjjIn(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal); // Mjj-in ee
+    std::function<float()> MjjOut(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal); // Mjj-out ee
 
     extern std::function<float()> ZVetoSS; // Same-sign Mll Z-veto
 
-    extern std::function<float()> SSPreSelection;
+    std::function<float()> SSPreSelection(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
 
-    extern std::function<float()> SRSSeeSelection;
-    extern std::function<float()> SRSSemSelection;
-    extern std::function<float()> SRSSmmSelection;
+    std::function<float()> SRSSeeSelection(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()> SRSSemSelection(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()> SRSSmmSelection(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
 
-    extern std::function<float()> SRSSSidemmSel;
+    std::function<float()> SRSSSidemmSel(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
 
     // Split by channel
     extern std::function<float()> is0SFOS;
     extern std::function<float()> is1SFOS;
     extern std::function<float()> is2SFOS;
 
-    extern std::function<float()> ThreeLepPresel;
+    std::function<float()> ThreeLepPresel(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
 
     extern std::function<float()> ZVeto3L;
 
@@ -130,9 +161,9 @@ namespace Lambdas
     extern std::function<float()> DYVetoes1SFOS;
     extern std::function<float()> DYVetoes2SFOS;
 
-    extern std::function<float()> KinSel0SFOS;
-    extern std::function<float()> KinSel1SFOS;
-    extern std::function<float()> KinSel2SFOS;
+    std::function<float()> KinSel0SFOS(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()> KinSel1SFOS(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()> KinSel2SFOS(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
 
     // Inverting z-veto for lost-lepton CR
     extern std::function<float()> HasZ_SS;
