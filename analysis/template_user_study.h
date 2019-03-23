@@ -40,7 +40,7 @@
     // User defined variable
     // e.g. Mlljj variable
     // arguments: Name of the histogram, nbin, low bound, high bound, lambda that returns the value of the variable
-    ana.histograms.addHistogram("Mlljj", 180, 0., 700.,
+    ana.histograms.addHistogram("Mlljj", 180, 0., 1500.,
             [&]()
             {
 
