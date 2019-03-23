@@ -507,6 +507,9 @@ int main(int argc, char** argv)
     ana.histograms.addHistogram("MTmax3L"                  ,  180 , 0.      , 300.   , [&]() { return www.MTmax3L()                                                                ; });
     ana.histograms.addHistogram("MT3rd"                    ,  180 , 0.      , 300.   , [&]() { return www.MT3rd()                                                                  ; });
 
+    // One bin histogram to hold the total yield at this cut stage
+    ana.histograms.addHistogram("yield"                    ,  1   , 0.      , 1      , [&]() { return 0                                                                            ; });
+
     // Because RooUtil::Histograms uses lambda you can compute much more complicated variables on the fly your need
     // Let's define a complex histogram. (This is a variable Yifan is looking into.)
     // This is going to plot a new variable where it plots the minimum DR of the two opposite sign leptons.
