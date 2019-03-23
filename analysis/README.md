@@ -86,4 +86,10 @@ However, since for 2016 we had an almost perfect aggreement in data v. MC yields
     ## Read the options for more information
     ## Brlow are some examples for plotting
     python ./plot.py -i outputs/WWW2016_v1.2.2/test/ --use_private_sig_sample --draw_data # To plot 9 bin SR and and 5 bin lost-lepton CR plots (--draw_data option unblinds it)
-    python ./plot.py -i outputs/WWW2016_v1.2.2/test/ --use_private_sig_sample --draw_data SRSSmmFullPP__Mlljj # To plot Mlljj in mu+mu+ region Mjj-in
+    python ./plot.py -i outputs/WWW2016_v1.2.2/test/ --use_private_sig_sample --draw_data SRSSmmMjjInPP__Mlljj # To plot Mlljj in mu+mu+ region Mjj-in
+
+When running again, it will complain that the ```outputs/WWW2016_v1.2.2/test/*.root``` already exists.
+
+Either delete the previous outputs or run with a new tag ```-t newtest``` for ```./process.sh```
+
+

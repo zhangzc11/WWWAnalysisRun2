@@ -2,14 +2,17 @@
     // NOTE:
     // Copy this code to "my_user_study.h" and re-compile
 
+    // First call nominal_analysis() since additional selections are based on full analysis selection (it is defined in main.cc)
+    nominal_analysis();
+
     //************************************************************************************************************************************************************************************************
     // USER DEFINED ADDITIONAL SELECTION REGIONS
     //************************************************************************************************************************************************************************************************
 
     // Call "getCut" to activate the cut "SRSSmmFull" which is full mm selection at Mjj-in (defined in main.cc)
-    ana.cutflow.getCut("SRSSmmFull");
-    // Now add a new cut "SRSSmmFullPP" with the cut definition defined in the lambda being passed on as second argument (third argument = weight to apply for this cut. and it's just "UNITY" which is returning float of 1)
-    ana.cutflow.addCutToLastActiveCut("SRSSmmFullPP", [&]()
+    ana.cutflow.getCut("SRSSmmMjjIn");
+    // Now add a new cut "SRSSmmMjjInPP" with the cut definition defined in the lambda being passed on as second argument (third argument = weight to apply for this cut. and it's just "UNITY" which is returning float of 1)
+    ana.cutflow.addCutToLastActiveCut("SRSSmmMjjInPP", [&]()
             {
                 if (www.lep_pdgId()[0] < 0 and www.lep_pdgId()[1] < 0)
                     return true;
@@ -17,10 +20,10 @@
                     return false;
             }, UNITY);
 
-    // Call "getCut" to activate the cut "SRSSmmFull" which is full mm selection at Mjj-in
-    ana.cutflow.getCut("SRSSmmFull");
-    // Now add a new cut "SRSSmmFullMM" with the cut definition defined in the lambda being passed on as second argument (third argument = weight to apply for this cut. and it's just "UNITY" which is returning float of 1)
-    ana.cutflow.addCutToLastActiveCut("SRSSmmFullMM", [&]()
+    // Call "getCut" to activate the cut "SRSSSidemmMjjOut" which is full mm selection at Mjj-out (defined in main.cc)
+    ana.cutflow.getCut("SRSSSidemmMjjOut");
+    // Now add a new cut "SRSSSidemmMjjOutMM" with the cut definition defined in the lambda being passed on as second argument (third argument = weight to apply for this cut. and it's just "UNITY" which is returning float of 1)
+    ana.cutflow.addCutToLastActiveCut("SRSSSidemmMjjOutMM", [&]()
             {
                 if (www.lep_pdgId()[0] > 0 and www.lep_pdgId()[1] > 0)
                     return true;
@@ -28,7 +31,7 @@
                     return false;
             }, UNITY);
 
-    /// .... add extra selection regions....
+    /// .... add extra selection regions.... that are not defined above ...
 
     //************************************************************************************************************************************************************************************************
     // USER DEFINED ADDITIONAL HISTOGRAMS
@@ -37,7 +40,7 @@
     // User defined variable
     // e.g. Mlljj variable
     // arguments: Name of the histogram, nbin, low bound, high bound, lambda that returns the value of the variable
-    ana.histograms.addHistogram("Mlljj", 180, 0., 300.,
+    ana.histograms.addHistogram("Mlljj", 180, 0., 700.,
             [&]()
             {
 

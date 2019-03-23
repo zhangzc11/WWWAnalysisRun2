@@ -703,25 +703,8 @@ int main(int argc, char** argv)
     ana.cutflow.getCut("CutTrigger"); // Retrieve the CutTrigger and add CutARDilep to the CutTrigger node
     ana.cutflow.addCutToLastActiveCut("CutARTrilep", Lambdas::CutARTrilep, UNITY); // No lepton scale factors applied for the application region. (no proper lepton scale factors for loose leptons derived)
 
-
-    // Here I create hook for users to add various cuts and histograms of their choice to make their own studies
-    // The separation between the main parts and the user_study helps to not make main analysis code too bloated
-    // An example of how to add new cuts are shown in template_user_study.h
-    // Copy the file template_user_study.h -> user_study.h after implementing user's additional cutflows
-    // Then recompile the code and provide the option -u,--user_study as the option to the ./doAnalysis
-    // OR just use process.sh script with option -u which will relay the --user_study option to the ./doAnalysis
-    if (ana.do_user_study)
+    auto nominal_analysis = [&]()
     {
-
-        #if __has_include ("user_study.h")
-        #include "user_study.h"
-        #endif
-
-    }
-    // If --user_study option is not provided, it defaults to main analysis
-    else
-    {
-
         //************************************************************************************************************************************************************************************************
         //
         //
@@ -738,9 +721,11 @@ int main(int argc, char** argv)
         ana.cutflow.addCutToLastActiveCut("SRSSeeKinSel"    , Lambdas::SRSSeeSelection , UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSSeeLowDetajj" , Lambdas::LowDEtajj       , UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSSeeLowMjj"    , Lambdas::LowMjj          , UNITY);
-        ana.cutflow.addCutToLastActiveCut("SRSSeeFull"      , Lambdas::MjjIn           , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSeeMjjIn"     , Lambdas::MjjIn           , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSeeFull"      , UNITY                    , UNITY); // Adding one more node to have a clean name of "<Region>Full"
         ana.cutflow.getCut("SRSSeeLowMjj");
-        ana.cutflow.addCutToLastActiveCut("SRSSSideeeFull"  , Lambdas::MjjOut          , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSSideeeMjjOut", Lambdas::MjjOut          , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSSideeeFull"  , UNITY                    , UNITY); // Adding one more node to have a clean name of "<Region>Full"
 
         ana.cutflow.getCut("CutSRDilep");
         ana.cutflow.addCutToLastActiveCut("SRSSem"          , Lambdas::isSRSSemChannel , UNITY);
@@ -749,9 +734,11 @@ int main(int argc, char** argv)
         ana.cutflow.addCutToLastActiveCut("SRSSemKinSel"    , Lambdas::SRSSemSelection , UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSSemLowDetajj" , Lambdas::LowDEtajj       , UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSSemLowMjj"    , Lambdas::LowMjj          , UNITY);
-        ana.cutflow.addCutToLastActiveCut("SRSSemFull"      , Lambdas::MjjIn           , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSemMjjIn"     , Lambdas::MjjIn           , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSemFull"      , UNITY                    , UNITY); // Adding one more node to have a clean name of "<Region>Full"
         ana.cutflow.getCut("SRSSemLowMjj");
-        ana.cutflow.addCutToLastActiveCut("SRSSSideemFull"  , Lambdas::MjjOut          , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSSideemMjjOut", Lambdas::MjjOut          , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSSideemFull"  , UNITY                    , UNITY); // Adding one more node to have a clean name of "<Region>Full"
 
         ana.cutflow.getCut("CutSRDilep");
         ana.cutflow.addCutToLastActiveCut("SRSSmm"          , Lambdas::isSRSSmmChannel , UNITY);
@@ -760,10 +747,12 @@ int main(int argc, char** argv)
         ana.cutflow.addCutToLastActiveCut("SRSSmmKinSel"    , Lambdas::SRSSmmSelection , UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSSmmLowDetajj" , Lambdas::LowDEtajj       , UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSSmmLowMjj"    , Lambdas::LowMjj          , UNITY);
-        ana.cutflow.addCutToLastActiveCut("SRSSmmFull"      , Lambdas::MjjIn           , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSmmMjjIn"     , Lambdas::MjjIn           , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSmmFull"      , UNITY                    , UNITY); // Adding one more node to have a clean name of "<Region>Full"
         ana.cutflow.getCut("SRSSmmLowMjj");
         ana.cutflow.addCutToLastActiveCut("SRSSSidemmMET"   , Lambdas::SRSSSidemmSel   , UNITY);
-        ana.cutflow.addCutToLastActiveCut("SRSSSidemmFull"  , Lambdas::MjjOut          , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSSidemmMjjOut", Lambdas::MjjOut          , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSSidemmFull"  , UNITY                    , UNITY); // Adding one more node to have a clean name of "<Region>Full"
 
         ana.cutflow.getCut("CutSRTrilep");
         ana.cutflow.addCutToLastActiveCut("SR0SFOS"         , Lambdas::is0SFOS        , UNITY);
@@ -897,6 +886,27 @@ int main(int argc, char** argv)
         ana.cutflow.addCutToLastActiveCut("AR2SFOSZVeto"    , Lambdas::ZVeto3L        , UNITY);
         ana.cutflow.addCutToLastActiveCut("AR2SFOSFull"     , Lambdas::KinSel2SFOS    , UNITY);
 
+    };
+
+    // Here I create hook for users to add various cuts and histograms of their choice to make their own studies
+    // The separation between the main parts and the user_study helps to not make main analysis code too bloated
+    // An example of how to add new cuts are shown in template_user_study.h
+    // Copy the file template_user_study.h -> user_study.h after implementing user's additional cutflows
+    // Then recompile the code and provide the option -u,--user_study as the option to the ./doAnalysis
+    // OR just use process.sh script with option -u which will relay the --user_study option to the ./doAnalysis
+    if (ana.do_user_study)
+    {
+
+        #if __has_include ("user_study.h")
+        #include "user_study.h"
+        #endif
+
+    }
+    // If --user_study option is not provided, it defaults to main analysis
+    else
+    {
+
+        nominal_analysis();
 
     }
 
