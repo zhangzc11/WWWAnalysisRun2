@@ -31,8 +31,8 @@ If it does not, let Philip know.
 
 ### Running on baby ntuples
 
-    time sh ./process.sh -i WWW2016_v1.2.2 -t test -s # should take about a minute on uaf-10. This runs over 2016 ntuples. (-s option turns on the systematic variations)
-    time sh ./process.sh -i WWW2017_v5.0.0 -t test -s # should take about two mins on uaf-10. This runs over 2017 ntuples. (-s option turns on the systematic variations)
+    time sh ./process.sh -i WWW2016_v1.2.2 -t test # should take about a minute on uaf-10. This runs over 2016 ntuples.
+    time sh ./process.sh -i WWW2017_v5.0.0 -t test # should take about two mins on uaf-10. This runs over 2017 ntuples.
     # 2018 is on-going
 
 ### Plotting result
@@ -91,7 +91,6 @@ Then we recompile.
 Then, when runnung the job via ```process.sh``` provide the ```-u``` option.  
 If ```-u``` option is not provided, the additional histograms and cuts defined in ```my_user_study.h``` will not run.
 We'll run this for 2016 analysis as an example.  
-(NOTE: that I took out ```-s``` options. The user defined cuts may interfere with systematic cut settings. So it's better to turn it off.)
 
     time sh ./process.sh -i WWW2016_v1.2.2 -t testuser -u
 
@@ -102,9 +101,41 @@ Let's plot this.
 
 Try reading through ```main.cc``` and ```my_user_study.h``` to get an idea how to add new cuts and new histograms.
 
-#### Higgs Combine Tool
+#### Statistical tool
 
-##### Setting up the first time
+To run sensitivity study we need the systematic variations.  
+To run systematic variations at the looper stage, one uses ```-s``` option to ```process.sh```.
+IMPORTANT NOTE:  
+IMPORTANT NOTE:  When, ```-s``` option is provided only the histograms at the very END of the cutflows are enabled. This is so that computationally it doesn't go overboard.
+IMPORTANT NOTE:  
+
+So now re-run 2016 analysis with ```-s``` option and provide yet another tag name.
+
+    time sh ./process.sh -i WWW2016_v1.2.2 -t testsyst -s # should take about a little less than a minute as well.
+
+##### Writing datacards for Higgs Combine
+
+I wrote a script to read the histograms in each region and write out the datacards automatically.
+
+Assuming histograms are created by running the looper.
+
+    python ./write_datacards.py -i hists/WWW2016_v1.2.2/testsyst/ # code is not very efficient yet and may take some time ~1 minute
+
+Then, datacards will be written out to
+
+    ls datacards/WWW2016_v1.2.2/test/
+        datacard_b1.txt
+        datacard_b2.txt
+        datacard_b3.txt
+        datacard_b4.txt
+        datacard_b5.txt
+        datacard_b6.txt
+        datacard_b7.txt
+        datacard_b8.txt
+        datacard_b9.txt
+
+
+##### Setting up Higgs Combine the first time
 In a separate terminal run the following to install the Higgs Combined Limit Tool. (Because the ROOT version is different one needs a new terminal environment.)
 
     cd stats/
@@ -123,11 +154,11 @@ Next time logging into the terminal, run to setup the appropriate environment
 
 Then, to combine all 9 SR bins into a one giant datacards, we run
 
-    sh combinecards.sh /path/to/where/your/datacards/WWW2016_v1.2.2/test/
+    sh combinecards.sh /path/to/where/your/datacards/WWW2016_v1.2.2/testsyst/
 
 Now you should have
 
-    ls datacards/WWW2016_v1.2.2/test/
+    ls datacards/WWW2016_v1.2.2/testsyst/
         datacard_b1.txt
         datacard_b2.txt
         datacard_b3.txt
@@ -150,7 +181,7 @@ To compute expected sensitivity
 e.g.
 
     $ cd stats/
-    $ sh doSensitivity.sh ../datacards/WWW2016_v1.2.2/test/datacard_combined.txt
+    $ sh doSensitivity.sh ../datacards/WWW2016_v1.2.2/testsyst/datacard_combined.txt
      <<< Combine >>>
      WARNING --  From combine v7, method ProfileLikelihood has been renamed to Significance
     >>> including systematics

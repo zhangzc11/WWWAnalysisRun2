@@ -561,5 +561,5 @@ if __name__ == "__main__":
     parse_output_dir()
 
     write_datacard()
-    write_datacard_w_control_regions()
+    # write_datacard_w_control_regions()
 
