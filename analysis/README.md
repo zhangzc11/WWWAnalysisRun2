@@ -122,7 +122,7 @@ Assuming histograms are created by running the looper.
 
 Then, datacards will be written out to
 
-    ls datacards/WWW2016_v1.2.2/test/
+    ls datacards/WWW2016_v1.2.2/testsyst/
         datacard_b1.txt
         datacard_b2.txt
         datacard_b3.txt
