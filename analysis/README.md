@@ -31,8 +31,8 @@ If it does not, let Philip know.
 
 ### Running on baby ntuples
 
-    time sh ./process.sh -i WWW2016_v1.2.2 -t test # should take about ~40 seconds on uaf-10. This runs over 2016 ntuples.
-    time sh ./process.sh -i WWW2017_v5.0.0 -t test # should take about ~90 seconds on uaf-10. This runs over 2017 ntuples.
+    time sh ./process.sh -i WWW2016_v1.2.2 -t test -s # should take about ~40 seconds on uaf-10. This runs over 2016 ntuples. (-s option turns on the systematic variations)
+    time sh ./process.sh -i WWW2017_v5.0.0 -t test -s # should take about ~90 seconds on uaf-10. This runs over 2017 ntuples. (-s option turns on the systematic variations)
     # 2018 is on-going
 
 ### Plotting result
@@ -91,6 +91,7 @@ Then we recompile.
 Then, when runnung the job via ```process.sh``` provide the ```-u``` option.  
 If ```-u``` option is not provided, the additional histograms and cuts defined in ```my_user_study.h``` will not run.
 We'll run this for 2016 analysis as an example.  
+(NOTE: that I took out ```-s``` options. The user defined cuts may interfere with systematic cut settings. So it's better to turn it off.)
 
     time sh ./process.sh -i WWW2016_v1.2.2 -t testuser -u
 
@@ -100,6 +101,74 @@ Let's plot this.
     python ./plot.py --use_private_sig_sample -i hists/WWW2016_v1.2.2/testuser/ --draw_data SRSSmmMjjInPP__Mlljj -n 5  # To plot Mlljj in mu+mu+ region Mjj-in
 
 Try reading through ```main.cc``` and ```my_user_study.h``` to get an idea how to add new cuts and new histograms.
+
+#### Higgs Combine 
+#### Higgs Combine Tool
+
+##### Setting up the first time
+In a separate terminal run the following to install the Higgs Combined Limit Tool. (Because the ROOT version is different one needs a new terminal environment.)
+
+    cd stats/
+    source ./setup_higgs_combine.sh
+
+This only has to be done one time, and it takes about the time for you get a cup of coffee.
+
+##### Setup up script after re-logging in
+
+Next time logging into the terminal, run to setup the appropriate environment
+
+    cd stats/
+    source setup.sh    
+
+##### Combining individual datacards
+
+Then, to combine all 9 SR bins into a one giant datacards, we run
+
+    sh combinecards.sh /path/to/where/your/datacards/WWW2016_v1.2.2/test/
+
+Now you should have
+
+    ls datacards/WWW2016_v1.2.2/test/
+        datacard_b1.txt
+        datacard_b2.txt
+        datacard_b3.txt
+        datacard_b4.txt
+        datacard_b5.txt
+        datacard_b6.txt
+        datacard_b7.txt
+        datacard_b8.txt
+        datacard_b9.txt
+        datacard_combined.txt     # new file
+        datacard_combined_ss.txt  # new file
+        datacard_combined_3l.txt  # new file
+
+##### Expected sensitivity
+
+To compute expected sensitivity
+
+    sh doSensitivity.sh /path/to/your/datacard.txt
+
+e.g.
+
+    $ cd stats/
+    $ sh doSensitivity.sh ../datacards/WWW2016_v1.2.2/test/datacard_combined.txt
+     <<< Combine >>>
+     WARNING --  From combine v7, method ProfileLikelihood has been renamed to Significance
+    >>> including systematics
+    >>> method used is ProfileLikelihood
+    >>> random number generator seed is 123456
+    Computing results starting from expected outcome (a-priori)
+    
+     -- Significance --
+    Significance: 1.85503
+    Done in 0.01 min (cpu), 0.01 min (real)
+
+
+NOTE: The lost lepton numbers for the public result came directly from Hannsjorg. (Same as what is in AN)  
+While, the numbers I get with my looper seems slightly different.  
+But to zero-th order things pretty much the same :neutral_face:  
+
+
 
 ## Quick start
 
@@ -186,70 +255,4 @@ Then, datacards will be written out to
 
 Notice, that all 9 bins are written separately. (the order is in-ee, in-em, in-mm, out-ee, out-em, out-mm, 0, 1, 2)  
 We will combine this later with Higgs Combine Tool.
-
-### Higgs Combine Tool
-
-#### Setting up the first time
-In a separate terminal run the following to install the Higgs Combined Limit Tool. (Because the ROOT version is different one needs a new terminal environment.)
-
-    cd stats/
-    source ./setup_higgs_combine.sh
-
-This only has to be done one time, and it takes about the time for you get a cup of coffee.
-
-#### Setup up script after re-logging in
-
-Next time logging into the terminal, run to setup the appropriate environment
-
-    cd stats/
-    source setup.sh    
-
-#### Combining individual datacards
-
-Then, to combine all 9 SR bins into a one giant datacards, we run
-
-    sh combinecards.sh /path/to/where/your/datacards/WWW2016_v1.2.2/test/
-
-Now you should have
-
-    ls datacards/WWW2016_v1.2.2/test/
-        datacard_b1.txt
-        datacard_b2.txt
-        datacard_b3.txt
-        datacard_b4.txt
-        datacard_b5.txt
-        datacard_b6.txt
-        datacard_b7.txt
-        datacard_b8.txt
-        datacard_b9.txt
-        datacard_combined.txt     # new file
-        datacard_combined_ss.txt  # new file
-        datacard_combined_3l.txt  # new file
-
-#### Expected sensitivity
-
-To compute expected sensitivity
-
-    sh doSensitivity.sh /path/to/your/datacard.txt
-
-e.g.
-
-    $ cd stats/
-    $ sh doSensitivity.sh ../datacards/WWW2016_v1.2.2/test/datacard_combined.txt
-     <<< Combine >>>
-     WARNING --  From combine v7, method ProfileLikelihood has been renamed to Significance
-    >>> including systematics
-    >>> method used is ProfileLikelihood
-    >>> random number generator seed is 123456
-    Computing results starting from expected outcome (a-priori)
-    
-     -- Significance --
-    Significance: 1.85503
-    Done in 0.01 min (cpu), 0.01 min (real)
-
-
-NOTE: The lost lepton numbers for the public result came directly from Hannsjorg. (Same as what is in AN)  
-While, the numbers I get with my looper seems slightly different.  
-But to zero-th order things pretty much the same :neutral_face:  
-
 
