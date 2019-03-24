@@ -126,8 +126,5 @@ if [ -f $DIR/datacard_s1.txt ]; then
 
     rm $DIR/.tmp.datacard_*.txt
 
-else
-    echo "ERROR: Could not find datacards"
-    help
 fi
 
