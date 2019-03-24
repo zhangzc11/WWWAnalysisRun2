@@ -101,9 +101,9 @@ tail -n 3 hists/${INPUT_BABY_VERSION}/${JOB_TAG}/*.log
 
 # Hadd the split jobs result
 echo "Hadding some histogram outputs ... ==>"
-(set -x ; hadd -f hists/${INPUT_BABY_VERSION}/${JOB_TAG}/lostlep.root hists/${INPUT_BABY_VERSION}/${JOB_TAG}/lostlep_*.root > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/lostlep.log) &
-(set -x ; hadd -f hists/${INPUT_BABY_VERSION}/${JOB_TAG}/ddfakes.root hists/${INPUT_BABY_VERSION}/${JOB_TAG}/ddfakes_*.root > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/ddfakes.log) &
-(set -x ; hadd -f hists/${INPUT_BABY_VERSION}/${JOB_TAG}/fitlostlep.root hists/${INPUT_BABY_VERSION}/${JOB_TAG}/fitlostlep_*.root > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/fitlostlep.log) &
+(set -x ; hadd hists/${INPUT_BABY_VERSION}/${JOB_TAG}/lostlep.root hists/${INPUT_BABY_VERSION}/${JOB_TAG}/lostlep_*.root > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/lostlep.log) &
+(set -x ; hadd hists/${INPUT_BABY_VERSION}/${JOB_TAG}/ddfakes.root hists/${INPUT_BABY_VERSION}/${JOB_TAG}/ddfakes_*.root > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/ddfakes.log) &
+(set -x ; hadd hists/${INPUT_BABY_VERSION}/${JOB_TAG}/fitlostlep.root hists/${INPUT_BABY_VERSION}/${JOB_TAG}/fitlostlep_*.root > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/fitlostlep.log) &
 wait
 echo "<== Done hadding histogram outputs!"
 

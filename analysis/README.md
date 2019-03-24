@@ -37,7 +37,7 @@ If it does not, let Philip know.
 
 ### Plotting result
 
-The plotting code is ```plot.py```.
+The plotting code is ```plot.py```.  
 It has various options.
 
     ## To Print plotting options
@@ -63,8 +63,8 @@ To stack signal on top use (```-1,--stack_signal```)
 
 #### Kinematic distributions
 
-Other kinematic distributions can be drawn by providing the histogram name as positional argument
-Below are some various examples.
+Other kinematic distributions can be drawn by providing the histogram name as positional argument  
+Below are some various examples.  
 
     ## Below are some examples for plotting for 2017 ntuples
     python ./plot.py --use_private_sig_sample -i hists/WWW2017_v5.0.0/test/ SRSSmmNj2__lep_pt0 -n 30 -S -v                                                 # To plot leading lepton pt in mm channel at preselection
@@ -75,8 +75,30 @@ Below are some various examples.
     python ./plot.py --use_private_sig_sample -i hists/WWW2017_v5.0.0/test/ SR0SFOSDYVeto__minDRllOS -n 6 -S -v                                            # To plot Yifan's new variable she's studying for separating WH v. WWW
     python ./plot.py --use_private_sig_sample -i hists/WWW2017_v5.0.0/test/ SR0SFOSFull__minDRllOS  -n 3 -S -v                                             # To plot Yifan's new variable she's studying for separating WH v. WWW
 
-    ## Below are some examples for plotting for 2016 ntuples
-    python ./plot.py --use_private_sig_sample -i hists/WWW2016_v1.2.2/test/ --draw_data SRSSmmMjjInPP__Mlljj -n 5                                          # To plot Mlljj in mu+mu+ region Mjj-in
+#### Running user defined study
+
+Users can modify the cutflows and histograms via copying ```template_user_study.h``` to ```user_study.h```  
+What I like to do is copy to ```my_user_study.h``` and link ```my_user_study.h``` to ```user_study.h```  
+
+    cp template_user_study.h my_user_study.h
+    ln -s my_user_study.h user_study.h
+
+Then we recompile.
+
+    make -j
+
+Then, when runnung the job via ```process.sh``` provide the ```-u``` option.  
+If ```-u``` option is not provided, the additional histograms and cuts defined in ```my_user_study.h``` will not run.
+We'll run this for 2016 analysis as an example.  
+
+    time sh ./process.sh -i WWW2016_v1.2.2 -t testuser -u
+
+The ```user_study.h``` added a couple of extra cuts (SRSSmmMjjInPP, SRSSSidemmMjjOutMM) at the end of the cutflows and created one new histogram of four-fermion mass (i.e. Mlljj).  
+Let's plot this.  
+
+    python ./plot.py --use_private_sig_sample -i hists/WWW2016_v1.2.2/testuser/ --draw_data SRSSmmMjjInPP__Mlljj -n 5  # To plot Mlljj in mu+mu+ region Mjj-in
+
+Try reading through ```main.cc``` and ```my_user_study.h``` to get an idea how to add new cuts and new histograms.
 
 ## Quick start
 
