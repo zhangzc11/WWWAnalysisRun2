@@ -31,8 +31,8 @@ If it does not, let Philip know.
 
 ### Running on baby ntuples
 
-    time sh ./process.sh -i WWW2016_v1.2.2 -t test -s # should take about ~40 seconds on uaf-10. This runs over 2016 ntuples. (-s option turns on the systematic variations)
-    time sh ./process.sh -i WWW2017_v5.0.0 -t test -s # should take about ~90 seconds on uaf-10. This runs over 2017 ntuples. (-s option turns on the systematic variations)
+    time sh ./process.sh -i WWW2016_v1.2.2 -t test -s # should take about a minute on uaf-10. This runs over 2016 ntuples. (-s option turns on the systematic variations)
+    time sh ./process.sh -i WWW2017_v5.0.0 -t test -s # should take about two mins on uaf-10. This runs over 2017 ntuples. (-s option turns on the systematic variations)
     # 2018 is on-going
 
 ### Plotting result
