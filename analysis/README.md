@@ -21,29 +21,62 @@ After reading main.cc, If there is a specific non-trivial task that isn't clear 
 The following script should always work out-of-the-box.  
 If it does not, let Philip know.  
 
+### Compiling
 
     git clone --recurse-submodules https://github.com/cmstas/WWWAnalysisRun2.git
     cd WWWAnalysisRun2/analysis/
-    git fetch && git fetch --tags
-    git checkout looper_instruction_v2
-    git submodule update --init --recursive
     source ./setup.sh
     make clean
     make -j
-    time sh ./process.sh -i WWW2017_v5.0.0 -t test1 # should take about a minute
-    ## To Print plotting options
-    python ./plot.py -h
-    ## Read the options for more information
-    ## Brlow are some examples for plotting
-    python ./plot.py --use_private_sig_sample -i hists/WWW2017_v5.0.0/test1 "SRSSmmNj2__lep_pt0" -n 30 -S -v                                                 # To plot leading lepton pt in mm channel at preselection
-    python ./plot.py --use_private_sig_sample -i hists/WWW2017_v5.0.0/test1 "SRSSmmNj2__lep_pt1" -n 30 -S -v -m                                              # To plot sub-leading lepton pt in mm channel at preselection (Where fake is from MC directly, toggle option -m to see data-driven v. MC estimate)
-    python ./plot.py --use_private_sig_sample -i hists/WWW2017_v5.0.0/test1 "SRSSmmNj2__Mjj" -n 30 -S -v                                                     # To plot Mjj in mm channel at preselection
-    python ./plot.py --use_private_sig_sample -i hists/WWW2017_v5.0.0/test1 "SRSSmmNj2__Mjj,SRSSemNj2__Mjj,SRSSeeNj2__Mjj" -n 30 -S -v -a -O SRSSNj2__Mjj    # To plot Mjj in ee,em,mm channel combined at preselection and rename it "SRSSNj2__Mjj"
-    python ./plot.py --use_private_sig_sample -i hists/WWW2017_v5.0.0/test1 "SRSSmmNj2__Mjj" -n 30 -S -v                                                     # To plot Mjj in mm channel at preselection
-    python ./plot.py --use_private_sig_sample -i hists/WWW2017_v5.0.0/test1 "SR0SFOSDYVeto__minDRllOS" -n 6 -S -v                                            # To plot Yifan's new variable she's studying for separating WH v. WWW
-    python ./plot.py --use_private_sig_sample -i hists/WWW2017_v5.0.0/test1 "SR0SFOSFull__minDRllOS"  -n 3 -S -v                                             # To plot Yifan's new variable she's studying for separating WH v. WWW
-    python ./plot.py --use_private_sig_sample -i hists/WWW2017_v5.0.0/test1                                                                                  # To plot 9 bin SR and and 5 bin lost-lepton CR plots
 
+### Running on baby ntuples
+
+    time sh ./process.sh -i WWW2016_v1.2.2 -t test # should take about ~30 seconds. This runs over 2016 ntuples.
+    time sh ./process.sh -i WWW2017_v5.0.0 -t test # should take about a minute. This runs over 2017 ntuples.
+    # 2018 is on-going
+
+### Plotting result
+
+The plotting code is ```plot.py```.
+It has various options.
+
+    ## To Print plotting options
+    ## Read the options for more information
+    python ./plot.py -h
+
+Now below are some examples of plotting interesting variables or the money plots.
+
+#### Money plots
+
+The 9 bin signal region plots + 5 bin WZ CR plots
+
+    python ./plot.py --use_private_sig_sample -i hists/WWW2017_v5.0.0/test/                # To plot 9 bin SR and and 5 bin lost-lepton CR plots
+    python ./plot.py --use_private_sig_sample -i hists/WWW2016_v1.2.2/test/ --draw_data    # To plot 9 bin SR and and 5 bin lost-lepton CR plots (--draw_data option unblinds it)
+
+To draw a re-ordered plot where the high purity bins are on the right (use ```-p,--order_by_purity```)
+
+    python ./plot.py --use_private_sig_sample -i hists/WWW2016_v1.2.2/test/ --draw_data --order_by_purity
+
+To stack signal on top use (```-1,--stack_signal```)
+
+    python ./plot.py --use_private_sig_sample -i hists/WWW2016_v1.2.2/test/ --draw_data --order_by_purity -1
+
+#### Kinematic distributions
+
+Other kinematic distributions can be drawn by providing the histogram name as positional argument
+Below are some various examples.
+
+    ## Below are some examples for plotting for 2017 ntuples
+    python ./plot.py --use_private_sig_sample -i hists/WWW2017_v5.0.0/test/ SRSSmmNj2__lep_pt0 -n 30 -S -v                                                 # To plot leading lepton pt in mm channel at preselection
+    python ./plot.py --use_private_sig_sample -i hists/WWW2017_v5.0.0/test/ SRSSmmNj2__lep_pt1 -n 30 -S -v -m                                              # To plot sub-leading lepton pt in mm channel at preselection (Where fake is from MC directly, toggle option -m to see data-driven v. MC estimate)
+    python ./plot.py --use_private_sig_sample -i hists/WWW2017_v5.0.0/test/ SRSSmmNj2__Mjj -n 30 -S -v                                                     # To plot Mjj in mm channel at preselection
+    python ./plot.py --use_private_sig_sample -i hists/WWW2017_v5.0.0/test/ SRSSmmNj2__Mjj,SRSSemNj2__Mjj,SRSSeeNj2__Mjj -n 30 -S -v -a -O SRSSNj2__Mjj    # To plot Mjj in ee,em,mm channel combined at preselection and rename it "SRSSNj2__Mjj"
+    python ./plot.py --use_private_sig_sample -i hists/WWW2017_v5.0.0/test/ SRSSmmNj2__Mjj -n 30 -S -v                                                     # To plot Mjj in mm channel at preselection
+    python ./plot.py --use_private_sig_sample -i hists/WWW2017_v5.0.0/test/ SR0SFOSDYVeto__minDRllOS -n 6 -S -v                                            # To plot Yifan's new variable she's studying for separating WH v. WWW
+    python ./plot.py --use_private_sig_sample -i hists/WWW2017_v5.0.0/test/ SR0SFOSFull__minDRllOS  -n 3 -S -v                                             # To plot Yifan's new variable she's studying for separating WH v. WWW
+
+    ## Below are some examples for plotting for 2016 ntuples
+    python ./plot.py --use_private_sig_sample -i hists/WWW2016_v1.2.2/test/ --draw_data SRSSmmMjjInPP__Mlljj -n 5                                          # To plot Mlljj in mu+mu+ region Mjj-in
 
 ## Quick start
 
