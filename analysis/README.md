@@ -31,8 +31,8 @@ If it does not, let Philip know.
 
 ### Running on baby ntuples
 
-    time sh ./process.sh -i WWW2016_v1.2.2 -t test # should take about ~30 seconds. This runs over 2016 ntuples.
-    time sh ./process.sh -i WWW2017_v5.0.0 -t test # should take about ~90 seconds. This runs over 2017 ntuples.
+    time sh ./process.sh -i WWW2016_v1.2.2 -t test # should take about ~40 seconds on uaf-10. This runs over 2016 ntuples.
+    time sh ./process.sh -i WWW2017_v5.0.0 -t test # should take about ~90 seconds on uaf-10. This runs over 2017 ntuples.
     # 2018 is on-going
 
 ### Plotting result
@@ -44,7 +44,8 @@ It has various options.
     ## Read the options for more information
     python ./plot.py -h
 
-Now below are some examples of plotting interesting variables or the money plots.
+Unless specified, the default output location is ```plots/<BABYVERSION>/<JOBTAG>/``` which are parsed from the histogram directory path. (e.g. ```hists/WWW2016_v1.2.2/test/```)  
+Now below are some examples of plotting interesting variables or the money plots.  
 
 #### Money plots
 
