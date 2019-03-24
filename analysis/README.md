@@ -5,10 +5,9 @@ This area started for 2017 analysis with eventual integration of 2016 into a sin
 The analysis ran over the ntuple babies created from cmstas/VVVBabyMaker.  
 As of Mar. 2019, latest 2017 ntuple baby is:
 
-    /nfs-7/userdata/phchang/WWW_babies/WWW2017_v5.0.0/grouped/sig
-    /nfs-7/userdata/phchang/WWW_babies/WWW2017_v5.0.0/grouped/sigofficial
-    /nfs-7/userdata/phchang/WWW_babies/WWW2017_v5.0.0/grouped/bkg
-    /nfs-7/userdata/phchang/WWW_babies/WWW2017_v5.0.0/grouped/data
+    /nfs-7/userdata/phchang/WWW_babies/WWW2016_v1.2.2/grouped/
+    /nfs-7/userdata/phchang/WWW_babies/WWW2017_v5.0.0/grouped/
+
 
 ## Understanding the code
 
@@ -176,7 +175,7 @@ Now you should have
 
 To compute expected sensitivity
 
-    sh doSensitivity.sh /path/to/your/datacard.txt
+    sh doSensitivity.sh /path/to/your/datacard_combined.txt
 
 e.g.
 
