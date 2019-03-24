@@ -28,24 +28,8 @@ config = {
     }
 
 #________________________________________________________________________________________________________________________________________
-# Writing statistics datacards
-def write_datacard():
-
-    # Get the main yield
-    lostlep_sf = get_lostlep_sf() # Get the lost lepton scale factors
-
-    hists = get_yield_hists("SR", True, lostlep_sf) # Get the main yields with lost lepton scale factors applied
-
-    systs = get_systs() # Get all systematic histograms
-
-    # putting together the background histograms
-    bgs = [ hists[x] for x in config["bkg_order"] ]
-
-    # Write to the datacard
-    # d = dw.DataCardWriter(sig=hists["www"], bgs=bgs, data=None, datacard_filename="datacard.txt", systs=systs, no_stat_procs=["lostlep"])
-    d = dw.DataCardWriter(sig=hists["www"], bgs=bgs, data=hists["data"], datacard_filename="datacard.txt", systs=systs, no_stat_procs=["lostlep"])
-
-    # Parse the input_dirpath to get the baby version and job tag
+# Parse baby version, job tag...
+def parse_output_dir():
 
     # path to where the histogram files are sitting at
     input_dir = config["input_dirpath"]
@@ -71,11 +55,31 @@ def write_datacard():
     babytag = input_dir.rsplit("hists/")[1].split("/")[0]
     jobtag  = input_dir.rsplit("hists/")[1].split("/")[1].split("/")[0]
 
+    # Parse the input_dirpath to get the baby version and job tag
     # then create plot output with a directory structure like plots/BABYTAG/JOBTAG/
     output_dir = "datacards/" + babytag + "/" + jobtag
 
+    config["output_dir"] = output_dir
+
+#________________________________________________________________________________________________________________________________________
+# Writing statistics datacards
+def write_datacard():
+
+    lostlep_sf = get_lostlep_sf() # Get the lost lepton scale factors
+
+    hists = get_yield_hists("SR", True, lostlep_sf) # Get the main yields with lost lepton scale factors applied
+
+    systs = get_systs() # Get all systematic histograms
+
+    # putting together the background histograms
+    bgs = [ hists[x] for x in config["bkg_order"] ]
+
+    # Write to the datacard
+    # d = dw.DataCardWriter(sig=hists["www"], bgs=bgs, data=None, datacard_filename="datacard.txt", systs=systs, no_stat_procs=["lostlep"])
+    d = dw.DataCardWriter(sig=hists["www"], bgs=bgs, data=hists["data"], datacard_filename="datacard.txt", systs=systs, no_stat_procs=["lostlep"])
+
     # Create output directory
-    os.system("mkdir -p {}".format(output_dir))
+    os.system("mkdir -p {}".format(config["output_dir"]))
 
     # Region names
     reg_names = [ "b{}".format(index) for index in xrange(1, 10) ]
@@ -84,9 +88,59 @@ def write_datacard():
     for i, reg_name in enumerate(reg_names):
         d.set_bin(i+1) # TH1 bin indices start with 1
         d.set_region_name(reg_name)
-        d.write("{}/datacard_{}.txt".format(output_dir, reg_name))
+        d.write("{}/datacard_{}.txt".format(config["output_dir"], reg_name))
 
-    print "Wrote datacards to {}".format(output_dir)
+    print "Wrote datacards to {}".format(config["output_dir"])
+
+#________________________________________________________________________________________________________________________________________
+# Writing statistics datacards
+def write_datacard_w_control_regions():
+
+    #
+    # Signal region
+    #
+
+    hists = get_yield_hists("SR", True) # Get the main yields without lost lepton scale factors applied
+    systs = get_systs(apply_lostlep_sf=False, include_lostlep=True) # Get all systematic histograms
+
+    # putting together the background histograms
+    bgs = [ hists[x] for x in config["bkg_order"] ]
+
+    # Write to the datacard
+    d = dw.DataCardWriter(sig=hists["www"], bgs=bgs, data=hists["data"], datacard_filename="datacard.txt", systs=systs)
+
+    # Region names
+    reg_names = [ "s{}".format(index) for index in xrange(1, 10) ]
+
+    # Write the datacards for each regions
+    for i, reg_name in enumerate(reg_names):
+        d.set_bin(i+1) # TH1 bin indices start with 1
+        d.set_region_name(reg_name)
+        d.write("{}/datacard_{}.txt".format(config["output_dir"], reg_name))
+
+    #
+    # Lost Lep Control region
+    #
+
+    hists = get_yield_hists("WZCR", True) # Get the main yields without lost lepton scale factors applied in control region
+    systs = get_systs("WZCR", apply_lostlep_sf=False, include_lostlep=True) # Get all systematic histograms
+
+    # putting together the background histograms
+    bgs = [ hists[x] for x in config["bkg_order"] ]
+
+    # Write to the datacard
+    d = dw.DataCardWriter(sig=hists["www"], bgs=bgs, data=hists["data"], datacard_filename="datacard.txt", systs=systs)
+
+    # Region names
+    reg_names = [ "c{}".format(index) for index in xrange(1, 6) ]
+
+    # Write the datacards for each regions
+    for i, reg_name in enumerate(reg_names):
+        d.set_bin(i+1) # TH1 bin indices start with 1
+        d.set_region_name(reg_name)
+        d.write("{}/datacard_{}.txt".format(config["output_dir"], reg_name))
+
+    print "Wrote datacards to {}".format(config["output_dir"])
 
 #________________________________________________________________________________________________________________________________________
 # Get the lost lepton scale factors to be applied
@@ -283,7 +337,7 @@ def get_lostlep_alpha(syst=""):
 #           ('WW_norm', 'gmN', [TH1], {'qqWW': TH1, 'ggWW': TH1, 'ggH': TH1, 'others': TH1}),
 #           ('WW_norm', 'gmN', [TH1], {'qqWW': [float,..], 'ggWW': [float,..], 'ggH': [float,..], 'others': [float,..]}),
 # ]
-def get_systs(region="SR", apply_lostlep_sf=True):
+def get_systs(region="SR", apply_lostlep_sf=True, include_lostlep=False):
 
     # Get the main yield
     lostlep_sf = get_lostlep_sf() if region == "SR" and apply_lostlep_sf else {}
@@ -300,21 +354,24 @@ def get_systs(region="SR", apply_lostlep_sf=True):
         sys_hists_dn = get_yield_hists(region, True, lostlep_sf, sys+"Down")
         systval = {}
         for proc in ["www"] + config["bkg_order"]:
-            if proc in ["www", "qflip", "prompt", "photon", "ttw", "vbsww"]:
+            bkglist = ["www", "qflip", "prompt", "photon", "ttw", "vbsww"]
+            if include_lostlep:
+                bkglist.append("lostlep")
+            if proc in bkglist:
                 systval[proc] = [sys_hists_up[proc], sys_hists_dn[proc]]
-            # elif proc == "lostlep":
-            #     lostlep_yield_sysup = get_yield_hists(region, True, lostlep_sf)
-            #     lostlep_yield_sysdn = get_yield_hists(region, True, lostlep_sf)
-            #     lostlep_alpha_nom = get_lostlep_alpha()
-            #     lostlep_alpha_sysup = get_lostlep_alpha(sys+"Up")
-            #     lostlep_alpha_sysdn = get_lostlep_alpha(sys+"Down")
-            #     lostlep_alpha_sysup.Divide(lostlep_alpha_nom)
-            #     lostlep_alpha_sysdn.Divide(lostlep_alpha_nom)
-            #     lostlep_alpha_sysup.SetBinContent(7, lostlep_alpha_sysup.GetBinContent(8))
-            #     lostlep_alpha_sysdn.SetBinContent(7, lostlep_alpha_sysdn.GetBinContent(8))
-            #     lostlep_yield_sysup[proc].Multiply(lostlep_alpha_sysup)
-            #     lostlep_yield_sysdn[proc].Multiply(lostlep_alpha_sysdn)
-            #     systval[proc] = [lostlep_yield_sysup[proc], lostlep_yield_sysdn[proc]] 
+            elif proc == "lostlep":
+                lostlep_yield_sysup = get_yield_hists(region, True, lostlep_sf)
+                lostlep_yield_sysdn = get_yield_hists(region, True, lostlep_sf)
+                lostlep_alpha_nom = get_lostlep_alpha()
+                lostlep_alpha_sysup = get_lostlep_alpha(sys+"Up")
+                lostlep_alpha_sysdn = get_lostlep_alpha(sys+"Down")
+                lostlep_alpha_sysup.Divide(lostlep_alpha_nom)
+                lostlep_alpha_sysdn.Divide(lostlep_alpha_nom)
+                lostlep_alpha_sysup.SetBinContent(7, lostlep_alpha_sysup.GetBinContent(8))
+                lostlep_alpha_sysdn.SetBinContent(7, lostlep_alpha_sysdn.GetBinContent(8))
+                lostlep_yield_sysup[proc].Multiply(lostlep_alpha_sysup)
+                lostlep_yield_sysdn[proc].Multiply(lostlep_alpha_sysdn)
+                systval[proc] = [lostlep_yield_sysup[proc], lostlep_yield_sysdn[proc]] 
             else:
                 systval[proc] = 0
         syst_datacard_data = (sys, 'lnN', [], systval)
@@ -488,7 +545,10 @@ def get_systs(region="SR", apply_lostlep_sf=True):
     # LumiSyst
     systval = {}
     for proc in ["www"] + config["bkg_order"]:
-        if proc in ["www", "qflip", "photon", "ttw", "vbsww", "prompt"]:
+        bkglist = ["www", "qflip", "prompt", "photon", "ttw", "vbsww"]
+        if include_lostlep:
+            bkglist.append("lostlep")
+        if proc in bkglist:
             systval[proc] = "1.025"
         else:
             systval[proc] = 0
@@ -496,8 +556,10 @@ def get_systs(region="SR", apply_lostlep_sf=True):
 
     return systs
 
-
 if __name__ == "__main__":
 
+    parse_output_dir()
+
     write_datacard()
+    write_datacard_w_control_regions()
 

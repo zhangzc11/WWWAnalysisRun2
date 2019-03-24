@@ -176,10 +176,12 @@ e.g.
     Computing results starting from expected outcome (a-priori)
     
      -- Significance --
-    Significance: 1.86216
+    Significance: 1.85503
     Done in 0.01 min (cpu), 0.01 min (real)
 
-NOTE: I have not verified whether the datacards that is written out currently is validated against what I had for 2016 yet, so some systematics maybe missing hence the slight "improvement" over public result.
-But to first order things looked OK generally looked OK.
+
+NOTE: The lost lepton numbers for the public result came directly from Hannsjorg (same as what is in AN)
+While, the numbers I get with my looper seems slightly different.
+But to zero-th order things pretty much the same ¯\_(ツ)_
 
 

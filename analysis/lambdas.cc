@@ -222,7 +222,7 @@ std::function<float()> Lambdas::BTagScaleFactor = [&]() { return www.weight_btag
 // Lepton scale factor variations
 std::function<float()> Lambdas::LepSFVariation(Variation::Var var)
 {
-    return [&]()
+    return [&, var]()
     {
         if (input.year == 2016)
         {
@@ -264,7 +264,7 @@ std::function<float()> Lambdas::LepSFVariation(Variation::Var var)
 // Trigger scale factor variations
 std::function<float()> Lambdas::TriggerSFVariation(Variation::Var var)
 {
-    return [&]()
+    return [&, var]()
     {
         if (input.year == 2016)
         {
@@ -306,7 +306,7 @@ std::function<float()> Lambdas::TriggerSFVariation(Variation::Var var)
 // Btagging LF scale factor variations
 std::function<float()> Lambdas::BTagLFVariation(Variation::Var var)
 {
-    return [&]()
+    return [&, var]()
     {
         // Regardless of each year the babymaker uses same structure to put the systematic variations
         if (var == Variation::Up)
@@ -320,7 +320,7 @@ std::function<float()> Lambdas::BTagLFVariation(Variation::Var var)
 // Btagging HF scale factor variations
 std::function<float()> Lambdas::BTagHFVariation(Variation::Var var)
 {
-    return [&]()
+    return [&, var]()
     {
         // Regardless of each year the babymaker uses same structure to put the systematic variations
         if (var == Variation::Up)
@@ -334,7 +334,7 @@ std::function<float()> Lambdas::BTagHFVariation(Variation::Var var)
 // Pileup reweighting variations
 std::function<float()> Lambdas::PileupVariation(Variation::Var var)
 {
-    return [&]()
+    return [&, var]()
     {
         if (input.year == 2016)
         {
@@ -549,7 +549,7 @@ std::function<float()> Lambdas::FakeFactorVariation(Variation::FakeVar fakevar_,
 // PDF weight variations
 std::function<float()> Lambdas::PDFVariation(Variation::Var var)
 {
-    return [&]()
+    return [&, var]()
     {
         if (var == Variation::Up)
             return www.weight_fr_r1_f1() == 0 or theoryweight.pdfup() == 0 ? 0 : www.weight_pdf_up() / www.weight_fr_r1_f1() * theoryweight.nominal() / theoryweight.pdfup();
@@ -562,7 +562,7 @@ std::function<float()> Lambdas::PDFVariation(Variation::Var var)
 // Qsq weight variations
 std::function<float()> Lambdas::QsqVariation(Variation::Var var)
 {
-    return [&]()
+    return [&, var]()
     {
         if (var == Variation::Up)
             return www.weight_fr_r1_f1() == 0 or theoryweight.qsqup() == 0 ? 0 : www.weight_fr_r2_f2() / www.weight_fr_r1_f1() * theoryweight.nominal() / theoryweight.qsqup();
@@ -575,7 +575,7 @@ std::function<float()> Lambdas::QsqVariation(Variation::Var var)
 // AlphaS weight variations
 std::function<float()> Lambdas::AlphaSVariation(Variation::Var var)
 {
-    return [&]()
+    return [&, var]()
     {
         if (var == Variation::Up)
             return www.weight_fr_r1_f1() == 0 or theoryweight.alsup() == 0 ? 0 : www.weight_alphas_up() / www.weight_fr_r1_f1() * theoryweight.nominal() / theoryweight.alsup();
