@@ -32,7 +32,7 @@ If it does not, let Philip know.
 ### Running on baby ntuples
 
     time sh ./process.sh -i WWW2016_v1.2.2 -t test # should take about ~30 seconds. This runs over 2016 ntuples.
-    time sh ./process.sh -i WWW2017_v5.0.0 -t test # should take about a minute. This runs over 2017 ntuples.
+    time sh ./process.sh -i WWW2017_v5.0.0 -t test # should take about ~90 seconds. This runs over 2017 ntuples.
     # 2018 is on-going
 
 ### Plotting result
