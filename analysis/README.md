@@ -182,6 +182,6 @@ e.g.
 
 NOTE: The lost lepton numbers for the public result came directly from Hannsjorg (same as what is in AN)
 While, the numbers I get with my looper seems slightly different.
-But to zero-th order things pretty much the same ¯\_(ツ)_
+But to zero-th order things pretty much the same :neutral_face:
 
 
