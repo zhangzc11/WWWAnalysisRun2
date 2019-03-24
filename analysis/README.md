@@ -102,7 +102,6 @@ Let's plot this.
 
 Try reading through ```main.cc``` and ```my_user_study.h``` to get an idea how to add new cuts and new histograms.
 
-#### Higgs Combine 
 #### Higgs Combine Tool
 
 ##### Setting up the first time
