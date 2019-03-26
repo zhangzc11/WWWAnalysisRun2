@@ -94,6 +94,39 @@ def write_datacard():
 
 #________________________________________________________________________________________________________________________________________
 # Writing statistics datacards
+def write_datacard_nj1():
+
+    hists = get_yield_hists("EXSS", True) # Get the main yields with lost lepton scale factors applied
+
+    # lostlep_sf = get_lostlep_sf() # Get the lost lepton scale factors
+
+    # hists = get_yield_hists("SR", True, lostlep_sf) # Get the main yields with lost lepton scale factors applied
+
+    systs = get_systs("EXSS", apply_lostlep_sf=False, include_lostlep=True, isnj1=True) # Get all systematic histograms
+
+    # putting together the background histograms
+    bgs = [ hists[x] for x in config["bkg_order"] ]
+
+    # Write to the datacard
+    # d = dw.DataCardWriter(sig=hists["www"], bgs=bgs, data=None, datacard_filename="datacard.txt", systs=systs, no_stat_procs=["lostlep"])
+    d = dw.DataCardWriter(sig=hists["www"], bgs=bgs, data=hists["data"], datacard_filename="datacard.txt", systs=systs)#, no_stat_procs=["lostlep"])
+
+    # Create output directory
+    os.system("mkdir -p {}".format(config["output_dir"]))
+
+    # Region names
+    reg_names = [ "n{}".format(index) for index in xrange(1, 5) ]
+
+    # Write the datacards for each regions
+    for i, reg_name in enumerate(reg_names):
+        d.set_bin(i+1) # TH1 bin indices start with 1
+        d.set_region_name(reg_name)
+        d.write("{}/datacard_{}.txt".format(config["output_dir"], reg_name))
+
+    print "Wrote datacards to {}".format(config["output_dir"])
+
+#________________________________________________________________________________________________________________________________________
+# Writing statistics datacards
 def write_datacard_w_control_regions():
 
     #
@@ -132,7 +165,7 @@ def write_datacard_w_control_regions():
     d = dw.DataCardWriter(sig=hists["www"], bgs=bgs, data=hists["data"], datacard_filename="datacard.txt", systs=systs)
 
     # Region names
-    reg_names = [ "c{}".format(index) for index in xrange(1, 6) ]
+    reg_names = [ "c{}".format(index) for index in xrange(1, 10) ]
 
     # Write the datacards for each regions
     for i, reg_name in enumerate(reg_names):
@@ -182,6 +215,8 @@ def get_yield_hists(region, use_data_driven_fakes, sfs={}, syst=""):
     # get all the histogram names in the file matching the region string and syst string
     histnames = get_histnames(config["input_dirpath"] + "/" + config["signal_filename"], region, syst)
 
+    print histnames
+
     # Sort the histogram names that were retrieved
     histnames.sort(key=region_index)
 
@@ -205,6 +240,14 @@ def get_yield_hists(region, use_data_driven_fakes, sfs={}, syst=""):
             tmphist.SetBinContent(6, hists[h].GetBinContent(3))
             tmphist.SetBinContent(8, hists[h].GetBinContent(4))
             tmphist.SetBinContent(9, hists[h].GetBinContent(5))
+            tmphist.SetBinError(1, hists[h].GetBinError(1))
+            tmphist.SetBinError(2, hists[h].GetBinError(2))
+            tmphist.SetBinError(3, hists[h].GetBinError(3))
+            tmphist.SetBinError(4, hists[h].GetBinError(1))
+            tmphist.SetBinError(5, hists[h].GetBinError(2))
+            tmphist.SetBinError(6, hists[h].GetBinError(3))
+            tmphist.SetBinError(8, hists[h].GetBinError(4))
+            tmphist.SetBinError(9, hists[h].GetBinError(5))
             hists[h] = tmphist
 
     return hists
@@ -337,7 +380,7 @@ def get_lostlep_alpha(syst=""):
 #           ('WW_norm', 'gmN', [TH1], {'qqWW': TH1, 'ggWW': TH1, 'ggH': TH1, 'others': TH1}),
 #           ('WW_norm', 'gmN', [TH1], {'qqWW': [float,..], 'ggWW': [float,..], 'ggH': [float,..], 'others': [float,..]}),
 # ]
-def get_systs(region="SR", apply_lostlep_sf=True, include_lostlep=False):
+def get_systs(region="SR", apply_lostlep_sf=True, include_lostlep=False, isnj1=False):
 
     # Get the main yield
     lostlep_sf = get_lostlep_sf() if region == "SR" and apply_lostlep_sf else {}
@@ -459,32 +502,33 @@ def get_systs(region="SR", apply_lostlep_sf=True, include_lostlep=False):
             syst_datacard_data = (sys, 'gmN', [data_yield["data"]], systval)
             systs.append(syst_datacard_data)
 
-    # Lost-Lep extrapolation factor (alpha) error
-    systval = {}
-    for proc in ["www"] + config["bkg_order"]:
-        if proc in ["lostlep"]:
-            systval[proc] = ["1.049"] * 6 + ["-"] * 3
-        else:
-            systval[proc] = 0
-    systs.append(("MjjSyst", 'lnN', [], systval))
+    if not isnj1:
+        # Lost-Lep extrapolation factor (alpha) error
+        systval = {}
+        for proc in ["www"] + config["bkg_order"]:
+            if proc in ["lostlep"]:
+                systval[proc] = ["1.049"] * 6 + ["-"] * 3
+            else:
+                systval[proc] = 0
+        systs.append(("MjjSyst", 'lnN', [], systval))
 
-    # Lost-Lep extrapolation factor (alpha) error
-    systval = {}
-    for proc in ["www"] + config["bkg_order"]:
-        if proc in ["lostlep"]:
-            systval[proc] = ["1.053"] * 6 + ["-"] * 3
-        else:
-            systval[proc] = 0
-    systs.append(("MllSSSyst", 'lnN', [], systval))
+        # Lost-Lep extrapolation factor (alpha) error
+        systval = {}
+        for proc in ["www"] + config["bkg_order"]:
+            if proc in ["lostlep"]:
+                systval[proc] = ["1.053"] * 6 + ["-"] * 3
+            else:
+                systval[proc] = 0
+        systs.append(("MllSSSyst", 'lnN', [], systval))
 
-    # Lost-Lep extrapolation factor (alpha) error
-    systval = {}
-    for proc in ["www"] + config["bkg_order"]:
-        if proc in ["lostlep"]:
-            systval[proc] = ["-"] * 6 + ["1.082"] * 3
-        else:
-            systval[proc] = 0
-    systs.append(("Mll3LSyst", 'lnN', [], systval))
+        # Lost-Lep extrapolation factor (alpha) error
+        systval = {}
+        for proc in ["www"] + config["bkg_order"]:
+            if proc in ["lostlep"]:
+                systval[proc] = ["-"] * 6 + ["1.082"] * 3
+            else:
+                systval[proc] = 0
+        systs.append(("Mll3LSyst", 'lnN', [], systval))
 
     # Flat systematics
 
@@ -560,6 +604,7 @@ if __name__ == "__main__":
 
     parse_output_dir()
 
-    write_datacard()
-    # write_datacard_w_control_regions()
+    # write_datacard()
+    # write_datacard_nj1()
+    write_datacard_w_control_regions()
 

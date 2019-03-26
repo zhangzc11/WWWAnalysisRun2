@@ -126,11 +126,23 @@ namespace Lambdas
             std::function<float()>  // JER Down
             );
 
+    // Helper functions to concisely define JES/JER variations
+    std::function<LV()> jetVec(Variation::ExpSyst, Variation::Var,
+            std::function<LV()>, // Nominal JES
+            std::function<LV()>, // JES Up
+            std::function<LV()>, // JES Down
+            std::function<LV()>, // Nominal JER
+            std::function<LV()>, // JER Up
+            std::function<LV()>  // JER Down
+            );
+
     // Split by channel
     extern std::function<float()> isSRSSeeChannel;
     extern std::function<float()> isSRSSemChannel;
     extern std::function<float()> isSRSSmmChannel;
 
+    std::function<float()> LeqOneJet30(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal); // Less than or equal to One jets above 30 GeV 
+    std::function<float()> OneCenJet30(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal); // One central jets above 30 GeV 
     std::function<float()> TwoCenJet30(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal); // Two central jets above 30 GeV 
     std::function<float()> LowDEtajj(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal); // Low Detajj
     std::function<float()> LowMjj(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal); // Low Mjj
@@ -168,6 +180,13 @@ namespace Lambdas
     // Inverting z-veto for lost-lepton CR
     extern std::function<float()> HasZ_SS;
     extern std::function<float()> HasZ_3L;
+
+    // Split by channel
+    extern std::function<float()> isSSem;
+    extern std::function<float()> isSSme;
+
+    std::function<float()> Nj1DRljMin(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()> Nj1CRKinSel(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
 
 }
 

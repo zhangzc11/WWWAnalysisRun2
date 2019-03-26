@@ -1,4 +1,46 @@
 #include "main.h"
+#include "/home/users/phchang/public_html/analysis/www/production/v5.1.4/wwwbabymaker/dilepbabymaker/LeptonScaleFactors.h"
+
+std::tuple<float, float> getCombinedTrigEffandError(
+        float e_l0,
+        float e_l1,
+        float e_t0,
+        float e_t1,
+        float d_l0,
+        float d_l1,
+        float d_t0,
+        float d_t1)
+{
+    bool scheme_that_i_think_is_correct = true;
+    if (scheme_that_i_think_is_correct)
+    {
+        float e_lt = e_l0 * e_t1;
+        float f_l0 = e_l0 > 0 ? d_l0 / e_l0 : 0;
+        float f_t1 = e_t1 > 0 ? d_t1 / e_t1 : 0;
+        float f_lt = sqrt(pow(f_l0, 2) + pow(f_t1, 2));
+        float d_lt = e_lt * f_lt;
+        float eff = e_lt;
+        float err = d_lt;
+        return make_tuple(eff, err);
+    }
+    else
+    {
+        float e_lt = e_l0 * e_t1;
+        float e_tl = e_t0 * e_l1;
+        float f_l0 = e_l0 > 0 ? d_l0 / e_l0 : 0;
+        float f_l1 = e_l1 > 0 ? d_l1 / e_l1 : 0;
+        float f_t0 = e_t0 > 0 ? d_t0 / e_t0 : 0;
+        float f_t1 = e_t1 > 0 ? d_t1 / e_t1 : 0;
+        float f_lt = sqrt(pow(f_l0, 2) + pow(f_t1, 2));
+        float f_tl = sqrt(pow(f_t0, 2) + pow(f_l1, 2));
+        float d_lt = e_lt * f_lt;
+        float d_tl = e_tl * f_tl;
+        float eff = e_lt + (1.0 - e_lt) * e_tl;
+        float err2 = pow(d_lt, 2) + pow(d_tl, 2) + pow((e_lt * e_tl) * sqrt(pow(f_lt, 2) + pow(f_tl, 2)), 2);
+        float err = sqrt(err2);
+        return make_tuple(eff, err);
+    }
+}
 
 //_______________________________________________________________________________________________________
 int main(int argc, char** argv)
@@ -459,7 +501,7 @@ int main(int argc, char** argv)
     // Then this is used in conjunction with RooUtil::Cutflow to book histograms at different cut stage
     // This is so that the users don't have to copy paste a thousands lines of codes if they want to book more histograms at different cut stages
 
-    ana.histograms.addHistogram("MllSS"                    ,  180 , 0.      , 300.   , [&]() { return www.MllSS()                                                                  ; });
+    ana.histograms.addHistogram("MllSS"                    ,  180 , 0.      , 500.   , [&]() { return www.MllSS()                                                                  ; });
     ana.histograms.addHistogram("MllSS_wide"               ,  180 , 0.      , 2000.  , [&]() { return www.MllSS()                                                                  ; });
     ana.histograms.addHistogram("MllZ"                     ,  180 , 60.     , 120.   , [&]() { return www.MllSS()                                                                  ; });
     ana.histograms.addHistogram("MllZZoom"                 ,  180 , 80.     , 100.   , [&]() { return www.MllSS()                                                                  ; });
@@ -506,6 +548,84 @@ int main(int argc, char** argv)
     ana.histograms.addHistogram("MTmax"                    ,  180 , 0.      , 300.   , [&]() { return www.MTmax()                                                                  ; });
     ana.histograms.addHistogram("MTmax3L"                  ,  180 , 0.      , 300.   , [&]() { return www.MTmax3L()                                                                ; });
     ana.histograms.addHistogram("MT3rd"                    ,  180 , 0.      , 300.   , [&]() { return www.MT3rd()                                                                  ; });
+    ana.histograms.addHistogram("dEtall"                   ,  180 , 0.      , 5.     , [&]() { return www.lep_eta().size() > 1 ? fabs(www.lep_eta()[0] - www.lep_eta()[1]) : -999  ; });
+    ana.histograms.addHistogram("dRll"                     ,  180 , 0.      , 8.     , [&]() { return www.lep_p4().size() > 1 ? RooUtil::Calc::DeltaR(www.lep_p4()[0], www.lep_p4()[1]) : -999  ; });
+    ana.histograms.addHistogram("dPhill"                   ,  180 , 0.      , 3.1416 , [&]() { return www.lep_p4().size() > 1 ? fabs(RooUtil::Calc::DeltaPhi(www.lep_p4()[0], www.lep_p4()[1])) : -999  ; });
+    ana.histograms.addHistogram("JetCentrality"            ,  180 , 0.      , 10.    , [&]()
+            {
+                if (www.lep_eta().size() > 1 and www.jets_p4().size() > 0)
+                {
+                    float detall = fabs(www.lep_eta()[0] - www.lep_eta()[1]);
+                    float avgeta = (www.lep_eta()[0] + www.lep_eta()[1]) / 2.;
+                    float cen = fabs(www.jets_p4()[0].eta() - avgeta) / (detall / 2.);
+                    return cen;
+                }
+                else
+                {
+                    return float(-999);
+                }
+            });
+
+    ana.histograms.addHistogram("MljMin" , 180 , 0. , 300. , [&]()
+            {
+                if (not (www.lep_p4().size() > 0 and www.jets_p4().size() > 0))
+                    return float(-999);
+                float mlj0 = (www.lep_p4()[0] + www.jets_p4()[0]).mass();
+                float mlj1 = (www.lep_p4()[1] + www.jets_p4()[0]).mass();
+                return mlj0 < mlj1 ? mlj0 : mlj1;
+            });
+
+    ana.histograms.addHistogram("MljMax" , 180 , 0. , 600. , [&]()
+            {
+                if (not (www.lep_p4().size() > 1 and www.jets_p4().size() > 0))
+                    return float(-999);
+                float mlj0 = (www.lep_p4()[0] + www.jets_p4()[0]).mass();
+                float mlj1 = (www.lep_p4()[1] + www.jets_p4()[0]).mass();
+                return mlj0 < mlj1 ? mlj1 : mlj0;
+            });
+
+    ana.histograms.addHistogram("DRljMin" , 180 , 0. , 6.   , [&]()
+            {
+                if (not (www.lep_p4().size() > 0 and www.jets_p4().size() > 0))
+                    return float(-999);
+                float drlj0 = RooUtil::Calc::DeltaR(www.lep_p4()[0], www.jets_p4()[0]);
+                float drlj1 = RooUtil::Calc::DeltaR(www.lep_p4()[1], www.jets_p4()[0]);
+                return drlj0 < drlj1 ? drlj0 : drlj1;
+            });
+
+    ana.histograms.addHistogram("DRljMax" , 180 , 0. , 6.   , [&]()
+            {
+                if (not (www.lep_p4().size() > 0 and www.jets_p4().size() > 0))
+                    return float(-999);
+                float drlj0 = RooUtil::Calc::DeltaR(www.lep_p4()[0], www.jets_p4()[0]);
+                float drlj1 = RooUtil::Calc::DeltaR(www.lep_p4()[1], www.jets_p4()[0]);
+                return drlj0 < drlj1 ? drlj1 : drlj0;
+            });
+
+    ana.histograms.addHistogram("Ptllj" , 180 , 0. , 300. , [&]()
+            {
+                if (not (www.lep_p4().size() > 1 and www.jets_p4().size() > 0))
+                    return float(-999);
+                return (www.lep_p4()[0] + www.lep_p4()[1] + www.jets_p4()[0]).pt();
+            });
+
+    ana.histograms.addHistogram("Mllj" , 180 , 0. , 600. , [&]()
+            {
+                if (not (www.lep_p4().size() > 1 and www.jets_p4().size() > 0))
+                    return float(-999);
+                return (www.lep_p4()[0] + www.lep_p4()[1] + www.jets_p4()[0]).mass();
+            });
+
+    ana.histograms.addHistogram("MTj" , 180 , 0. , 300., [&]()
+            {
+                if (not (www.jets_p4().size() > 0))
+                    return float(-999);
+                float phi1 = www.jets_p4()[0].Phi();
+                float phi2 = www.met_phi();
+                float Et1  = www.jets_p4()[0].Et();
+                float Et2  = www.met_pt();
+                return float(sqrt(2*Et1*Et2*(1.0 - cos(phi1-phi2))));
+            });
 
     // One bin histogram to hold the total yield at this cut stage
     ana.histograms.addHistogram("yield"                    ,  1   , 0.      , 1      , [&]() { return 0                                                                            ; });
@@ -915,6 +1035,55 @@ int main(int argc, char** argv)
         ana.cutflow.addCutToLastActiveCut("AR2SFOSKinSel"    , Lambdas::KinSel2SFOS     (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("AR2SFOSFull"      , UNITY                                                        , UNITY);
 
+        //************************************************************************************************************************************************************************************************
+        //
+        //
+        // N-jet 1 bin selection
+        //
+        //
+        //************************************************************************************************************************************************************************************************
+
+        ana.cutflow.getCut("SRSSmmPreSel");
+        ana.cutflow.addCutToLastActiveCut("EXSSmmNj1OneJet" , Lambdas::OneCenJet30 (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("EXSSmmNj1DRljMin", Lambdas::Nj1DRljMin  (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("EXSSmmNj1Full"   , UNITY                                                    , UNITY);
+        ana.cutflow.getCut("SRSSemPreSel");
+        ana.cutflow.addCutToLastActiveCut("EXSSemNj1Channel", Lambdas::isSSem                                          , UNITY);
+        ana.cutflow.addCutToLastActiveCut("EXSSemNj1OneJet" , Lambdas::OneCenJet30 (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("EXSSemNj1DRljMin", Lambdas::Nj1DRljMin  (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("EXSSemNj1Full"   , UNITY                                                    , UNITY);
+        ana.cutflow.getCut("SRSSemPreSel");
+        ana.cutflow.addCutToLastActiveCut("EXSSmeNj1Channel", Lambdas::isSSme                                          , UNITY);
+        ana.cutflow.addCutToLastActiveCut("EXSSmeNj1OneJet" , Lambdas::OneCenJet30 (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("EXSSmeNj1DRljMin", Lambdas::Nj1DRljMin  (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("EXSSmeNj1Full"   , UNITY                                                    , UNITY);
+        ana.cutflow.getCut("SRSSeePreSel");
+        ana.cutflow.addCutToLastActiveCut("EXSSeeNj1OneJet" , Lambdas::OneCenJet30 (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("EXSSeeNj1DRljMin", Lambdas::Nj1DRljMin  (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("EXSSeeNj1Full"   , UNITY                                                    , UNITY);
+
+        ana.cutflow.getCut("WZCRSSeePreSel");
+        ana.cutflow.addCutToLastActiveCut("EXCRSSeeNjLeq1"    , Lambdas::LeqOneJet30(Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("EXCRSSeeNj1KinSel" , Lambdas::Nj1CRKinSel(Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("EXCRSSeeNj1Full"   , Lambdas::HasZ_SS                                        , UNITY);
+
+        ana.cutflow.getCut("WZCRSSemPreSel");
+        ana.cutflow.addCutToLastActiveCut("EXCRSSemNjChannel" , Lambdas::isSSem                                         , UNITY);
+        ana.cutflow.addCutToLastActiveCut("EXCRSSemNjLeq1"    , Lambdas::LeqOneJet30(Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("EXCRSSemNj1KinSel" , Lambdas::Nj1CRKinSel(Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("EXCRSSemNj1Full"   , Lambdas::HasZ_SS                                        , UNITY);
+
+        ana.cutflow.getCut("WZCRSSemPreSel");
+        ana.cutflow.addCutToLastActiveCut("EXCRSSmeNjChannel" , Lambdas::isSSme                                         , UNITY);
+        ana.cutflow.addCutToLastActiveCut("EXCRSSmeNjLeq1"    , Lambdas::LeqOneJet30(Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("EXCRSSmeNj1KinSel" , Lambdas::Nj1CRKinSel(Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("EXCRSSmeNj1Full"   , Lambdas::HasZ_SS                                        , UNITY);
+
+        ana.cutflow.getCut("WZCRSSmmPreSel");
+        ana.cutflow.addCutToLastActiveCut("EXCRSSmmNjLeq1"    , Lambdas::LeqOneJet30(Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("EXCRSSmmNj1KinSel" , Lambdas::Nj1CRKinSel(Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("EXCRSSmmNj1Full"   , Lambdas::HasZ_SS                                        , UNITY);
+
     };
 
     // Here I create hook for users to add various cuts and histograms of their choice to make their own studies
@@ -1031,8 +1200,8 @@ int main(int argc, char** argv)
         }
 
         // Declare cut varying systematics to cuts with the patterns provided in the vector
-        ana.cutflow.addCutSyst("JESUp"    , {"jj", "PreSel", "Nj", "KinSel", "SidemmMET"});
-        ana.cutflow.addCutSyst("JESDown"  , {"jj", "PreSel", "Nj", "KinSel", "SidemmMET"});
+        ana.cutflow.addCutSyst("JESUp"    , {"jj", "PreSel", "Nj2", "KinSel", "SidemmMET", "OneJet", "NjLeq1", "DRljMin"});
+        ana.cutflow.addCutSyst("JESDown"  , {"jj", "PreSel", "Nj2", "KinSel", "SidemmMET", "OneJet", "NjLeq1", "DRljMin"});
 
         // // 2016 v1.2.2 baby ntuple does not have jer variation
         // ana.cutflow.addCutSyst("JER"      , {"jj", "PreSel", "Nj", "KinSel", "SidemmMET"});
@@ -1117,6 +1286,22 @@ int main(int argc, char** argv)
             ana.cutflow.setCutSyst("AR1SFOSKinSel"     , systname, Lambdas::KinSel1SFOS    (expsyst, var) , UNITY                    );
             ana.cutflow.setCutSyst("AR2SFOSPreSel"     , systname, Lambdas::ThreeLepPresel (expsyst, var) , Lambdas::BTagScaleFactor );
             ana.cutflow.setCutSyst("AR2SFOSKinSel"     , systname, Lambdas::KinSel2SFOS    (expsyst, var) , UNITY                    );
+            ana.cutflow.setCutSyst("EXSSeeNj1OneJet"   , systname, Lambdas::OneCenJet30    (expsyst, var) , UNITY                    );
+            ana.cutflow.setCutSyst("EXSSeeNj1DRljMin"  , systname, Lambdas::Nj1DRljMin     (expsyst, var) , UNITY                    );
+            ana.cutflow.setCutSyst("EXSSemNj1OneJet"   , systname, Lambdas::OneCenJet30    (expsyst, var) , UNITY                    );
+            ana.cutflow.setCutSyst("EXSSemNj1DRljMin"  , systname, Lambdas::Nj1DRljMin     (expsyst, var) , UNITY                    );
+            ana.cutflow.setCutSyst("EXSSmeNj1OneJet"   , systname, Lambdas::OneCenJet30    (expsyst, var) , UNITY                    );
+            ana.cutflow.setCutSyst("EXSSmeNj1DRljMin"  , systname, Lambdas::Nj1DRljMin     (expsyst, var) , UNITY                    );
+            ana.cutflow.setCutSyst("EXSSmmNj1OneJet"   , systname, Lambdas::OneCenJet30    (expsyst, var) , UNITY                    );
+            ana.cutflow.setCutSyst("EXSSmmNj1DRljMin"  , systname, Lambdas::Nj1DRljMin     (expsyst, var) , UNITY                    );
+            ana.cutflow.setCutSyst("EXCRSSeeNjLeq1"    , systname, Lambdas::LeqOneJet30    (expsyst, var) , UNITY                    );
+            ana.cutflow.setCutSyst("EXCRSSeeNj1KinSel" , systname, Lambdas::Nj1CRKinSel    (expsyst, var) , UNITY                    );
+            ana.cutflow.setCutSyst("EXCRSSemNjLeq1"    , systname, Lambdas::LeqOneJet30    (expsyst, var) , UNITY                    );
+            ana.cutflow.setCutSyst("EXCRSSemNj1KinSel" , systname, Lambdas::Nj1CRKinSel    (expsyst, var) , UNITY                    );
+            ana.cutflow.setCutSyst("EXCRSSmeNjLeq1"    , systname, Lambdas::LeqOneJet30    (expsyst, var) , UNITY                    );
+            ana.cutflow.setCutSyst("EXCRSSmeNj1KinSel" , systname, Lambdas::Nj1CRKinSel    (expsyst, var) , UNITY                    );
+            ana.cutflow.setCutSyst("EXCRSSmmNjLeq1"    , systname, Lambdas::LeqOneJet30    (expsyst, var) , UNITY                    );
+            ana.cutflow.setCutSyst("EXCRSSmmNj1KinSel" , systname, Lambdas::Nj1CRKinSel    (expsyst, var) , UNITY                    );
         };
 
         // Actually set the door
@@ -1291,6 +1476,55 @@ int main(int argc, char** argv)
         //     std::cout <<  " www.run(): " << www.run() <<  " www.lumi(): " << www.lumi() <<  " www.evt(): " << www.evt() <<  std::endl;
         //     std::cout <<  " Below shows whether it passes or fails the cuts" << std::endl;
         //     cutflow.printCuts();
+        // }
+
+        // if (ana.cutflow.getCut("SRSSmmFull").pass)
+        // {
+
+        //     float pt0 = www.lep_p4()[0].pt();
+        //     float pt1 = www.lep_p4()[1].pt();
+        //     float eta0 = www.lep_p4()[0].eta();
+        //     float eta1 = www.lep_p4()[1].eta();
+        //     float leadeta  = std::min(fabs(eta0), (float)2.39);
+        //     float traileta = std::min(fabs(eta1), (float)2.39);
+        //     float leadpt   = std::min(pt0, (float)199.);
+        //     float trailpt  = std::min(pt1, (float)199.);
+
+        //     float bigeta   = leadeta > traileta ? leadeta  : traileta;
+        //     float smalleta = leadeta > traileta ? traileta : leadeta;
+
+        //     // is mm events
+        //     if (abs(www.lep_pdgId()[0]) == 13 && abs(www.lep_pdgId()[1]) == 13)
+        //     {
+        //         // related to lepton legs
+        //         float e_l0 = trigsf_mu_lead(leadpt, leadeta);
+        //         float e_t1 = trigsf_mu_trail(trailpt, traileta);
+        //         float d_l0 = trigsf_mu_lead(leadpt, leadeta, 1) - trigsf_mu_lead(leadpt, leadeta);
+        //         float d_t1 = trigsf_mu_trail(trailpt, traileta, 1) - trigsf_mu_trail(trailpt, traileta);
+        //         float tempeff = 1.0;
+        //         float temperr = 0.0;
+        //         std::tie(tempeff, temperr) = getCombinedTrigEffandError(e_l0, 0., 0., e_t1, d_l0, 0., 0., d_t1);
+        //         // dz
+        //         float dzeff = 0.241 * trigsf_dimu_dz(smalleta, bigeta) + (1 - 0.241) * 1; // Because DZ filter only affects Period H
+        //         float dzerr = 0.241 * (trigsf_dimu_dz(smalleta, bigeta, 1) - trigsf_dimu_dz(smalleta, bigeta));
+        //         float eff = tempeff * dzeff;
+        //         float err = eff * sqrt(pow(temperr / tempeff, 2) + pow(dzerr / dzeff, 2));
+        //         // And the fractino of period H is calculated from here: http://www.t2.ucsd.edu/tastwiki/bin/view/CMS/Run2_Data2016
+        //         // 8.636 + 0.221 / 36.814 = 0.241
+
+        //         std::cout <<  " tempeff: " << tempeff <<  " temperr: " << temperr <<  std::endl;
+        //         std::cout <<  " dzeff: " << dzeff <<  " dzerr: " << dzerr <<  std::endl;
+        //         std::cout <<  " eff: " << eff <<  " err: " << err <<  std::endl;
+        //         std::cout <<  " (eff+err)/eff: " << (eff+err)/eff <<  " (eff-err)/eff: " << (eff-err)/eff <<  std::endl;
+
+        //         std::cout <<  " www.lep_p4()[0].pt(): " << www.lep_p4()[0].pt() <<  " www.lep_p4()[0].eta(): " << www.lep_p4()[0].eta() <<  " www.lep_pdgId()[0]: " << www.lep_pdgId()[0] <<  std::endl;
+        //         std::cout <<  " www.lep_p4()[1].pt(): " << www.lep_p4()[1].pt() <<  " www.lep_p4()[1].eta(): " << www.lep_p4()[1].eta() <<  " www.lep_pdgId()[1]: " << www.lep_pdgId()[1] <<  std::endl;
+        //         float trigsf = Lambdas::TriggerScaleFactor();
+        //         float trigsfup = Lambdas::TriggerSFVariation(Variation::Up)();
+        //         float trigsfdn = Lambdas::TriggerSFVariation(Variation::Down)();
+        //         std::cout <<  " trigsf: " << trigsf <<  " trigsfup: " << trigsfup <<  " trigsfdn: " << trigsfdn <<  std::endl;
+
+        //     }
         // }
 
     }

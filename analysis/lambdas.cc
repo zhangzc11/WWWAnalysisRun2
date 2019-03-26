@@ -686,9 +686,62 @@ std::function<float()> Lambdas::jetVar(Variation::ExpSyst expsyst, Variation::Va
     }
 }
 
+std::function<LV()> Lambdas::jetVec(Variation::ExpSyst expsyst, Variation::Var var,
+        std::function<LV()> jesup, // JES Up
+        std::function<LV()> jesdn, // JES Down
+        std::function<LV()> jes,   // JES
+        std::function<LV()> jerup, // JER Up
+        std::function<LV()> jerdn, // JER Down
+        std::function<LV()> jer    // JER
+        )
+{
+    if (expsyst == Variation::JES)
+    {
+        if (var == Variation::Up)
+            return jesup;
+        else if (var == Variation::Down)
+            return jesdn;
+        else
+            return jes;
+    }
+    else // else if (expsyst == Variation::JER)
+    {
+        if (var == Variation::Up)
+            return jerup;
+        else if (var == Variation::Down)
+            return jerdn;
+        else
+            return jer;
+    }
+}
+
 std::function<float()> Lambdas::isSRSSeeChannel = [&]() { return (www.passSSee())*(www.MllSS()>40.); };
 std::function<float()> Lambdas::isSRSSemChannel = [&]() { return (www.passSSem())*(www.MllSS()>30.); };
 std::function<float()> Lambdas::isSRSSmmChannel = [&]() { return (www.passSSmm())*(www.MllSS()>40.); };
+
+std::function<float()> Lambdas::LeqOneJet30(Variation::ExpSyst expsyst, Variation::Var var)
+{
+    return jetVar(expsyst, var, 
+            [&]() { return (www.nj_up()<= 1); },
+            [&]() { return (www.nj_up()<= 1); },
+            [&]() { return (www.nj()<= 1); },
+            [&]() { return (www.nj_jerup()<= 1); },
+            [&]() { return (www.nj_jerdn()<= 1); },
+            [&]() { return (www.nj_jer()<= 1); }
+            );
+}
+
+std::function<float()> Lambdas::OneCenJet30(Variation::ExpSyst expsyst, Variation::Var var)
+{
+    return jetVar(expsyst, var, 
+            [&]() { return (www.nj30_up()== 1); },
+            [&]() { return (www.nj30_up()== 1); },
+            [&]() { return (www.nj30()== 1); },
+            [&]() { return (www.nj30_jerup()== 1); },
+            [&]() { return (www.nj30_jerdn()== 1); },
+            [&]() { return (www.nj30_jer()== 1); }
+            );
+}
 
 std::function<float()> Lambdas::TwoCenJet30(Variation::ExpSyst expsyst, Variation::Var var)
 {
@@ -992,6 +1045,85 @@ std::function<float()> Lambdas::KinSel2SFOS(Variation::ExpSyst expsyst, Variatio
 
 std::function<float()> Lambdas::HasZ_SS = [&]() { return (abs(www.Mll3L()-91.1876)<10.||abs(www.Mll3L1()-91.1876)<10.); };
 std::function<float()> Lambdas::HasZ_3L = [&]() { return (abs(www.Mll3L()-91.1876)<20.||abs(www.Mll3L1()-91.1876)<20.); };
+
+std::function<float()> Lambdas::Nj1DRljMin(Variation::ExpSyst expsyst, Variation::Var var)
+{
+    return [&, expsyst, var]()
+    {
+
+        if (not (www.lep_p4().size() > 1)) return false;
+
+        if (not (jetVar(expsyst, var,
+            [&]() { return www.jets_up_p4().size(); },
+            [&]() { return www.jets_dn_p4().size(); },
+            [&]() { return www.jets_p4().size(); },
+            [&]() { return www.jets_jerup_p4().size(); },
+            [&]() { return www.jets_jerdn_p4().size(); },
+            [&]() { return www.jets_jer_p4().size(); }
+            )() != 1 )) return false;
+
+        LV jet = jetVec(expsyst, var,
+            [&]() { return www.jets_up_p4()[0]; },
+            [&]() { return www.jets_dn_p4()[0]; },
+            [&]() { return www.jets_p4()[0]; },
+            [&]() { return www.jets_jerup_p4()[0]; },
+            [&]() { return www.jets_jerdn_p4()[0]; },
+            [&]() { return www.jets_jer_p4()[0]; }
+            )();
+
+        float drlj0 = RooUtil::Calc::DeltaR(www.lep_p4()[0], jet);
+        float drlj1 = RooUtil::Calc::DeltaR(www.lep_p4()[1], jet);
+        float mindrlj = drlj0 < drlj1 ? drlj0 : drlj1;
+        return mindrlj < 1.9;
+    };
+}
+
+std::function<float()> Lambdas::Nj1CRKinSel(Variation::ExpSyst expsyst, Variation::Var var)
+{
+    return [&, expsyst, var]()
+    {
+        if (not (www.Mll3L()  > 10.                    )) return false;
+        if (not (www.Mll3L1() > 10. or www.Mll3L1() < 0)) return false;
+        if (not (
+                   ((www.nSFOS() == 0) and
+                    jetVar(expsyst, var,
+                        [&]() { return www.met_up_pt()<30.; },
+                        [&]() { return www.met_dn_pt()<30.; },
+                        [&]() { return www.met_pt()<30.; },
+                        [&]() { return www.met_jerup_pt()<30.; },
+                        [&]() { return www.met_jerdn_pt()<30.; },
+                        [&]() { return www.met_jer_pt()<30.; }
+                        )()                                   
+                   )
+                   or
+                   ((www.nSFOS() == 1) and
+                    jetVar(expsyst, var,
+                        [&]() { return www.met_up_pt()<40.; },
+                        [&]() { return www.met_dn_pt()<40.; },
+                        [&]() { return www.met_pt()<40.; },
+                        [&]() { return www.met_jerup_pt()<40.; },
+                        [&]() { return www.met_jerdn_pt()<40.; },
+                        [&]() { return www.met_jer_pt()<40.; }
+                        )()                                   
+                   )
+                   or
+                   ((www.nSFOS() == 2) and
+                    jetVar(expsyst, var,
+                        [&]() { return www.met_up_pt()<55.; },
+                        [&]() { return www.met_dn_pt()<55.; },
+                        [&]() { return www.met_pt()<55.; },
+                        [&]() { return www.met_jerup_pt()<55.; },
+                        [&]() { return www.met_jerdn_pt()<55.; },
+                        [&]() { return www.met_jer_pt()<55.; }
+                        )()                                   
+                   )
+                    )) return false;
+        return true;
+    };
+}
+
+std::function<float()> Lambdas::isSSem = [&]() { return (www.lep_pdgId().size() > 1) and (www.lep_pdgId()[0] * www.lep_pdgId()[1] == 143) and (abs(www.lep_pdgId()[1]) == 13); };
+std::function<float()> Lambdas::isSSme = [&]() { return (www.lep_pdgId().size() > 1) and (www.lep_pdgId()[0] * www.lep_pdgId()[1] == 143) and (abs(www.lep_pdgId()[1]) == 11); };
 
 //_______________________________________________________________________________________________________
 // The trigger requirement for the 2016 was done in the following way

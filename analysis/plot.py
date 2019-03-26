@@ -33,7 +33,7 @@ from rooutil import plottery_wrapper as p
 
 # sig scale determines how much to scale your signal up by
 # default is set to 1
-if args.sig_scale < 0:
+if float(args.sig_scale) < 0:
     sig_scale = "auto"
 else:
     sig_scale = float(args.sig_scale)
@@ -139,6 +139,7 @@ if args.use_private:
     else:
         sig_fnames = [
             "{}/signal_private.root".format(input_dir),
+            # "{}/vh_private.root".format(input_dir),
             ]
 else:
     sig_fnames = ["{}/signal.root".format(input_dir)]
@@ -321,7 +322,6 @@ else:
     if args.order_by_purity:
         binorder.reverse()
         binlabels9binSR.reverse()
-    print bkg_fnames, sig_fnames
     p.plot_yields(
             fnames=bkg_fnames,
             sig_fnames=sig_fnames,
@@ -330,6 +330,99 @@ else:
             binlabels=binlabels9binSR,
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             output_name="yield_ordered" if args.order_by_purity else "yield",
+            legend_labels=legend_labels,
+            signal_labels=["WWW", "VH"],
+            donorm=False,
+            signal_scale=sig_scale,
+            hsuffix="__yield",
+            extraoptions={
+                "bkg_sort_method": "unsorted",
+                "legend_scalex": 2.8,
+                "legend_scaley": 0.8,
+                "lumi_value": lumi,
+                "print_yield": True,
+                "legend_ncolumns": 3,
+                "ratio_range": [0., 2.],
+                "ymax_scale": 1.3,
+                "blind": not args.draw_data, # BE CAREFUL!!!!!!!!!!!!!!!!!!
+                },
+            usercolors=histcolors,
+            )
+
+    #__________________________________________________________________________________
+    # Draw the money plot (the 3 bin Njet-1 category plot)
+    p.plot_yields(
+            fnames=bkg_fnames,
+            sig_fnames=sig_fnames,
+            data_fname="{}/data.root".format(input_dir),
+            regions=[ "EXSSeeNj1Full{}(1)".format(args.syst), "EXSSmeNj1Full{}(1)".format(args.syst), "EXSSemNj1Full{}(1)".format(args.syst), "EXSSmmNj1Full{}(1)".format(args.syst)],
+            binlabels=[ "ee", "me", "em", "mm"],
+            dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
+            output_name="yield_nj1",
+            legend_labels=legend_labels,
+            signal_labels=["WWW", "VH"],
+            donorm=False,
+            signal_scale=sig_scale,
+            hsuffix="__yield",
+            extraoptions={
+                "bkg_sort_method": "unsorted",
+                "legend_scalex": 2.8,
+                "legend_scaley": 0.8,
+                "lumi_value": lumi,
+                "print_yield": True,
+                "legend_ncolumns": 3,
+                "ratio_range": [0., 2.],
+                "ymax_scale": 1.3,
+                "blind": not args.draw_data, # BE CAREFUL!!!!!!!!!!!!!!!!!!
+                },
+            usercolors=histcolors,
+            )
+
+    #__________________________________________________________________________________
+    # Draw the money plot (the 3 bin Njet-1 category plot)
+    p.plot_yields(
+            fnames=bkg_fnames,
+            sig_fnames=sig_fnames,
+            data_fname="{}/data.root".format(input_dir),
+            regions=[ "EXCRSSeeNj1Full{}(1)".format(args.syst), "EXCRSSmeNj1Full{}(1)".format(args.syst), "EXCRSSemNj1Full{}(1)".format(args.syst), "EXCRSSmmNj1Full{}(1)".format(args.syst)],
+            binlabels=[ "ee", "me", "em", "mm"],
+            dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
+            output_name="yield_nj1_cr",
+            legend_labels=legend_labels,
+            signal_labels=["WWW", "VH"],
+            donorm=False,
+            signal_scale=sig_scale,
+            hsuffix="__yield",
+            extraoptions={
+                "bkg_sort_method": "unsorted",
+                "legend_scalex": 2.8,
+                "legend_scaley": 0.8,
+                "lumi_value": lumi,
+                "print_yield": True,
+                "legend_ncolumns": 3,
+                "ratio_range": [0., 2.],
+                "ymax_scale": 1.3,
+                "blind": False, # BE CAREFUL!!!!!!!!!!!!!!!!!!
+                },
+            usercolors=histcolors,
+            )
+
+    #__________________________________________________________________________________
+    # Draw the money plot (the 12 bin plot)
+    binorder=[ "{}{}(1)".format(x, args.syst) for x in binorder9binSR ]
+    if args.order_by_purity:
+        binorder.reverse()
+        binlabels9binSR.reverse()
+    binorder = binorder9binSR[:6] + ["EXSSeeNj1Full", "EXSSmeNj1Full", "EXSSemNj1Full", "EXSSmmNj1Full"] + binorder9binSR[6:]
+    binlabels12binSR = binlabels9binSR[:6] + [ "Nj1-ee", "Nj1-me", "Nj1-em", "Nj1-mm"] + binlabels9binSR[6:]
+    p.plot_yields(
+            fnames=bkg_fnames,
+            sig_fnames=sig_fnames,
+            data_fname="{}/data.root".format(input_dir),
+            regions=binorder,
+            binlabels=binlabels12binSR,
+            dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
+            output_name="yield12_ordered" if args.order_by_purity else "yield12",
             legend_labels=legend_labels,
             signal_labels=["WWW", "VH"],
             donorm=False,

@@ -5,6 +5,7 @@ cmsrel CMSSW_8_1_0
 cd CMSSW_8_1_0/src 
 cmsenv
 git clone https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsAnalysis/CombinedLimit
+git clone https://github.com/cms-analysis/CombineHarvester.git CombineHarvester
 cd HiggsAnalysis/CombinedLimit
 cd $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit
 git fetch origin
