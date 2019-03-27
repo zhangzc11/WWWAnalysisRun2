@@ -1,46 +1,4 @@
 #include "main.h"
-#include "/home/users/phchang/public_html/analysis/www/production/v5.1.4/wwwbabymaker/dilepbabymaker/LeptonScaleFactors.h"
-
-std::tuple<float, float> getCombinedTrigEffandError(
-        float e_l0,
-        float e_l1,
-        float e_t0,
-        float e_t1,
-        float d_l0,
-        float d_l1,
-        float d_t0,
-        float d_t1)
-{
-    bool scheme_that_i_think_is_correct = true;
-    if (scheme_that_i_think_is_correct)
-    {
-        float e_lt = e_l0 * e_t1;
-        float f_l0 = e_l0 > 0 ? d_l0 / e_l0 : 0;
-        float f_t1 = e_t1 > 0 ? d_t1 / e_t1 : 0;
-        float f_lt = sqrt(pow(f_l0, 2) + pow(f_t1, 2));
-        float d_lt = e_lt * f_lt;
-        float eff = e_lt;
-        float err = d_lt;
-        return make_tuple(eff, err);
-    }
-    else
-    {
-        float e_lt = e_l0 * e_t1;
-        float e_tl = e_t0 * e_l1;
-        float f_l0 = e_l0 > 0 ? d_l0 / e_l0 : 0;
-        float f_l1 = e_l1 > 0 ? d_l1 / e_l1 : 0;
-        float f_t0 = e_t0 > 0 ? d_t0 / e_t0 : 0;
-        float f_t1 = e_t1 > 0 ? d_t1 / e_t1 : 0;
-        float f_lt = sqrt(pow(f_l0, 2) + pow(f_t1, 2));
-        float f_tl = sqrt(pow(f_t0, 2) + pow(f_l1, 2));
-        float d_lt = e_lt * f_lt;
-        float d_tl = e_tl * f_tl;
-        float eff = e_lt + (1.0 - e_lt) * e_tl;
-        float err2 = pow(d_lt, 2) + pow(d_tl, 2) + pow((e_lt * e_tl) * sqrt(pow(f_lt, 2) + pow(f_tl, 2)), 2);
-        float err = sqrt(err2);
-        return make_tuple(eff, err);
-    }
-}
 
 //_______________________________________________________________________________________________________
 int main(int argc, char** argv)
