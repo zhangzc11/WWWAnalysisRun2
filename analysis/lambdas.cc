@@ -1125,6 +1125,13 @@ std::function<float()> Lambdas::Nj1CRKinSel(Variation::ExpSyst expsyst, Variatio
 std::function<float()> Lambdas::isSSem = [&]() { return (www.lep_pdgId().size() > 1) and (www.lep_pdgId()[0] * www.lep_pdgId()[1] == 143) and (abs(www.lep_pdgId()[1]) == 13); };
 std::function<float()> Lambdas::isSSme = [&]() { return (www.lep_pdgId().size() > 1) and (www.lep_pdgId()[0] * www.lep_pdgId()[1] == 143) and (abs(www.lep_pdgId()[1]) == 11); };
 
+std::function<float()> Lambdas::GammaCR = [&]()
+{
+    
+    if (not (www.met_pt() < 50.)) return false;
+    return true;
+};
+
 //_______________________________________________________________________________________________________
 // The trigger requirement for the 2016 was done in the following way
 // This was later moved to the VVVBabyMaker, and is no longer needed
@@ -1198,4 +1205,5 @@ bool passTrigger2016()
         return 0;
     }
 }
+
 

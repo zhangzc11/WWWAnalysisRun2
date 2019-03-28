@@ -2070,7 +2070,7 @@ void LoadAllBranches();
 extern wwwtree www;
 #endif
 
-namespace tas {
+namespace taswww {
   const int &run();
   const int &lumi();
   const unsigned long long &evt();

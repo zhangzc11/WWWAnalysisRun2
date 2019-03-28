@@ -8692,7 +8692,7 @@ void wwwtree::progress( int nEventsTotal, int nEventsChain ){
   }
 }
 
-namespace tas {
+namespace taswww {
 
 const int &run() { return www.run(); }
 const int &lumi() { return www.lumi(); }

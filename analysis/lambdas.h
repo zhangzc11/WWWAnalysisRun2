@@ -188,6 +188,9 @@ namespace Lambdas
     std::function<float()> Nj1DRljMin(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
     std::function<float()> Nj1CRKinSel(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
 
+    // Gamma CR
+    extern std::function<float()> GammaCR;
+
 }
 
 bool passTrigger2016();

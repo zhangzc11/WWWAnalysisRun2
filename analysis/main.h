@@ -9,6 +9,10 @@
 #include "scalefactors.h"
 #include "lambdas.h"
 
+#ifdef WITHCORE
+#include "CMS4Utils.h"
+#endif
+
 
 // #include "applicationregioncuts.h"
 // #include "basecuts.h"

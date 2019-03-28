@@ -740,6 +740,24 @@ int main(int argc, char** argv)
                 }
             );
 
+    ana.histograms.addVecHistogram("el_photon_pt" , 180 , 0. , 250 , [&]()
+            {
+                std::vector<float> rtn;
+                for (unsigned ilep = 0; ilep < www.lep_pdgId().size(); ++ilep)
+                    if (abs(www.lep_pdgId()[ilep]) == 11 and www.lep_motherIdSS()[ilep] == -3)
+                        rtn.push_back(www.lep_pt()[ilep]);
+                return rtn;
+            });
+
+    ana.histograms.addVecHistogram("el_MVA" , 180 , 5 , 8 , [&]()
+            {
+                std::vector<float> rtn;
+                for (unsigned ilep = 0; ilep < www.lep_pdgId().size(); ++ilep)
+                    if (abs(www.lep_pdgId()[ilep]) == 11 and www.lep_motherIdSS()[ilep] == -3)
+                        rtn.push_back(www.lep_MVA()[ilep]);
+                return rtn;
+            });
+
 
 //********************************************************************************
 //
@@ -1041,6 +1059,18 @@ int main(int argc, char** argv)
         ana.cutflow.addCutToLastActiveCut("EXCRSSmmNjLeq1"    , Lambdas::LeqOneJet30(Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("EXCRSSmmNj1KinSel" , Lambdas::Nj1CRKinSel(Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("EXCRSSmmNj1Full"   , Lambdas::HasZ_SS                                        , UNITY);
+
+        //************************************************************************************************************************************************************************************************
+        //
+        //
+        // Gamma CR
+        //
+        //
+        //************************************************************************************************************************************************************************************************
+
+        ana.cutflow.getCut("CutSRTrilep");
+        ana.cutflow.addCutToLastActiveCut("GammaCR", Lambdas::GammaCR, UNITY);
+
 
     };
 
@@ -1423,6 +1453,32 @@ int main(int argc, char** argv)
         // This magic "fill()" function will now go through all the cut nodes in the RooUtil::Cutflow and evaluate whether it passes the cut or not
         // And also fill histograms for all the booked histograms and fill all the book cutflows
         ana.cutflow.fill();
+
+        if (ana.cutflow.getCut("SRSSSideemFull").pass)
+        {
+            std::cout << std::endl;
+            std::cout <<  " www.run(): " << www.run() <<  " www.lumi(): " << www.lumi() <<  " www.evt(): " << www.evt() <<  std::endl;
+            std::cout <<  " www.CMS4path(): " << www.CMS4path() <<  " www.CMS4index(): " << www.CMS4index() <<  std::endl;
+            std::cout <<  " Lambdas::EventWeight(): " << Lambdas::EventWeight() <<  std::endl;
+            std::cout <<  " www.lep_pdgId()[0]: " << www.lep_pdgId()[0] <<  " www.lep_pdgId()[1]: " << www.lep_pdgId()[1] <<  std::endl;
+            std::cout <<  " www.lep_motherIdSS()[0]: " << www.lep_motherIdSS()[0] <<  " www.lep_motherIdSS()[1]: " << www.lep_motherIdSS()[1] <<  std::endl;
+            std::cout <<  " www.lep_convVeto()[0]: " << www.lep_convVeto()[0] <<  " www.lep_convVeto()[1]: " << www.lep_convVeto()[1] <<  std::endl;
+            std::cout <<  " www.lep_lostHits()[0]: " << www.lep_lostHits()[0] <<  " www.lep_lostHits()[1]: " << www.lep_lostHits()[1] <<  std::endl;
+
+#ifdef WITHCORE
+            cms4reader.open();
+            cms4reader.printLeptons();
+#endif
+
+        }
+
+        // if (ana.cutflow.getCut("SRSSmmFull").pass || ana.cutflow.getCut("SRSSemFull").pass || ana.cutflow.getCut("SRSSeeFull").pass)
+        // {
+        //     std::cout <<  " www.lep_pdgId()[0]: " << www.lep_pdgId()[0] <<  " www.lep_pdgId()[1]: " << www.lep_pdgId()[1] <<  std::endl;
+        //     std::cout <<  " www.lep_motherIdSS()[0]: " << www.lep_motherIdSS()[0] <<  " www.lep_motherIdSS()[1]: " << www.lep_motherIdSS()[1] <<  std::endl;
+        //     std::cout <<  " www.lep_convVeto()[0]: " << www.lep_convVeto()[0] <<  " www.lep_convVeto()[1]: " << www.lep_convVeto()[1] <<  std::endl;
+        //     std::cout <<  " www.lep_lostHits()[0]: " << www.lep_lostHits()[0] <<  " www.lep_lostHits()[1]: " << www.lep_lostHits()[1] <<  std::endl;
+        // }
 
         // // Must come after .fill() so that the cuts are all evaulated
         // if (eventlist.has(www.run(), www.lumi(), www.evt()))
