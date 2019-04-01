@@ -20,40 +20,78 @@ void CMS4Reader::printLeptons()
     std::cout << "*           Printing Leptons from CMS4            *" << std::endl;
     std::cout << "***************************************************" << std::endl;
 
+    std::cout <<  " cms3.genps_weight(): " << cms3.genps_weight() <<  std::endl;
     std::cout <<  " cms3.els_p4().size(): " << cms3.els_p4().size() <<  std::endl;
     std::cout <<  " cms3.els_etaSC().size(): " << cms3.els_etaSC().size() <<  std::endl;
 
     for (unsigned int elIdx = 0; elIdx < cms3.els_p4().size(); elIdx++)
     {
 
+        pair<int, int> motherId_genIdx = lepMotherID_v2(Lep(cms3.els_charge()[elIdx] * (-11), elIdx)); //don't forget the sign
+        if (motherId_genIdx.first != -3)
+            continue;
+
         std::cout << "Electron Index: " << elIdx << std::endl;
-        std::cout << " cms3.els_p4().at(elIdx).pt()                : " << cms3.els_p4().at(elIdx).pt()                << std::endl;
-        std::cout << " cms3.els_p4().at(elIdx).eta()               : " << cms3.els_p4().at(elIdx).eta()               << std::endl;
-        std::cout << " cms3.els_etaSC().at(elIdx)                  : " << cms3.els_etaSC().at(elIdx)                  << std::endl;
-        std::cout << " cms3.els_dxyPV().at(elIdx)                  : " << cms3.els_dxyPV().at(elIdx)                  << std::endl;
-        std::cout << " cms3.els_dzPV().at(elIdx)                   : " << cms3.els_dzPV().at(elIdx)                   << std::endl;
-        std::cout << " getMVAoutput(elIdx)                         : " << getMVAoutput(elIdx)                         << std::endl;
-        std::cout << " getMVAoutput(elIdx,true)                    : " << getMVAoutput(elIdx,true)                    << std::endl;
-        std::cout << " isMVAHZZNoIsofall17(elIdx,true)             : " << isMVAHZZNoIsofall17(elIdx,true)             << std::endl;
-        std::cout << " eleRelIso03EA(elIdx,2,true)                 : " << eleRelIso03EA(elIdx,2,true)                 << std::endl;
-        std::cout << " eleRelIso03EA(elIdx,2,false)                : " << eleRelIso03EA(elIdx,2,false)                << std::endl;
-        std::cout << " eleRelIso03EA(elIdx,4,true)                 : " << eleRelIso03EA(elIdx,4,true)                 << std::endl;
-        std::cout << " eleRelIso03EA(elIdx,4,false)                : " << eleRelIso03EA(elIdx,4,false)                << std::endl;
-        std::cout << " cms3.els_ip3d()[elIdx]                      : " << cms3.els_ip3d()[elIdx]                      << std::endl;
-        std::cout << " cms3.els_ip3derr()[elIdx]                   : " << cms3.els_ip3derr()[elIdx]                   << std::endl;
-        std::cout << " threeChargeAgree(elIdx)                     : " << threeChargeAgree(elIdx)                     << std::endl;
-        std::cout << " isMVAwp80NoIsofall17(elIdx,true)            : " << isMVAwp80NoIsofall17(elIdx,true)            << std::endl;
-        std::cout << " isTriggerSafenoIso_v1(elIdx)                : " << isTriggerSafenoIso_v1(elIdx)                << std::endl;
-        std::cout << " cms3.els_conv_vtx_flag().at(elIdx)          : " << cms3.els_conv_vtx_flag().at(elIdx)          << std::endl;
-        std::cout << " cms3.els_conv_vtx_prob().at(elIdx)          : " << cms3.els_conv_vtx_prob().at(elIdx)          << std::endl;
-        std::cout << " cms3.els_exp_innerlayers().at(elIdx)        : " << cms3.els_exp_innerlayers().at(elIdx)        << std::endl;
-        std::cout << " cms3.els_sigmaIEtaIEta_full5x5().at(elIdx)  : " << cms3.els_sigmaIEtaIEta_full5x5().at(elIdx)  << std::endl;
-        std::cout << " cms3.els_dEtaIn().at(elIdx)                 : " << cms3.els_dEtaIn().at(elIdx)                 << std::endl;
-        std::cout << " cms3.els_dPhiIn().at(elIdx)                 : " << cms3.els_dPhiIn().at(elIdx)                 << std::endl;
-        std::cout << " cms3.els_scSeedEta().at(elIdx)              : " << cms3.els_scSeedEta().at(elIdx)              << std::endl;
-        std::cout << " cms3.els_hOverE().at(elIdx)                 : " << cms3.els_hOverE().at(elIdx)                 << std::endl;
-        std::cout << " cms3.els_ecalEnergy().at(elIdx)             : " << cms3.els_ecalEnergy().at(elIdx)             << std::endl;
-        std::cout << " cms3.els_eOverPIn().at(elIdx)               : " << cms3.els_eOverPIn().at(elIdx)               << std::endl;
+        std::cout << " cms3.els_p4().at(elIdx).pt()                : " << cms3.els_p4().at(elIdx).pt()                  << std::endl;
+        std::cout << " cms3.els_p4().at(elIdx).eta()               : " << cms3.els_p4().at(elIdx).eta()                 << std::endl;
+        std::cout << " cms3.els_p4().at(elIdx).phi()               : " << cms3.els_p4().at(elIdx).phi()                 << std::endl;
+        std::cout << " cms3.els_etaSC().at(elIdx)                  : " << cms3.els_etaSC().at(elIdx)                    << std::endl;
+        std::cout << " cms3.els_dxyPV().at(elIdx)                  : " << cms3.els_dxyPV().at(elIdx)                    << std::endl;
+        std::cout << " cms3.els_dzPV().at(elIdx)                   : " << cms3.els_dzPV().at(elIdx)                     << std::endl;
+        std::cout << " getMVAoutput(elIdx)                         : " << getMVAoutput(elIdx)                           << std::endl;
+        std::cout << " getMVAoutput(elIdx,true)                    : " << getMVAoutput(elIdx,true)                      << std::endl;
+        std::cout << " isMVAHZZNoIsofall17(elIdx,true)             : " << isMVAHZZNoIsofall17(elIdx,true)               << std::endl;
+        std::cout << " els_VIDFall17V2NoIsoMvaValue().at(index)    : " << cms3.els_VIDFall17V2NoIsoMvaValue().at(elIdx) << std::endl;
+        float notraw = cms3.els_VIDFall17V2NoIsoMvaValue().at(elIdx);
+        if (notraw >  1.0-1.e-7) notraw =  1.0-1.e-7; // protect against inf, -inf due to FP rounding issues
+        if (notraw < -1.0+1.e-7) notraw = -1.0+1.e-7;
+        std::cout << " raw VIDFall17V2NoIsoMvaValue().at(index)    : " << -0.5*log((2.0/(notraw+1.))-1.0) << std::endl;
+        std::cout << " eleRelIso03EA(elIdx,2,true)                 : " << eleRelIso03EA(elIdx,2,true)                   << std::endl;
+        std::cout << " eleRelIso03EA(elIdx,2,false)                : " << eleRelIso03EA(elIdx,2,false)                  << std::endl;
+        std::cout << " eleRelIso03EA(elIdx,4,true)                 : " << eleRelIso03EA(elIdx,4,true)                   << std::endl;
+        std::cout << " eleRelIso03EA(elIdx,4,false)                : " << eleRelIso03EA(elIdx,4,false)                  << std::endl;
+        std::cout << " cms3.els_ip3d()[elIdx]                      : " << cms3.els_ip3d()[elIdx]                        << std::endl;
+        std::cout << " cms3.els_ip3derr()[elIdx]                   : " << cms3.els_ip3derr()[elIdx]                     << std::endl;
+        std::cout << " threeChargeAgree(elIdx)                     : " << threeChargeAgree(elIdx)                       << std::endl;
+        std::cout << " isMVAwp80NoIsofall17(elIdx,true)            : " << isMVAwp80NoIsofall17(elIdx,true)              << std::endl;
+        std::cout << " isTriggerSafenoIso_v1(elIdx)                : " << isTriggerSafenoIso_v1(elIdx)                  << std::endl;
+        std::cout << " cms3.els_conv_vtx_flag().at(elIdx)          : " << cms3.els_conv_vtx_flag().at(elIdx)            << std::endl;
+        std::cout << " cms3.els_conv_vtx_prob().at(elIdx)          : " << cms3.els_conv_vtx_prob().at(elIdx)            << std::endl;
+        std::cout << " cms3.els_exp_innerlayers().at(elIdx)        : " << cms3.els_exp_innerlayers().at(elIdx)          << std::endl;
+        std::cout << " cms3.els_sigmaIEtaIEta_full5x5().at(elIdx)  : " << cms3.els_sigmaIEtaIEta_full5x5().at(elIdx)    << std::endl;
+        std::cout << " cms3.els_dEtaIn().at(elIdx)                 : " << cms3.els_dEtaIn().at(elIdx)                   << std::endl;
+        std::cout << " cms3.els_dPhiIn().at(elIdx)                 : " << cms3.els_dPhiIn().at(elIdx)                   << std::endl;
+        std::cout << " cms3.els_scSeedEta().at(elIdx)              : " << cms3.els_scSeedEta().at(elIdx)                << std::endl;
+        std::cout << " cms3.els_hOverE().at(elIdx)                 : " << cms3.els_hOverE().at(elIdx)                   << std::endl;
+        std::cout << " cms3.els_ecalEnergy().at(elIdx)             : " << cms3.els_ecalEnergy().at(elIdx)               << std::endl;
+        std::cout << " cms3.els_eOverPIn().at(elIdx)               : " << cms3.els_eOverPIn().at(elIdx)                 << std::endl;
+
+        std::cout <<  " cms3.els_ckf_laywithmeas().at(elIdx): " << cms3.els_ckf_laywithmeas().at(elIdx) <<  std::endl;
+        std::cout <<  " cms3.els_sigmaIEtaIEta_full5x5().at(elIdx): " << cms3.els_sigmaIEtaIEta_full5x5().at(elIdx) <<  std::endl;
+        std::cout <<  " cms3.els_sigmaIPhiIPhi_full5x5().at(elIdx): " << cms3.els_sigmaIPhiIPhi_full5x5().at(elIdx) <<  std::endl;
+        std::cout <<  " 1.0-cms3.els_e1x5_full5x5().at(elIdx)/cms3.els_e5x5_full5x5().at(elIdx): " << 1.0-cms3.els_e1x5_full5x5().at(elIdx)/cms3.els_e5x5_full5x5().at(elIdx) <<  std::endl;
+        std::cout <<  " cms3.els_r9_full5x5().at(elIdx): " << cms3.els_r9_full5x5().at(elIdx) <<  std::endl;
+        std::cout <<  " cms3.els_etaSCwidth().at(elIdx): " << cms3.els_etaSCwidth().at(elIdx) <<  std::endl;
+        std::cout <<  " cms3.els_phiSCwidth().at(elIdx): " << cms3.els_phiSCwidth().at(elIdx) <<  std::endl;
+        std::cout <<  " cms3.els_hOverE().at(elIdx): " << cms3.els_hOverE().at(elIdx) <<  std::endl;
+        std::cout <<  " cms3.els_hOverE().at(elIdx)*cms3.els_ecalEnergy().at(elIdx)/cms3.els_eSC().at(elIdx): " << cms3.els_hOverE().at(elIdx)*cms3.els_ecalEnergy().at(elIdx)/cms3.els_eSC().at(elIdx) <<  std::endl;
+        std::cout <<  " cms3.els_eSCPresh().at(elIdx)/cms3.els_eSCRaw().at(elIdx): " << cms3.els_eSCPresh().at(elIdx)/cms3.els_eSCRaw().at(elIdx) <<  std::endl;
+        std::cout <<  " cms3.els_ckf_chi2().at(elIdx)/cms3.els_ckf_ndof().at(elIdx): " << cms3.els_ckf_chi2().at(elIdx)/cms3.els_ckf_ndof().at(elIdx) <<  std::endl;
+        std::cout <<  " cms3.els_chi2().at(elIdx)/cms3.els_ndof().at(elIdx): " << cms3.els_chi2().at(elIdx)/cms3.els_ndof().at(elIdx) <<  std::endl;
+        std::cout <<  " cms3.els_fbrem().at(elIdx): " << cms3.els_fbrem().at(elIdx) <<  std::endl;
+        std::cout <<  " cms3.els_eOverPIn().at(elIdx): " << cms3.els_eOverPIn().at(elIdx) <<  std::endl;
+        std::cout <<  " cms3.els_eOverPOut().at(elIdx): " << cms3.els_eOverPOut().at(elIdx) <<  std::endl;
+        std::cout <<  " ((cms3.els_ecalEnergy().at(elIdx)!=0&&cms3.els_p4In().at(elIdx).P()!=0)?1.0/cms3.els_ecalEnergy().at(elIdx)-1.0/cms3.els_p4In().at(elIdx).P():999999): " << ((cms3.els_ecalEnergy().at(elIdx)!=0&&cms3.els_p4In().at(elIdx).P()!=0)?1.0/cms3.els_ecalEnergy().at(elIdx)-1.0/cms3.els_p4In().at(elIdx).P():999999) <<  std::endl;
+        std::cout <<  " fabs(cms3.els_dEtaIn().at(elIdx)): " << fabs(cms3.els_dEtaIn().at(elIdx)) <<  std::endl;
+        std::cout <<  " fabs(cms3.els_dPhiIn().at(elIdx)): " << fabs(cms3.els_dPhiIn().at(elIdx)) <<  std::endl;
+        std::cout <<  " fabs(cms3.els_dEtaOut().at(elIdx)): " << fabs(cms3.els_dEtaOut().at(elIdx)) <<  std::endl;
+        std::cout <<  " cms3.els_p4().at(elIdx).pt(): " << cms3.els_p4().at(elIdx).pt() <<  std::endl;
+        std::cout <<  " (fabs(cms3.els_etaSC().at(elIdx))<1.479?1:0): " << (fabs(cms3.els_etaSC().at(elIdx))<1.479?1:0) <<  std::endl;
+        std::cout <<  " (fabs(cms3.els_etaSC().at(elIdx))>1.479?1:0): " << (fabs(cms3.els_etaSC().at(elIdx))>1.479?1:0) <<  std::endl;
+        std::cout <<  " cms3.els_etaSC().at(elIdx): " << cms3.els_etaSC().at(elIdx) <<  std::endl;
+        std::cout <<  " cms3.els_nlayers().at(elIdx): " << cms3.els_nlayers().at(elIdx) <<  std::endl;
+        std::cout <<  " cms3.els_exp_innerlayers().at(elIdx): " << cms3.els_exp_innerlayers().at(elIdx) <<  std::endl;
+        std::cout <<  " cms3.els_conv_vtx_prob().at(elIdx): " << cms3.els_conv_vtx_prob().at(elIdx) <<  std::endl;
 
         // std::cout << " cms3.els_conv_vtx_flag().at(elIdx)                 : " << cms3.els_conv_vtx_flag().at(elIdx)                 << std::endl;
         // std::cout << " cms3.els_isGsfCtfScPixChargeConsistent().at(elIdx) : " << cms3.els_isGsfCtfScPixChargeConsistent().at(elIdx) << std::endl;

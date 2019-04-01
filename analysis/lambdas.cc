@@ -600,6 +600,7 @@ std::function<float()> Lambdas::AlphaSVariation(Variation::Var var)
 // SR Dilepton selection
 std::function<float()> Lambdas::CutSRDilep = [&]()
     {
+        float mva_threshold = input.year == 2018 ? 7 : -1;
         // If the looper is looping over to do fake estimation, even though it is "SR dilep" selection require nTlep == 1, nLlep = 2. (i.e. AR)
         // This is to ensure that the histogram outputs will have the same name with proper fake estimation
         if (ana.do_fake_estimation)
@@ -1131,6 +1132,23 @@ std::function<float()> Lambdas::GammaCR = [&]()
     if (not (www.met_pt() < 50.)) return false;
     return true;
 };
+
+std::function<float()> Lambdas::KinSelNj1ee(Variation::ExpSyst expsyst, Variation::Var var)
+{
+    return [&, expsyst, var]()
+    {
+        if (not (
+                    jetVar(expsyst, var,
+                        [&]() { return www.MTmax()>80.; }, // TODO : Need to add to baby maker
+                        [&]() { return www.MTmax()>80.; }, // TODO
+                        [&]() { return www.MTmax()>80.; }, // TODO
+                        [&]() { return www.MTmax()>80.; }, // TODO
+                        [&]() { return www.MTmax()>80.; }, // TODO
+                        [&]() { return www.MTmax()>80.; }  // TODO
+                        )()                                  )) return false;
+        return true;
+    };
+}
 
 //_______________________________________________________________________________________________________
 // The trigger requirement for the 2016 was done in the following way

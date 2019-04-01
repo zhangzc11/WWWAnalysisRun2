@@ -6,6 +6,7 @@
 #include "IsolationTools.h"
 #include "Tools/JetCorrector.h"
 #include "MuonSelections.h"
+#include "SSSelections.h"
 #include "Config.h"
 #include "Base.h"
 

@@ -191,6 +191,7 @@ namespace Lambdas
     // Gamma CR
     extern std::function<float()> GammaCR;
 
+    std::function<float()> KinSelNj1ee(Variation::ExpSyst expsyst, Variation::Var var);
 }
 
 bool passTrigger2016();
