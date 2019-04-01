@@ -23,6 +23,7 @@ parser.add_argument('-P' , '--use_private_sig_sample' , dest='use_private'     ,
 parser.add_argument('-a' , '--sum_hists'              , dest='sum_hists'       , help='Sum all hists that passes filter'       , default=False                              , action='store_true') 
 parser.add_argument('-O' , '--output_name'            , dest='output_name'     , help='output file name when using sum_hists'  , default=None                                                    ) 
 parser.add_argument('-t' , '--syst'                   , dest='syst'            , help='Specific syst variation'                , default=""                                                      ) 
+parser.add_argument('-8' , '--do_grep'                , dest='do_grep'         , help='Use filter as pattern matching'         , default=False                              , action='store_true') 
 parser.add_argument('-p' , '--order_by_purity'        , dest='order_by_purity' , help='Rearrange 9 bin SR plot by S/B purity'  , default=False                              , action='store_true') 
 
 parser.add_argument('hist_filters', metavar='<histogram_names>=(e.g. SRSSmmPre__lep_pt1,SRSSmmNj2__lep_pt1)', type=str, nargs='*', help='patterns to use to filter histograms to dump')
@@ -264,6 +265,7 @@ if hist_filters:
                 # "yaxis_range": [0., 40.],
                 },
             do_sum=args.sum_hists,
+            dogrep=args.do_grep,
             output_name=args.output_name if args.sum_hists else None,
             usercolors=histcolors,
             )
