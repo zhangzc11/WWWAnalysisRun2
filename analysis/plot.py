@@ -30,7 +30,7 @@ parser.add_argument('hist_filters', metavar='<histogram_names>=(e.g. SRSSmmPre__
 
 args = parser.parse_args()
 
-from rooutil import plottery_wrapper as p
+import plottery_wrapper as p
 
 # sig scale determines how much to scale your signal up by
 # default is set to 1
