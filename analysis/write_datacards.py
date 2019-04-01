@@ -1,6 +1,6 @@
 #!/bin/env python
 
-from rooutil import rooutil as ru
+from rooutil import pyrootutil as ru
 from rooutil import datacard_writer as dw
 import glob
 import ROOT as r
