@@ -45,6 +45,9 @@ class CMS4Reader
 {
 public:
     TChain* cms4_tree;
+
+    void printParticle(int i);
+    void printPartonsWithCondition(TString message, std::function<bool(int)> pass=nullptr);
     void open();
     void printLeptons();
 };

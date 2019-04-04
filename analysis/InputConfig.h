@@ -37,6 +37,9 @@ public:
     // For 2016 baby version of v1.2.2 (the public result) WWW had LO cross-section instead of NLO
     bool do_www_xsec_scaling;
 
+    // Current file name that was used to determine the settings in this class
+    TString current_file_name;
+
     // baby type
     // There are several baby types
     // 1. WWW baby (same-sign + 3lepton pre selection applied. Most common type.)
@@ -59,10 +62,6 @@ public:
 
     // Print input file settings to be clear
     void print_input_settings();
-
-private:
-    // Current file name that was used to determine the settings in this class
-    TString current_file_name;
 
 };
 

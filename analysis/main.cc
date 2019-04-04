@@ -1454,7 +1454,7 @@ int main(int argc, char** argv)
         // And also fill histograms for all the booked histograms and fill all the book cutflows
         ana.cutflow.fill();
 
-        if (ana.cutflow.getCut("SRSSSideemFull").pass)
+        if (ana.cutflow.getCut("SRSSmmFull").pass)
         {
             std::cout << std::endl;
             std::cout <<  " www.run(): " << www.run() <<  " www.lumi(): " << www.lumi() <<  " www.evt(): " << www.evt() <<  std::endl;
@@ -1468,6 +1468,7 @@ int main(int argc, char** argv)
 #ifdef WITHCORE
             cms4reader.open();
             cms4reader.printLeptons();
+            cms4reader.printPartonsWithCondition("===All Particles===");
 #endif
 
         }

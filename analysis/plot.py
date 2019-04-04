@@ -262,7 +262,6 @@ if hist_filters:
                 "lumi_value": lumi,
                 "blind": not args.draw_data,
                 "ratio_range": [0., 2.],
-                # "yaxis_range": [0., 40.],
                 },
             do_sum=args.sum_hists,
             dogrep=args.do_grep,

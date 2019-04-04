@@ -126,6 +126,16 @@ std::function<float()> Lambdas::EventWeight = [&]()
         // n.b. In a lot of the cases, ffwgt = 1. cause this is only set when the looper is trying to estimate fake
         weight = www.evt_scale1fb() * purewgt * lumi * ffwgt;
 
+        //
+        // Xsec error corrections
+        //
+        if (input.current_file_name.Contains("wg_lnug_amcatnlo_1.root")
+                and input.baby_version.EqualTo("5.1.4")
+                and input.baby_type.EqualTo("Loose"))
+        {
+            weight *= 163. / 405.27;
+        }
+
         // Missing k-factor for v1.2.2 2016 baby ntuples (our first public result)
         if (input.do_www_xsec_scaling)
             weight *= 1.0384615385; // NLO cross section v. MadGraph cross section
@@ -600,13 +610,14 @@ std::function<float()> Lambdas::AlphaSVariation(Variation::Var var)
 // SR Dilepton selection
 std::function<float()> Lambdas::CutSRDilep = [&]()
     {
-        float mva_threshold = input.year == 2018 ? 7 : -1;
+        // Additional cuts for 2018 lepton IDs
+        float mva_threshold = input.year == 2018 ? 7 : -999;
         // If the looper is looping over to do fake estimation, even though it is "SR dilep" selection require nTlep == 1, nLlep = 2. (i.e. AR)
         // This is to ensure that the histogram outputs will have the same name with proper fake estimation
         if (ana.do_fake_estimation)
-            return (www.nVlep() == 2) * (www.nLlep() == 2) * (www.nTlep() == 1) * (www.lep_pt()[0]>25.) * (www.lep_pt()[1]>25.);
+            return (www.nVlep() == 2) * (www.nLlep() == 2) * (www.nTlep() == 1) * (www.lep_pt()[0]>25.) * (www.lep_pt()[1]>25.) * (fabs(www.lep_MVA()[0]) > mva_threshold) * (fabs(www.lep_MVA()[1]) > mva_threshold);
         else
-            return (www.nVlep() == 2) * (www.nLlep() == 2) * (www.nTlep() == 2) * (www.lep_pt()[0]>25.) * (www.lep_pt()[1]>25.);
+            return (www.nVlep() == 2) * (www.nLlep() == 2) * (www.nTlep() == 2) * (www.lep_pt()[0]>25.) * (www.lep_pt()[1]>25.) * (fabs(www.lep_MVA()[0]) > mva_threshold) * (fabs(www.lep_MVA()[1]) > mva_threshold);
     };
 
 //______________________________________________________________________________________________

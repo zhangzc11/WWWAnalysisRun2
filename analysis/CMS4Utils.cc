@@ -13,6 +13,39 @@ void CMS4Reader::open()
     createAndInitMVA("../wwwbabymaker/CORE", true, false, 80); // for electrons
 }
 
+void CMS4Reader::printParticle(int i)
+{
+    int pdgId = cms3.genps_id()[i];
+    int status = cms3.genps_status()[i];
+    int motherId = cms3.genps_id_simplemother()[i];
+    int grandmaId = cms3.genps_id_simplegrandma()[i];
+    LorentzVector p4 = cms3.genps_p4()[i];
+    printf("pdgId: %6d motherId: %6d grandmaId: %6d status: %4d p4.pt(): %8.3f p4.eta(): %8.3f p4.phi(): %8.3f p4.mass(): %8.3f p4.energy(): %8.3f\n",
+            pdgId, motherId, grandmaId, status, p4.pt(), p4.eta(), p4.phi(), p4.mass(), p4.energy());
+}
+
+void CMS4Reader::printPartonsWithCondition(TString message, std::function<bool(int)> pass)
+{
+    std::cout << message << std::endl;
+    for (unsigned int i = 0; i < genPart_idx.size(); ++i)
+    {
+        int idx = genPart_idx.at(i);
+        if (pass)
+        {
+            if (pass(idx))
+            {
+                std::cout <<  " i: " << i << " ";
+                printParticle(idx);
+            }
+        }
+        else
+        {
+            std::cout <<  " i: " << i << " ";
+            printParticle(idx);
+        }
+    }
+}
+
 void CMS4Reader::printLeptons()
 {
 
@@ -22,7 +55,7 @@ void CMS4Reader::printLeptons()
 
     std::cout <<  " cms3.genps_weight(): " << cms3.genps_weight() <<  std::endl;
     std::cout <<  " cms3.els_p4().size(): " << cms3.els_p4().size() <<  std::endl;
-    std::cout <<  " cms3.els_etaSC().size(): " << cms3.els_etaSC().size() <<  std::endl;
+    std::cout <<  " cms3.mus_p4().size(): " << cms3.mus_p4().size() <<  std::endl;
 
     for (unsigned int elIdx = 0; elIdx < cms3.els_p4().size(); elIdx++)
     {
@@ -32,6 +65,7 @@ void CMS4Reader::printLeptons()
             continue;
 
         std::cout << "Electron Index: " << elIdx << std::endl;
+        std::cout << " cms3.els_lost_pixelhits().at(elIdx)         : " << cms3.els_lost_pixelhits().at(elIdx)           << std::endl;
         std::cout << " cms3.els_p4().at(elIdx).pt()                : " << cms3.els_p4().at(elIdx).pt()                  << std::endl;
         std::cout << " cms3.els_p4().at(elIdx).eta()               : " << cms3.els_p4().at(elIdx).eta()                 << std::endl;
         std::cout << " cms3.els_p4().at(elIdx).phi()               : " << cms3.els_p4().at(elIdx).phi()                 << std::endl;
@@ -92,6 +126,23 @@ void CMS4Reader::printLeptons()
         std::cout <<  " cms3.els_nlayers().at(elIdx): " << cms3.els_nlayers().at(elIdx) <<  std::endl;
         std::cout <<  " cms3.els_exp_innerlayers().at(elIdx): " << cms3.els_exp_innerlayers().at(elIdx) <<  std::endl;
         std::cout <<  " cms3.els_conv_vtx_prob().at(elIdx): " << cms3.els_conv_vtx_prob().at(elIdx) <<  std::endl;
+
+        std::cout <<  " cms3.els_category().at(elIdx): " << cms3.els_category().at(elIdx) <<  std::endl;
+        std::cout <<  " cms3.els_charge().at(elIdx): " << cms3.els_charge().at(elIdx) <<  std::endl;
+        std::cout <<  " cms3.els_ckf_charge().at(elIdx): " << cms3.els_ckf_charge().at(elIdx) <<  std::endl;
+        std::cout <<  " cms3.els_ckf_laywithmeas().at(elIdx): " << cms3.els_ckf_laywithmeas().at(elIdx) <<  std::endl;
+        std::cout <<  " cms3.els_exp_innerlayers().at(elIdx): " << cms3.els_exp_innerlayers().at(elIdx) <<  std::endl;
+        std::cout <<  " cms3.els_exp_outerlayers().at(elIdx): " << cms3.els_exp_outerlayers().at(elIdx) <<  std::endl;
+        std::cout <<  " cms3.els_lostHits().at(elIdx): " << cms3.els_lostHits().at(elIdx) <<  std::endl;
+        std::cout <<  " cms3.els_lost_pixelhits().at(elIdx): " << cms3.els_lost_pixelhits().at(elIdx) <<  std::endl;
+        std::cout <<  " cms3.els_nlayers().at(elIdx): " << cms3.els_nlayers().at(elIdx) <<  std::endl;
+        std::cout <<  " cms3.els_nlayers3D().at(elIdx): " << cms3.els_nlayers3D().at(elIdx) <<  std::endl;
+        std::cout <<  " cms3.els_nlayersLost().at(elIdx): " << cms3.els_nlayersLost().at(elIdx) <<  std::endl;
+        std::cout <<  " cms3.els_sccharge().at(elIdx): " << cms3.els_sccharge().at(elIdx) <<  std::endl;
+        std::cout <<  " cms3.els_trk_charge().at(elIdx): " << cms3.els_trk_charge().at(elIdx) <<  std::endl;
+        std::cout <<  " cms3.els_type().at(elIdx): " << cms3.els_type().at(elIdx) <<  std::endl;
+        std::cout <<  " cms3.els_validHits().at(elIdx): " << cms3.els_validHits().at(elIdx) <<  std::endl;
+        std::cout <<  " cms3.els_valid_pixelhits().at(elIdx): " << cms3.els_valid_pixelhits().at(elIdx) <<  std::endl;
 
         // std::cout << " cms3.els_conv_vtx_flag().at(elIdx)                 : " << cms3.els_conv_vtx_flag().at(elIdx)                 << std::endl;
         // std::cout << " cms3.els_isGsfCtfScPixChargeConsistent().at(elIdx) : " << cms3.els_isGsfCtfScPixChargeConsistent().at(elIdx) << std::endl;
