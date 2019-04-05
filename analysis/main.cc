@@ -1454,24 +1454,24 @@ int main(int argc, char** argv)
         // And also fill histograms for all the booked histograms and fill all the book cutflows
         ana.cutflow.fill();
 
-        if (ana.cutflow.getCut("SRSSmmFull").pass)
-        {
-            std::cout << std::endl;
-            std::cout <<  " www.run(): " << www.run() <<  " www.lumi(): " << www.lumi() <<  " www.evt(): " << www.evt() <<  std::endl;
-            std::cout <<  " www.CMS4path(): " << www.CMS4path() <<  " www.CMS4index(): " << www.CMS4index() <<  std::endl;
-            std::cout <<  " Lambdas::EventWeight(): " << Lambdas::EventWeight() <<  std::endl;
-            std::cout <<  " www.lep_pdgId()[0]: " << www.lep_pdgId()[0] <<  " www.lep_pdgId()[1]: " << www.lep_pdgId()[1] <<  std::endl;
-            std::cout <<  " www.lep_motherIdSS()[0]: " << www.lep_motherIdSS()[0] <<  " www.lep_motherIdSS()[1]: " << www.lep_motherIdSS()[1] <<  std::endl;
-            std::cout <<  " www.lep_convVeto()[0]: " << www.lep_convVeto()[0] <<  " www.lep_convVeto()[1]: " << www.lep_convVeto()[1] <<  std::endl;
-            std::cout <<  " www.lep_lostHits()[0]: " << www.lep_lostHits()[0] <<  " www.lep_lostHits()[1]: " << www.lep_lostHits()[1] <<  std::endl;
+        // if (ana.cutflow.getCut("SRSSmmFull").pass)
+        // {
+        //     std::cout << std::endl;
+            // std::cout <<  " www.run(): " << www.run() <<  " www.lumi(): " << www.lumi() <<  " www.evt(): " << www.evt() <<  std::endl;
+            // std::cout <<  " www.CMS4path(): " << www.CMS4path() <<  " www.CMS4index(): " << www.CMS4index() <<  std::endl;
+            // std::cout <<  " Lambdas::EventWeight(): " << Lambdas::EventWeight() <<  std::endl;
+            // std::cout <<  " www.lep_pdgId()[0]: " << www.lep_pdgId()[0] <<  " www.lep_pdgId()[1]: " << www.lep_pdgId()[1] <<  std::endl;
+            // std::cout <<  " www.lep_motherIdSS()[0]: " << www.lep_motherIdSS()[0] <<  " www.lep_motherIdSS()[1]: " << www.lep_motherIdSS()[1] <<  std::endl;
+            // std::cout <<  " www.lep_convVeto()[0]: " << www.lep_convVeto()[0] <<  " www.lep_convVeto()[1]: " << www.lep_convVeto()[1] <<  std::endl;
+            // std::cout <<  " www.lep_lostHits()[0]: " << www.lep_lostHits()[0] <<  " www.lep_lostHits()[1]: " << www.lep_lostHits()[1] <<  std::endl;
 
 #ifdef WITHCORE
-            cms4reader.open();
-            cms4reader.printLeptons();
-            cms4reader.printPartonsWithCondition("===All Particles===");
+            // cms4reader.open();
+            // cms4reader.printLeptons();
+            // cms4reader.printPartonsWithCondition("===All Particles===");
 #endif
 
-        }
+        // }
 
         // if (ana.cutflow.getCut("SRSSmmFull").pass || ana.cutflow.getCut("SRSSemFull").pass || ana.cutflow.getCut("SRSSeeFull").pass)
         // {
