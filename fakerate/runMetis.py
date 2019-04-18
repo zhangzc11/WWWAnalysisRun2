@@ -98,14 +98,14 @@ for sample in samples:
 
 # Now submit the job!
 from rooutil import rooutil as ru
-ru.submit_metis(
-        job_tag=job_tag,                                 # The tag for this round of submission
-        sample_list=sample_list,                         # The list of samples to submitted (in this case, the sample list is "sample_name"_ss or _3l.)
-        samples_map=samples_map,                         # The dictionary of where the input locations are for a given sample
-        arguments_map=arguments_map,                     # The dictionary of whether to run same-sign or three-lepton
-        tar_files=["doAnalysis", "setup.sh", "histmap"], # Files/directories to transfer to working nodes
-        exec_script="metis.sh",                          # Executable to run for each condor job
-        hadoop_dirname="franalysis")                     # Where the output of the condor jobs will be (i.e. /hadoop/cms/store/user/${USER}/metis/"hadoop_dirname")
+# ru.submit_metis(
+#         job_tag=job_tag,                                 # The tag for this round of submission
+#         sample_list=sample_list,                         # The list of samples to submitted (in this case, the sample list is "sample_name"_ss or _3l.)
+#         samples_map=samples_map,                         # The dictionary of where the input locations are for a given sample
+#         arguments_map=arguments_map,                     # The dictionary of whether to run same-sign or three-lepton
+#         tar_files=["doAnalysis", "setup.sh", "histmap"], # Files/directories to transfer to working nodes
+#         exec_script="metis.sh",                          # Executable to run for each condor job
+#         hadoop_dirname="franalysis")                     # Where the output of the condor jobs will be (i.e. /hadoop/cms/store/user/${USER}/metis/"hadoop_dirname")
 
 import os
 

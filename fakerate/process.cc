@@ -40,9 +40,12 @@ int main(int argc, char** argv)
     const char* suffix = lepversion == 0 ? "_ss" : "_3l";
 
     // Hist map for retreiving histograms with fake rates and pileup reweights
-    RooUtil::HistMap purewgt("histmap/puw_2017.root:puw_central");
+    // RooUtil::HistMap purewgt("histmap/puw_2017.root:puw_central");
     RooUtil::HistMap qcd_mu(TString::Format("histmap/fakerate%s.root:Mu_ptcorretarolledcoarse_qcd_fakerate", suffix));
     RooUtil::HistMap qcd_el(TString::Format("histmap/fakerate%s.root:El_ptcorretarolledcoarse_qcd_fakerate", suffix));
+
+    // Setting years
+    int year = -1;
 
     // Variables
     float weight;
@@ -248,7 +251,13 @@ int main(int argc, char** argv)
     {
         // Preliminary calculations
         //float weight = fr.isData() ? 1 : fr.evt_scale1fb() * 41.3 * purewgt.eval(fr.nTrueInt());
-        weight = fr.isData() ? 1 : fr.evt_scale1fb() * 41.3;
+        if (looper.isNewFileInChain())
+        {
+            if (looper.getCurrentFileName().Contains("FR2016")) year = 2016;
+            if (looper.getCurrentFileName().Contains("FR2017")) year = 2017;
+            if (looper.getCurrentFileName().Contains("FR2018")) year = 2018;
+        }
+        weight = fr.isData() ? 1 : fr.evt_scale1fb() * (year == 2017 ? 41.3 : year == 2018 ? 59.74 : year == 2016 ? 35.9 : 0);
         presel = fr.firstgoodvertex() == 0;
         presel &= fr.Flag_AllEventFilters() > 0;
         presel &= fr.evt_passgoodrunlist() > 0;
@@ -260,10 +269,26 @@ int main(int argc, char** argv)
         muptcorr = fr.lep_pt()[muidx]*(1 + max((double) 0. , (double) fr.lep_relIso03EAv2Lep()[muidx]-muiso_thresh));
         elptcorr = fr.lep_pt()[elidx]*(1 + max((double) 0. , (double) fr.lep_relIso03EAv2Lep()[elidx]-eliso_thresh));
         ptcorr = abs(fr.lep_pdgId()[0]) == 13 ? muptcorr : elptcorr;
-        onemu_cuts      = (fr.nVlep() == 1) * (fr.lep_pt()[0] > 25.) * (fr.lep_pass_VVV_cutbased_tight()[0] == 1) * (abs(fr.lep_pdgId()[0])==13) * (fr.mc_HLT_SingleIsoMu17() > 0) * (jet_pt0>40.);
-        oneel_cuts      = (fr.nVlep() == 1) * (fr.lep_pt()[0] > 25.) * (fr.lep_pass_VVV_cutbased_tight()[0] == 1) * (abs(fr.lep_pdgId()[0])==11) * (fr.mc_HLT_SingleIsoEl23() > 0) * (jet_pt0>40.);
-        onemuloose_cuts = (fr.nVlep() == 1) * (fr.lep_pt()[0] > 25.) * (fr.lep_pass_VVV_cutbased_fo()[0] == 1) * (abs(fr.lep_pdgId()[0])==13) * (fr.mc_HLT_SingleIsoMu17() > 0) * (jet_pt0>40.);
-        oneelloose_cuts = (fr.nVlep() == 1) * (fr.lep_pt()[0] > 25.) * (fr.lep_pass_VVV_cutbased_fo()[0] == 1) * (abs(fr.lep_pdgId()[0])==11) * (fr.mc_HLT_SingleIsoEl23() > 0) * (jet_pt0>40.);
+        if (lepversion == 0)
+        {
+            onemu_cuts = (fr.nVlep() == 1) * (fr.lep_pt()[0] > 25.) * (fr.lep_pass_VVV_cutbased_tight()[0] == 1) * (abs(fr.lep_pdgId()[0])==13) * (fr.mc_HLT_SingleIsoMu17() > 0) * (jet_pt0>40.);
+            oneel_cuts = (fr.nVlep() == 1) * (fr.lep_pt()[0] > 25.) * (fr.lep_pass_VVV_cutbased_tight()[0] == 1) * (abs(fr.lep_pdgId()[0])==11) * (fr.mc_HLT_SingleIsoEl23() > 0) * (jet_pt0>40.);
+        }
+        else
+        {
+            onemu_cuts = (fr.nVlep() == 1) * (fr.lep_pt()[0] > 20.) * (fr.lep_pass_VVV_cutbased_3l_tight()[0] == 1) * (abs(fr.lep_pdgId()[0])==13) * (fr.mc_HLT_SingleIsoMu17() > 0) * (jet_pt0>40.);
+            oneel_cuts = (fr.nVlep() == 1) * (fr.lep_pt()[0] > 20.) * (fr.lep_pass_VVV_cutbased_3l_tight()[0] == 1) * (abs(fr.lep_pdgId()[0])==11) * (fr.mc_HLT_SingleIsoEl23() > 0) * (jet_pt0>40.);
+        }
+        if (lepversion == 0)
+        {
+            onemuloose_cuts = (fr.nVlep() == 1) * (fr.lep_pt()[0] > 25.) * (fr.lep_pass_VVV_cutbased_fo()[0] == 1) * (abs(fr.lep_pdgId()[0])==13) * (fr.mc_HLT_SingleIsoMu17() > 0) * (jet_pt0>40.);
+            oneelloose_cuts = (fr.nVlep() == 1) * (fr.lep_pt()[0] > 25.) * (fr.lep_pass_VVV_cutbased_fo()[0] == 1) * (abs(fr.lep_pdgId()[0])==11) * (fr.mc_HLT_SingleIsoEl23() > 0) * (jet_pt0>40.);
+        }
+        else
+        {
+            onemuloose_cuts = (fr.nVlep() == 1) * (fr.lep_pt()[0] > 20.) * (fr.lep_pass_VVV_cutbased_fo()[0] == 1) * (abs(fr.lep_pdgId()[0])==13) * (fr.mc_HLT_SingleIsoMu17() > 0) * (jet_pt0>40.);
+            oneelloose_cuts = (fr.nVlep() == 1) * (fr.lep_pt()[0] > 20.) * (fr.lep_pass_VVV_cutbased_fo()[0] == 1) * (abs(fr.lep_pdgId()[0])==11) * (fr.mc_HLT_SingleIsoEl23() > 0) * (jet_pt0>40.);
+        }
 
         cutflow.fill();
     }
