@@ -25,6 +25,8 @@ parser.add_argument('-O' , '--output_name'            , dest='output_name'     ,
 parser.add_argument('-t' , '--syst'                   , dest='syst'            , help='Specific syst variation'                , default=""                                                      ) 
 parser.add_argument('-8' , '--do_grep'                , dest='do_grep'         , help='Use filter as pattern matching'         , default=False                              , action='store_true') 
 parser.add_argument('-p' , '--order_by_purity'        , dest='order_by_purity' , help='Rearrange 9 bin SR plot by S/B purity'  , default=False                              , action='store_true') 
+parser.add_argument('-uw' , '--usewhatSR'             , dest='usewhatSR'       , help='what selecton for the nine bins'        , default=False, action='store_true') 
+parser.add_argument('-w' , '--whatSR'                 , dest='whatSR'          , help='what selecton for the nine bins'        , default=["SRSSeeFull", "SRSSemFull", "SRSSmmFull", "SRSSSideeeFull", "SRSSSideemFull", "SRSSSidemmFull", "SR0SFOSFull", "SR1SFOSFull", "SR2SFOSFull",], nargs='+') 
 
 parser.add_argument('hist_filters', metavar='<histogram_names>=(e.g. SRSSmmPre__lep_pt1,SRSSmmNj2__lep_pt1)', type=str, nargs='*', help='patterns to use to filter histograms to dump')
 
@@ -102,6 +104,9 @@ elif "2017" in input_dir:
 elif "2018" in input_dir:
     year = 2018
     lumi = 59.74
+elif "comb" in input_dir:
+    year = 6051
+    lumi = 136.9
 else:
     print "ERROR: from -i,--input_dir {}, I can't figure out which year it is. I don't see 2016, 2017 nor 2018 anywhere"
     sys.exit(1)
@@ -185,6 +190,8 @@ binorder9binSR=[
     "SR1SFOSFull",
     "SR2SFOSFull",
     ]
+if args.usewhatSR:
+    binorder9binSR = args.whatSR[0].split(',')
 binlabels9binSR=[
     "ee",
     "em",
