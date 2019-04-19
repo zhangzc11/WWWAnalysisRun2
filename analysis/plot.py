@@ -9,6 +9,7 @@ parser = argparse.ArgumentParser(description="Plot dumper from Run 2 WWW Analysi
 parser.add_argument('-i' , '--input_dir'              , dest='input_dir'       , help='input dir path (where hists are) NOTE: pattern MUST be hists/${BABY_VERSION}/${TAG}/', required=True      ) 
 parser.add_argument('-o' , '--output_dir'             , dest='output_dir'      , help='output dir path'                        , default='plots'                                                 ) 
 parser.add_argument('-n' , '--nbins'                  , dest='nbins'           , help='number of bins for the histograms'      , default=30                                                      ) 
+parser.add_argument('-xt', '--xaxis_title'            , dest='xaxis_title'     , help='X-axis title'                           , default=None                                                    ) 
 parser.add_argument('-y' , '--yaxis_range'            , dest='yaxis_range'     , help='Y-axis range set by user'               , default=None                                                    ) 
 parser.add_argument('-l' , '--yaxis_log'              , dest='yaxis_log'       , help='Y-axis set to log'                      , default=False                              , action='store_true') 
 parser.add_argument('-s' , '--sig_scale'              , dest='sig_scale'       , help='Signal scale'                           , default=1                                                       ) 
@@ -25,7 +26,7 @@ parser.add_argument('-O' , '--output_name'            , dest='output_name'     ,
 parser.add_argument('-t' , '--syst'                   , dest='syst'            , help='Specific syst variation'                , default=""                                                      ) 
 parser.add_argument('-8' , '--do_grep'                , dest='do_grep'         , help='Use filter as pattern matching'         , default=False                              , action='store_true') 
 parser.add_argument('-p' , '--order_by_purity'        , dest='order_by_purity' , help='Rearrange 9 bin SR plot by S/B purity'  , default=False                              , action='store_true') 
-parser.add_argument('-uw' , '--usewhatSR'             , dest='usewhatSR'       , help='what selecton for the nine bins'        , default=False, action='store_true') 
+parser.add_argument('-uw', '--usewhatSR'              , dest='usewhatSR'       , help='what selecton for the nine bins'        , default=False, action='store_true') 
 parser.add_argument('-w' , '--whatSR'                 , dest='whatSR'          , help='what selecton for the nine bins'        , default=["SRSSeeFull", "SRSSemFull", "SRSSmmFull", "SRSSSideeeFull", "SRSSSideemFull", "SRSSSidemmFull", "SR0SFOSFull", "SR1SFOSFull", "SR2SFOSFull",], nargs='+') 
 
 parser.add_argument('hist_filters', metavar='<histogram_names>=(e.g. SRSSmmPre__lep_pt1,SRSSmmNj2__lep_pt1)', type=str, nargs='*', help='patterns to use to filter histograms to dump')
@@ -269,6 +270,12 @@ if hist_filters:
                 "lumi_value": lumi,
                 "blind": not args.draw_data,
                 "ratio_range": [0., 2.],
+                "xaxis_label": args.xaxis_title if args.xaxis_title and not args.draw_data else "",
+                "xaxis_title_size": 0.05 if args.xaxis_title and not args.draw_data else None,
+                "xaxis_title_offset": 1.5 if args.xaxis_title and not args.draw_data else None,
+                "ratio_xaxis_title": args.xaxis_title if args.xaxis_title and args.draw_data else "",
+                "ratio_xaxis_title_size": 0.135 if args.xaxis_title and args.draw_data else None,
+                "ratio_xaxis_title_offset": 1.25 if args.xaxis_title and args.draw_data else None,
                 },
             do_sum=args.sum_hists,
             dogrep=args.do_grep,
