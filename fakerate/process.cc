@@ -133,12 +133,12 @@ int main(int argc, char** argv)
 
     for (auto& cut : regionsmu)
     {
-        for (unsigned int ii = 2 ; ii < ptcorr_bounds.size() - 1; ++ii)
+        for (unsigned int ii = 1 ; ii < ptcorr_bounds.size() - 1; ++ii)
         {
             for (unsigned int jj = 0 ; jj < eta_bounds.size() - 1; ++jj)
             {
                 cutflow.getCut(TString::Format("%s", cut.Data()));
-                cutflow.addCutToLastActiveCut(TString::Format("%sEta%dPt%d", cut.Data(), jj, ii - 2), [&, ii, jj]() { return RooUtil::Calc::calcBin2D(ptcorr_bounds, eta_bounds, muptcorr, fabs(fr.lep_eta()[0])) == int(ii + jj * (ptcorr_bounds.size() - 1)); } , [&]() { return 1.; } ) ;
+                cutflow.addCutToLastActiveCut(TString::Format("%sEta%dPt%d", cut.Data(), jj, ii - 1), [&, ii, jj]() { return RooUtil::Calc::calcBin2D(ptcorr_bounds, eta_bounds, muptcorr, fabs(fr.lep_eta()[0])) == int(ii + jj * (ptcorr_bounds.size() - 1)); } , [&]() { return 1.; } ) ;
             }
         }
     }
@@ -147,12 +147,12 @@ int main(int argc, char** argv)
 
     for (auto& cut : regionsel)
     {
-        for (unsigned int ii = 2 ; ii < ptcorr_bounds.size() - 1; ++ii)
+        for (unsigned int ii = 1 ; ii < ptcorr_bounds.size() - 1; ++ii)
         {
             for (unsigned int jj = 0 ; jj < eta_bounds.size() - 1; ++jj)
             {
                 cutflow.getCut(TString::Format("%s", cut.Data()));
-                cutflow.addCutToLastActiveCut(TString::Format("%sEta%dPt%d", cut.Data(), jj, ii - 2), [&, ii, jj]() { return RooUtil::Calc::calcBin2D(ptcorr_bounds, eta_bounds, elptcorr, fabs(fr.lep_eta()[0])) == int(ii + jj * (ptcorr_bounds.size() - 1)); } , [&]() { return 1.; } ) ;
+                cutflow.addCutToLastActiveCut(TString::Format("%sEta%dPt%d", cut.Data(), jj, ii - 1), [&, ii, jj]() { return RooUtil::Calc::calcBin2D(ptcorr_bounds, eta_bounds, elptcorr, fabs(fr.lep_eta()[0])) == int(ii + jj * (ptcorr_bounds.size() - 1)); } , [&]() { return 1.; } ) ;
             }
         }
     }

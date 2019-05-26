@@ -102,6 +102,14 @@ def grand_main(input_ntup_tag, analysis_tag, isSS):
         closure_plot("ElClosureTightNbgeq2__MT", "ElClosureTightNbgeq2Predict__MT")
         closure_plot("MuClosureTightNbgeq1__MT", "MuClosureTightNbgeq1Predict__MT")
         closure_plot("ElClosureTightNbgeq1__MT", "ElClosureTightNbgeq1Predict__MT")
+        closure_plot("ElClosureTightBVeto__Mll", "ElClosureTightBVetoPredict__Mll", 6)
+        closure_plot("ElClosureTightBVeto__MET", "ElClosureTightBVetoPredict__MET", 6)
+        closure_plot("ElClosureTightBVeto__MT", "ElClosureTightBVetoPredict__MT", 6)
+        closure_plot("ElClosureTightBVeto__ptcorr", "ElClosureTightBVetoPredict__ptcorr", 6)
+        closure_plot("MuClosureTightBVeto__Mll", "MuClosureTightBVetoPredict__Mll", 6)
+        closure_plot("MuClosureTightBVeto__MET", "MuClosureTightBVetoPredict__MET", 6)
+        closure_plot("MuClosureTightBVeto__MT", "MuClosureTightBVetoPredict__MT", 6)
+        closure_plot("MuClosureTightBVeto__ptcorr", "MuClosureTightBVetoPredict__ptcorr", 6)
 
     def get_bounds_from_source_file(keyword):
         line = [ y.strip() for y in open("process.cc").readlines() if keyword in y and "const std::vector<float>" in y ][0]
@@ -392,12 +400,15 @@ def grand_main(input_ntup_tag, analysis_tag, isSS):
         bgs_list = [h_vv , h_ttbar , h_dy , h_wjets, h_qcd_mu ],
         bgs_list = [h_vv , h_ttbar , h_dy , h_wjets, h_qcd_mu ] if "Mu" in histnames else [h_vv , h_ttbar , h_dy , h_wjets, h_qcd_el ]
 
+        legend_labels = ["VV", "t#bar{t}", "DY", "W", "QCD" ]
+
         # Plot them
         p.plot_hist(
                 bgs = bgs_list,
                 data = h_data.Clone("Data"),
                 colors = colors,
                 syst = None,
+                legend_labels=legend_labels,
                 options=alloptions)
 
         # Obtain the histogram again to return the object for further calculations
@@ -418,7 +429,7 @@ def grand_main(input_ntup_tag, analysis_tag, isSS):
 
         return h_ddqcd, h_data, h_bkg, h_qcd_mu, h_qcd_el, h_qcd_bc
 
-    def closure_plot(predict, estimate):
+    def closure_plot(predict, estimate, nbins=1):
 
         # Glob the file lists
         bkg_list_wjets  = [ output_dirpath+"/wj_ht.root" ]
@@ -431,10 +442,10 @@ def grand_main(input_ntup_tag, analysis_tag, isSS):
         h_ttbar_estimate = ru.get_summed_histogram(bkg_list_ttbar , estimate)
 
         # Set the names of the histograms
-        h_wjets_predict.SetName("W predict")
-        h_ttbar_predict.SetName("Top predict")
-        h_wjets_estimate.SetName("W estimate")
-        h_ttbar_estimate.SetName("Top estimate")
+        h_wjets_predict.SetTitle("W predict")
+        h_ttbar_predict.SetTitle("Top predict")
+        h_wjets_estimate.SetTitle("W estimate")
+        h_ttbar_estimate.SetTitle("Top estimate")
 
         # Color settings
         colors = [ 2005, 2001, ]
@@ -442,16 +453,16 @@ def grand_main(input_ntup_tag, analysis_tag, isSS):
         # Options
         alloptions= {
                     "ratio_range":[0.0,2.0],
-                    "nbins": 1,
+                    "nbins": nbins,
                     "autobin": False,
                     "legend_scalex": 1.8,
                     "legend_scaley": 1.1,
-                    "output_name": "plots/{}/{}/{}/closure/{}.pdf".format(input_ntup_tag, analysis_tag, "ss" if isSS else "3l", predict + "__" + estimate),
+                    "output_name": "plots/{}/{}/{}/closure/{}_nbins{}.pdf".format(input_ntup_tag, analysis_tag, "ss" if isSS else "3l", predict + "__" + estimate, nbins),
                     "bkg_sort_method": "unsorted",
                     "no_ratio": False,
                     "print_yield": False,
-                    "yaxis_log": True if "ptcorr" in predict else False,
-                    "legend_smart": False if "ptcorr" in predict else True,
+                    "yaxis_log": False,
+                    "legend_smart": True,
                     "lumi_value" : 41.3,
                     "legend_datalabel": "Estimate",
                     "yield_prec": 3,
@@ -459,11 +470,13 @@ def grand_main(input_ntup_tag, analysis_tag, isSS):
                     }
 
         # The bkg histogram list
-        bgs_list = [ h_ttbar_predict , h_wjets_predict, ]
+        bgs_list = [ h_ttbar_predict.Clone() , h_wjets_predict.Clone() ]
         #bgs_list = [ h_ttbar_predict  ]
 
         h_estimate = h_wjets_estimate.Clone("Estimate")
         h_estimate.Add(h_ttbar_estimate)
+
+        ll = [ "Top Predict", "W Predict" ]
 
         # Plot them
         p.plot_hist(
@@ -471,6 +484,7 @@ def grand_main(input_ntup_tag, analysis_tag, isSS):
                 data = h_estimate,
                 colors = colors,
                 syst = None,
+                legend_labels=ll,
                 options=alloptions)
 
     def mu_fakerate():

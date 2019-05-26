@@ -16,7 +16,7 @@ from errors import E
 
 input_ntup_tag = "FR2018_v5.1.5"
 analysis_tag = "test21"
-isSS = True
+isSS = False
 
 output_dirpath = "outputs/{}/{}/{}".format(input_ntup_tag, analysis_tag, "ss" if isSS else "3l")
 is2017 = "FR2017" in output_dirpath
@@ -234,6 +234,7 @@ def plot(histnames, ps=0, sf=None, sfqcd=None, output_suffix="", dd_qcd=None):
             d = E(data_bc, data_be)
             b = E(bkg_bc, bkg_be)
             n = d - b
+            print "HERE", histnames, d.err, n.val
             if d.err > n.val:
                 n.val = d.err
 
@@ -440,7 +441,7 @@ def fakerate(num, den, ps=0, sf=0, sferr=0, tfile=None, sfden=0, sfdenerr=0):
                "hist_line_none": True,
                "show_bkg_errors": True,
                "lumi_value" : lumi,
-               "yaxis_range": [0., 0.4] if "Mu" in num else [0., 1.2],
+               "yaxis_range": [0., 0.4] if "Mu" in num else ([0., 1.2] if isSS else [0., 1.8]),
                }
 
     bgs_list = [h_num_qcd_mu] if "Mu" in num else [h_num_qcd_esum]
