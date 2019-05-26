@@ -18,10 +18,8 @@ def grand_main(input_ntup_tag, analysis_tag, isSS):
     from array import array
     from pytable import Table
     import tabletex
-    from errors import E
 
     is2017 = "FR2017" in output_dirpath
-    lumi = 41.3 if is2017 else 59.74
 
     def main():
 
@@ -38,15 +36,13 @@ def grand_main(input_ntup_tag, analysis_tag, isSS):
         prescale_muHLT17 = get_prescale("TwoMuHLT17__Mll")
         prescale_elHLT23 = get_prescale("TwoElHLT23__Mll")
         print prescale_muHLT17 , prescale_elHLT23
-        prescale_muHLT17 = 1
-        prescale_elHLT23 = 1
+        #prescale_muHLT17 = 1
+        #prescale_elHLT23 = 1
 
-        plot("OneEl__nj"                  , prescale_elHLT23)
-        plot("OneEl__pt"                  , prescale_elHLT23)
-        plot("OneEl__MET"                 , prescale_elHLT23)
+        plot("OneEl__nj"                  , prescale_muHLT17)
+        plot("OneEl__pt"                  , prescale_muHLT17)
+        plot("OneEl__MET"                 , prescale_muHLT17)
         plot("OneElHighMET__MT"           , prescale_elHLT23)
-        plot("OneElHighPt__MT"            , prescale_elHLT23)
-        plot("OneElHighPt__MET"           , prescale_elHLT23)
         plot("OneElEWKCR__MT"             , prescale_elHLT23)
         plot("OneElEWKCR__MET"            , prescale_elHLT23)
         plot("OneElEWKCR__Nvtx"           , prescale_elHLT23)
@@ -55,7 +51,6 @@ def grand_main(input_ntup_tag, analysis_tag, isSS):
         plot("OneElTightMR__ptcorr"       , prescale_elHLT23)
 
         el_sf, el_sferr = ewksf("OneElEWKCR__MT", prescale_elHLT23)
-        # el_sf, el_sferr = ewksf_v2("OneElEWKCR__MT", prescale_elHLT23)
         plot("OneElMR__ptcorrvarbin"      , prescale_elHLT23, el_sf)
         plot("OneElTightMR__ptcorrvarbin" , prescale_elHLT23, el_sf)
         fakerate("OneElTightMR__pt"                    , "OneElMR__pt"                    , prescale_elHLT23 , el_sf , el_sferr, ofile)
@@ -68,8 +63,6 @@ def grand_main(input_ntup_tag, analysis_tag, isSS):
         plot("OneMu__pt"                  , prescale_muHLT17)
         plot("OneMu__MET"                 , prescale_muHLT17)
         plot("OneMuHighMET__MT"           , prescale_muHLT17)
-        plot("OneMuHighPt__MT"            , prescale_muHLT17)
-        plot("OneMuHighPt__MET"           , prescale_muHLT17)
         plot("OneMuEWKCR__MT"             , prescale_muHLT17)
         plot("OneMuEWKCR__MET"            , prescale_muHLT17)
         plot("OneMuEWKCR__Nvtx"           , prescale_muHLT17)
@@ -85,22 +78,8 @@ def grand_main(input_ntup_tag, analysis_tag, isSS):
 
         plot("OneMuEWKCREta0Pt3__MT"      , prescale_muHLT17)
         plot("OneMuEWKCREta1Pt3__MT"      , prescale_muHLT17)
-        plot("OneMuEWKCREta0Pt3__MET"     , prescale_muHLT17)
-        plot("OneMuHighMT__ptcorretarolled", prescale_muHLT17)
-        plot("OneMuHighMT__ptcorretarolledcoarse", prescale_muHLT17)
 
         mu_sf, mu_sferr = ewksf("OneMuEWKCR__MT", prescale_muHLT17)
-        # mu_sf, mu_sferr = ewksf_v2("OneMuHighMET__MT", prescale_muHLT17)
-        mu_sf1, mu_sferr1 = ewksf("OneMuEWKCREta0Pt1__MT", prescale_muHLT17)
-        mu_sf2, mu_sferr2 = ewksf("OneMuEWKCREta0Pt2__MT", prescale_muHLT17)
-        mu_sf3, mu_sferr3 = ewksf("OneMuEWKCREta0Pt3__MT", prescale_muHLT17)
-        mu_sf4, mu_sferr4 = ewksf_v2("OneMuHighPt__MT", prescale_muHLT17)
-        mu_sf, mu_sferr = ewksf("OneMuHighMT__MT", prescale_muHLT17)
-        mu_sf, mu_sferr = ewksf("OneMuHighMTEta1Pt3__MT", prescale_muHLT17)
-        plot("OneMuEta1Pt3__MT", prescale_muHLT17)
-        mu_sf, mu_sferr = ewksf_v2("OneMuEta1Pt3__MT", prescale_muHLT17)
-        # mu_sf = mu_sf3
-        # mu_sferr = mu_sferr3
         plot("OneMuMR__ptcorrvarbin"      , prescale_muHLT17)
         plot("OneMuTightMR__ptcorrvarbin" , prescale_muHLT17)
         fakerate("OneMuTightMR__pt"                    , "OneMuMR__pt"                    , prescale_muHLT17 , mu_sf , mu_sferr, ofile)
@@ -108,9 +87,6 @@ def grand_main(input_ntup_tag, analysis_tag, isSS):
         fakerate("OneMuTightMR__etavarbin"             , "OneMuMR__etavarbin"             , prescale_muHLT17 , mu_sf , mu_sferr, ofile)
         fakerate("OneMuTightMR__ptcorretarolled"       , "OneMuMR__ptcorretarolled"       , prescale_muHLT17 , mu_sf , mu_sferr, ofile)
         fakerate("OneMuTightMR__ptcorretarolledcoarse" , "OneMuMR__ptcorretarolledcoarse" , prescale_muHLT17 , mu_sf , mu_sferr, ofile)
-        fakerate("OneMuTightMR2__ptcorretarolledcoarse" , "OneMuMR2__ptcorretarolledcoarse" , prescale_muHLT17 , mu_sf , mu_sferr, ofile)
-        fakerate("OneMuTightMR2__ptcorretarolled" , "OneMuMR2__ptcorretarolled" , prescale_muHLT17 , mu_sf , mu_sferr, ofile)
-
         x = Table()
         x.add_column("type of scale factors", [ "Prescale $e$", "Prescale $\mu$", "$e$ prompt SF", "$\mu$ prompt SF", ])
         x.add_column("scale factor values", ["{:.2f}".format(prescale_elHLT23), "{:.2f}".format(prescale_muHLT17), "{:.2f} $\\pm$ {:.2f}".format(el_sf, el_sferr), "{:.2f} $\\pm$ {:.2f}".format(mu_sf, mu_sferr)])
@@ -203,85 +179,6 @@ def grand_main(input_ntup_tag, analysis_tag, isSS):
         h_d.Print("all")
         return h_d.GetBinContent(1), h_d.GetBinError(1)
 
-    def ewksf_v2(histname, ps=0):
-
-        _, h_d, h_b, h_qcd_mu, h_qcd_el, h_qcd_bc = plot(histname, ps)
-
-        mt = r.RooRealVar("mt", "mt", 0., 180.)
-        h_qcd = h_qcd_mu if "Mu" in histname else h_qcd_el
-        hdata = r.RooDataHist("data", "data", r.RooArgList(mt), h_d)
-        hqcd = r.RooDataHist("qcd", "qcd", r.RooArgList(mt), h_qcd)
-        hewk = r.RooDataHist("ewk", "ewk", r.RooArgList(mt), h_b)
-
-        hqcd_pdf = r.RooHistPdf("qcd_pdf", "qcd_pdf", r.RooArgSet(mt), hqcd)
-        hewk_pdf = r.RooHistPdf("ewk_pdf", "ewk_pdf", r.RooArgSet(mt), hewk)
-
-        nqcd = r.RooRealVar("nqcd", "number of QCD events", h_qcd.Integral(), h_qcd.Integral() * 0.5, h_qcd.Integral() * 1.5) # Allowed to float +/- 50% 
-        newk = r.RooRealVar("newk", "number of EWK events", h_b.Integral(), h_b.Integral() * 0.5, h_b.Integral() * 1.5) # Allowed to float +/- 50% 
-
-        model = r.RooAddPdf("model","model", r.RooArgList(hqcd_pdf, hewk_pdf), r.RooArgList(nqcd, newk))
-        fitres = model.fitTo(hdata, r.RooFit.SumW2Error(r.kFALSE), r.RooFit.Extended(), r.RooFit.Save(r.kTRUE))
-        print nqcd.getValV() / h_qcd.Integral(), nqcd.getError() / h_qcd.Integral()
-        print newk.getValV() / h_b.Integral(), newk.getError() / h_b.Integral()
-        plot(histname, ps, newk.getValV() / h_b.Integral(), nqcd.getValV() / h_qcd.Integral())
-        return newk.getValV() / h_b.Integral(), newk.getError() / h_b.Integral()
-
-        # from matplottery.utils import Hist1D
-        # from scipy.optimize import minimize
-        # import numpy as np
-
-        # hdata = Hist1D(h_d)
-        # hqcd = Hist1D(h_qcd_mu) if "Mu" in histname else Hist1D(h_qcd_el)
-        # hewk = Hist1D(h_b)
-
-        # def do_fit(hdata,hqcd,hewk):
-        #     def calc_chi2(args):
-        #         sf_qcd,sf_ewk = args
-        #         nbinlow,nbinhigh = None,None
-        #         # nbinlow,nbinhigh = 5,None
-        #         bgerrs = (sf_qcd*hqcd.errors)**2. + (sf_ewk*hewk.errors)**2.
-        #         bgcounts = (sf_qcd*hqcd.counts+sf_ewk*hewk.counts)
-        #         datacounts = hdata.counts
-        #         dataerrs = hdata.errors
-        #         # tot_err2 = (dataerrs**2. + bgerrs**2.)
-        #         tot_err2 = (dataerrs**2.) # ignore bg errs
-        #         tot_diff2 = (datacounts - bgcounts)**2.
-        #         # chi2 = np.log(np.sum(tot_diff2[nbinlow:nbinhigh]/tot_err2[nbinlow:nbinhigh]**.5))
-        #         chi2 = (np.sum(tot_diff2[nbinlow:nbinhigh]/tot_err2[nbinlow:nbinhigh]**.5))
-        #         return chi2
-
-        #     # triplets = []
-        #     # for x in np.arange(0.7,1.4,0.005):
-        #     #     for y in np.arange(0.7,1.4,0.005):
-        #     #         z = calc_chi2([x,y])
-        #     #         triplets.append([x,y,z])
-        #     # triplets = np.array(triplets)
-        #     # print triplets[triplets[:,2].argsort()]
-
-
-        #     res = minimize(calc_chi2,
-        #             [
-        #                 1.0,
-        #                 1.31,
-        #                 ],
-        #             # bounds=[
-        #             #     # (0.3,3.0),
-        #             #     # (0.8,1.5),
-        #             #     ],
-        #             # method="SLSQP",
-        #             method='Nelder-Mead',
-        #             # method='Powell',
-        #             tol=1e-6,
-        #             )
-        #     # print res
-        #     # print res.x
-        #     sf_qcd,sf_ewk = res.x
-        #     return [sf_qcd, sf_ewk]
-
-        # sf_qcd,sf_ewk = do_fit(hdata,hqcd,hewk)
-        # print sf_qcd
-        # print sf_ewk
-
     def get_fakerate_histograms(num, den, ps=0, sf=0):
 
         h_num, _, _, h_num_qcd_mu, h_num_qcd_el, h_num_qcd_bc = plot(num, ps, sf)
@@ -318,18 +215,6 @@ def grand_main(input_ntup_tag, analysis_tag, isSS):
         u.move_in_overflows(h_den_qcd_esum)
         h_num_qcd_esum.Divide(h_den_qcd_esum)
 
-        # Set any negative fake rate to 0 or some tiny number
-        def set_nonzero(h):
-            for i in xrange(1, h.GetNbinsX()+1):
-                bc = h.GetBinContent(i)
-                if bc < 0:
-                    h.SetBinContent(i, 1e-6)
-        set_nonzero(h_num)
-        set_nonzero(h_num_qcd_mu)
-        set_nonzero(h_num_qcd_esum)
-        set_nonzero(h_num_qcd_el)
-        set_nonzero(h_num_qcd_bc)
-
         return h_num, h_num_qcd_mu, h_num_qcd_esum, h_num_qcd_el, h_num_qcd_bc
 
     def add_systematics(h_num, herr_num):
@@ -343,7 +228,7 @@ def grand_main(input_ntup_tag, analysis_tag, isSS):
 
         # Obtain histograms
         h_num    , h_num_qcd_mu    , h_num_qcd_esum    , h_num_qcd_el    , h_num_qcd_bc    = get_fakerate_histograms(num , den , ps , sf)
-        herr_num , herr_num_qcd_mu , herr_num_qcd_esum , herr_num_qcd_el , herr_num_qcd_bc = get_fakerate_histograms(num , den , ps , sf-sferr)
+        herr_num , herr_num_qcd_mu , herr_num_qcd_esum , herr_num_qcd_el , herr_num_qcd_bc = get_fakerate_histograms(num , den , ps , sf+sferr)
 
         # Set data-driven QCD estimate systematics stemming from EWK SF uncertainty
         add_systematics(h_num, herr_num)
@@ -353,25 +238,20 @@ def grand_main(input_ntup_tag, analysis_tag, isSS):
                     "ratio_range":[0.0,2.0],
                     "nbins": 180,
                     "autobin": False,
-                    "legend_scalex": 0.8,
-                    "legend_scaley": 0.8,
+                    "legend_scalex": 1.8,
+                    "legend_scaley": 1.1,
                     "output_name": "plots/{}/{}/{}/fakerate/{}.pdf".format(input_ntup_tag, analysis_tag, "ss" if isSS else "3l", num+"__"+den),
                     "bkg_sort_method": "unsorted",
                     "no_ratio": False,
                     "print_yield": True,
                     "yield_prec": 3,
                     "draw_points": True,
-                    "hist_line_none": True,
-                    "show_bkg_errors": True,
-                    "lumi_value" : lumi,
+                    "lumi_value" : 41.3,
                     }
 
         bgs_list = [h_num_qcd_mu] if "Mu" in num else [h_num_qcd_esum]
         #bgs_list = [h_num_qcd_mu] if "Mu" in num else [h_num_qcd_esum, h_num_qcd_el, h_num_qcd_bc]
-        #sigs_list = [] if "Mu" in num else [h_num_qcd_el, h_num_qcd_bc]
-        sigs_list = []
-
-        h_num_qcd_esum.Print("all")
+        sigs_list = [] if "Mu" in num else [h_num_qcd_el, h_num_qcd_bc]
 
         # Special label handling instance for pt-eta rolled out case
         histname = num.split("__")[1]
@@ -394,8 +274,6 @@ def grand_main(input_ntup_tag, analysis_tag, isSS):
                 data = h_num,
                 #data = None,
                 syst = None,
-                colors=[2001],
-                legend_labels=["QCD(#mu)"] if "Mu" in num else ["QCD(e)"],
                 options=alloptions)
 
         if tfile:
@@ -431,7 +309,7 @@ def grand_main(input_ntup_tag, analysis_tag, isSS):
                     else:
                         create_varbin(data_fakerate, "ptcorrcoarse_bounds", "eta_bounds", 0.01, "closure").Write()
 
-    def plot(histnames, ps=0, sf=0, sfqcd=0):
+    def plot(histnames, ps=0, sf=0):
 
         # Glob the file lists
     #    bkg_list_wjets  = glob.glob(output_dirpath+"/WJetsToLNu_Tune*.root")
@@ -484,10 +362,6 @@ def grand_main(input_ntup_tag, analysis_tag, isSS):
             h_dy     .Scale(sf)
             h_ttbar  .Scale(sf)
             h_vv     .Scale(sf)
-        if sfqcd > 0:
-            h_qcd_mu.Scale(sfqcd)
-            h_qcd_el.Scale(sfqcd)
-            h_qcd_bc.Scale(sfqcd)
 
         # If the data needs some additional correction for the prescale
         if ps > 0:
@@ -506,43 +380,17 @@ def grand_main(input_ntup_tag, analysis_tag, isSS):
                     "output_name": "plots/{}/{}/{}/plot/{}.pdf".format(input_ntup_tag, analysis_tag, "ss" if isSS else "3l", histnames),
                     "bkg_sort_method": "unsorted",
                     "no_ratio": False,
-                    "print_yield": True,
+                    "print_yield": False,
                     "yaxis_log": True if "ptcorr" in histnames else False,
-                    #"yaxis_log": False,
                     #"yaxis_log": False,
                     "divide_by_bin_width": True,
                     "legend_smart": False if "ptcorr" in histnames else True,
-                    "lumi_value" : lumi,
+                    "lumi_value" : 41.3,
                     }
 
         # The bkg histogram list
         bgs_list = [h_vv , h_ttbar , h_dy , h_wjets, h_qcd_mu ],
         bgs_list = [h_vv , h_ttbar , h_dy , h_wjets, h_qcd_mu ] if "Mu" in histnames else [h_vv , h_ttbar , h_dy , h_wjets, h_qcd_el ]
-
-        legend_labels = ["VV", "t#bar{t}", "DY", "W", "QCD(#mu)"] if "Mu" in histnames else ["VV", "t#bar{t}", "DY", "W", "QCD(e)"]
-
-        # # For 2018 merge the last two bins in the central
-        # if "ptcorretarolledcoarse" in histnames:
-        #     def merge_4_5(h):
-        #         bc4 = h.GetBinContent(4)
-        #         bc5 = h.GetBinContent(5)
-        #         be4 = h.GetBinError(4)
-        #         be5 = h.GetBinError(5)
-        #         nb = E(bc4, be4) + E(bc5, be5)
-        #         nbc = nb.val
-        #         nbe = nb.err
-        #         h.SetBinContent(4, nbc)
-        #         h.SetBinError(4, nbe)
-        #         h.SetBinContent(5, nbc)
-        #         h.SetBinError(5, nbe)
-        #     merge_4_5(h_vv)
-        #     merge_4_5(h_ttbar)
-        #     merge_4_5(h_dy)
-        #     merge_4_5(h_wjets)
-        #     merge_4_5(h_qcd_mu)
-        #     merge_4_5(h_qcd_el)
-        #     merge_4_5(h_qcd_bc)
-        #     merge_4_5(h_data)
 
         # Plot them
         p.plot_hist(
@@ -550,7 +398,6 @@ def grand_main(input_ntup_tag, analysis_tag, isSS):
                 data = h_data.Clone("Data"),
                 colors = colors,
                 syst = None,
-                legend_labels=legend_labels,
                 options=alloptions)
 
         # Obtain the histogram again to return the object for further calculations
@@ -605,7 +452,7 @@ def grand_main(input_ntup_tag, analysis_tag, isSS):
                     "print_yield": False,
                     "yaxis_log": True if "ptcorr" in predict else False,
                     "legend_smart": False if "ptcorr" in predict else True,
-                    "lumi_value" : lumi,
+                    "lumi_value" : 41.3,
                     "legend_datalabel": "Estimate",
                     "yield_prec": 3,
                     "print_yield": True,
@@ -670,7 +517,7 @@ def grand_main(input_ntup_tag, analysis_tag, isSS):
                     "print_yield": True,
                     "yield_prec": 3,
                     "draw_points": True,
-                    "lumi_value" : lumi,
+                    "lumi_value" : 41.3,
                     "legend_datalabel" : "W+t#bar{t}"
                     }
 
@@ -726,7 +573,7 @@ def grand_main(input_ntup_tag, analysis_tag, isSS):
                     "print_yield": True,
                     "yield_prec": 3,
                     "draw_points": True,
-                    "lumi_value" : lumi,
+                    "lumi_value" : 41.3,
                     "legend_datalabel" : "W+t#bar{t}"
                     }
 
@@ -797,7 +644,7 @@ def grand_main(input_ntup_tag, analysis_tag, isSS):
                     "print_yield": True,
                     "yield_prec": 3,
                     "draw_points": True,
-                    "lumi_value" : lumi,
+                    "lumi_value" : 41.3,
                     "legend_datalabel": "W+t#bar{t}",
                     }
 
@@ -854,7 +701,7 @@ def grand_main(input_ntup_tag, analysis_tag, isSS):
                     "print_yield": True,
                     "yield_prec": 3,
                     "draw_points": True,
-                    "lumi_value" : lumi,
+                    "lumi_value" : 41.3,
                     "legend_datalabel": "W+t#bar{t}",
                     }
 
@@ -867,18 +714,7 @@ def grand_main(input_ntup_tag, analysis_tag, isSS):
                 syst = None,
                 options=alloptions)
 
-    # ewksf("OneMuEWKCR__MT", 1)
-    # mu1, _ = ewksf("OneMuEWKCREta0Pt1__MT", 1)
-    # mu2, _ = ewksf("OneMuEWKCREta0Pt2__MT", 1)
-    # mu3, _ = ewksf("OneMuEWKCREta0Pt3__MT", 1)
-    # print mu1, mu2, mu3
     main()
-    # prescale_muHLT17 = get_prescale("TwoMuHLT17__Mll")
-    # prescale_elHLT23 = get_prescale("TwoElHLT23__Mll")
-    # ewksf_v2("OneMuHighMET__MT", prescale_muHLT17)
-    # print ewksf("OneMuHighMET__MT", prescale_muHLT17)
-    # ewksf_v2("OneElHighMET__MT", prescale_elHLT23)
-    # print ewksf("OneElHighMET__MT", prescale_elHLT23)
 
 if __name__ == "__main__":
 
@@ -909,7 +745,7 @@ if __name__ == "__main__":
     grand_main(input_ntup_tag, analysis_tag, isSS=True)
 
     # Then run the three-lepton fake rate studies
-    # grand_main(input_ntup_tag, analysis_tag, isSS=False)
+    grand_main(input_ntup_tag, analysis_tag, isSS=False)
 
     print ""
     print ""
