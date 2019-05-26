@@ -85,6 +85,27 @@ export COREDIR=$PWD/CORE/
 echo ">>> ./doAnalysis ${INPUTFILENAMES} output.root ${BABYMODE}"
 ./doAnalysis ${INPUTFILENAMES} output.root ${BABYMODE}
 
+function lsroot {
+    if [ -z $1 ];then
+        echo "USAGE: lsroot rootfile"
+    fi
+    MACRONAME=$(mktemp stupid_numbers_XXXXXXXXX)
+    MACRO=/tmp/${MACRONAME}.C
+    for item in $*; do
+        echo "{ TFile* f = new TFile(\"$item\"); f->ls(); }" > $MACRO
+        root -l -b -q $MACRO
+    done
+    rm $MACRONAME
+}
+export -f lsroot
+
+STR=$(lsroot output.root | grep filename | awk '{print $3}')
+STR=${STR/.root/ }
+STR=${STR/Root__/ }
+STR=${STR/filename_/ }
+STR=$(echo $STR | awk '{print $1}')
+cp -v output.root ${STR}.root
+
 ###################################################################################################
 # ProjectMetis/CondorTask specific (Copying files over to hadoop)
 ###################################################################################################
@@ -133,6 +154,7 @@ else
                 if [ $INDEX -lt 1 ]; then
                     echo gfal-copy -p -f -t 4200 --verbose file://`pwd`/${OUTPUTFILE} gsiftp://gftp.t2.ucsd.edu/${OUTPUTDIR}/${OUTPUTNAME}_${IFILE}.root --checksum ADLER32
                     gfal-copy -p -f -t 4200 --verbose file://`pwd`/${OUTPUTFILE} gsiftp://gftp.t2.ucsd.edu/${OUTPUTDIR}/${OUTPUTNAME}_${IFILE}.root --checksum ADLER32
+                    gfal-copy -p -f -t 4200 --verbose file://`pwd`/${STR}.root gsiftp://gftp.t2.ucsd.edu/${OUTPUTDIR}/${STR}.root --checksum ADLER32
                 else
                     echo gfal-copy -p -f -t 4200 --verbose file://`pwd`/${OUTPUTFILE} gsiftp://gftp.t2.ucsd.edu/${OUTPUTDIR}/${OUTPUTNAME}_${IFILE}_${INDEX}.root --checksum ADLER32
                     gfal-copy -p -f -t 4200 --verbose file://`pwd`/${OUTPUTFILE} gsiftp://gftp.t2.ucsd.edu/${OUTPUTDIR}/${OUTPUTNAME}_${IFILE}_${INDEX}.root --checksum ADLER32
