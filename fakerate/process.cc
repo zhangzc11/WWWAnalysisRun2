@@ -42,8 +42,10 @@ int main(int argc, char** argv)
     // Hist map for retreiving histograms with fake rates and pileup reweights
     RooUtil::HistMap purewgt2017("histmap/puw_2017.root:puw_central");
     RooUtil::HistMap purewgt2018("histmap/puw_2018.root:puw_central");
-    RooUtil::HistMap qcd_mu(TString::Format("histmap/fakerate%s.root:Mu_ptcorretarolledcoarse_qcd_fakerate", suffix));
-    RooUtil::HistMap qcd_el(TString::Format("histmap/fakerate%s.root:El_ptcorretarolledcoarse_qcd_fakerate", suffix));
+    RooUtil::HistMap qcd_mu(TString::Format("histmap/fakerate_2017%s.root:Mu_ptcorretarolledcoarse_qcd_fakerate", suffix));
+    RooUtil::HistMap qcd_el(TString::Format("histmap/fakerate_2017%s.root:El_ptcorretarolledcoarse_qcd_fakerate", suffix));
+    RooUtil::HistMap qcd_mu2018(TString::Format("histmap/fakerate_2018%s.root:Mu_ptcorretarolled_qcd_fakerate", suffix));
+    RooUtil::HistMap qcd_el2018(TString::Format("histmap/fakerate_2018%s.root:El_ptcorretarolled_qcd_fakerate", suffix));
 
     // Setting years
     int year = -1;
@@ -358,7 +360,7 @@ int main(int argc, char** argv)
     cutflow.getCut("MuClosureTight");
     cutflow.addCutToLastActiveCut("MuClosureTightNbgeq1"        , [&]() { return fr.nb() >= 1                                                                                                   ; } , [&]() { return 1.                                                 ; } ) ;
     cutflow.getCut("MuClosureLoose");
-    cutflow.addCutToLastActiveCut("MuClosureTightPredict"       , [&]() { return 1                                                                                                              ; } , [&]() { return qcd_mu.eval(muptcorr , fabs(fr.lep_eta()[muidx]))  ; } ) ;
+    cutflow.addCutToLastActiveCut("MuClosureTightPredict"       , [&]() { return 1                                                                                                              ; } , [&]() { return (year == 2017 ? qcd_mu.eval(muptcorr , fabs(fr.lep_eta()[muidx])) : qcd_mu2018.eval(muptcorr , fabs(fr.lep_eta()[muidx])))  ; } ) ;
     cutflow.getCut("MuClosureTightPredict");
     cutflow.addCutToLastActiveCut("MuClosureTightBVetoPredict"  , [&]() { return fr.nb() == 0                                                                                                   ; } , [&]() { return 1                                                  ; } ) ;
     cutflow.getCut("MuClosureTightPredict");
@@ -399,7 +401,7 @@ int main(int argc, char** argv)
     cutflow.getCut("ElClosureTight");
     cutflow.addCutToLastActiveCut("ElClosureTightNbgeq1"        , [&]() { return fr.nb() >= 1                                                                                                   ; } , [&]() { return 1.                                                 ; } ) ;
     cutflow.getCut("ElClosureLoose");
-    cutflow.addCutToLastActiveCut("ElClosureTightPredict"       , [&]() { return 1                                                                                                              ; } , [&]() { return qcd_el.eval(elptcorr, fabs(fr.lep_eta()[elidx]))   ; } ) ;
+    cutflow.addCutToLastActiveCut("ElClosureTightPredict"       , [&]() { return 1                                                                                                              ; } , [&]() { return (year == 2017 ? qcd_el.eval(elptcorr, fabs(fr.lep_eta()[elidx])) : qcd_el2018.eval(elptcorr, fabs(fr.lep_eta()[elidx])))   ; } ) ;
     cutflow.getCut("ElClosureTightPredict");
     cutflow.addCutToLastActiveCut("ElClosureTightBVetoPredict"  , [&]() { return fr.nb() == 0                                                                                                   ; } , [&]() { return 1                                                  ; } ) ;
     cutflow.getCut("ElClosureTightPredict");
@@ -515,8 +517,8 @@ int main(int argc, char** argv)
         }
         else
         {
-            onemuloose_cuts = (fr.nVlep() == 1) * (fr.lep_pt()[0] > 20.) * (fr.lep_pass_VVV_cutbased_fo()[0] == 1) * (abs(fr.lep_pdgId()[0])==13) * (fr.mc_HLT_SingleIsoMu17() > 0) * (jet_pt0>40.);
-            oneelloose_cuts = (fr.nVlep() == 1) * (fr.lep_pt()[0] > 20.) * (fr.lep_pass_VVV_cutbased_fo()[0] == 1) * (abs(fr.lep_pdgId()[0])==11) * (fr.mc_HLT_SingleIsoEl23() > 0) * (jet_pt0>40.);
+            onemuloose_cuts = (fr.nVlep() == 1) * (fr.lep_pt()[0] > 20.) * (fr.lep_pass_VVV_cutbased_3l_fo()[0] == 1) * (abs(fr.lep_pdgId()[0])==13) * (fr.mc_HLT_SingleIsoMu17() > 0) * (jet_pt0>40.);
+            oneelloose_cuts = (fr.nVlep() == 1) * (fr.lep_pt()[0] > 20.) * (fr.lep_pass_VVV_cutbased_3l_fo()[0] == 1) * (abs(fr.lep_pdgId()[0])==11) * (fr.mc_HLT_SingleIsoEl23() > 0) * (jet_pt0>40.);
         }
 
         cutflow.fill();

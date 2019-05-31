@@ -9,7 +9,7 @@
 #
 ################
 # The following defines the tag for this round of submission (change it every time you submit)
-job_tag = "test21"
+job_tag = "test24"
 
 #_____________________________________________________________________________________________
 # Job tag and output hadoop path
