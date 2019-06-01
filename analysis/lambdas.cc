@@ -102,7 +102,8 @@ std::function<float()> Lambdas::EventWeight = [&]()
             // Primarily the fake-factor will be applied to the data events
             // When we are at this point where the do_fake_estimation = true and we're running over background samples
             // then, it means that we're trying to do "ewk" subtraction (i.e. subtracting prompt contamination in AR)
-            if (input.is_bkg && !www.bkgtype().EqualTo("fakes")) ffwgt *= -1; // subtracting non-fakes
+            // if (input.is_bkg && !www.bkgtype().EqualTo("fakes")) ffwgt *= -1; // subtracting non-fakes
+            if (input.is_bkg && !www.bkgtype().EqualTo("fakes")) ffwgt *=  0; // do not subtract non-fakes
             if (input.is_bkg &&  www.bkgtype().EqualTo("fakes")) ffwgt *=  0; // do not subtract fakes
         }
 
@@ -611,7 +612,7 @@ std::function<float()> Lambdas::AlphaSVariation(Variation::Var var)
 std::function<float()> Lambdas::CutSRDilep = [&]()
     {
         // Additional cuts for 2018 lepton IDs
-        float mva_threshold = input.year == 2018 ? 7 : -999;
+        float mva_threshold = input.year == 2018 ? 7 : -1;
         // If the looper is looping over to do fake estimation, even though it is "SR dilep" selection require nTlep == 1, nLlep = 2. (i.e. AR)
         // This is to ensure that the histogram outputs will have the same name with proper fake estimation
         if (ana.do_fake_estimation)

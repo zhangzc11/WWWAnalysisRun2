@@ -757,6 +757,16 @@ int main(int argc, char** argv)
                         rtn.push_back(www.lep_MVA()[ilep]);
                 return rtn;
             });
+    ana.histograms.addVecHistogram("el_MVA_2017" , 180 , 0.95 , 1 , [&]()
+            {
+                std::vector<float> rtn;
+                for (unsigned ilep = 0; ilep < www.lep_pdgId().size(); ++ilep)
+                    // if (abs(www.lep_pdgId()[ilep]) == 11 and www.lep_motherIdSS()[ilep] == -3)
+                    //     rtn.push_back(www.lep_MVA()[ilep]);
+                    if (abs(www.lep_pdgId()[ilep]) == 11)
+                        rtn.push_back(www.lep_MVA()[ilep]);
+                return rtn;
+            });
 
 
 //********************************************************************************
@@ -1428,7 +1438,11 @@ int main(int argc, char** argv)
         // If a new file was opened after "looper.nextEvent" was called configure the sample dependent settings in class InputConfig;
         if (ana.looper.isNewFileInChain())
         {
+            std::cout << "new file in chain" << std::endl;
             input.determine_input_settings(ana.looper.getCurrentFileName(), ana.input_tree_name);
+            if (input.year == 2016) fakerates.load2016(); // Not properly implemented
+            if (input.year == 2017) fakerates.load2017();
+            if (input.year == 2018) fakerates.load2018();
         }
 
         // If splitting jobs are requested then determine whether to process the event or not based on remainder

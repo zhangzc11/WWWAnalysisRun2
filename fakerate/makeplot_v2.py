@@ -16,7 +16,7 @@ from errors import E
 
 input_ntup_tag = "FR2018_v5.1.5"
 analysis_tag = "test24"
-isSS = False
+isSS = True
 
 output_dirpath = "outputs/{}/{}/{}".format(input_ntup_tag, analysis_tag, "ss" if isSS else "3l")
 is2017 = "FR2017" in output_dirpath
@@ -513,6 +513,17 @@ def fakerate(num, den, ps=0, sf=0, sferr=0, tfile=None, sfden=0, sfdenerr=0):
         elif histname == "ptcorretarolled":
             create_varbin(data_fakerate, "ptcorr_bounds", "eta_bounds").Write()
             create_varbin(qcd_fakerate, "ptcorr_bounds", "eta_bounds").Write()
+            # Closure 3l mu 51% 3l el 1% ss mu 33% ss el 3% (1.51, 0.994, 1.329, 0.978)
+            if channel == "Mu":
+                if isSS:
+                    create_varbin(data_fakerate, "ptcorr_bounds", "eta_bounds", 0.14, "closure").Write()
+                else:
+                    create_varbin(data_fakerate, "ptcorr_bounds", "eta_bounds", 0.56, "closure").Write()
+            elif channel == "El":
+                if isSS:
+                    create_varbin(data_fakerate, "ptcorr_bounds", "eta_bounds", 0.29, "closure").Write()
+                else:
+                    create_varbin(data_fakerate, "ptcorr_bounds", "eta_bounds", 0.11, "closure").Write()
         elif histname == "ptcorretarolledcoarse":
             create_varbin(data_fakerate, "ptcorrcoarse_bounds", "eta_bounds").Write()
             create_varbin(qcd_fakerate, "ptcorrcoarse_bounds", "eta_bounds").Write()

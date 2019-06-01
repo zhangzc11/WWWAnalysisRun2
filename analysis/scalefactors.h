@@ -219,6 +219,33 @@ class FakeRates
         RooUtil::HistMap* histmap_fr_3l_el_closure;
         RooUtil::HistMap* histmap_fr_3l_mu_closure;
 
+        RooUtil::HistMap* histmap_2016_fr_ss_el;
+        RooUtil::HistMap* histmap_2016_fr_ss_mu;
+        RooUtil::HistMap* histmap_2016_fr_3l_el;
+        RooUtil::HistMap* histmap_2016_fr_3l_mu;
+        RooUtil::HistMap* histmap_2016_fr_ss_el_closure;
+        RooUtil::HistMap* histmap_2016_fr_ss_mu_closure;
+        RooUtil::HistMap* histmap_2016_fr_3l_el_closure;
+        RooUtil::HistMap* histmap_2016_fr_3l_mu_closure;
+
+        RooUtil::HistMap* histmap_2017_fr_ss_el;
+        RooUtil::HistMap* histmap_2017_fr_ss_mu;
+        RooUtil::HistMap* histmap_2017_fr_3l_el;
+        RooUtil::HistMap* histmap_2017_fr_3l_mu;
+        RooUtil::HistMap* histmap_2017_fr_ss_el_closure;
+        RooUtil::HistMap* histmap_2017_fr_ss_mu_closure;
+        RooUtil::HistMap* histmap_2017_fr_3l_el_closure;
+        RooUtil::HistMap* histmap_2017_fr_3l_mu_closure;
+
+        RooUtil::HistMap* histmap_2018_fr_ss_el;
+        RooUtil::HistMap* histmap_2018_fr_ss_mu;
+        RooUtil::HistMap* histmap_2018_fr_3l_el;
+        RooUtil::HistMap* histmap_2018_fr_3l_mu;
+        RooUtil::HistMap* histmap_2018_fr_ss_el_closure;
+        RooUtil::HistMap* histmap_2018_fr_ss_mu_closure;
+        RooUtil::HistMap* histmap_2018_fr_3l_el_closure;
+        RooUtil::HistMap* histmap_2018_fr_3l_mu_closure;
+
         const float muiso_ss_thresh = 0.03;
         const float eliso_ss_thresh = 0.03;
         const float muiso_3l_thresh = 0.07;
@@ -226,14 +253,41 @@ class FakeRates
 
         FakeRates()
         {
-            histmap_fr_ss_el = new RooUtil::HistMap("scalefactors/fakerate_ss.root:El_ptcorretarolledcoarse_data_fakerate");
-            histmap_fr_ss_mu = new RooUtil::HistMap("scalefactors/fakerate_ss.root:Mu_ptcorretarolledcoarse_data_fakerate");
-            histmap_fr_3l_el = new RooUtil::HistMap("scalefactors/fakerate_3l.root:El_ptcorretarolledcoarse_data_fakerate");
-            histmap_fr_3l_mu = new RooUtil::HistMap("scalefactors/fakerate_3l.root:Mu_ptcorretarolledcoarse_data_fakerate");
-            histmap_fr_ss_el_closure = new RooUtil::HistMap("scalefactors/fakerate_ss.root:El_ptcorretarolledcoarse_data_fakerateclosure");
-            histmap_fr_ss_mu_closure = new RooUtil::HistMap("scalefactors/fakerate_ss.root:Mu_ptcorretarolledcoarse_data_fakerateclosure");
-            histmap_fr_3l_el_closure = new RooUtil::HistMap("scalefactors/fakerate_3l.root:El_ptcorretarolledcoarse_data_fakerateclosure");
-            histmap_fr_3l_mu_closure = new RooUtil::HistMap("scalefactors/fakerate_3l.root:Mu_ptcorretarolledcoarse_data_fakerateclosure");
+            histmap_fr_ss_el = 0;
+            histmap_fr_ss_mu = 0;
+            histmap_fr_3l_el = 0;
+            histmap_fr_3l_mu = 0;
+            histmap_fr_ss_el_closure = 0;
+            histmap_fr_ss_mu_closure = 0;
+            histmap_fr_3l_el_closure = 0;
+            histmap_fr_3l_mu_closure = 0;
+
+            histmap_2016_fr_ss_el = 0;
+            histmap_2016_fr_ss_mu = 0;
+            histmap_2016_fr_3l_el = 0;
+            histmap_2016_fr_3l_mu = 0;
+            histmap_2016_fr_ss_el_closure = 0;
+            histmap_2016_fr_ss_mu_closure = 0;
+            histmap_2016_fr_3l_el_closure = 0;
+            histmap_2016_fr_3l_mu_closure = 0;
+
+            histmap_2017_fr_ss_el = 0;
+            histmap_2017_fr_ss_mu = 0;
+            histmap_2017_fr_3l_el = 0;
+            histmap_2017_fr_3l_mu = 0;
+            histmap_2017_fr_ss_el_closure = 0;
+            histmap_2017_fr_ss_mu_closure = 0;
+            histmap_2017_fr_3l_el_closure = 0;
+            histmap_2017_fr_3l_mu_closure = 0;
+
+            histmap_2018_fr_ss_el = 0;
+            histmap_2018_fr_ss_mu = 0;
+            histmap_2018_fr_3l_el = 0;
+            histmap_2018_fr_3l_mu = 0;
+            histmap_2018_fr_ss_el_closure = 0;
+            histmap_2018_fr_ss_mu_closure = 0;
+            histmap_2018_fr_3l_el_closure = 0;
+            histmap_2018_fr_3l_mu_closure = 0;
         }
 
         ~FakeRates()
@@ -246,6 +300,67 @@ class FakeRates
             delete histmap_fr_ss_mu_closure;
             delete histmap_fr_3l_el_closure;
             delete histmap_fr_3l_mu_closure;
+        }
+
+        void load2016()
+        {
+            load2017();
+            // if (not histmap_2016_fr_ss_el        ) histmap_2016_fr_ss_el         = new RooUtil::HistMap("scalefactors/fakerate_ss.root:El_ptcorretarolledcoarse_data_fakerate");
+            // if (not histmap_2016_fr_ss_mu        ) histmap_2016_fr_ss_mu         = new RooUtil::HistMap("scalefactors/fakerate_ss.root:Mu_ptcorretarolledcoarse_data_fakerate");
+            // if (not histmap_2016_fr_3l_el        ) histmap_2016_fr_3l_el         = new RooUtil::HistMap("scalefactors/fakerate_3l.root:El_ptcorretarolledcoarse_data_fakerate");
+            // if (not histmap_2016_fr_3l_mu        ) histmap_2016_fr_3l_mu         = new RooUtil::HistMap("scalefactors/fakerate_3l.root:Mu_ptcorretarolledcoarse_data_fakerate");
+            // if (not histmap_2016_fr_ss_el_closure) histmap_2016_fr_ss_el_closure = new RooUtil::HistMap("scalefactors/fakerate_ss.root:El_ptcorretarolledcoarse_data_fakerateclosure");
+            // if (not histmap_2016_fr_ss_mu_closure) histmap_2016_fr_ss_mu_closure = new RooUtil::HistMap("scalefactors/fakerate_ss.root:Mu_ptcorretarolledcoarse_data_fakerateclosure");
+            // if (not histmap_2016_fr_3l_el_closure) histmap_2016_fr_3l_el_closure = new RooUtil::HistMap("scalefactors/fakerate_3l.root:El_ptcorretarolledcoarse_data_fakerateclosure");
+            // if (not histmap_2016_fr_3l_mu_closure) histmap_2016_fr_3l_mu_closure = new RooUtil::HistMap("scalefactors/fakerate_3l.root:Mu_ptcorretarolledcoarse_data_fakerateclosure");
+            // histmap_fr_ss_el         = histmap_2016_fr_ss_el;
+            // histmap_fr_ss_mu         = histmap_2016_fr_ss_mu;
+            // histmap_fr_3l_el         = histmap_2016_fr_3l_el;
+            // histmap_fr_3l_mu         = histmap_2016_fr_3l_mu;
+            // histmap_fr_ss_el_closure = histmap_2016_fr_ss_el_closure;
+            // histmap_fr_ss_mu_closure = histmap_2016_fr_ss_mu_closure;
+            // histmap_fr_3l_el_closure = histmap_2016_fr_3l_el_closure;
+            // histmap_fr_3l_mu_closure = histmap_2016_fr_3l_mu_closure;
+        }
+
+        void load2017()
+        {
+            if (not histmap_2017_fr_ss_el        ) histmap_2017_fr_ss_el         = new RooUtil::HistMap("scalefactors/fakerate_2017_ss.root:El_ptcorretarolledcoarse_data_fakerate");
+            if (not histmap_2017_fr_ss_mu        ) histmap_2017_fr_ss_mu         = new RooUtil::HistMap("scalefactors/fakerate_2017_ss.root:Mu_ptcorretarolledcoarse_data_fakerate");
+            if (not histmap_2017_fr_3l_el        ) histmap_2017_fr_3l_el         = new RooUtil::HistMap("scalefactors/fakerate_2017_3l.root:El_ptcorretarolledcoarse_data_fakerate");
+            if (not histmap_2017_fr_3l_mu        ) histmap_2017_fr_3l_mu         = new RooUtil::HistMap("scalefactors/fakerate_2017_3l.root:Mu_ptcorretarolledcoarse_data_fakerate");
+            if (not histmap_2017_fr_ss_el_closure) histmap_2017_fr_ss_el_closure = new RooUtil::HistMap("scalefactors/fakerate_2017_ss.root:El_ptcorretarolledcoarse_data_fakerateclosure");
+            if (not histmap_2017_fr_ss_mu_closure) histmap_2017_fr_ss_mu_closure = new RooUtil::HistMap("scalefactors/fakerate_2017_ss.root:Mu_ptcorretarolledcoarse_data_fakerateclosure");
+            if (not histmap_2017_fr_3l_el_closure) histmap_2017_fr_3l_el_closure = new RooUtil::HistMap("scalefactors/fakerate_2017_3l.root:El_ptcorretarolledcoarse_data_fakerateclosure");
+            if (not histmap_2017_fr_3l_mu_closure) histmap_2017_fr_3l_mu_closure = new RooUtil::HistMap("scalefactors/fakerate_2017_3l.root:Mu_ptcorretarolledcoarse_data_fakerateclosure");
+            histmap_fr_ss_el         = histmap_2017_fr_ss_el;
+            histmap_fr_ss_mu         = histmap_2017_fr_ss_mu;
+            histmap_fr_3l_el         = histmap_2017_fr_3l_el;
+            histmap_fr_3l_mu         = histmap_2017_fr_3l_mu;
+            histmap_fr_ss_el_closure = histmap_2017_fr_ss_el_closure;
+            histmap_fr_ss_mu_closure = histmap_2017_fr_ss_mu_closure;
+            histmap_fr_3l_el_closure = histmap_2017_fr_3l_el_closure;
+            histmap_fr_3l_mu_closure = histmap_2017_fr_3l_mu_closure;
+        }
+
+        void load2018()
+        {
+            if (not histmap_2018_fr_ss_el        ) histmap_2018_fr_ss_el         = new RooUtil::HistMap("scalefactors/fakerate_2018_ss.root:El_ptcorretarolled_data_fakerate");
+            if (not histmap_2018_fr_ss_mu        ) histmap_2018_fr_ss_mu         = new RooUtil::HistMap("scalefactors/fakerate_2018_ss.root:Mu_ptcorretarolled_data_fakerate");
+            if (not histmap_2018_fr_3l_el        ) histmap_2018_fr_3l_el         = new RooUtil::HistMap("scalefactors/fakerate_2018_3l.root:El_ptcorretarolled_data_fakerate");
+            if (not histmap_2018_fr_3l_mu        ) histmap_2018_fr_3l_mu         = new RooUtil::HistMap("scalefactors/fakerate_2018_3l.root:Mu_ptcorretarolled_data_fakerate");
+            if (not histmap_2018_fr_ss_el_closure) histmap_2018_fr_ss_el_closure = new RooUtil::HistMap("scalefactors/fakerate_2018_ss.root:El_ptcorretarolled_data_fakerateclosure");
+            if (not histmap_2018_fr_ss_mu_closure) histmap_2018_fr_ss_mu_closure = new RooUtil::HistMap("scalefactors/fakerate_2018_ss.root:Mu_ptcorretarolled_data_fakerateclosure");
+            if (not histmap_2018_fr_3l_el_closure) histmap_2018_fr_3l_el_closure = new RooUtil::HistMap("scalefactors/fakerate_2018_3l.root:El_ptcorretarolled_data_fakerateclosure");
+            if (not histmap_2018_fr_3l_mu_closure) histmap_2018_fr_3l_mu_closure = new RooUtil::HistMap("scalefactors/fakerate_2018_3l.root:Mu_ptcorretarolled_data_fakerateclosure");
+            histmap_fr_ss_el         = histmap_2018_fr_ss_el;
+            histmap_fr_ss_mu         = histmap_2018_fr_ss_mu;
+            histmap_fr_3l_el         = histmap_2018_fr_3l_el;
+            histmap_fr_3l_mu         = histmap_2018_fr_3l_mu;
+            histmap_fr_ss_el_closure = histmap_2018_fr_ss_el_closure;
+            histmap_fr_ss_mu_closure = histmap_2018_fr_ss_mu_closure;
+            histmap_fr_3l_el_closure = histmap_2018_fr_3l_el_closure;
+            histmap_fr_3l_mu_closure = histmap_2018_fr_3l_mu_closure;
         }
 
         int getFakeLepIndex()
