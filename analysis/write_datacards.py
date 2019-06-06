@@ -127,6 +127,39 @@ def write_datacard_nj1():
 
 #________________________________________________________________________________________________________________________________________
 # Writing statistics datacards
+def write_datacard_btag():
+
+    hists = get_yield_hists("CRBTag", True) # Get the main yields with lost lepton scale factors applied
+
+    # lostlep_sf = get_lostlep_sf() # Get the lost lepton scale factors
+
+    # hists = get_yield_hists("SR", True, lostlep_sf) # Get the main yields with lost lepton scale factors applied
+
+    systs = get_systs("CRBTag", apply_lostlep_sf=False, include_lostlep=True, isnj1=True) # Get all systematic histograms
+
+    # putting together the background histograms
+    bgs = [ hists[x] for x in config["bkg_order"] ]
+
+    # Write to the datacard
+    # d = dw.DataCardWriter(sig=hists["www"], bgs=bgs, data=None, datacard_filename="datacard.txt", systs=systs, no_stat_procs=["lostlep"])
+    d = dw.DataCardWriter(sig=hists["www"], bgs=bgs, data=hists["data"], datacard_filename="datacard.txt", systs=systs)#, no_stat_procs=["lostlep"])
+
+    # Create output directory
+    os.system("mkdir -p {}".format(config["output_dir"]))
+
+    # Region names
+    reg_names = [ "t{}".format(index) for index in xrange(1, 7) ]
+
+    # Write the datacards for each regions
+    for i, reg_name in enumerate(reg_names):
+        d.set_bin(i+1) # TH1 bin indices start with 1
+        d.set_region_name(reg_name)
+        d.write("{}/datacard_{}.txt".format(config["output_dir"], reg_name))
+
+    print "Wrote datacards to {}".format(config["output_dir"])
+
+#________________________________________________________________________________________________________________________________________
+# Writing statistics datacards
 def write_datacard_w_control_regions():
 
     #
@@ -421,7 +454,8 @@ def get_systs(region="SR", apply_lostlep_sf=True, include_lostlep=False, isnj1=F
         systs.append(syst_datacard_data)
 
     # Fake systematics
-    for sys in ["FakeRateEl", "FakeRateMu", "FakeClosureEl", "FakeClosureMu"]:
+    # for sys in ["FakeRateEl", "FakeRateMu", "FakeClosureEl", "FakeClosureMu"]:
+    for sys in ["FakeRateSSEl", "FakeRateSSMu", "FakeClosureSSEl", "FakeClosureSSMu", "FakeRate3LEl", "FakeRate3LMu", "FakeClosure3LEl", "FakeClosure3LMu"]:
         sys_hists_up = get_yield_hists(region, True, lostlep_sf, sys+"Up")
         sys_hists_dn = get_yield_hists(region, True, lostlep_sf, sys+"Down")
         systval = {}
@@ -604,7 +638,8 @@ if __name__ == "__main__":
 
     parse_output_dir()
 
-    # write_datacard()
+    write_datacard()
     # write_datacard_nj1()
-    write_datacard_w_control_regions()
+    write_datacard_btag()
+    # write_datacard_w_control_regions()
 

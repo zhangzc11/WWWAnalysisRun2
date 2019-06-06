@@ -492,13 +492,30 @@ int main(int argc, char** argv)
     ana.histograms.addHistogram("lep_pt0"                  ,  180 , 0.      , 250    , [&]() { return www.lep_pt().size() > 0 ? www.lep_pt()[0]  : -999                            ; });
     ana.histograms.addHistogram("lep_pt1"                  ,  180 , 0.      , 150    , [&]() { return www.lep_pt().size() > 1 ? www.lep_pt()[1]  : -999                            ; });
     ana.histograms.addHistogram("lep_pt2"                  ,  180 , 0.      , 150    , [&]() { return www.lep_pt().size() > 2 ? www.lep_pt()[2]  : -999                            ; });
+    ana.histograms.addHistogram("el_pt2"                   ,  180 , 0.      , 150    , [&]() { return www.lep_pt().size() > 2 and abs(www.lep_pdgId()[2]) == 11 ? www.lep_pt()[2] : -999; });
+    ana.histograms.addHistogram("mu_pt2"                   ,  180 , 0.      , 150    , [&]() { return www.lep_pt().size() > 2 and abs(www.lep_pdgId()[2]) == 13 ? www.lep_pt()[2] : -999; });
     ana.histograms.addHistogram("lep_eta0"                 ,  180 , -2.5    , 2.5    , [&]() { return www.lep_pt().size() > 0 ? www.lep_eta()[0] : -999                            ; });
     ana.histograms.addHistogram("lep_eta1"                 ,  180 , -2.5    , 2.5    , [&]() { return www.lep_pt().size() > 1 ? www.lep_eta()[1] : -999                            ; });
+    ana.histograms.addHistogram("lep_eta2"                 ,  180 , -2.5    , 2.5    , [&]() { return www.lep_pt().size() > 2 ? www.lep_eta()[2] : -999                            ; });
+    ana.histograms.addHistogram("lep_eta_fwd"              ,  {0., 1.6, 2.4}         , [&]() { return www.lep_pt().size() > 2 ? std::max(std::max(fabs(www.lep_eta()[0]), fabs(www.lep_eta()[1])), fabs(www.lep_eta()[2])) : -999; });
+    ana.histograms.addHistogram("el_eta2"                  ,  180 , -2.5    , 2.5    , [&]() { return www.lep_pt().size() > 2 and abs(www.lep_pdgId()[2]) == 11 ? www.lep_eta()[2] : -999; });
+    ana.histograms.addHistogram("mu_eta2"                  ,  180 , -2.5    , 2.5    , [&]() { return www.lep_pt().size() > 2 and abs(www.lep_pdgId()[2]) == 13 ? www.lep_eta()[2] : -999; });
     ana.histograms.addHistogram("lep_phi0"                 ,  180 , -3.1416 , 3.1416 , [&]() { return www.lep_pt().size() > 0 ? www.lep_phi()[0] : -999                            ; });
     ana.histograms.addHistogram("lep_phi1"                 ,  180 , -3.1416 , 3.1416 , [&]() { return www.lep_pt().size() > 1 ? www.lep_phi()[1] : -999                            ; });
+    ana.histograms.addHistogram("lep_phi2"                 ,  180 , -3.1416 , 3.1416 , [&]() { return www.lep_pt().size() > 2 ? www.lep_phi()[2] : -999                            ; });
+    ana.histograms.addHistogram("el_phi2"                  ,  180 , -3.1416 , 3.1416 , [&]() { return www.lep_pt().size() > 2 and abs(www.lep_pdgId()[2]) == 11 ? www.lep_phi()[2] : -999                            ; });
+    ana.histograms.addHistogram("mu_phi2"                  ,  180 , -3.1416 , 3.1416 , [&]() { return www.lep_pt().size() > 2 and abs(www.lep_pdgId()[2]) == 13 ? www.lep_phi()[2] : -999                            ; });
     ana.histograms.addHistogram("lep_relIso03EAv2Lep0"     ,  180 , 0.0     , 0.4    , [&]() { return www.lep_pt().size() > 0 ? www.lep_relIso03EAv2Lep()[0] : -999                ; });
     ana.histograms.addHistogram("lep_relIso03EAv2Lep1"     ,  180 , 0.0     , 0.4    , [&]() { return www.lep_pt().size() > 1 ? www.lep_relIso03EAv2Lep()[1] : -999                ; });
     ana.histograms.addHistogram("lep_relIso03EAv2Lep2"     ,  180 , 0.0     , 0.4    , [&]() { return www.lep_pt().size() > 2 ? www.lep_relIso03EAv2Lep()[2] : -999                ; });
+    ana.histograms.addHistogram("lep_relIso03EAv2Max"      ,  180 , 0.0     , 0.4    , [&]() { return www.lep_pt().size() > 2 ? std::max(std::max(fabs(www.lep_relIso03EAv2Lep()[0]), fabs(www.lep_relIso03EAv2Lep()[1])), fabs(www.lep_relIso03EAv2Lep()[2])) : -999; });
+    ana.histograms.addHistogram("lep_ptcorr"               ,  180 , 0.      , 150    , [&]() { return fakerates.getPtCorr()                                                        ; });
+    ana.histograms.addHistogram("el_ptcorr"                ,  {0., 20., 25., 30., 35., 50., 150.}, [&]() { return abs(www.lep_pdgId()[fakerates.getFakeLepIndex()]) == 11 ? fakerates.getPtCorr() : 0; });
+    ana.histograms.addHistogram("mu_ptcorr"                ,  {0., 20., 25., 30., 35., 50., 150.}, [&]() { return abs(www.lep_pdgId()[fakerates.getFakeLepIndex()]) == 13 ? fakerates.getPtCorr() : 0; });
+    ana.histograms.addHistogram("el_ptcorr_cen"            ,  {0., 20., 25., 30., 35., 50., 150.}, [&]() { return abs(www.lep_pdgId()[fakerates.getFakeLepIndex()]) == 11 and fabs(www.lep_pdgId()[fakerates.getFakeLepIndex()]) < 1.6 ? fakerates.getPtCorr() : 0; });
+    ana.histograms.addHistogram("mu_ptcorr_cen"            ,  {0., 20., 25., 30., 35., 50., 150.}, [&]() { return abs(www.lep_pdgId()[fakerates.getFakeLepIndex()]) == 13 and fabs(www.lep_pdgId()[fakerates.getFakeLepIndex()]) < 1.6 ? fakerates.getPtCorr() : 0; });
+    ana.histograms.addHistogram("el_ptcorr_fwd"            ,  {0., 20., 25., 30., 35., 50., 150.}, [&]() { return abs(www.lep_pdgId()[fakerates.getFakeLepIndex()]) == 11 and fabs(www.lep_pdgId()[fakerates.getFakeLepIndex()]) >=1.6 ? fakerates.getPtCorr() : 0; });
+    ana.histograms.addHistogram("mu_ptcorr_fwd"            ,  {0., 20., 25., 30., 35., 50., 150.}, [&]() { return abs(www.lep_pdgId()[fakerates.getFakeLepIndex()]) == 13 and fabs(www.lep_pdgId()[fakerates.getFakeLepIndex()]) >=1.6 ? fakerates.getPtCorr() : 0; });
     ana.histograms.addHistogram("nj"                       ,  7   , 0.      , 7.     , [&]() { return www.nj()                                                                     ; });
     ana.histograms.addHistogram("nj30"                     ,  7   , 0.      , 7.     , [&]() { return www.nj30()                                                                   ; });
     ana.histograms.addHistogram("nb"                       ,  5   , 0.      , 5.     , [&]() { return www.nb()                                                                     ; });
@@ -1073,6 +1090,56 @@ int main(int argc, char** argv)
         //************************************************************************************************************************************************************************************************
         //
         //
+        // N-btag control region (mainly for fakes)
+        //
+        //
+        //************************************************************************************************************************************************************************************************
+
+        ana.cutflow.getCut("CutSRDilep");
+        ana.cutflow.addCutToLastActiveCut("CRBTagee"           , Lambdas::isSRSSeeChannel                                     , UNITY);
+        ana.cutflow.addCutToLastActiveCut("CRBTageeZVeto"      , Lambdas::ZVetoSS                                             , UNITY);
+        ana.cutflow.addCutToLastActiveCut("CRBTageePreSel"     , Lambdas::SSPreSelection  (Variation::JES, Variation::Nominal, true), Lambdas::BTagScaleFactor);
+        ana.cutflow.addCutToLastActiveCut("CRBTageeNj2"        , Lambdas::TwoCenJet30     (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("CRBTageeKinSel"     , Lambdas::SRSSeeSelection (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("CRBTageeFull"       , UNITY                                                        , UNITY); // Adding one more node to have a clean name of "<Region>Full"
+
+        ana.cutflow.getCut("CutSRDilep");
+        ana.cutflow.addCutToLastActiveCut("CRBTagem"           , Lambdas::isSRSSemChannel                                     , UNITY);
+        ana.cutflow.addCutToLastActiveCut("CRBTagemPreSel"     , Lambdas::SSPreSelection  (Variation::JES, Variation::Nominal, true), Lambdas::BTagScaleFactor);
+        ana.cutflow.addCutToLastActiveCut("CRBTagemNj2"        , Lambdas::TwoCenJet30     (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("CRBTagemKinSel"     , Lambdas::SRSSemSelection (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("CRBTagemFull"       , UNITY                                                        , UNITY); // Adding one more node to have a clean name of "<Region>Full"
+
+        ana.cutflow.getCut("CutSRDilep");
+        ana.cutflow.addCutToLastActiveCut("CRBTagmm"           , Lambdas::isSRSSmmChannel                                     , UNITY);
+        ana.cutflow.addCutToLastActiveCut("CRBTagmmPreSel"     , Lambdas::SSPreSelection  (Variation::JES, Variation::Nominal, true), Lambdas::BTagScaleFactor);
+        ana.cutflow.addCutToLastActiveCut("CRBTagmmNj2"        , Lambdas::TwoCenJet30     (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("CRBTagmmKinSel"     , Lambdas::SRSSmmSelection (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("CRBTagmmFull"       , UNITY                                                        , UNITY); // Adding one more node to have a clean name of "<Region>Full"
+
+        ana.cutflow.getCut("CutSRTrilep");
+        ana.cutflow.addCutToLastActiveCut("CRBTag0SFOS"          , Lambdas::is0SFOS                                             , UNITY);
+        ana.cutflow.addCutToLastActiveCut("CRBTag0SFOSPreSel"    , Lambdas::ThreeLepPresel  (Variation::JES, Variation::Nominal, true), Lambdas::BTagScaleFactor);
+        ana.cutflow.addCutToLastActiveCut("CRBTag0SFOSDYVeto"    , Lambdas::DYVetoes0SFOS                                       , UNITY);
+        ana.cutflow.addCutToLastActiveCut("CRBTag0SFOSFull"      , UNITY                                                        , UNITY);
+
+        ana.cutflow.getCut("CutSRTrilep");
+        ana.cutflow.addCutToLastActiveCut("CRBTag1SFOS"          , Lambdas::is1SFOS                                             , UNITY);
+        ana.cutflow.addCutToLastActiveCut("CRBTag1SFOSPreSel"    , Lambdas::ThreeLepPresel  (Variation::JES, Variation::Nominal, true), Lambdas::BTagScaleFactor);
+        ana.cutflow.addCutToLastActiveCut("CRBTag1SFOSDYVeto"    , Lambdas::DYVetoes1SFOS                                       , UNITY);
+        ana.cutflow.addCutToLastActiveCut("CRBTag1SFOSZVeto"     , Lambdas::ZVeto3L                                             , UNITY);
+        ana.cutflow.addCutToLastActiveCut("CRBTag1SFOSFull"      , UNITY                                                        , UNITY);
+
+        ana.cutflow.getCut("CutSRTrilep");
+        ana.cutflow.addCutToLastActiveCut("CRBTag2SFOS"          , Lambdas::is2SFOS                                             , UNITY);
+        ana.cutflow.addCutToLastActiveCut("CRBTag2SFOSPreSel"    , Lambdas::ThreeLepPresel  (Variation::JES, Variation::Nominal, true), Lambdas::BTagScaleFactor);
+        ana.cutflow.addCutToLastActiveCut("CRBTag2SFOSDYVeto"    , Lambdas::DYVetoes2SFOS                                       , UNITY);
+        ana.cutflow.addCutToLastActiveCut("CRBTag2SFOSZVeto"     , Lambdas::ZVeto3L                                             , UNITY);
+        ana.cutflow.addCutToLastActiveCut("CRBTag2SFOSFull"      , UNITY                                                        , UNITY);
+
+        //************************************************************************************************************************************************************************************************
+        //
+        //
         // Gamma CR
         //
         //
@@ -1164,37 +1231,69 @@ int main(int argc, char** argv)
 
         if (ana.do_fake_estimation)
         {
-            ana.cutflow.addWgtSyst("FakeUp"            , Lambdas::FakeFactorVariation(Variation::Full      , Variation::Up  ));
-            ana.cutflow.addWgtSyst("FakeDown"          , Lambdas::FakeFactorVariation(Variation::Full      , Variation::Down));
-            ana.cutflow.addWgtSyst("FakeRateUp"        , Lambdas::FakeFactorVariation(Variation::Rate      , Variation::Up  ));
-            ana.cutflow.addWgtSyst("FakeRateDown"      , Lambdas::FakeFactorVariation(Variation::Rate      , Variation::Down));
-            ana.cutflow.addWgtSyst("FakeRateElUp"      , Lambdas::FakeFactorVariation(Variation::RateEl    , Variation::Up  ));
-            ana.cutflow.addWgtSyst("FakeRateElDown"    , Lambdas::FakeFactorVariation(Variation::RateEl    , Variation::Down));
-            ana.cutflow.addWgtSyst("FakeRateMuUp"      , Lambdas::FakeFactorVariation(Variation::RateMu    , Variation::Up  ));
-            ana.cutflow.addWgtSyst("FakeRateMuDown"    , Lambdas::FakeFactorVariation(Variation::RateMu    , Variation::Down));
-            ana.cutflow.addWgtSyst("FakeClosureUp"     , Lambdas::FakeFactorVariation(Variation::Closure   , Variation::Up  ));
-            ana.cutflow.addWgtSyst("FakeClosureDown"   , Lambdas::FakeFactorVariation(Variation::Closure   , Variation::Down));
-            ana.cutflow.addWgtSyst("FakeClosureElUp"   , Lambdas::FakeFactorVariation(Variation::ClosureEl , Variation::Up  ));
-            ana.cutflow.addWgtSyst("FakeClosureElDown" , Lambdas::FakeFactorVariation(Variation::ClosureEl , Variation::Down));
-            ana.cutflow.addWgtSyst("FakeClosureMuUp"   , Lambdas::FakeFactorVariation(Variation::ClosureMu , Variation::Up  ));
-            ana.cutflow.addWgtSyst("FakeClosureMuDown" , Lambdas::FakeFactorVariation(Variation::ClosureMu , Variation::Down));
+            ana.cutflow.addWgtSyst("FakeUp"              , Lambdas::FakeFactorVariation(Variation::Full        , Variation::Up  ));
+            ana.cutflow.addWgtSyst("FakeDown"            , Lambdas::FakeFactorVariation(Variation::Full        , Variation::Down));
+            ana.cutflow.addWgtSyst("FakeRateUp"          , Lambdas::FakeFactorVariation(Variation::Rate        , Variation::Up  ));
+            ana.cutflow.addWgtSyst("FakeRateDown"        , Lambdas::FakeFactorVariation(Variation::Rate        , Variation::Down));
+            ana.cutflow.addWgtSyst("FakeRateElUp"        , Lambdas::FakeFactorVariation(Variation::RateEl      , Variation::Up  ));
+            ana.cutflow.addWgtSyst("FakeRateElDown"      , Lambdas::FakeFactorVariation(Variation::RateEl      , Variation::Down));
+            ana.cutflow.addWgtSyst("FakeRateMuUp"        , Lambdas::FakeFactorVariation(Variation::RateMu      , Variation::Up  ));
+            ana.cutflow.addWgtSyst("FakeRateMuDown"      , Lambdas::FakeFactorVariation(Variation::RateMu      , Variation::Down));
+            ana.cutflow.addWgtSyst("FakeClosureUp"       , Lambdas::FakeFactorVariation(Variation::Closure     , Variation::Up  ));
+            ana.cutflow.addWgtSyst("FakeClosureDown"     , Lambdas::FakeFactorVariation(Variation::Closure     , Variation::Down));
+            ana.cutflow.addWgtSyst("FakeClosureElUp"     , Lambdas::FakeFactorVariation(Variation::ClosureEl   , Variation::Up  ));
+            ana.cutflow.addWgtSyst("FakeClosureElDown"   , Lambdas::FakeFactorVariation(Variation::ClosureEl   , Variation::Down));
+            ana.cutflow.addWgtSyst("FakeClosureMuUp"     , Lambdas::FakeFactorVariation(Variation::ClosureMu   , Variation::Up  ));
+            ana.cutflow.addWgtSyst("FakeClosureMuDown"   , Lambdas::FakeFactorVariation(Variation::ClosureMu   , Variation::Down));
+            ana.cutflow.addWgtSyst("FakeRateSSElUp"      , Lambdas::FakeFactorVariation(Variation::RateSSEl    , Variation::Up  ));
+            ana.cutflow.addWgtSyst("FakeRateSSElDown"    , Lambdas::FakeFactorVariation(Variation::RateSSEl    , Variation::Down));
+            ana.cutflow.addWgtSyst("FakeRateSSMuUp"      , Lambdas::FakeFactorVariation(Variation::RateSSMu    , Variation::Up  ));
+            ana.cutflow.addWgtSyst("FakeRateSSMuDown"    , Lambdas::FakeFactorVariation(Variation::RateSSMu    , Variation::Down));
+            ana.cutflow.addWgtSyst("FakeRate3LElUp"      , Lambdas::FakeFactorVariation(Variation::Rate3LEl    , Variation::Up  ));
+            ana.cutflow.addWgtSyst("FakeRate3LElDown"    , Lambdas::FakeFactorVariation(Variation::Rate3LEl    , Variation::Down));
+            ana.cutflow.addWgtSyst("FakeRate3LMuUp"      , Lambdas::FakeFactorVariation(Variation::Rate3LMu    , Variation::Up  ));
+            ana.cutflow.addWgtSyst("FakeRate3LMuDown"    , Lambdas::FakeFactorVariation(Variation::Rate3LMu    , Variation::Down));
+            ana.cutflow.addWgtSyst("FakeClosureSSElUp"   , Lambdas::FakeFactorVariation(Variation::ClosureSSEl , Variation::Up  ));
+            ana.cutflow.addWgtSyst("FakeClosureSSElDown" , Lambdas::FakeFactorVariation(Variation::ClosureSSEl , Variation::Down));
+            ana.cutflow.addWgtSyst("FakeClosureSSMuUp"   , Lambdas::FakeFactorVariation(Variation::ClosureSSMu , Variation::Up  ));
+            ana.cutflow.addWgtSyst("FakeClosureSSMuDown" , Lambdas::FakeFactorVariation(Variation::ClosureSSMu , Variation::Down));
+            ana.cutflow.addWgtSyst("FakeClosure3LElUp"   , Lambdas::FakeFactorVariation(Variation::Closure3LEl , Variation::Up  ));
+            ana.cutflow.addWgtSyst("FakeClosure3LElDown" , Lambdas::FakeFactorVariation(Variation::Closure3LEl , Variation::Down));
+            ana.cutflow.addWgtSyst("FakeClosure3LMuUp"   , Lambdas::FakeFactorVariation(Variation::Closure3LMu , Variation::Up  ));
+            ana.cutflow.addWgtSyst("FakeClosure3LMuDown" , Lambdas::FakeFactorVariation(Variation::Closure3LMu , Variation::Down));
         }
         else
         {
-            ana.cutflow.addWgtSyst("FakeUp"            , UNITY);
-            ana.cutflow.addWgtSyst("FakeDown"          , UNITY);
-            ana.cutflow.addWgtSyst("FakeRateUp"        , UNITY);
-            ana.cutflow.addWgtSyst("FakeRateDown"      , UNITY);
-            ana.cutflow.addWgtSyst("FakeRateElUp"      , UNITY);
-            ana.cutflow.addWgtSyst("FakeRateElDown"    , UNITY);
-            ana.cutflow.addWgtSyst("FakeRateMuUp"      , UNITY);
-            ana.cutflow.addWgtSyst("FakeRateMuDown"    , UNITY);
-            ana.cutflow.addWgtSyst("FakeClosureUp"     , UNITY);
-            ana.cutflow.addWgtSyst("FakeClosureDown"   , UNITY);
-            ana.cutflow.addWgtSyst("FakeClosureElUp"   , UNITY);
-            ana.cutflow.addWgtSyst("FakeClosureElDown" , UNITY);
-            ana.cutflow.addWgtSyst("FakeClosureMuUp"   , UNITY);
-            ana.cutflow.addWgtSyst("FakeClosureMuDown" , UNITY);
+            ana.cutflow.addWgtSyst("FakeUp"              , UNITY);
+            ana.cutflow.addWgtSyst("FakeDown"            , UNITY);
+            ana.cutflow.addWgtSyst("FakeRateUp"          , UNITY);
+            ana.cutflow.addWgtSyst("FakeRateDown"        , UNITY);
+            ana.cutflow.addWgtSyst("FakeRateElUp"        , UNITY);
+            ana.cutflow.addWgtSyst("FakeRateElDown"      , UNITY);
+            ana.cutflow.addWgtSyst("FakeRateMuUp"        , UNITY);
+            ana.cutflow.addWgtSyst("FakeRateMuDown"      , UNITY);
+            ana.cutflow.addWgtSyst("FakeRateSSElUp"      , UNITY);
+            ana.cutflow.addWgtSyst("FakeRateSSElDown"    , UNITY);
+            ana.cutflow.addWgtSyst("FakeRateSSMuUp"      , UNITY);
+            ana.cutflow.addWgtSyst("FakeRateSSMuDown"    , UNITY);
+            ana.cutflow.addWgtSyst("FakeRate3LElUp"      , UNITY);
+            ana.cutflow.addWgtSyst("FakeRate3LElDown"    , UNITY);
+            ana.cutflow.addWgtSyst("FakeRate3LMuUp"      , UNITY);
+            ana.cutflow.addWgtSyst("FakeRate3LMuDown"    , UNITY);
+            ana.cutflow.addWgtSyst("FakeClosureUp"       , UNITY);
+            ana.cutflow.addWgtSyst("FakeClosureDown"     , UNITY);
+            ana.cutflow.addWgtSyst("FakeClosureElUp"     , UNITY);
+            ana.cutflow.addWgtSyst("FakeClosureElDown"   , UNITY);
+            ana.cutflow.addWgtSyst("FakeClosureMuUp"     , UNITY);
+            ana.cutflow.addWgtSyst("FakeClosureMuDown"   , UNITY);
+            ana.cutflow.addWgtSyst("FakeClosureSSElUp"   , UNITY);
+            ana.cutflow.addWgtSyst("FakeClosureSSElDown" , UNITY);
+            ana.cutflow.addWgtSyst("FakeClosureSSMuUp"   , UNITY);
+            ana.cutflow.addWgtSyst("FakeClosureSSMuDown" , UNITY);
+            ana.cutflow.addWgtSyst("FakeClosure3LElUp"   , UNITY);
+            ana.cutflow.addWgtSyst("FakeClosure3LElDown" , UNITY);
+            ana.cutflow.addWgtSyst("FakeClosure3LMuUp"   , UNITY);
+            ana.cutflow.addWgtSyst("FakeClosure3LMuDown" , UNITY);
         }
 
         // Declare cut varying systematics to cuts with the patterns provided in the vector
@@ -1300,6 +1399,18 @@ int main(int argc, char** argv)
             ana.cutflow.setCutSyst("EXCRSSmeNj1KinSel" , systname, Lambdas::Nj1CRKinSel    (expsyst, var) , UNITY                    );
             ana.cutflow.setCutSyst("EXCRSSmmNjLeq1"    , systname, Lambdas::LeqOneJet30    (expsyst, var) , UNITY                    );
             ana.cutflow.setCutSyst("EXCRSSmmNj1KinSel" , systname, Lambdas::Nj1CRKinSel    (expsyst, var) , UNITY                    );
+            ana.cutflow.setCutSyst("CRBTageePreSel"    , systname, Lambdas::SSPreSelection (expsyst, var, true), Lambdas::BTagScaleFactor);
+            ana.cutflow.setCutSyst("CRBTageeNj2"       , systname, Lambdas::TwoCenJet30    (expsyst, var), UNITY);
+            ana.cutflow.setCutSyst("CRBTageeKinSel"    , systname, Lambdas::SRSSeeSelection(expsyst, var), UNITY);
+            ana.cutflow.setCutSyst("CRBTagemPreSel"    , systname, Lambdas::SSPreSelection (expsyst, var, true), Lambdas::BTagScaleFactor);
+            ana.cutflow.setCutSyst("CRBTagemNj2"       , systname, Lambdas::TwoCenJet30    (expsyst, var), UNITY);
+            ana.cutflow.setCutSyst("CRBTagemKinSel"    , systname, Lambdas::SRSSemSelection(expsyst, var), UNITY);
+            ana.cutflow.setCutSyst("CRBTagmmPreSel"    , systname, Lambdas::SSPreSelection (expsyst, var, true), Lambdas::BTagScaleFactor);
+            ana.cutflow.setCutSyst("CRBTagmmNj2"       , systname, Lambdas::TwoCenJet30    (expsyst, var), UNITY);
+            ana.cutflow.setCutSyst("CRBTagmmKinSel"    , systname, Lambdas::SRSSmmSelection(expsyst, var), UNITY);
+            ana.cutflow.setCutSyst("CRBTag0SFOSPreSel" , systname, Lambdas::ThreeLepPresel (expsyst, var, true), Lambdas::BTagScaleFactor);
+            ana.cutflow.setCutSyst("CRBTag1SFOSPreSel" , systname, Lambdas::ThreeLepPresel (expsyst, var, true), Lambdas::BTagScaleFactor);
+            ana.cutflow.setCutSyst("CRBTag2SFOSPreSel" , systname, Lambdas::ThreeLepPresel (expsyst, var, true), Lambdas::BTagScaleFactor);
         };
 
         // Actually set the door

@@ -325,14 +325,14 @@ class FakeRates
 
         void load2017()
         {
-            if (not histmap_2017_fr_ss_el        ) histmap_2017_fr_ss_el         = new RooUtil::HistMap("scalefactors/fakerate_2017_ss.root:El_ptcorretarolledcoarse_data_fakerate");
-            if (not histmap_2017_fr_ss_mu        ) histmap_2017_fr_ss_mu         = new RooUtil::HistMap("scalefactors/fakerate_2017_ss.root:Mu_ptcorretarolledcoarse_data_fakerate");
-            if (not histmap_2017_fr_3l_el        ) histmap_2017_fr_3l_el         = new RooUtil::HistMap("scalefactors/fakerate_2017_3l.root:El_ptcorretarolledcoarse_data_fakerate");
-            if (not histmap_2017_fr_3l_mu        ) histmap_2017_fr_3l_mu         = new RooUtil::HistMap("scalefactors/fakerate_2017_3l.root:Mu_ptcorretarolledcoarse_data_fakerate");
-            if (not histmap_2017_fr_ss_el_closure) histmap_2017_fr_ss_el_closure = new RooUtil::HistMap("scalefactors/fakerate_2017_ss.root:El_ptcorretarolledcoarse_data_fakerateclosure");
-            if (not histmap_2017_fr_ss_mu_closure) histmap_2017_fr_ss_mu_closure = new RooUtil::HistMap("scalefactors/fakerate_2017_ss.root:Mu_ptcorretarolledcoarse_data_fakerateclosure");
-            if (not histmap_2017_fr_3l_el_closure) histmap_2017_fr_3l_el_closure = new RooUtil::HistMap("scalefactors/fakerate_2017_3l.root:El_ptcorretarolledcoarse_data_fakerateclosure");
-            if (not histmap_2017_fr_3l_mu_closure) histmap_2017_fr_3l_mu_closure = new RooUtil::HistMap("scalefactors/fakerate_2017_3l.root:Mu_ptcorretarolledcoarse_data_fakerateclosure");
+            if (not histmap_2017_fr_ss_el        ) histmap_2017_fr_ss_el         = new RooUtil::HistMap("scalefactors/fakerate_2017_ss_mar2019.root:El_ptcorretarolledcoarse_data_fakerate");
+            if (not histmap_2017_fr_ss_mu        ) histmap_2017_fr_ss_mu         = new RooUtil::HistMap("scalefactors/fakerate_2017_ss_mar2019.root:Mu_ptcorretarolledcoarse_data_fakerate");
+            if (not histmap_2017_fr_3l_el        ) histmap_2017_fr_3l_el         = new RooUtil::HistMap("scalefactors/fakerate_2017_3l_mar2019.root:El_ptcorretarolledcoarse_data_fakerate");
+            if (not histmap_2017_fr_3l_mu        ) histmap_2017_fr_3l_mu         = new RooUtil::HistMap("scalefactors/fakerate_2017_3l_mar2019.root:Mu_ptcorretarolledcoarse_data_fakerate");
+            if (not histmap_2017_fr_ss_el_closure) histmap_2017_fr_ss_el_closure = new RooUtil::HistMap("scalefactors/fakerate_2017_ss_mar2019.root:El_ptcorretarolledcoarse_data_fakerateclosure");
+            if (not histmap_2017_fr_ss_mu_closure) histmap_2017_fr_ss_mu_closure = new RooUtil::HistMap("scalefactors/fakerate_2017_ss_mar2019.root:Mu_ptcorretarolledcoarse_data_fakerateclosure");
+            if (not histmap_2017_fr_3l_el_closure) histmap_2017_fr_3l_el_closure = new RooUtil::HistMap("scalefactors/fakerate_2017_3l_mar2019.root:El_ptcorretarolledcoarse_data_fakerateclosure");
+            if (not histmap_2017_fr_3l_mu_closure) histmap_2017_fr_3l_mu_closure = new RooUtil::HistMap("scalefactors/fakerate_2017_3l_mar2019.root:Mu_ptcorretarolledcoarse_data_fakerateclosure");
             histmap_fr_ss_el         = histmap_2017_fr_ss_el;
             histmap_fr_ss_mu         = histmap_2017_fr_ss_mu;
             histmap_fr_3l_el         = histmap_2017_fr_3l_el;
@@ -430,11 +430,30 @@ class FakeRates
 
             int lepid = abs(www.lep_pdgId()[index]);
             bool lepidmatchforerror = abs(lepid) == abs(lepflav);
-                
+
+            // The closure error needs a bit of special treatment to properly propagate the error
+            // the percentage error used to save the fakerates are in percentage for the fakerate
+            // But the properway to do it is to use the percentage error to the fake factors
+            float nom_fr = 0;
+            float closure_err_pct = 0;
+            float closure_ff = 0;
 
             if (abs(www.lep_pdgId()[index]) == 11 and lepversion == 0)
             {
                 if (doclosureerr)
+                {
+                    if (err == 1 and lepidmatchforerror)
+                        fr = histmap_fr_ss_el_closure->eval_up(ptcorr, fabs(www.lep_eta()[index]));
+                    else if (err ==-1 and lepidmatchforerror)
+                        fr = histmap_fr_ss_el_closure->eval_down(ptcorr, fabs(www.lep_eta()[index]));
+                    else
+                        fr = histmap_fr_ss_el_closure->eval(ptcorr, fabs(www.lep_eta()[index]));
+                    nom_fr = histmap_fr_ss_el_closure->eval(ptcorr, fabs(www.lep_eta()[index]));
+                    closure_err_pct = fr / nom_fr;
+                    closure_ff = (nom_fr / (1 - nom_fr)) * (closure_err_pct);
+                    fr = (closure_ff / (1 + closure_ff));
+                }
+                else
                 {
                     if (err == 1 and lepidmatchforerror)
                         fr = histmap_fr_ss_el->eval_up(ptcorr, fabs(www.lep_eta()[index]));
@@ -443,19 +462,23 @@ class FakeRates
                     else
                         fr = histmap_fr_ss_el->eval(ptcorr, fabs(www.lep_eta()[index]));
                 }
-                else
-                {
-                    if (err == 1 and lepidmatchforerror)
-                        fr = histmap_fr_ss_el_closure->eval_up(ptcorr, fabs(www.lep_eta()[index]));
-                    else if (err ==-1 and lepidmatchforerror)
-                        fr = histmap_fr_ss_el_closure->eval_down(ptcorr, fabs(www.lep_eta()[index]));
-                    else
-                        fr = histmap_fr_ss_el_closure->eval(ptcorr, fabs(www.lep_eta()[index]));
-                }
             }
             else if (abs(www.lep_pdgId()[index]) == 13 and lepversion == 0)
             {
                 if (doclosureerr)
+                {
+                    if (err == 1 and lepidmatchforerror)
+                        fr = histmap_fr_ss_mu_closure->eval_up(ptcorr, fabs(www.lep_eta()[index]));
+                    else if (err ==-1 and lepidmatchforerror)
+                        fr = histmap_fr_ss_mu_closure->eval_down(ptcorr, fabs(www.lep_eta()[index]));
+                    else
+                        fr = histmap_fr_ss_mu_closure->eval(ptcorr, fabs(www.lep_eta()[index]));
+                    nom_fr = histmap_fr_ss_mu_closure->eval(ptcorr, fabs(www.lep_eta()[index]));
+                    closure_err_pct = fr / nom_fr;
+                    closure_ff = (nom_fr / (1 - nom_fr)) * (closure_err_pct);
+                    fr = (closure_ff / (1 + closure_ff));
+                }
+                else
                 {
                     if (err == 1 and lepidmatchforerror)
                         fr = histmap_fr_ss_mu->eval_up(ptcorr, fabs(www.lep_eta()[index]));
@@ -464,19 +487,23 @@ class FakeRates
                     else
                         fr = histmap_fr_ss_mu->eval(ptcorr, fabs(www.lep_eta()[index]));
                 }
-                else
-                {
-                    if (err == 1 and lepidmatchforerror)
-                        fr = histmap_fr_ss_mu_closure->eval_up(ptcorr, fabs(www.lep_eta()[index]));
-                    else if (err ==-1 and lepidmatchforerror)
-                        fr = histmap_fr_ss_mu_closure->eval_down(ptcorr, fabs(www.lep_eta()[index]));
-                    else
-                        fr = histmap_fr_ss_mu_closure->eval(ptcorr, fabs(www.lep_eta()[index]));
-                }
             }
             else if (abs(www.lep_pdgId()[index]) == 11 and lepversion == 1)
             {
                 if (doclosureerr)
+                {
+                    if (err == 1 and lepidmatchforerror)
+                        fr = histmap_fr_3l_el_closure->eval_up(ptcorr, fabs(www.lep_eta()[index]));
+                    else if (err ==-1 and lepidmatchforerror)
+                        fr = histmap_fr_3l_el_closure->eval_down(ptcorr, fabs(www.lep_eta()[index]));
+                    else
+                        fr = histmap_fr_3l_el_closure->eval(ptcorr, fabs(www.lep_eta()[index]));
+                    nom_fr = histmap_fr_3l_el_closure->eval(ptcorr, fabs(www.lep_eta()[index]));
+                    closure_err_pct = fr / nom_fr;
+                    closure_ff = (nom_fr / (1 - nom_fr)) * (closure_err_pct);
+                    fr = (closure_ff / (1 + closure_ff));
+                }
+                else
                 {
                     if (err == 1 and lepidmatchforerror)
                         fr = histmap_fr_3l_el->eval_up(ptcorr, fabs(www.lep_eta()[index]));
@@ -485,28 +512,10 @@ class FakeRates
                     else
                         fr = histmap_fr_3l_el->eval(ptcorr, fabs(www.lep_eta()[index]));
                 }
-                else
-                {
-                    if (err == 1 and lepidmatchforerror)
-                        fr = histmap_fr_3l_el_closure->eval_up(ptcorr, fabs(www.lep_eta()[index]));
-                    else if (err ==-1 and lepidmatchforerror)
-                        fr = histmap_fr_3l_el_closure->eval_down(ptcorr, fabs(www.lep_eta()[index]));
-                    else
-                        fr = histmap_fr_3l_el_closure->eval(ptcorr, fabs(www.lep_eta()[index]));
-                }
             }
             else if (abs(www.lep_pdgId()[index]) == 13 and lepversion == 1)
             {
                 if (doclosureerr)
-                {
-                    if (err == 1 and lepidmatchforerror)
-                        fr = histmap_fr_3l_mu->eval_up(ptcorr, fabs(www.lep_eta()[index]));
-                    else if (err ==-1 and lepidmatchforerror)
-                        fr = histmap_fr_3l_mu->eval_down(ptcorr, fabs(www.lep_eta()[index]));
-                    else
-                        fr = histmap_fr_3l_mu->eval(ptcorr, fabs(www.lep_eta()[index]));
-                }
-                else
                 {
                     if (err == 1 and lepidmatchforerror)
                         fr = histmap_fr_3l_mu_closure->eval_up(ptcorr, fabs(www.lep_eta()[index]));
@@ -514,6 +523,19 @@ class FakeRates
                         fr = histmap_fr_3l_mu_closure->eval_down(ptcorr, fabs(www.lep_eta()[index]));
                     else
                         fr = histmap_fr_3l_mu_closure->eval(ptcorr, fabs(www.lep_eta()[index]));
+                    nom_fr = histmap_fr_3l_mu_closure->eval(ptcorr, fabs(www.lep_eta()[index]));
+                    closure_err_pct = fr / nom_fr;
+                    closure_ff = (nom_fr / (1 - nom_fr)) * (closure_err_pct);
+                    fr = (closure_ff / (1 + closure_ff));
+                }
+                else
+                {
+                    if (err == 1 and lepidmatchforerror)
+                        fr = histmap_fr_3l_mu->eval_up(ptcorr, fabs(www.lep_eta()[index]));
+                    else if (err ==-1 and lepidmatchforerror)
+                        fr = histmap_fr_3l_mu->eval_down(ptcorr, fabs(www.lep_eta()[index]));
+                    else
+                        fr = histmap_fr_3l_mu->eval(ptcorr, fabs(www.lep_eta()[index]));
                 }
             }
             else

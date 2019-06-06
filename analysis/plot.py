@@ -359,6 +359,7 @@ else:
                 "legend_ncolumns": 3,
                 "ratio_range": [0., 2.],
                 "ymax_scale": 1.3,
+                "yaxis_range": [0., 46.],
                 "blind": not args.draw_data, # BE CAREFUL!!!!!!!!!!!!!!!!!!
                 },
             usercolors=histcolors,
@@ -438,6 +439,35 @@ else:
             binlabels=binlabels12binSR,
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             output_name="yield12_ordered" if args.order_by_purity else "yield12",
+            legend_labels=legend_labels,
+            signal_labels=["WWW", "VH"],
+            donorm=False,
+            signal_scale=sig_scale,
+            hsuffix="__yield",
+            extraoptions={
+                "bkg_sort_method": "unsorted",
+                "legend_scalex": 2.8,
+                "legend_scaley": 0.8,
+                "lumi_value": lumi,
+                "print_yield": True,
+                "legend_ncolumns": 3,
+                "ratio_range": [0., 2.],
+                "ymax_scale": 1.3,
+                "blind": not args.draw_data, # BE CAREFUL!!!!!!!!!!!!!!!!!!
+                },
+            usercolors=histcolors,
+            )
+
+    #__________________________________________________________________________________
+    # Draw the money plot (b-tagged CR)
+    p.plot_yields(
+            fnames=bkg_fnames,
+            sig_fnames=sig_fnames,
+            data_fname="{}/data.root".format(input_dir),
+            regions=["CRBTageeFull{}(1)".format(args.syst), "CRBTagemFull{}(1)".format(args.syst), "CRBTagmmFull{}(1)".format(args.syst), "CRBTag0SFOSFull{}(1)".format(args.syst), "CRBTag1SFOSFull{}(1)".format(args.syst), "CRBTag2SFOSFull{}(1)".format(args.syst)],
+            binlabels=[ "ee", "em", "mm", "0SFOS", "1SFOS", "2SFOS" ],
+            dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
+            output_name="yield_bcr",
             legend_labels=legend_labels,
             signal_labels=["WWW", "VH"],
             donorm=False,

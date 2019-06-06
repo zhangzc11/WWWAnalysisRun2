@@ -23,7 +23,8 @@ usage()
 }
 
 # Default value
-CUTFLOW="-C"
+# CUTFLOW="-C"
+CUTFLOW=""
 
 # Command-line opts
 while getopts ":i:t:uxsh" OPTION; do
@@ -54,6 +55,7 @@ echo "INPUT_BABY_VERSION  : ${INPUT_BABY_VERSION}"
 echo "JOB_TAG             : ${JOB_TAG}"
 echo "================================================"
 
+# DDFAKEDIR=data/
 DDFAKEDIR=bkgdata/
 if [[ ${INPUT_BABY_VERSION} == *"2016"* ]]; then
     DDFAKEDIR=data/

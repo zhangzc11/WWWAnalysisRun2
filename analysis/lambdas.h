@@ -30,9 +30,17 @@ namespace Variation
         Rate,
         RateEl,
         RateMu,
+        RateSSEl,
+        RateSSMu,
+        Rate3LEl,
+        Rate3LMu,
         Closure,
         ClosureEl,
         ClosureMu,
+        ClosureSSEl,
+        ClosureSSMu,
+        Closure3LEl,
+        Closure3LMu,
     };
 
     enum ExpSyst
@@ -152,7 +160,7 @@ namespace Lambdas
 
     extern std::function<float()> ZVetoSS; // Same-sign Mll Z-veto
 
-    std::function<float()> SSPreSelection(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()> SSPreSelection(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, bool invert_btag=false);
 
     std::function<float()> SRSSeeSelection(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
     std::function<float()> SRSSemSelection(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
@@ -165,7 +173,7 @@ namespace Lambdas
     extern std::function<float()> is1SFOS;
     extern std::function<float()> is2SFOS;
 
-    std::function<float()> ThreeLepPresel(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()> ThreeLepPresel(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, bool invert_btag=false);
 
     extern std::function<float()> ZVeto3L;
 
