@@ -172,8 +172,9 @@ std::function<float()> Lambdas::TriggerSelection = [&]()
         bool trigger;
         if (input.year == 2017 or input.year == 2018)
             trigger = www.passTrigger() * www.pass_duplicate_ee_em_mm();
-        // TODO THIS NEEDS TO BE UPDATED ONCE WE MOVE TO NEWER 2016 BABY. THE FOLLOWING LINE ONLY WORKS WITH WWW_v1.2.2
         if (input.year == 2016)
+            trigger = www.passTrigger() * www.pass_duplicate_ee_em_mm();
+        if (input.do_www_xsec_scaling) // this is a way to check that the baby that i am running over is the 2016 result from 80X
             trigger = passTrigger2016();
         return trigger;
 
