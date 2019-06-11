@@ -34,6 +34,9 @@ public:
     // Boolean flag to whether or not book the cutflow histograms
     bool do_cutflow;
 
+    // Boolean flag to whether or not book the eventlist
+    bool do_eventlist;
+
     // Boolean flag to whether or not book histograms and cutflows for systematic variations
     bool do_systematics;
 

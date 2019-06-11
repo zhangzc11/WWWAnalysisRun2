@@ -170,12 +170,12 @@ std::function<float()> Lambdas::TriggerSelection = [&]()
 
         // Compute trigger variable (TODO for 2016 baby, the tertiary statement may be outdated)
         bool trigger;
-        if (input.year == 2017 or input.year == 2018)
-            trigger = www.passTrigger() * www.pass_duplicate_ee_em_mm();
-        if (input.year == 2016)
-            trigger = www.passTrigger() * www.pass_duplicate_ee_em_mm();
-        if (input.do_www_xsec_scaling) // this is a way to check that the baby that i am running over is the 2016 result from 80X
+        if (input.baby_type.EqualTo("WWW") and input.baby_version.EqualTo("1.2.2"))
             trigger = passTrigger2016();
+        else if (input.year == 2017 or input.year == 2018)
+            trigger = www.passTrigger() * www.pass_duplicate_ee_em_mm();
+        else if (input.year == 2016)
+            trigger = www.passTrigger() * www.pass_duplicate_ee_em_mm();
         return trigger;
 
     };

@@ -72,6 +72,7 @@ int main(int argc, char** argv)
         ("t,test"        , "Run test job. i.e. overrides output option to 'test.root' and 'recreate's the file.")
         ("H,hist"        , "Book histogram")
         ("C,cutflow"     , "Book cutflows")
+        ("L,eventlist"   , "Book event list")
         ("S,systematics" , "Also consider systematics (NOTE: Generally, this limits the number of histograms and cutflows. use -f,--force to run all.)")
         ("f,force"       , "force process all and not limit any number of histograms and cutflows")
         ("F,fake"        , "The event weight will be multiplied by fake weights")
@@ -173,6 +174,17 @@ int main(int argc, char** argv)
     else
     {
         ana.do_cutflow = false;
+    }
+
+    //_______________________________________________________________________________
+    // --eventlist
+    if (result.count("eventlist"))
+    {
+        ana.do_eventlist = true;
+    }
+    else
+    {
+        ana.do_eventlist = false;
     }
 
     //_______________________________________________________________________________
@@ -288,6 +300,7 @@ int main(int argc, char** argv)
     std::cout <<  " ana.output_tfile: " << ana.output_tfile->GetName() <<  std::endl;
     std::cout <<  " ana.n_events: " << ana.n_events <<  std::endl;
     std::cout <<  " ana.do_cutflow: " << ana.do_cutflow <<  std::endl;
+    std::cout <<  " ana.do_eventlist: " << ana.do_eventlist <<  std::endl;
     std::cout <<  " ana.do_histograms: " << ana.do_histograms <<  std::endl;
     std::cout <<  " ana.do_systematics: " << ana.do_systematics <<  std::endl;
     std::cout <<  " ana.do_force: " << ana.do_force <<  std::endl;
@@ -1469,7 +1482,12 @@ int main(int argc, char** argv)
         if (ana.do_cutflow)
             ana.cutflow.bookCutflows();
 
+        // Book eventlist
+        if (ana.do_eventlist)
+            ana.cutflow.bookEventLists();
+
     }
+
 
     //
     // Print cut structure before starting the loop just to visually see it
@@ -1572,8 +1590,9 @@ int main(int argc, char** argv)
         // // NOTE if there was a continue statement prior to this it can mess it up
         // if (looper.isNewFileInChain() and not isData) theoryweight.setFile(looper.getCurrentFileName());
 
-        // // Set the event list variables
-        // cutflow.setEventID(www.run(), www.lumi(), www.evt());
+        // Set the event list variables for EventList booking
+        if (ana.do_eventlist and not (ana.do_systematics and not ana.do_force))
+            ana.cutflow.setEventID(www.run(), www.lumi(), www.evt());
 
         // This magic "fill()" function will now go through all the cut nodes in the RooUtil::Cutflow and evaluate whether it passes the cut or not
         // And also fill histograms for all the booked histograms and fill all the book cutflows
@@ -1667,6 +1686,20 @@ int main(int argc, char** argv)
         //     }
         // }
 
+    }
+
+    // If bookEventLists has been called then print the event lists into a text file for terminating node cuts (i.e. the final selections applied. e.g. SRSSeeFull, ..., etc.)
+    if (ana.do_eventlist and not (ana.do_systematics and not ana.do_force))
+    {
+        std::vector<TString> regions = ana.cutflow.getCut("Root").getEndCuts();
+        for (auto& region : regions)
+        {
+            TString output_tfile_name = ana.output_tfile->GetName(); // get the output file name
+            TString suffix = TString::Format(".%s.txt", region.Data());
+            output_tfile_name.ReplaceAll(".root", suffix); // replace .root with suffix if .root exists
+            if (not output_tfile_name.Contains(suffix)) output_tfile_name += suffix; // if no suffix exists, then append suffix
+            ana.cutflow.getCut(region).writeEventList(output_tfile_name);
+        }
     }
 
     // Once done with the loop, now save all the histograms to the output file
