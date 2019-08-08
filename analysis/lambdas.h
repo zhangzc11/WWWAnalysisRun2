@@ -236,4 +236,6 @@ extern int this_run;
 extern int this_lumi;
 extern unsigned long long this_evt;
 
+float getRawMVA(float raw);
+
 #endif

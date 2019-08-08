@@ -816,9 +816,9 @@ std::function<float()> Lambdas::CutSRDilep = [&]()
         // If the looper is looping over to do fake estimation, even though it is "SR dilep" selection require nTlep == 1, nLlep = 2. (i.e. AR)
         // This is to ensure that the histogram outputs will have the same name with proper fake estimation
         if (ana.do_fake_estimation)
-            return (www.nVlep() == 2) * (www.nLlep() == 2) * (www.nTlep() == 1) * (www.lep_pt()[0]>25.) * (www.lep_pt()[1]>25.) * (fabs(www.lep_MVA()[0]) > mva_threshold) * (fabs(www.lep_MVA()[1]) > mva_threshold);
+            return (www.nVlep() == 2) * (www.nLlep() == 2) * (www.nTlep() == 1) * (www.lep_pt()[0]>25.) * (www.lep_pt()[1]>25.) * (getRawMVA(fabs(www.lep_MVA()[0])) > mva_threshold) * (getRawMVA(fabs(www.lep_MVA()[1])) > mva_threshold);
         else
-            return (www.nVlep() == 2) * (www.nLlep() == 2) * (www.nTlep() == 2) * (www.lep_pt()[0]>25.) * (www.lep_pt()[1]>25.) * (fabs(www.lep_MVA()[0]) > mva_threshold) * (fabs(www.lep_MVA()[1]) > mva_threshold);
+            return (www.nVlep() == 2) * (www.nLlep() == 2) * (www.nTlep() == 2) * (www.lep_pt()[0]>25.) * (www.lep_pt()[1]>25.) * (getRawMVA(fabs(www.lep_MVA()[0])) > mva_threshold) * (getRawMVA(fabs(www.lep_MVA()[1])) > mva_threshold);
     };
 
 //______________________________________________________________________________________________
@@ -1895,5 +1895,14 @@ bool passTrigger2016()
     }
 }
 
+
+//_______________________________________________________________________________________________________
+// Because EGamma POG decided to be stupid
+float getRawMVA(float notraw)
+{
+    if (notraw >  1.0-1.e-6) notraw =  1.0-1.e-6; // protect against inf, -inf due to FP rounding issues
+    if (notraw < -1.0+1.e-6) notraw = -1.0+1.e-6;
+    return -0.5*log((2.0/(notraw+1))-1.0);
+}
 
 
