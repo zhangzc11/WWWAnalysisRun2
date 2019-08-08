@@ -41,36 +41,36 @@ class LeptonScaleFactors
 
         LeptonScaleFactors()
         {
-            histmap_lead_mu_recoid_sf     = new RooUtil::HistMap("scalefactors/RunBCDEF_SF_ID.root:NUM_MediumID_DEN_genTracks_pt_abseta");
-            histmap_subl_mu_recoid_sf     = new RooUtil::HistMap("scalefactors/RunBCDEF_SF_ID.root:NUM_MediumID_DEN_genTracks_pt_abseta");
-            histmap_lead_el_recoid_sf     = new RooUtil::HistMap("scalefactors/egammaEffi.txt_EGM2D_runBCDEF_passingRECO.root:EGamma_SF2D");
-            histmap_subl_el_recoid_sf     = new RooUtil::HistMap("scalefactors/egammaEffi.txt_EGM2D_runBCDEF_passingRECO.root:EGamma_SF2D");
-            histmap_lead_el_mva_sf        = new RooUtil::HistMap("scalefactors/gammaEffi.txt_EGM2D_runBCDEF_passingMVA94Xwp80noiso.root:EGamma_SF2D");
-            histmap_subl_el_mva_sf        = new RooUtil::HistMap("scalefactors/gammaEffi.txt_EGM2D_runBCDEF_passingMVA94Xwp80noiso.root:EGamma_SF2D");
-            histmap_emu_mu_recoid_sf      = new RooUtil::HistMap("scalefactors/RunBCDEF_SF_ID.root:NUM_MediumID_DEN_genTracks_pt_abseta");
-            histmap_emu_el_recoid_sf      = new RooUtil::HistMap("scalefactors/egammaEffi.txt_EGM2D_runBCDEF_passingRECO.root:EGamma_SF2D");
-            histmap_emu_el_mva_sf         = new RooUtil::HistMap("scalefactors/gammaEffi.txt_EGM2D_runBCDEF_passingMVA94Xwp80noiso.root:EGamma_SF2D");
-            histmap_lead_mu_recoid_3l_sf  = new RooUtil::HistMap("scalefactors/RunBCDEF_SF_ID.root:NUM_MediumID_DEN_genTracks_pt_abseta");
-            histmap_subl_mu_recoid_3l_sf  = new RooUtil::HistMap("scalefactors/RunBCDEF_SF_ID.root:NUM_MediumID_DEN_genTracks_pt_abseta");
-            histmap_lead_el_recoid_3l_sf  = new RooUtil::HistMap("scalefactors/egammaEffi.txt_EGM2D_runBCDEF_passingRECO.root:EGamma_SF2D");
-            histmap_subl_el_recoid_3l_sf  = new RooUtil::HistMap("scalefactors/egammaEffi.txt_EGM2D_runBCDEF_passingRECO.root:EGamma_SF2D");
-            histmap_lead_el_mva_3l_sf     = new RooUtil::HistMap("scalefactors/gammaEffi.txt_EGM2D_runBCDEF_passingMVA94Xwp90noiso.root:EGamma_SF2D");
-            histmap_subl_el_mva_3l_sf     = new RooUtil::HistMap("scalefactors/gammaEffi.txt_EGM2D_runBCDEF_passingMVA94Xwp90noiso.root:EGamma_SF2D");
-            histmap_tert_mu_recoid_3l_sf  = new RooUtil::HistMap("scalefactors/RunBCDEF_SF_ID.root:NUM_MediumID_DEN_genTracks_pt_abseta");
-            histmap_tert_el_recoid_3l_sf  = new RooUtil::HistMap("scalefactors/egammaEffi.txt_EGM2D_runBCDEF_passingRECO.root:EGamma_SF2D");
-            histmap_tert_el_mva_3l_sf     = new RooUtil::HistMap("scalefactors/gammaEffi.txt_EGM2D_runBCDEF_passingMVA94Xwp90noiso.root:EGamma_SF2D");
-            histmap_lead_mu_isoip_sf      = new RooUtil::HistMap("scalefactors/isoipsf/MuonID_2017www/muon/MuMediumPOG_MuTightVVV/sf.root:h_sf_pt_vs_eta");
-            histmap_subl_mu_isoip_sf      = new RooUtil::HistMap("scalefactors/isoipsf/MuonID_2017www/muon/MuMediumPOG_MuTightVVV/sf.root:h_sf_pt_vs_eta");
-            histmap_lead_el_isoip_sf      = new RooUtil::HistMap("scalefactors/isoipsf/ElectronID_2017www/electron/EGammaMVA80POG2017_EGammaTightVVV/sf.root:h_sf_pt_vs_eta");
-            histmap_subl_el_isoip_sf      = new RooUtil::HistMap("scalefactors/isoipsf/ElectronID_2017www/electron/EGammaMVA80POG2017_EGammaTightVVV/sf.root:h_sf_pt_vs_eta");
-            histmap_emu_mu_isoip_sf       = new RooUtil::HistMap("scalefactors/isoipsf/MuonID_2017www/muon/MuMediumPOG_MuTightVVV/sf.root:h_sf_pt_vs_eta");
-            histmap_emu_el_isoip_sf       = new RooUtil::HistMap("scalefactors/isoipsf/ElectronID_2017www/electron/EGammaMVA80POG2017_EGammaTightVVV/sf.root:h_sf_pt_vs_eta");
-            histmap_lead_mu_isoip_3l_sf   = new RooUtil::HistMap("scalefactors/isoipsf/MuonID_2017www/muon/MuMediumPOG_MuTightVVV3l/sf.root:h_sf_pt_vs_eta");
-            histmap_subl_mu_isoip_3l_sf   = new RooUtil::HistMap("scalefactors/isoipsf/MuonID_2017www/muon/MuMediumPOG_MuTightVVV3l/sf.root:h_sf_pt_vs_eta");
-            histmap_lead_el_isoip_3l_sf   = new RooUtil::HistMap("scalefactors/isoipsf/ElectronID_2017www/electron/EGammaMVA90POG2017_EGammaTightVVV3l/sf.root:h_sf_pt_vs_eta");
-            histmap_subl_el_isoip_3l_sf   = new RooUtil::HistMap("scalefactors/isoipsf/ElectronID_2017www/electron/EGammaMVA90POG2017_EGammaTightVVV3l/sf.root:h_sf_pt_vs_eta");
-            histmap_tert_mu_isoip_3l_sf   = new RooUtil::HistMap("scalefactors/isoipsf/MuonID_2017www/muon/MuMediumPOG_MuTightVVV3l/sf.root:h_sf_pt_vs_eta");
-            histmap_tert_el_isoip_3l_sf   = new RooUtil::HistMap("scalefactors/isoipsf/ElectronID_2017www/electron/EGammaMVA90POG2017_EGammaTightVVV3l/sf.root:h_sf_pt_vs_eta");
+            histmap_lead_mu_recoid_sf     = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/RunBCDEF_SF_ID.root:NUM_MediumID_DEN_genTracks_pt_abseta");
+            histmap_subl_mu_recoid_sf     = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/RunBCDEF_SF_ID.root:NUM_MediumID_DEN_genTracks_pt_abseta");
+            histmap_lead_el_recoid_sf     = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/egammaEffi.txt_EGM2D_runBCDEF_passingRECO.root:EGamma_SF2D");
+            histmap_subl_el_recoid_sf     = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/egammaEffi.txt_EGM2D_runBCDEF_passingRECO.root:EGamma_SF2D");
+            histmap_lead_el_mva_sf        = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/gammaEffi.txt_EGM2D_runBCDEF_passingMVA94Xwp80noiso.root:EGamma_SF2D");
+            histmap_subl_el_mva_sf        = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/gammaEffi.txt_EGM2D_runBCDEF_passingMVA94Xwp80noiso.root:EGamma_SF2D");
+            histmap_emu_mu_recoid_sf      = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/RunBCDEF_SF_ID.root:NUM_MediumID_DEN_genTracks_pt_abseta");
+            histmap_emu_el_recoid_sf      = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/egammaEffi.txt_EGM2D_runBCDEF_passingRECO.root:EGamma_SF2D");
+            histmap_emu_el_mva_sf         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/gammaEffi.txt_EGM2D_runBCDEF_passingMVA94Xwp80noiso.root:EGamma_SF2D");
+            histmap_lead_mu_recoid_3l_sf  = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/RunBCDEF_SF_ID.root:NUM_MediumID_DEN_genTracks_pt_abseta");
+            histmap_subl_mu_recoid_3l_sf  = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/RunBCDEF_SF_ID.root:NUM_MediumID_DEN_genTracks_pt_abseta");
+            histmap_lead_el_recoid_3l_sf  = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/egammaEffi.txt_EGM2D_runBCDEF_passingRECO.root:EGamma_SF2D");
+            histmap_subl_el_recoid_3l_sf  = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/egammaEffi.txt_EGM2D_runBCDEF_passingRECO.root:EGamma_SF2D");
+            histmap_lead_el_mva_3l_sf     = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/gammaEffi.txt_EGM2D_runBCDEF_passingMVA94Xwp90noiso.root:EGamma_SF2D");
+            histmap_subl_el_mva_3l_sf     = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/gammaEffi.txt_EGM2D_runBCDEF_passingMVA94Xwp90noiso.root:EGamma_SF2D");
+            histmap_tert_mu_recoid_3l_sf  = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/RunBCDEF_SF_ID.root:NUM_MediumID_DEN_genTracks_pt_abseta");
+            histmap_tert_el_recoid_3l_sf  = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/egammaEffi.txt_EGM2D_runBCDEF_passingRECO.root:EGamma_SF2D");
+            histmap_tert_el_mva_3l_sf     = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/gammaEffi.txt_EGM2D_runBCDEF_passingMVA94Xwp90noiso.root:EGamma_SF2D");
+            histmap_lead_mu_isoip_sf      = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/isoipsf/MuonID_2017www/muon/MuMediumPOG_MuTightVVV/sf.root:h_sf_pt_vs_eta");
+            histmap_subl_mu_isoip_sf      = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/isoipsf/MuonID_2017www/muon/MuMediumPOG_MuTightVVV/sf.root:h_sf_pt_vs_eta");
+            histmap_lead_el_isoip_sf      = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/isoipsf/ElectronID_2017www/electron/EGammaMVA80POG2017_EGammaTightVVV/sf.root:h_sf_pt_vs_eta");
+            histmap_subl_el_isoip_sf      = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/isoipsf/ElectronID_2017www/electron/EGammaMVA80POG2017_EGammaTightVVV/sf.root:h_sf_pt_vs_eta");
+            histmap_emu_mu_isoip_sf       = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/isoipsf/MuonID_2017www/muon/MuMediumPOG_MuTightVVV/sf.root:h_sf_pt_vs_eta");
+            histmap_emu_el_isoip_sf       = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/isoipsf/ElectronID_2017www/electron/EGammaMVA80POG2017_EGammaTightVVV/sf.root:h_sf_pt_vs_eta");
+            histmap_lead_mu_isoip_3l_sf   = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/isoipsf/MuonID_2017www/muon/MuMediumPOG_MuTightVVV3l/sf.root:h_sf_pt_vs_eta");
+            histmap_subl_mu_isoip_3l_sf   = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/isoipsf/MuonID_2017www/muon/MuMediumPOG_MuTightVVV3l/sf.root:h_sf_pt_vs_eta");
+            histmap_lead_el_isoip_3l_sf   = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/isoipsf/ElectronID_2017www/electron/EGammaMVA90POG2017_EGammaTightVVV3l/sf.root:h_sf_pt_vs_eta");
+            histmap_subl_el_isoip_3l_sf   = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/isoipsf/ElectronID_2017www/electron/EGammaMVA90POG2017_EGammaTightVVV3l/sf.root:h_sf_pt_vs_eta");
+            histmap_tert_mu_isoip_3l_sf   = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/isoipsf/MuonID_2017www/muon/MuMediumPOG_MuTightVVV3l/sf.root:h_sf_pt_vs_eta");
+            histmap_tert_el_isoip_3l_sf   = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/isoipsf/ElectronID_2017www/electron/EGammaMVA90POG2017_EGammaTightVVV3l/sf.root:h_sf_pt_vs_eta");
         }
 
         ~LeptonScaleFactors()

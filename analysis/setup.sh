@@ -11,9 +11,9 @@ cd - > /dev/null
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 export LD_LIBRARY_PATH=$DIR:$LD_LIBRARY_PATH
 
-# Copy Philip's scale factors root files
-if [ ! -d ./scalefactors/ ]; then
-    cp -r /home/users/phchang/public_html/analysis/www/code/WWWAnalysisRun2_/analysis/scalefactors .
-fi
+# # Copy Philip's scale factors root files
+# if [ ! -d ./scalefactors/ ]; then
+#     cp -r /home/users/phchang/public_html/analysis/www/code/WWWAnalysisRun2_/analysis/scalefactors .
+# fi
 
 source ./rooutil/thisrooutil.sh
