@@ -149,41 +149,63 @@ namespace Lambdas
     extern std::function<float()> isSRSSemChannel;
     extern std::function<float()> isSRSSmmChannel;
 
-    std::function<float()> LeqOneJet30(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal); // Less than or equal to One jets above 30 GeV 
-    std::function<float()> OneCenJet30(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal); // One central jets above 30 GeV 
-    std::function<float()> TwoCenJet30(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal); // Two central jets above 30 GeV 
-    std::function<float()> LowDEtajj(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal); // Low Detajj
-    std::function<float()> LowMjj(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal); // Low Mjj
+    std::function<float()> CenJet30Cut(   Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, int value = 0);
+    std::function<float()> LeqOneJet(     Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal); 
+    std::function<float()> LeqOneJet30(   Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal); // Less than or equal to One jets above 30 GeV 
+    std::function<float()> OneCenJet30(   Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal); // One central jets above 30 GeV 
+    std::function<float()> TwoCenJet30(   Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal); // Two central jets above 30 GeV 
+    std::function<float()> NumberCenJet30(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal); // Two central jets above 30 GeV 
+    std::function<float()> NBveto(        Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, bool invert_btag=false);
+    std::function<float()> NBcut(         Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, bool invert_btag=false, int value = 1);
+    std::function<float()> LowDEtajj(     Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, float value = 2.5); // Low Detajj
+    std::function<float()> LowMjj(        Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, float value = 500.); // Low Mjj
+    std::function<float()> LowDEtaMJJ(    Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal); // Low Mjj and Detajj
+    std::function<float()> HighDeta(      Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal); // High Detajj
+    std::function<float()> HighMJJ(       Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal); // High Mjj
+    std::function<float()> HighMJJDeta(   Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal); // High Mjj and Detajj
 
-    std::function<float()> MjjIn(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal); // Mjj-in ee
-    std::function<float()> MjjOut(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal); // Mjj-out ee
+    std::function<float()> MjjIn(         Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal); // Mjj-in ee
+    std::function<float()> MjjOut(        Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal); // Mjj-out ee
 
     extern std::function<float()> ZVetoSS; // Same-sign Mll Z-veto
+    std::function<float()> METcut(      Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, float value=60.);
+    std::function<float()> Mllcut(      float value);
+    std::function<float()> MTmaxcut(    Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal,float value=90.);
+    std::function<float()> MTmax3Lcut(  Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal,float value=90.);
+    std::function<float()> DRljMinCut(  Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, float value = 1.5); // Low Mjj
+    std::function<float()> DRljMin3LCut(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, float value = 1.5); // Low Mjj
 
-    std::function<float()> SSPreSelection(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, bool invert_btag=false);
+    std::function<float()> SSPreSelection(  Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, bool invert_btag=false);
+    std::function<float()> SSKinSel(        Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()> SSMjjIn(         Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()> SSMjjOut(        Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()> SS1JPreselection(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, bool invert_btag=false);
+    std::function<float()> SS1J(            Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
 
-    std::function<float()> SRSSeeSelection(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
-    std::function<float()> SRSSemSelection(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
-    std::function<float()> SRSSmmSelection(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()> SRSSeeSelection( Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()> SRSSemSelection( Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()> SRSSmmSelection( Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
 
-    std::function<float()> SRSSSidemmSel(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()> SRSSSidemmSel(   Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
 
     // Split by channel
     extern std::function<float()> is0SFOS;
     extern std::function<float()> is1SFOS;
     extern std::function<float()> is2SFOS;
 
-    std::function<float()> ThreeLepPresel(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, bool invert_btag=false);
+    std::function<float()> ThreeLepPresel(  Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, bool invert_btag=false);
 
     extern std::function<float()> ZVeto3L;
-
+    extern std::function<float()> DYAndZVetoes;
+    extern std::function<float()> DYVetoes;
     extern std::function<float()> DYVetoes0SFOS;
     extern std::function<float()> DYVetoes1SFOS;
     extern std::function<float()> DYVetoes2SFOS;
-
-    std::function<float()> KinSel0SFOS(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
-    std::function<float()> KinSel1SFOS(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
-    std::function<float()> KinSel2SFOS(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()> DPhi3lMETcut(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, float value=2.1);
+    std::function<float()> KinSel3L(    Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()> KinSel0SFOS( Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()> KinSel1SFOS( Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()> KinSel2SFOS( Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
 
     // Inverting z-veto for lost-lepton CR
     extern std::function<float()> HasZ_SS;
@@ -193,13 +215,19 @@ namespace Lambdas
     extern std::function<float()> isSSem;
     extern std::function<float()> isSSme;
 
-    std::function<float()> Nj1DRljMin(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
-    std::function<float()> Nj1CRKinSel(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    extern std::function<float()> isWZCRSS;
+    extern std::function<float()> isWZCR3L;
+    
+    std::function<float()> Nj1DRljMin(   Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()> Nj1CRKinSel(  Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
 
     // Gamma CR
-    extern std::function<float()> GammaCR;
+    //extern std::function<float()> GammaCR;
+    std::function<float()> GammaCR(       Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
 
-    std::function<float()> KinSelNj1ee(Variation::ExpSyst expsyst, Variation::Var var);
+    std::function<float()> ttZWZfitRegion(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+
+    std::function<float()> KinSelNj1ee(   Variation::ExpSyst expsyst, Variation::Var var);
 }
 
 bool passTrigger2016();

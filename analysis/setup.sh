@@ -13,7 +13,7 @@ export LD_LIBRARY_PATH=$DIR:$LD_LIBRARY_PATH
 
 # Copy Philip's scale factors root files
 if [ ! -d ./scalefactors/ ]; then
-    cp -r /home/users/phchang/public_html/analysis/www/code/WWWAnalysisRun2/analysis/scalefactors .
+    cp -r /home/users/phchang/public_html/analysis/www/code/WWWAnalysisRun2_/analysis/scalefactors .
 fi
 
 source ./rooutil/thisrooutil.sh

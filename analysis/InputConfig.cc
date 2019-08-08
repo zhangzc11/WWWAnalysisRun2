@@ -63,7 +63,7 @@ void InputConfig::determine_input_settings(TString file_path, TString tree_name)
         std::vector<TString> items = RooUtil::StringUtil::split(token, "_v");
 
         // Check that it is item of size 2 then this might be the token of interest
-        if (items.size() == 2)
+        if (items.size() == 2 || items.size() == 3) //This might be dangerous to change from ==2 to >=2, but Mia's year token is this WWW2018_v5.1.8_v1, i.e. an additional _v1 was added at the end
         {
 
             // Get the year part
@@ -74,6 +74,7 @@ void InputConfig::determine_input_settings(TString file_path, TString tree_name)
             {
 
                 // At this point this token is identified as the "<BABYTYPE><YEAR>_v<VERSION>" string
+                // Also the token as "<BABYTYPE><YEAR>_v<VERSION>_vX" string exists
 
                 // Set year
                 year = year_substring.Atoi();

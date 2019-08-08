@@ -27,7 +27,7 @@ parser.add_argument('-t' , '--syst'                   , dest='syst'            ,
 parser.add_argument('-8' , '--do_grep'                , dest='do_grep'         , help='Use filter as pattern matching'         , default=False                              , action='store_true') 
 parser.add_argument('-p' , '--order_by_purity'        , dest='order_by_purity' , help='Rearrange 9 bin SR plot by S/B purity'  , default=False                              , action='store_true') 
 parser.add_argument('-uw', '--usewhatSR'              , dest='usewhatSR'       , help='what selecton for the nine bins'        , default=False, action='store_true') 
-parser.add_argument('-w' , '--whatSR'                 , dest='whatSR'          , help='what selecton for the nine bins'        , default=["SRSSeeFull", "SRSSemFull", "SRSSmmFull", "SRSSSideeeFull", "SRSSSideemFull", "SRSSSidemmFull", "SR0SFOSFull", "SR1SFOSFull", "SR2SFOSFull",], nargs='+') 
+parser.add_argument('-w' , '--whatSR'                 , dest='whatSR'          , help='what selecton for the nine bins'        , default=["SRSSeeMjjInFull", "SRSSemMjjInFull", "SRSSmmMjjInFull", "SRSSeeMjjOutFull", "SRSSemMjjOutFull", "SRSSemMjjOutFull", "SRSS1JeeFull", "SRSS1JemFull", "SRSS1JmmFull", "SR0SFOSFull", "SR1SFOSFull", "SR2SFOSFull",], nargs='+') 
 
 parser.add_argument('hist_filters', metavar='<histogram_names>=(e.g. SRSSmmPre__lep_pt1,SRSSmmNj2__lep_pt1)', type=str, nargs='*', help='patterns to use to filter histograms to dump')
 
@@ -180,13 +180,17 @@ if args.split_vbsttw:
             ]
 
 # If plotting 9 bin SR the following defines the order
+#try adding here also 1j
 binorder9binSR=[
-    "SRSSeeFull",
-    "SRSSemFull",
-    "SRSSmmFull",
-    "SRSSSideeeFull",
-    "SRSSSideemFull",
-    "SRSSSidemmFull",
+    "SRSSeeMjjInFull",
+    "SRSSemMjjInFull",
+    "SRSSmmMjjInFull",
+    "SRSSeeMjjOutFull",
+    "SRSSemMjjOutFull",
+    "SRSSmmMjjOutFull",
+    "SRSS1JeeFull",
+    "SRSS1JemFull",
+    "SRSS1JmmFull",    
     "SR0SFOSFull",
     "SR1SFOSFull",
     "SR2SFOSFull",
@@ -194,12 +198,15 @@ binorder9binSR=[
 if args.usewhatSR:
     binorder9binSR = args.whatSR[0].split(',')
 binlabels9binSR=[
-    "ee",
-    "em",
-    "mm",
-    "side-ee",
-    "side-em",
-    "side-mm",
+    "ee,Mjj-in",
+    "em,Mjj-in",
+    "mm,Mjj-in",
+    "ee,Mjj-out",
+    "em,Mjj-out",
+    "mm,Mjj-out",
+    "ee,1j",
+    "em,1j",
+    "mm,1j",
     "0SFOS",
     "1SFOS",
     "2SFOS",
@@ -210,25 +217,25 @@ binlabels9binSR=[
 if args.order_by_purity:
     binorder9binSR=[
         "SR0SFOSFull",
-        "SRSSmmFull",
-        "SRSSemFull",
+        "SRSSmmMjjInFull",
+        "SRSSemMjjInFull",
         "SR1SFOSFull",
-        "SRSSSidemmFull",
-        "SRSSSideemFull",
+        "SRSSmmMjjOutFull",
+        "SRSSemMjjOutFull",
         "SR2SFOSFull",
-        "SRSSSideeeFull",
-        "SRSSeeFull",
+        "SRSSeeMjjOutFull",
+        "SRSSeeMjjInFull",
         ]
     binlabels9binSR=[
         "0SFOS",
-        "mm",
-        "em",
+        "mm,Mjj-in",
+        "em,Mjj-in",
         "1SFOS",
-        "side-mm",
-        "side-em",
+        "mm,Mjj-out",
+        "em,Mjj-out",
         "2SFOS",
-        "side-ee",
-        "ee",
+        "ee,Mjj-out",
+        "ee,Mjj-in",
         ]
 
 
@@ -359,7 +366,7 @@ else:
                 "legend_ncolumns": 3,
                 "ratio_range": [0., 2.],
                 "ymax_scale": 1.3,
-                "yaxis_range": [0., 46.],
+                #"yaxis_range": [0., 46.],
                 "blind": not args.draw_data, # BE CAREFUL!!!!!!!!!!!!!!!!!!
                 },
             usercolors=histcolors,
@@ -371,8 +378,8 @@ else:
             fnames=bkg_fnames,
             sig_fnames=sig_fnames,
             data_fname="{}/data.root".format(input_dir),
-            regions=[ "EXSSeeNj1Full{}(1)".format(args.syst), "EXSSmeNj1Full{}(1)".format(args.syst), "EXSSemNj1Full{}(1)".format(args.syst), "EXSSmmNj1Full{}(1)".format(args.syst)],
-            binlabels=[ "ee", "me", "em", "mm"],
+            regions=[ "SRSS1JeeFull{}(1)".format(args.syst), "SRSS1JemFull{}(1)".format(args.syst), "SRSS1JmmFull{}(1)".format(args.syst)],
+            binlabels=[ "ee", "em", "mm"],
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             output_name="yield_nj1",
             legend_labels=legend_labels,
@@ -400,8 +407,8 @@ else:
             fnames=bkg_fnames,
             sig_fnames=sig_fnames,
             data_fname="{}/data.root".format(input_dir),
-            regions=[ "EXCRSSeeNj1Full{}(1)".format(args.syst), "EXCRSSmeNj1Full{}(1)".format(args.syst), "EXCRSSemNj1Full{}(1)".format(args.syst), "EXCRSSmmNj1Full{}(1)".format(args.syst)],
-            binlabels=[ "ee", "me", "em", "mm"],
+            regions=[ "SRSS1JeeFull{}(1)".format(args.syst), "SRSS1JemFull{}(1)".format(args.syst), "SRSS1JmmFull{}(1)".format(args.syst)],
+            binlabels=[ "ee", "em", "mm"],
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             output_name="yield_nj1_cr",
             legend_labels=legend_labels,
@@ -429,8 +436,8 @@ else:
     if args.order_by_purity:
         binorder.reverse()
         binlabels9binSR.reverse()
-    binorder = binorder9binSR[:6] + ["EXSSeeNj1Full", "EXSSmeNj1Full", "EXSSemNj1Full", "EXSSmmNj1Full"] + binorder9binSR[6:]
-    binlabels12binSR = binlabels9binSR[:6] + [ "Nj1-ee", "Nj1-me", "Nj1-em", "Nj1-mm"] + binlabels9binSR[6:]
+    binorder = binorder9binSR[:6] + ["SRSS1JeeFull", "SRSS1JemFull", "SRSS1JmmFull"] + binorder9binSR[6:]
+    binlabels12binSR = binlabels9binSR[:6] + [ "ee-1j", "em-1j", "mm-1j"] + binlabels9binSR[6:]
     p.plot_yields(
             fnames=bkg_fnames,
             sig_fnames=sig_fnames,
