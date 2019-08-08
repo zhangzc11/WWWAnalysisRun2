@@ -471,9 +471,6 @@ int main(int argc, char** argv)
     // The RooUtil::Histograms class holds the definitions of histograms with the lambda expression for the variable
     // Then this is used in conjunction with RooUtil::Cutflow to book histograms at different cut stage
     // This is so that the users don't have to copy paste a thousands lines of codes if they want to book more histograms at different cut stages
-    bool oldbaby = false;
-    if(input.baby_version.EqualTo("1.2.2") or input.baby_version.EqualTo("3.0.17") or input.baby_version.EqualTo("5.1.4") or input.baby_version.EqualTo("5.1.5") or input.baby_version.EqualTo("5.1.6") or input.baby_version.EqualTo("5.1.7")) oldbaby = true;
-
     ana.histograms.addHistogram("MllSS"                    ,  180 , 0.      , 500.   , [&]() { return www.MllSS()                                                                  ; });
     ana.histograms.addHistogram("MllSS_wide"               ,  180 , 0.      , 2000.  , [&]() { return www.MllSS()                                                                  ; });
     ana.histograms.addHistogram("MllZ"                     ,  180 , 60.     , 120.   , [&]() { return www.MllSS()                                                                  ; });
@@ -486,7 +483,7 @@ int main(int argc, char** argv)
     ana.histograms.addHistogram("Pt3lGCR"                  ,  180 , 0.      , 100.   , [&]() { return www.Pt3l()                                                                   ; });
     ana.histograms.addHistogram("Pt3l"                     ,  180 , 0.      , 300.   , [&]() { return www.Pt3l()                                                                   ; });
     ana.histograms.addHistogram("DPhi3lMET"                ,  160 , 0.      , 3.2   , [&]() { return www.DPhi3lMET()                                                               ; });
-    ana.histograms.addHistogram("Ptll"                     ,  180 , 0.      , 300.   , [&]() { return (oldbaby ? www.Pt3l() : www.Pt2l())                                          ; });
+    ana.histograms.addHistogram("Ptll"                     ,  180 , 0.      , 300.   , [&]() { return (input.oldbaby ? www.Pt3l() : www.Pt2l())                                          ; });
     ana.histograms.addHistogram("nvtx"                     ,  60  , 0.      , 60.    , [&]() { return www.nVert()                                                                  ; });
     ana.histograms.addHistogram("MjjZoom"                  ,  180 , 0.      , 150.   , [&]() { return www.Mjj()                                                                    ; });
     ana.histograms.addHistogram("Mjj"                      ,  180 , 1.      , 300.   , [&]() { return www.Mjj()                                                                    ; });
@@ -558,7 +555,7 @@ int main(int argc, char** argv)
             });
     ana.histograms.addHistogram("MljMin" , 180 , 0. , 300. , [&]()
             {
-                if (not oldbaby)
+                if (not input.oldbaby)
                     return www.Mljmin();
                 if (not (www.lep_p4().size() > 0 and www.jets_p4().size() > 0))
                     return float(-999);
@@ -573,7 +570,7 @@ int main(int argc, char** argv)
             });
     ana.histograms.addHistogram("MljMax" , 180 , 0. , 600. , [&]()
             {
-                if (not oldbaby)
+                if (not input.oldbaby)
                     return www.Mljmax();
                 if (not (www.lep_p4().size() > 1 and www.jets_p4().size() > 0))
                     return float(-999);
@@ -588,7 +585,7 @@ int main(int argc, char** argv)
             });
     ana.histograms.addHistogram("DRljMin" , 180 , 0. , 6.   , [&]()
             {
-               if (not oldbaby)
+               if (not input.oldbaby)
                     return www.DRljmin();
                 if (not (www.lep_p4().size() > 0 and www.jets_p4().size() > 0))
                     return float(-999);
@@ -603,7 +600,7 @@ int main(int argc, char** argv)
             });
     ana.histograms.addHistogram("DRljMax" , 180 , 0. , 6.   , [&]()
             {
-               if (not oldbaby)
+               if (not input.oldbaby)
                     return www.DRljmax();
                 if (not (www.lep_p4().size() > 0 and www.jets_p4().size() > 0))
                     return float(-999);
@@ -618,7 +615,7 @@ int main(int argc, char** argv)
             });
         ana.histograms.addHistogram("MljMin3L" , 180 , 0. , 300. , [&]()
             {
-                if (not oldbaby)
+                if (not input.oldbaby)
                     return www.Mljmin3L();
                 if (not (www.lep_p4().size() > 0 and www.jets_p4().size() > 0))
                     return float(-999);
@@ -633,7 +630,7 @@ int main(int argc, char** argv)
             });
     ana.histograms.addHistogram("MljMax3L" , 180 , 0. , 600. , [&]()
             {
-                if (not oldbaby)
+                if (not input.oldbaby)
                     return www.Mljmax3L();
                 if (not (www.lep_p4().size() > 1 and www.jets_p4().size() > 0))
                     return float(-999);
@@ -648,7 +645,7 @@ int main(int argc, char** argv)
             });
     ana.histograms.addHistogram("DRljMin3L" , 180 , 0. , 6.   , [&]()
             {
-               if (not oldbaby)
+               if (not input.oldbaby)
                     return www.DRljmin3L();
                 if (not (www.lep_p4().size() > 0 and www.jets_p4().size() > 0))
                     return float(-999);
@@ -663,7 +660,7 @@ int main(int argc, char** argv)
             });
     ana.histograms.addHistogram("DRljMax3L" , 180 , 0. , 6.   , [&]()
             {
-               if (not oldbaby)
+               if (not input.oldbaby)
                     return www.DRljmax3L();
                 if (not (www.lep_p4().size() > 0 and www.jets_p4().size() > 0))
                     return float(-999);

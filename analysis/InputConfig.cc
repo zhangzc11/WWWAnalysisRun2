@@ -110,6 +110,15 @@ void InputConfig::determine_input_settings(TString file_path, TString tree_name)
     // Lastly print out the input setting for completeness
     print_input_settings();
 
+    oldbaby = false;
+    if (input.baby_version.EqualTo("1.2.2")
+            or input.baby_version.EqualTo("3.0.17")
+            or input.baby_version.EqualTo("5.1.4")
+            or input.baby_version.EqualTo("5.1.5")
+            or input.baby_version.EqualTo("5.1.6")
+            or input.baby_version.EqualTo("5.1.7"))
+        oldbaby = true;
+
 }
 
 // Print input file settings to be clear
@@ -128,6 +137,7 @@ void InputConfig::print_input_settings()
     std::cout <<  " is_sig: " << is_sig <<  std::endl;
     std::cout <<  " is_www: " << is_www <<  std::endl;
     std::cout <<  " is_vh: " << is_vh <<  std::endl;
+    std::cout <<  " oldbaby: " << oldbaby <<  std::endl;
     std::cout <<  " do_www_xsec_scaling: " << do_www_xsec_scaling <<  std::endl;
     std::cout <<  "============================================" << std::endl;
 

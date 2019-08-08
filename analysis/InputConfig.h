@@ -57,6 +57,9 @@ public:
     // The version of the baby
     TString baby_version;
 
+    // Whether or not the baby version has new pre computed variables or not
+    bool oldbaby;
+
     // The function to determine all the configuration above
     void determine_input_settings(TString file_path, TString tree_name);
 
