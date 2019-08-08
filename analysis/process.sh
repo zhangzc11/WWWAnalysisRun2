@@ -18,6 +18,7 @@ usage()
     echo "  -u    Enable user study"
     echo "  -x    Skip cutflow histograms"
     echo "  -s    Do systematics"             
+    echo "  -r    Username for input     (e.g. -r mliu or -r phchang)"
     echo
     exit
 }
@@ -26,10 +27,11 @@ usage()
 CUTFLOW="-C"
 
 # Command-line opts
-while getopts ":i:t:uxsh" OPTION; do
+while getopts ":i:t:r:uxsh" OPTION; do
   case $OPTION in
     i) INPUT_BABY_VERSION=${OPTARG};;
     t) JOB_TAG=${OPTARG};;
+    r) USERNAME=${OPTARG};;
     u) DO_USER_STUDY=" --user_study ";;
     x) CUTFLOW=" ";;
     s) SYSTEMATICS=" -S";;
@@ -40,6 +42,7 @@ done
 
 if [ -z ${INPUT_BABY_VERSION} ]; then usage; fi
 if [ -z ${JOB_TAG}  ]; then usage; fi
+if [ -z ${USERNAME} ]; then USERNAME=mliu; fi
 
 # to shift away the parsed options
 shift $(($OPTIND - 1))
