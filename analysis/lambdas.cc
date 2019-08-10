@@ -135,20 +135,30 @@ std::function<float()> Lambdas::EventWeight = [&]()
         {
             weight *= 163. / 405.27;
         }
-        if(input.year == 2018){
-          if(input.current_file_name.Contains("www_amcatnlo_1.root") or input.current_file_name.Contains("vh_nonbb_amcatnlo_1.root")){
-            unsigned int genelemu = 0;
-            for(unsigned int gidx = 0; gidx<www.genPart_pdgId().size(); ++gidx){
-              if(abs(www.genPart_motherId()[gidx])==24 and (abs(www.genPart_pdgId()[gidx])==11 or abs(www.genPart_pdgId()[gidx])==13))
-                ++genelemu;
+
+        if (input.year == 2018)
+        {
+            if (input.current_file_name.Contains("www_amcatnlo_1.root") or input.current_file_name.Contains("vh_nonbb_amcatnlo_1.root"))
+            {
+                unsigned int genelemu = 0;
+                for (unsigned int gidx = 0; gidx < www.genPart_pdgId().size(); ++gidx)
+                {
+                    if (abs(www.genPart_motherId()[gidx]) == 24 and (abs(www.genPart_pdgId()[gidx]) == 11 or abs(www.genPart_pdgId()[gidx]) == 13))
+                        ++genelemu;
+                }
+                if (genelemu >= 2) weight = 0.;
             }
-            if(genelemu>=2) weight = 0.;
-          }
-          if(input.current_file_name.Contains("www_amcatnlo_dilepfilter_1.root"))
-            weight *= 0.119316;
-          if(input.current_file_name.Contains("vh_nonbb_amcatnlo_dilepfilter_"))
-            weight *= 0.088057;
+            if (input.current_file_name.Contains("www_amcatnlo_dilepfilter_1.root"))
+                weight *= 0.119316;
+            if (input.current_file_name.Contains("vh_nonbb_amcatnlo_dilepfilter_"))
+                weight *= 0.088057;
         }
+
+        if (input.current_file_name.Contains("WWW2018_v5.1.8_v1/skim/grouped/bkgdata/wjets_incl_madgraph_1")) // bkgdata is when it runs over for ddfakes and this has some stupid large weight subtractions if anything this makes it more conservative
+        {
+            weight *= 0.;
+        }
+
 
         // Missing k-factor for v1.2.2 2016 baby ntuples (our first public result)
         if (input.do_www_xsec_scaling)
