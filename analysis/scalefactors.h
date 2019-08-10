@@ -3,6 +3,7 @@
 
 #include "wwwtree.h"
 #include "rooutil/rooutil.h"
+#include "InputConfig.h"
 
 //_______________________________________________________________________________________________________
 class LeptonScaleFactors
@@ -39,6 +40,37 @@ class LeptonScaleFactors
         RooUtil::HistMap* histmap_tert_mu_isoip_3l_sf;
         RooUtil::HistMap* histmap_tert_el_isoip_3l_sf;
 
+        RooUtil::HistMap* histmap2018_lead_mu_recoid_sf;
+        RooUtil::HistMap* histmap2018_subl_mu_recoid_sf;
+        RooUtil::HistMap* histmap2018_lead_el_recoid_sf;
+        RooUtil::HistMap* histmap2018_subl_el_recoid_sf;
+        RooUtil::HistMap* histmap2018_lead_el_mva_sf;
+        RooUtil::HistMap* histmap2018_subl_el_mva_sf;
+        RooUtil::HistMap* histmap2018_emu_mu_recoid_sf;
+        RooUtil::HistMap* histmap2018_emu_el_recoid_sf;
+        RooUtil::HistMap* histmap2018_emu_el_mva_sf;
+        RooUtil::HistMap* histmap2018_lead_mu_recoid_3l_sf;
+        RooUtil::HistMap* histmap2018_subl_mu_recoid_3l_sf;
+        RooUtil::HistMap* histmap2018_lead_el_recoid_3l_sf;
+        RooUtil::HistMap* histmap2018_subl_el_recoid_3l_sf;
+        RooUtil::HistMap* histmap2018_lead_el_mva_3l_sf;
+        RooUtil::HistMap* histmap2018_subl_el_mva_3l_sf;
+        RooUtil::HistMap* histmap2018_tert_mu_recoid_3l_sf;
+        RooUtil::HistMap* histmap2018_tert_el_recoid_3l_sf;
+        RooUtil::HistMap* histmap2018_tert_el_mva_3l_sf;
+        RooUtil::HistMap* histmap2018_lead_mu_isoip_sf;
+        RooUtil::HistMap* histmap2018_subl_mu_isoip_sf;
+        RooUtil::HistMap* histmap2018_lead_el_isoip_sf;
+        RooUtil::HistMap* histmap2018_subl_el_isoip_sf;
+        RooUtil::HistMap* histmap2018_emu_mu_isoip_sf;
+        RooUtil::HistMap* histmap2018_emu_el_isoip_sf;
+        RooUtil::HistMap* histmap2018_lead_mu_isoip_3l_sf;
+        RooUtil::HistMap* histmap2018_subl_mu_isoip_3l_sf;
+        RooUtil::HistMap* histmap2018_lead_el_isoip_3l_sf;
+        RooUtil::HistMap* histmap2018_subl_el_isoip_3l_sf;
+        RooUtil::HistMap* histmap2018_tert_mu_isoip_3l_sf;
+        RooUtil::HistMap* histmap2018_tert_el_isoip_3l_sf;
+
         LeptonScaleFactors()
         {
             histmap_lead_mu_recoid_sf     = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/RunBCDEF_SF_ID.root:NUM_MediumID_DEN_genTracks_pt_abseta");
@@ -71,6 +103,38 @@ class LeptonScaleFactors
             histmap_subl_el_isoip_3l_sf   = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/isoipsf/ElectronID_2017www/electron/EGammaMVA90POG2017_EGammaTightVVV3l/sf.root:h_sf_pt_vs_eta");
             histmap_tert_mu_isoip_3l_sf   = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/isoipsf/MuonID_2017www/muon/MuMediumPOG_MuTightVVV3l/sf.root:h_sf_pt_vs_eta");
             histmap_tert_el_isoip_3l_sf   = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/isoipsf/ElectronID_2017www/electron/EGammaMVA90POG2017_EGammaTightVVV3l/sf.root:h_sf_pt_vs_eta");
+
+            histmap2018_lead_el_recoid_sf     = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/egammaEffi.txt_EGM2D_updatedAll.root:EGamma_SF2D");
+            histmap2018_subl_el_recoid_sf     = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/egammaEffi.txt_EGM2D_updatedAll.root:EGamma_SF2D");
+            histmap2018_lead_el_mva_sf        = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/2018_ElectronMVA80noiso.root:EGamma_SF2D");
+            histmap2018_subl_el_mva_sf        = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/2018_ElectronMVA80noiso.root:EGamma_SF2D");
+            histmap2018_emu_el_recoid_sf      = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/egammaEffi.txt_EGM2D_updatedAll.root:EGamma_SF2D");
+            histmap2018_emu_el_mva_sf         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/2018_ElectronMVA80noiso.root:EGamma_SF2D");
+            histmap2018_lead_el_recoid_3l_sf  = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/egammaEffi.txt_EGM2D_updatedAll.root:EGamma_SF2D");
+            histmap2018_subl_el_recoid_3l_sf  = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/egammaEffi.txt_EGM2D_updatedAll.root:EGamma_SF2D");
+            histmap2018_lead_el_mva_3l_sf     = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/2018_ElectronMVA90noiso.root:EGamma_SF2D");
+            histmap2018_subl_el_mva_3l_sf     = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/2018_ElectronMVA90noiso.root:EGamma_SF2D");
+            histmap2018_tert_el_recoid_3l_sf  = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/egammaEffi.txt_EGM2D_updatedAll.root:EGamma_SF2D");
+            histmap2018_tert_el_mva_3l_sf     = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/2018_ElectronMVA90noiso.root:EGamma_SF2D");
+            histmap2018_lead_el_isoip_sf      = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/isoipsf/ElectronID_2018www/electron/EGammaMVA80POG2018_EGammaTightVVV2018/sf.root:h_sf_pt_vs_eta");
+            histmap2018_subl_el_isoip_sf      = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/isoipsf/ElectronID_2018www/electron/EGammaMVA80POG2018_EGammaTightVVV2018/sf.root:h_sf_pt_vs_eta");
+            histmap2018_emu_el_isoip_sf       = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/isoipsf/ElectronID_2018www/electron/EGammaMVA80POG2018_EGammaTightVVV2018/sf.root:h_sf_pt_vs_eta");
+            histmap2018_lead_el_isoip_3l_sf   = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/isoipsf/ElectronID_2018www/electron/EGammaMVA90POG2018_EGammaTightVVV3l2018/sf.root:h_sf_pt_vs_eta");
+            histmap2018_subl_el_isoip_3l_sf   = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/isoipsf/ElectronID_2018www/electron/EGammaMVA90POG2018_EGammaTightVVV3l2018/sf.root:h_sf_pt_vs_eta");
+            histmap2018_tert_el_isoip_3l_sf   = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/isoipsf/ElectronID_2018www/electron/EGammaMVA90POG2018_EGammaTightVVV3l2018/sf.root:h_sf_pt_vs_eta");
+            histmap2018_lead_mu_recoid_sf     = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/EfficienciesStudies_2018_rootfiles_RunABCD_SF_ID.root:NUM_MediumID_DEN_TrackerMuons_pt_abseta");
+            histmap2018_subl_mu_recoid_sf     = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/EfficienciesStudies_2018_rootfiles_RunABCD_SF_ID.root:NUM_MediumID_DEN_TrackerMuons_pt_abseta");
+            histmap2018_emu_mu_recoid_sf      = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/EfficienciesStudies_2018_rootfiles_RunABCD_SF_ID.root:NUM_MediumID_DEN_TrackerMuons_pt_abseta");
+            histmap2018_lead_mu_recoid_3l_sf  = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/EfficienciesStudies_2018_rootfiles_RunABCD_SF_ID.root:NUM_MediumID_DEN_TrackerMuons_pt_abseta");
+            histmap2018_subl_mu_recoid_3l_sf  = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/EfficienciesStudies_2018_rootfiles_RunABCD_SF_ID.root:NUM_MediumID_DEN_TrackerMuons_pt_abseta");
+            histmap2018_tert_mu_recoid_3l_sf  = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/EfficienciesStudies_2018_rootfiles_RunABCD_SF_ID.root:NUM_MediumID_DEN_TrackerMuons_pt_abseta");
+            histmap2018_lead_mu_isoip_sf      = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/isoipsf/MuonID_2018www/muon/MuMediumPOG_MuTightVVV/sf.root:h_sf_pt_vs_eta");
+            histmap2018_subl_mu_isoip_sf      = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/isoipsf/MuonID_2018www/muon/MuMediumPOG_MuTightVVV/sf.root:h_sf_pt_vs_eta");
+            histmap2018_emu_mu_isoip_sf       = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/isoipsf/MuonID_2018www/muon/MuMediumPOG_MuTightVVV/sf.root:h_sf_pt_vs_eta");
+            histmap2018_lead_mu_isoip_3l_sf   = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/isoipsf/MuonID_2018www/muon/MuMediumPOG_MuTightVVV3l/sf.root:h_sf_pt_vs_eta");
+            histmap2018_subl_mu_isoip_3l_sf   = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/isoipsf/MuonID_2018www/muon/MuMediumPOG_MuTightVVV3l/sf.root:h_sf_pt_vs_eta");
+            histmap2018_tert_mu_isoip_3l_sf   = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/isoipsf/MuonID_2018www/muon/MuMediumPOG_MuTightVVV3l/sf.root:h_sf_pt_vs_eta");
+
         }
 
         ~LeptonScaleFactors()
@@ -114,7 +178,7 @@ class LeptonScaleFactors
             {
                 return 1;
             }
-            else if (is2017)
+            else if (input.year == 2017)
             {
                 const double b500 = 499.9;
                 const double b120 = 119.9;
@@ -197,6 +261,89 @@ class LeptonScaleFactors
                     return 1;
                 }
 
+            }
+            else if (input.year == 2018)
+            {
+                const double b500 = 499.9;
+                const double b120 = 119.9;
+                float lead_mu_recoid_sf    = variation > 0 ? histmap2018_lead_mu_recoid_sf    -> eval_up(min((double)www.lep_pt()[0],b120)   ,abs((double)www.lep_eta()[0])     ) : variation < 0 ? histmap2018_lead_mu_recoid_sf    -> eval_down(min((double)www.lep_pt()[0],b120)   ,abs((double)www.lep_eta()[0])     ) : histmap2018_lead_mu_recoid_sf    -> eval(min((double)www.lep_pt()[0],b120)   ,abs((double)www.lep_eta()[0])     );
+                float subl_mu_recoid_sf    = variation > 0 ? histmap2018_subl_mu_recoid_sf    -> eval_up(min((double)www.lep_pt()[1],b120)   ,abs((double)www.lep_eta()[1])     ) : variation < 0 ? histmap2018_subl_mu_recoid_sf    -> eval_down(min((double)www.lep_pt()[1],b120)   ,abs((double)www.lep_eta()[1])     ) : histmap2018_subl_mu_recoid_sf    -> eval(min((double)www.lep_pt()[1],b120)   ,abs((double)www.lep_eta()[1])     );
+                float lead_el_recoid_sf    = variation > 0 ? histmap2018_lead_el_recoid_sf    -> eval_up(   ((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) ) : variation < 0 ? histmap2018_lead_el_recoid_sf    -> eval_down(   ((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) ) : histmap2018_lead_el_recoid_sf    -> eval(   ((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) );
+                float subl_el_recoid_sf    = variation > 0 ? histmap2018_subl_el_recoid_sf    -> eval_up(   ((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) ) : variation < 0 ? histmap2018_subl_el_recoid_sf    -> eval_down(   ((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) ) : histmap2018_subl_el_recoid_sf    -> eval(   ((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) );
+                float lead_el_mva_sf       = variation > 0 ? histmap2018_lead_el_mva_sf       -> eval_up(   ((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) ) : variation < 0 ? histmap2018_lead_el_mva_sf       -> eval_down(   ((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) ) : histmap2018_lead_el_mva_sf       -> eval(   ((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) );
+                float subl_el_mva_sf       = variation > 0 ? histmap2018_subl_el_mva_sf       -> eval_up(   ((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) ) : variation < 0 ? histmap2018_subl_el_mva_sf       -> eval_down(   ((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) ) : histmap2018_subl_el_mva_sf       -> eval(   ((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) );
+                float emu_mu_recoid_sf     = variation > 0 ? histmap2018_emu_mu_recoid_sf     -> eval_up(min((double)www.mu_pt(),b120)       ,abs((double)www.mu_eta())         ) : variation < 0 ? histmap2018_emu_mu_recoid_sf     -> eval_down(min((double)www.mu_pt(),b120)       ,abs((double)www.mu_eta())         ) : histmap2018_emu_mu_recoid_sf     -> eval(min((double)www.mu_pt(),b120)       ,abs((double)www.mu_eta())         );
+                float emu_el_recoid_sf     = variation > 0 ? histmap2018_emu_el_recoid_sf     -> eval_up(   ((double)www.el_eta())           ,min((double)www.el_pt(),b500)     ) : variation < 0 ? histmap2018_emu_el_recoid_sf     -> eval_down(   ((double)www.el_eta())           ,min((double)www.el_pt(),b500)     ) : histmap2018_emu_el_recoid_sf     -> eval(   ((double)www.el_eta())           ,min((double)www.el_pt(),b500)     );
+                float emu_el_mva_sf        = variation > 0 ? histmap2018_emu_el_mva_sf        -> eval_up(   ((double)www.el_eta())           ,min((double)www.el_pt(),b500)     ) : variation < 0 ? histmap2018_emu_el_mva_sf        -> eval_down(   ((double)www.el_eta())           ,min((double)www.el_pt(),b500)     ) : histmap2018_emu_el_mva_sf        -> eval(   ((double)www.el_eta())           ,min((double)www.el_pt(),b500)     );
+                float lead_mu_recoid_3l_sf = variation > 0 ? histmap2018_lead_mu_recoid_3l_sf -> eval_up(min((double)www.lep_pt()[0],b120)   ,abs((double)www.lep_eta()[0])     ) : variation < 0 ? histmap2018_lead_mu_recoid_3l_sf -> eval_down(min((double)www.lep_pt()[0],b120)   ,abs((double)www.lep_eta()[0])     ) : histmap2018_lead_mu_recoid_3l_sf -> eval(min((double)www.lep_pt()[0],b120)   ,abs((double)www.lep_eta()[0])     );
+                float subl_mu_recoid_3l_sf = variation > 0 ? histmap2018_subl_mu_recoid_3l_sf -> eval_up(min((double)www.lep_pt()[1],b120)   ,abs((double)www.lep_eta()[1])     ) : variation < 0 ? histmap2018_subl_mu_recoid_3l_sf -> eval_down(min((double)www.lep_pt()[1],b120)   ,abs((double)www.lep_eta()[1])     ) : histmap2018_subl_mu_recoid_3l_sf -> eval(min((double)www.lep_pt()[1],b120)   ,abs((double)www.lep_eta()[1])     );
+                float lead_el_recoid_3l_sf = variation > 0 ? histmap2018_lead_el_recoid_3l_sf -> eval_up(   ((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) ) : variation < 0 ? histmap2018_lead_el_recoid_3l_sf -> eval_down(   ((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) ) : histmap2018_lead_el_recoid_3l_sf -> eval(   ((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) );
+                float subl_el_recoid_3l_sf = variation > 0 ? histmap2018_subl_el_recoid_3l_sf -> eval_up(   ((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) ) : variation < 0 ? histmap2018_subl_el_recoid_3l_sf -> eval_down(   ((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) ) : histmap2018_subl_el_recoid_3l_sf -> eval(   ((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) );
+                float lead_el_mva_3l_sf    = variation > 0 ? histmap2018_lead_el_mva_3l_sf    -> eval_up(   ((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) ) : variation < 0 ? histmap2018_lead_el_mva_3l_sf    -> eval_down(   ((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) ) : histmap2018_lead_el_mva_3l_sf    -> eval(   ((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) );
+                float subl_el_mva_3l_sf    = variation > 0 ? histmap2018_subl_el_mva_3l_sf    -> eval_up(   ((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) ) : variation < 0 ? histmap2018_subl_el_mva_3l_sf    -> eval_down(   ((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) ) : histmap2018_subl_el_mva_3l_sf    -> eval(   ((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) );
+                float tert_mu_recoid_3l_sf = variation > 0 ? histmap2018_tert_mu_recoid_3l_sf -> eval_up(min((double)www.lep_pt()[2],b120)   ,abs((double)www.lep_eta()[2])     ) : variation < 0 ? histmap2018_tert_mu_recoid_3l_sf -> eval_down(min((double)www.lep_pt()[2],b120)   ,abs((double)www.lep_eta()[2])     ) : histmap2018_tert_mu_recoid_3l_sf -> eval(min((double)www.lep_pt()[2],b120)   ,abs((double)www.lep_eta()[2])     );
+                float tert_el_recoid_3l_sf = variation > 0 ? histmap2018_tert_el_recoid_3l_sf -> eval_up(   ((double)www.lep_eta()[2])       ,min((double)www.lep_pt()[2],b500) ) : variation < 0 ? histmap2018_tert_el_recoid_3l_sf -> eval_down(   ((double)www.lep_eta()[2])       ,min((double)www.lep_pt()[2],b500) ) : histmap2018_tert_el_recoid_3l_sf -> eval(   ((double)www.lep_eta()[2])       ,min((double)www.lep_pt()[2],b500) );
+                float tert_el_mva_3l_sf    = variation > 0 ? histmap2018_tert_el_mva_3l_sf    -> eval_up(   ((double)www.lep_eta()[2])       ,min((double)www.lep_pt()[2],b500) ) : variation < 0 ? histmap2018_tert_el_mva_3l_sf    -> eval_down(   ((double)www.lep_eta()[2])       ,min((double)www.lep_pt()[2],b500) ) : histmap2018_tert_el_mva_3l_sf    -> eval(   ((double)www.lep_eta()[2])       ,min((double)www.lep_pt()[2],b500) );
+                float lead_mu_isoip_sf     = variation > 0 ? histmap2018_lead_mu_isoip_sf     -> eval_up(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b120) ) : variation < 0 ? histmap2018_lead_mu_isoip_sf     -> eval_down(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b120) ) : histmap2018_lead_mu_isoip_sf     -> eval(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b120) );
+                float subl_mu_isoip_sf     = variation > 0 ? histmap2018_subl_mu_isoip_sf     -> eval_up(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b120) ) : variation < 0 ? histmap2018_subl_mu_isoip_sf     -> eval_down(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b120) ) : histmap2018_subl_mu_isoip_sf     -> eval(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b120) );
+                float lead_el_isoip_sf     = variation > 0 ? histmap2018_lead_el_isoip_sf     -> eval_up(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) ) : variation < 0 ? histmap2018_lead_el_isoip_sf     -> eval_down(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) ) : histmap2018_lead_el_isoip_sf     -> eval(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) );
+                float subl_el_isoip_sf     = variation > 0 ? histmap2018_subl_el_isoip_sf     -> eval_up(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) ) : variation < 0 ? histmap2018_subl_el_isoip_sf     -> eval_down(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) ) : histmap2018_subl_el_isoip_sf     -> eval(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) );
+                float emu_mu_isoip_sf      = variation > 0 ? histmap2018_emu_mu_isoip_sf      -> eval_up(abs((double)www.mu_eta())           ,min((double)www.mu_pt(),199.99)   ) : variation < 0 ? histmap2018_emu_mu_isoip_sf      -> eval_down(abs((double)www.mu_eta())           ,min((double)www.mu_pt(),199.99)   ) : histmap2018_emu_mu_isoip_sf      -> eval(abs((double)www.mu_eta())           ,min((double)www.mu_pt(),199.99)   );
+                float emu_el_isoip_sf      = variation > 0 ? histmap2018_emu_el_isoip_sf      -> eval_up(abs((double)www.el_eta())           ,min((double)www.el_pt(),b500)     ) : variation < 0 ? histmap2018_emu_el_isoip_sf      -> eval_down(abs((double)www.el_eta())           ,min((double)www.el_pt(),b500)     ) : histmap2018_emu_el_isoip_sf      -> eval(abs((double)www.el_eta())           ,min((double)www.el_pt(),b500)     );
+                float lead_mu_isoip_3l_sf  = variation > 0 ? histmap2018_lead_mu_isoip_3l_sf  -> eval_up(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b120) ) : variation < 0 ? histmap2018_lead_mu_isoip_3l_sf  -> eval_down(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b120) ) : histmap2018_lead_mu_isoip_3l_sf  -> eval(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b120) );
+                float subl_mu_isoip_3l_sf  = variation > 0 ? histmap2018_subl_mu_isoip_3l_sf  -> eval_up(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b120) ) : variation < 0 ? histmap2018_subl_mu_isoip_3l_sf  -> eval_down(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b120) ) : histmap2018_subl_mu_isoip_3l_sf  -> eval(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b120) );
+                float lead_el_isoip_3l_sf  = variation > 0 ? histmap2018_lead_el_isoip_3l_sf  -> eval_up(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) ) : variation < 0 ? histmap2018_lead_el_isoip_3l_sf  -> eval_down(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) ) : histmap2018_lead_el_isoip_3l_sf  -> eval(abs((double)www.lep_eta()[0])       ,min((double)www.lep_pt()[0],b500) );
+                float subl_el_isoip_3l_sf  = variation > 0 ? histmap2018_subl_el_isoip_3l_sf  -> eval_up(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) ) : variation < 0 ? histmap2018_subl_el_isoip_3l_sf  -> eval_down(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) ) : histmap2018_subl_el_isoip_3l_sf  -> eval(abs((double)www.lep_eta()[1])       ,min((double)www.lep_pt()[1],b500) );
+                float tert_mu_isoip_3l_sf  = variation > 0 ? histmap2018_tert_mu_isoip_3l_sf  -> eval_up(abs((double)www.lep_eta()[2])       ,min((double)www.lep_pt()[2],b120) ) : variation < 0 ? histmap2018_tert_mu_isoip_3l_sf  -> eval_down(abs((double)www.lep_eta()[2])       ,min((double)www.lep_pt()[2],b120) ) : histmap2018_tert_mu_isoip_3l_sf  -> eval(abs((double)www.lep_eta()[2])       ,min((double)www.lep_pt()[2],b120) );
+                float tert_el_isoip_3l_sf  = variation > 0 ? histmap2018_tert_el_isoip_3l_sf  -> eval_up(abs((double)www.lep_eta()[2])       ,min((double)www.lep_pt()[2],b500) ) : variation < 0 ? histmap2018_tert_el_isoip_3l_sf  -> eval_down(abs((double)www.lep_eta()[2])       ,min((double)www.lep_pt()[2],b500) ) : histmap2018_tert_el_isoip_3l_sf  -> eval(abs((double)www.lep_eta()[2])       ,min((double)www.lep_pt()[2],b500) );
+
+                // Scale factors
+                float ee_sf = lead_el_recoid_sf * lead_el_mva_sf * lead_el_isoip_sf * subl_el_recoid_sf * subl_el_mva_sf * subl_el_isoip_sf;
+                float em_sf = emu_mu_recoid_sf * emu_mu_isoip_sf * emu_el_recoid_sf * emu_el_mva_sf * emu_el_isoip_sf;
+                float mm_sf = lead_mu_recoid_sf * lead_mu_isoip_sf * subl_mu_recoid_sf * subl_mu_isoip_sf;
+                float lead_el = lead_el_recoid_3l_sf * lead_el_mva_3l_sf * lead_el_isoip_3l_sf;
+                float subl_el = subl_el_recoid_3l_sf * subl_el_mva_3l_sf * subl_el_isoip_3l_sf;
+                float tert_el = tert_el_recoid_3l_sf * tert_el_mva_3l_sf * tert_el_isoip_3l_sf;
+                float lead_mu = lead_mu_recoid_3l_sf * lead_mu_isoip_3l_sf;
+                float subl_mu = subl_mu_recoid_3l_sf * subl_mu_isoip_3l_sf;
+                float tert_mu = tert_mu_recoid_3l_sf * tert_mu_isoip_3l_sf;
+                float threelep_sf = ((abs(www.lep_pdgId()[0])==11)*(lead_el)+(abs(www.lep_pdgId()[0])!=11)*(lead_mu))
+                    *((abs(www.lep_pdgId()[1])==11)*(subl_el)+(abs(www.lep_pdgId()[1])!=11)*(subl_mu))
+                    *((abs(www.lep_pdgId()[2])==11)*(tert_el)+(abs(www.lep_pdgId()[2])!=11)*(tert_mu));
+
+                ee_sf       = doFakeEstimation ? 1 : ee_sf;
+                em_sf       = doFakeEstimation ? 1 : em_sf;
+                mm_sf       = doFakeEstimation ? 1 : mm_sf;
+                threelep_sf = doFakeEstimation ? 1 : threelep_sf;
+
+                if (www.nVlep() == 2)
+                {
+                    if (abs(www.lep_pdgId()[0]) * abs(www.lep_pdgId()[1]) == 121)
+                    {
+                        return ee_sf;
+                    }
+                    else if (abs(www.lep_pdgId()[0]) * abs(www.lep_pdgId()[1]) == 143)
+                    {
+                        return em_sf;
+                    }
+                    else if (abs(www.lep_pdgId()[0]) * abs(www.lep_pdgId()[1]) == 169)
+                    {
+                        return mm_sf;
+                    }
+                    else
+                    {
+                        std::cout << "Error: should not be here " << __FUNCTION__ << std::endl;
+                        return 1;
+                    }
+                }
+                else if (www.nVlep() == 3)
+                {
+                    return threelep_sf;
+                }
+                else
+                {
+                    return 1;
+                }
             }
             else
             {
@@ -437,6 +584,8 @@ class FakeRates
             float nom_fr = 0;
             float closure_err_pct = 0;
             float closure_ff = 0;
+
+            std::cout <<  " index: " << index <<  " www.lep_pdgId()[index]: " << www.lep_pdgId()[index] <<  " lepversion: " << lepversion <<  std::endl;
 
             if (abs(www.lep_pdgId()[index]) == 11 and lepversion == 0)
             {
