@@ -82,6 +82,7 @@ std::function<float()> Lambdas::EventWeight = [&]()
             purewgt = 1;
         else
         {
+          pileupreweight.load(input.year);
             if (input.year == 2017 or input.year == 2018)
                 purewgt = pileupreweight.purewgt();
             if (input.year == 2016)
@@ -371,6 +372,7 @@ std::function<float()> Lambdas::PileupVariation(Variation::Var var)
 {
     return [&, var]()
     {
+      pileupreweight.load(input.year);
         if (input.year == 2016)
         {
             if (var == Variation::Up)
@@ -1205,48 +1207,48 @@ std::function<float()> Lambdas::NBmedcut(Variation::ExpSyst expsyst, Variation::
       if (expsyst == Variation::JES)
         {
           if (var == Variation::Up){
-            for(unsigned int jdx = 0; jdx<www.jets_up_csv().size(); ++jdx){
+            for(unsigned int jdx = 0; jdx<www.jets_up_btag_score().size(); ++jdx){
               if(www.jets_up_p4()[jdx].Pt()<ptcut) continue;
               if(abs(www.jets_up_p4()[jdx].Eta())>etacut) continue;
-              if(www.jets_up_csv()[jdx]>cut) ++nbmed;
+              if(www.jets_up_btag_score()[jdx]>cut) ++nbmed;
             }
           }
           else if (var == Variation::Down){
-            for(unsigned int jdx = 0; jdx<www.jets_dn_csv().size(); ++jdx){
+            for(unsigned int jdx = 0; jdx<www.jets_dn_btag_score().size(); ++jdx){
               if(www.jets_dn_p4()[jdx].Pt()<ptcut) continue;
               if(abs(www.jets_dn_p4()[jdx].Eta())>etacut) continue;
-              if(www.jets_dn_csv()[jdx]>cut) ++nbmed;
+              if(www.jets_dn_btag_score()[jdx]>cut) ++nbmed;
             }
           }
           else {
-            for(unsigned int jdx = 0; jdx<www.jets_csv().size(); ++jdx){
+            for(unsigned int jdx = 0; jdx<www.jets_btag_score().size(); ++jdx){
               if(www.jets_p4()[jdx].Pt()<ptcut) continue;
               if(abs(www.jets_p4()[jdx].Eta())>etacut) continue;
-              if(www.jets_csv()[jdx]>cut) ++nbmed;
+              if(www.jets_btag_score()[jdx]>cut) ++nbmed;
             }
           }
         }
       else // else if (expsyst == Variation::JER)
         {
           if (var == Variation::Up){
-            for(unsigned int jdx = 0; jdx<www.jets_jerup_csv().size(); ++jdx){
+            for(unsigned int jdx = 0; jdx<www.jets_jerup_btag_score().size(); ++jdx){
               if(www.jets_jerup_p4()[jdx].Pt()<ptcut) continue;
               if(abs(www.jets_jerup_p4()[jdx].Eta())>etacut) continue;
-              if(www.jets_jerup_csv()[jdx]>cut) ++nbmed;
+              if(www.jets_jerup_btag_score()[jdx]>cut) ++nbmed;
             }
           }
           else if (var == Variation::Down){
-            for(unsigned int jdx = 0; jdx<www.jets_jerdn_csv().size(); ++jdx){
+            for(unsigned int jdx = 0; jdx<www.jets_jerdn_btag_score().size(); ++jdx){
               if(www.jets_jerdn_p4()[jdx].Pt()<ptcut) continue;
               if(abs(www.jets_jerdn_p4()[jdx].Eta())>etacut) continue;
-              if(www.jets_jerdn_csv()[jdx]>cut) ++nbmed;
+              if(www.jets_jerdn_btag_score()[jdx]>cut) ++nbmed;
             }
           }
           else {
-            for(unsigned int jdx = 0; jdx<www.jets_jer_csv().size(); ++jdx){
+            for(unsigned int jdx = 0; jdx<www.jets_jer_btag_score().size(); ++jdx){
               if(www.jets_jer_p4()[jdx].Pt()<ptcut) continue;
               if(abs(www.jets_jer_p4()[jdx].Eta())>etacut) continue;
-              if(www.jets_jer_csv()[jdx]>cut) ++nbmed;
+              if(www.jets_jer_btag_score()[jdx]>cut) ++nbmed;
             }
           }
         }

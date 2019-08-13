@@ -472,14 +472,14 @@ class FakeRates
 
         void load2017()
         {
-            if (not histmap_2017_fr_ss_el        ) histmap_2017_fr_ss_el         = new RooUtil::HistMap("scalefactors/fakerate_2017_ss_mar2019.root:El_ptcorretarolledcoarse_data_fakerate");
-            if (not histmap_2017_fr_ss_mu        ) histmap_2017_fr_ss_mu         = new RooUtil::HistMap("scalefactors/fakerate_2017_ss_mar2019.root:Mu_ptcorretarolledcoarse_data_fakerate");
-            if (not histmap_2017_fr_3l_el        ) histmap_2017_fr_3l_el         = new RooUtil::HistMap("scalefactors/fakerate_2017_3l_mar2019.root:El_ptcorretarolledcoarse_data_fakerate");
-            if (not histmap_2017_fr_3l_mu        ) histmap_2017_fr_3l_mu         = new RooUtil::HistMap("scalefactors/fakerate_2017_3l_mar2019.root:Mu_ptcorretarolledcoarse_data_fakerate");
-            if (not histmap_2017_fr_ss_el_closure) histmap_2017_fr_ss_el_closure = new RooUtil::HistMap("scalefactors/fakerate_2017_ss_mar2019.root:El_ptcorretarolledcoarse_data_fakerateclosure");
-            if (not histmap_2017_fr_ss_mu_closure) histmap_2017_fr_ss_mu_closure = new RooUtil::HistMap("scalefactors/fakerate_2017_ss_mar2019.root:Mu_ptcorretarolledcoarse_data_fakerateclosure");
-            if (not histmap_2017_fr_3l_el_closure) histmap_2017_fr_3l_el_closure = new RooUtil::HistMap("scalefactors/fakerate_2017_3l_mar2019.root:El_ptcorretarolledcoarse_data_fakerateclosure");
-            if (not histmap_2017_fr_3l_mu_closure) histmap_2017_fr_3l_mu_closure = new RooUtil::HistMap("scalefactors/fakerate_2017_3l_mar2019.root:Mu_ptcorretarolledcoarse_data_fakerateclosure");
+            if (not histmap_2017_fr_ss_el        ) histmap_2017_fr_ss_el         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerate_2017_ss.root:El_ptcorretarolledcoarse_data_fakerate");
+            if (not histmap_2017_fr_ss_mu        ) histmap_2017_fr_ss_mu         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerate_2017_ss.root:Mu_ptcorretarolledcoarse_data_fakerate");
+            if (not histmap_2017_fr_3l_el        ) histmap_2017_fr_3l_el         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerate_2017_3l.root:El_ptcorretarolledcoarse_data_fakerate");
+            if (not histmap_2017_fr_3l_mu        ) histmap_2017_fr_3l_mu         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerate_2017_3l.root:Mu_ptcorretarolledcoarse_data_fakerate");
+            if (not histmap_2017_fr_ss_el_closure) histmap_2017_fr_ss_el_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerate_2017_ss.root:El_ptcorretarolledcoarse_data_fakerateclosure");
+            if (not histmap_2017_fr_ss_mu_closure) histmap_2017_fr_ss_mu_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerate_2017_ss.root:Mu_ptcorretarolledcoarse_data_fakerateclosure");
+            if (not histmap_2017_fr_3l_el_closure) histmap_2017_fr_3l_el_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerate_2017_3l.root:El_ptcorretarolledcoarse_data_fakerateclosure");
+            if (not histmap_2017_fr_3l_mu_closure) histmap_2017_fr_3l_mu_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerate_2017_3l.root:Mu_ptcorretarolledcoarse_data_fakerateclosure");
             histmap_fr_ss_el         = histmap_2017_fr_ss_el;
             histmap_fr_ss_mu         = histmap_2017_fr_ss_mu;
             histmap_fr_3l_el         = histmap_2017_fr_3l_el;
@@ -492,14 +492,14 @@ class FakeRates
 
         void load2018()
         {
-            if (not histmap_2018_fr_ss_el        ) histmap_2018_fr_ss_el         = new RooUtil::HistMap("scalefactors/fakerate_2018_ss.root:El_ptcorretarolled_data_fakerate");
-            if (not histmap_2018_fr_ss_mu        ) histmap_2018_fr_ss_mu         = new RooUtil::HistMap("scalefactors/fakerate_2018_ss.root:Mu_ptcorretarolled_data_fakerate");
-            if (not histmap_2018_fr_3l_el        ) histmap_2018_fr_3l_el         = new RooUtil::HistMap("scalefactors/fakerate_2018_3l.root:El_ptcorretarolled_data_fakerate");
-            if (not histmap_2018_fr_3l_mu        ) histmap_2018_fr_3l_mu         = new RooUtil::HistMap("scalefactors/fakerate_2018_3l.root:Mu_ptcorretarolled_data_fakerate");
-            if (not histmap_2018_fr_ss_el_closure) histmap_2018_fr_ss_el_closure = new RooUtil::HistMap("scalefactors/fakerate_2018_ss.root:El_ptcorretarolled_data_fakerateclosure");
-            if (not histmap_2018_fr_ss_mu_closure) histmap_2018_fr_ss_mu_closure = new RooUtil::HistMap("scalefactors/fakerate_2018_ss.root:Mu_ptcorretarolled_data_fakerateclosure");
-            if (not histmap_2018_fr_3l_el_closure) histmap_2018_fr_3l_el_closure = new RooUtil::HistMap("scalefactors/fakerate_2018_3l.root:El_ptcorretarolled_data_fakerateclosure");
-            if (not histmap_2018_fr_3l_mu_closure) histmap_2018_fr_3l_mu_closure = new RooUtil::HistMap("scalefactors/fakerate_2018_3l.root:Mu_ptcorretarolled_data_fakerateclosure");
+            if (not histmap_2018_fr_ss_el        ) histmap_2018_fr_ss_el         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerate_2018_ss.root:El_ptcorretarolled_data_fakerate");
+            if (not histmap_2018_fr_ss_mu        ) histmap_2018_fr_ss_mu         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerate_2018_ss.root:Mu_ptcorretarolled_data_fakerate");
+            if (not histmap_2018_fr_3l_el        ) histmap_2018_fr_3l_el         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerate_2018_3l.root:El_ptcorretarolled_data_fakerate");
+            if (not histmap_2018_fr_3l_mu        ) histmap_2018_fr_3l_mu         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerate_2018_3l.root:Mu_ptcorretarolled_data_fakerate");
+            if (not histmap_2018_fr_ss_el_closure) histmap_2018_fr_ss_el_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerate_2018_ss.root:El_ptcorretarolled_data_fakerateclosure");
+            if (not histmap_2018_fr_ss_mu_closure) histmap_2018_fr_ss_mu_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerate_2018_ss.root:Mu_ptcorretarolled_data_fakerateclosure");
+            if (not histmap_2018_fr_3l_el_closure) histmap_2018_fr_3l_el_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerate_2018_3l.root:El_ptcorretarolled_data_fakerateclosure");
+            if (not histmap_2018_fr_3l_mu_closure) histmap_2018_fr_3l_mu_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerate_2018_3l.root:Mu_ptcorretarolled_data_fakerateclosure");
             histmap_fr_ss_el         = histmap_2018_fr_ss_el;
             histmap_fr_ss_mu         = histmap_2018_fr_ss_mu;
             histmap_fr_3l_el         = histmap_2018_fr_3l_el;
@@ -738,9 +738,36 @@ class PileupReweight
         RooUtil::HistMap* histmap_purwegt_dn;
         PileupReweight()
         {
-            histmap_purwegt    = new RooUtil::HistMap("scalefactors/puw_2017.root:puw_central");
-            histmap_purwegt_up = new RooUtil::HistMap("scalefactors/puw_2017.root:puw_up");
-            histmap_purwegt_dn = new RooUtil::HistMap("scalefactors/puw_2017.root:puw_down");
+          histmap_purwegt = 0;
+          histmap_purwegt_up = 0;
+          histmap_purwegt_dn = 0;
+        }
+        ~PileupReweight()
+        {
+          delete histmap_purwegt;
+          delete histmap_purwegt_up;
+          delete histmap_purwegt_dn;
+        }
+        void load(float inputyear){
+          if(not (histmap_purwegt==NULL or histmap_purwegt_up==NULL or histmap_purwegt_dn==NULL) ) return;//already loaded
+          if(inputyear==2016)
+            {
+              histmap_purwegt    = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/puWeights_Run2.root:puWeight2016");
+              histmap_purwegt_up = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/puWeights_Run2.root:puWeight2016Up");
+              histmap_purwegt_dn = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/puWeights_Run2.root:puWeight2016Down");
+            }
+          if(inputyear==2017)
+            {
+              histmap_purwegt    = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/puWeights_Run2.root:puWeight2017");
+              histmap_purwegt_up = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/puWeights_Run2.root:puWeight2017Up");
+              histmap_purwegt_dn = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/puWeights_Run2.root:puWeight2017Down");
+            }
+          if(inputyear==2018)
+            {
+              histmap_purwegt    = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/puWeights_Run2.root:puWeight2018");
+              histmap_purwegt_up = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/puWeights_Run2.root:puWeight2018Up");
+              histmap_purwegt_dn = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/puWeights_Run2.root:puWeight2018Down");
+            }
         }
         float purewgt()
         {
