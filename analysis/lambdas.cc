@@ -130,7 +130,7 @@ std::function<float()> Lambdas::EventWeight = [&]()
         // Xsec error corrections
         //
         if ((input.current_file_name.Contains("wg_lnug_amcatnlo_1.root") or input.current_file_name.Contains("wg_lvg_amcatnlo_1.root")) // Because the short name was different between 2017 and 2018... (stupid of me...)
-                and (input.baby_version.EqualTo("5.1.4") or input.baby_version.EqualTo("5.1.6") or input.baby_version.EqualTo("5.1.8"))
+                and (input.baby_version.EqualTo("5.1.4") or input.baby_version.EqualTo("5.1.6") or input.baby_version.EqualTo("5.1.8") or input.baby_version.EqualTo("5.1.9"))
                 and (input.baby_type.EqualTo("Loose") or input.baby_type.EqualTo("WWW")))
         {
             weight *= 163. / 405.27;
