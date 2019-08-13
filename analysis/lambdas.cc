@@ -1190,6 +1190,79 @@ std::function<float()> Lambdas::NBcut(Variation::ExpSyst expsyst, Variation::Var
     };
 }
 
+std::function<float()> Lambdas::NBmedcut(Variation::ExpSyst expsyst, Variation::Var var, bool invert_btag, int value){
+  return [&, expsyst, var, invert_btag, value]()
+    {
+
+      int nbmed = 0;
+      //float cut = input.WP_DEEPCSV_MEDIUM;
+      float cut = -999;
+      if(input.year==2016) cut = 0.6321;
+      if(input.year==2017) cut = 0.4941;
+      if(input.year==2018) cut = 0.4184;
+      float ptcut = 30.;
+      float etacut = 2.4;
+      if (expsyst == Variation::JES)
+        {
+          if (var == Variation::Up){
+            for(unsigned int jdx = 0; jdx<www.jets_up_csv().size(); ++jdx){
+              if(www.jets_up_p4()[jdx].Pt()<ptcut) continue;
+              if(abs(www.jets_up_p4()[jdx].Eta())>etacut) continue;
+              if(www.jets_up_csv()[jdx]>cut) ++nbmed;
+            }
+          }
+          else if (var == Variation::Down){
+            for(unsigned int jdx = 0; jdx<www.jets_dn_csv().size(); ++jdx){
+              if(www.jets_dn_p4()[jdx].Pt()<ptcut) continue;
+              if(abs(www.jets_dn_p4()[jdx].Eta())>etacut) continue;
+              if(www.jets_dn_csv()[jdx]>cut) ++nbmed;
+            }
+          }
+          else {
+            for(unsigned int jdx = 0; jdx<www.jets_csv().size(); ++jdx){
+              if(www.jets_p4()[jdx].Pt()<ptcut) continue;
+              if(abs(www.jets_p4()[jdx].Eta())>etacut) continue;
+              if(www.jets_csv()[jdx]>cut) ++nbmed;
+            }
+          }
+        }
+      else // else if (expsyst == Variation::JER)
+        {
+          if (var == Variation::Up){
+            for(unsigned int jdx = 0; jdx<www.jets_jerup_csv().size(); ++jdx){
+              if(www.jets_jerup_p4()[jdx].Pt()<ptcut) continue;
+              if(abs(www.jets_jerup_p4()[jdx].Eta())>etacut) continue;
+              if(www.jets_jerup_csv()[jdx]>cut) ++nbmed;
+            }
+          }
+          else if (var == Variation::Down){
+            for(unsigned int jdx = 0; jdx<www.jets_jerdn_csv().size(); ++jdx){
+              if(www.jets_jerdn_p4()[jdx].Pt()<ptcut) continue;
+              if(abs(www.jets_jerdn_p4()[jdx].Eta())>etacut) continue;
+              if(www.jets_jerdn_csv()[jdx]>cut) ++nbmed;
+            }
+          }
+          else {
+            for(unsigned int jdx = 0; jdx<www.jets_jer_csv().size(); ++jdx){
+              if(www.jets_jer_p4()[jdx].Pt()<ptcut) continue;
+              if(abs(www.jets_jer_p4()[jdx].Eta())>etacut) continue;
+              if(www.jets_jer_csv()[jdx]>cut) ++nbmed;
+            }
+          }
+        }
+          
+        if (not invert_btag)
+        {
+          if ( nbmed<value ) return false;
+        }
+        else
+        {
+          if (nbmed>=value ) return false;
+        }
+        return true;
+    };
+}
+
 
 std::function<float()> Lambdas::SSPreSelection(Variation::ExpSyst expsyst, Variation::Var var, bool invert_btag)
 {
