@@ -157,6 +157,7 @@ namespace Lambdas
     std::function<float()> NumberCenJet30(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal); // Two central jets above 30 GeV 
     std::function<float()> NBveto(        Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, bool invert_btag=false);
     std::function<float()> NBcut(         Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, bool invert_btag=false, int value = 1);
+    std::function<float()> NBmedcut(      Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, bool invert_btag=false, int value = 1);
     std::function<float()> LowDEtajj(     Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, float value = 2.5); // Low Detajj
     std::function<float()> LowMjj(        Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, float value = 500.); // Low Mjj
     std::function<float()> LowDEtaMJJ(    Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal); // Low Mjj and Detajj
