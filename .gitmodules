@@ -8,6 +8,7 @@
 	path = wwwbabymaker
 	url = git@github.com:cmstas/VVVBabyMaker.git
 	branch = master
+	ignore = untracked
 [submodule "fakerate/plottery"]
 	path = fakerate/plottery
 	url = git@github.com:aminnj/plottery.git
