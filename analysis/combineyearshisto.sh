@@ -18,11 +18,11 @@ find "$YEAR2016" -maxdepth 1 -type f -name '*.root' -printf '%f\n' | while read 
         echo "File $YEAR2017/$line does not exist. continue."
         continue
     fi
-    if [ ! -f "$YEAR2017/$line" ]; then
-        echo "File $YEAR2017/$line does not exist. continue."
+    if [ ! -f "$YEAR2018/$line" ]; then
+        echo "File $YEAR2018/$line does not exist. continue."
         continue
     fi
-    echo "hadd -f $YEARCOMB/$line $YEAR2016/$line $YEAR2017/$line $YEAR2017/$line"
-    hadd -f $YEARCOMB/$line $YEAR2016/$line $YEAR2017/$line $YEAR2017/$line
+    echo "hadd -f $YEARCOMB/$line $YEAR2016/$line $YEAR2017/$line $YEAR2018/$line"
+    hadd -f $YEARCOMB/$line $YEAR2016/$line $YEAR2017/$line $YEAR2018/$line
 done
 

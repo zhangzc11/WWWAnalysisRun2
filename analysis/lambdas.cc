@@ -230,11 +230,12 @@ std::function<float()> Lambdas::TriggerScaleFactor = [&]()
 // Lepton scale factors
 std::function<float()> Lambdas::LeptonScaleFactor = [&]()
     {
-        // the 2017 and 2018 doesn't have lepton scale factors saved to the branches in the WWW ttree
-        if (input.year == 2017 or input.year == 2018)
-            return leptonScaleFactors.getScaleFactors(true, ana.do_fake_estimation, input.is_data);
-        else
-            return www.lepsf();
+        // // the 2017 and 2018 doesn't have lepton scale factors saved to the branches in the WWW ttree
+        // if (input.year == 2017 or input.year == 2018)
+        //     return leptonScaleFactors.getScaleFactors(true, ana.do_fake_estimation, input.is_data);
+        // else
+        //     return www.lepsf();
+        return leptonScaleFactors.getScaleFactors(true, ana.do_fake_estimation, input.is_data);
     };
 
 //______________________________________________________________________________________________
