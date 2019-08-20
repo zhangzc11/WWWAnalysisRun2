@@ -122,6 +122,16 @@ bkg_fnames = [
     ]
 histcolors = [920, 2007, 2005, 2003, 2001, 2011]
 
+# background file names w/ mc_fakes
+bkg_fnames_mc_fakes = [
+    "{}/photon.root".format(input_dir),
+    "{}/qflip.root".format(input_dir),
+    "{}/fakes.root".format(input_dir),
+    "{}/lostlep.root".format(input_dir),
+    "{}/prompt.root".format(input_dir),
+    ]
+histcolors = [920, 2007, 2005, 2003, 2001, 2011]
+
 # Background file names if split_vbsttw is true
 if args.split_vbsttw:
     bkg_fnames = [
@@ -167,11 +177,32 @@ legend_labels = [
         "All WWW (stacked)"
         ]
 
+# legend_labels
+legend_labels_mc_fakes = [
+        "#gamma#rightarrowl",
+        "Charge mis-id",
+        "Non-prompt (MC)",
+        "Lost/three lep",
+        "Irredu.",
+        "All WWW (stacked)"
+        ]
+
 if args.split_vbsttw:
     legend_labels = [
             "#gamma#rightarrowl",
             "Charge mis-id",
             "Non-prompt (MC)" if args.use_mc_fake else "Non-prompt",
+            "Lost/three lep",
+            "Other Irredu.",
+            "W^{#pm}W^{#pm}",
+            "t#bar{t}W",
+            "All WWW (stacked)"
+            ]
+
+    legend_labels_mc_fakes = [
+            "#gamma#rightarrowl",
+            "Charge mis-id",
+            "Non-prompt (MC)",
             "Lost/three lep",
             "Other Irredu.",
             "W^{#pm}W^{#pm}",
@@ -315,10 +346,19 @@ else:
             fnames=bkg_fnames,
             sig_fnames=sig_fnames,
             data_fname="{}/data.root".format(input_dir),
-            regions=[ "WZCRSSeeFull{}(1)".format(args.syst), "WZCRSSemFull{}(1)".format(args.syst), "WZCRSSmmFull{}(1)".format(args.syst), "WZCR1SFOSFull{}(1)".format(args.syst), "WZCR2SFOSFull{}(1)".format(args.syst) ],
-            binlabels=[ "ee", "em", "mm", "1SFOS", "2SFOS", ],
+            regions=[
+                "WZCRSSeeFull{}(1)".format(args.syst),
+                "WZCRSSemFull{}(1)".format(args.syst),
+                "WZCRSSmmFull{}(1)".format(args.syst),
+                "WZCRSS1JeeFull{}(1)".format(args.syst),
+                "WZCRSS1JemFull{}(1)".format(args.syst),
+                "WZCRSS1JmmFull{}(1)".format(args.syst),
+                "WZCR1SFOSFull{}(1)".format(args.syst),
+                "WZCR2SFOSFull{}(1)".format(args.syst)
+                ],
+            binlabels=[ "ee", "em", "mm", "ee1j", "em1j", "mm1j", "1SFOS", "2SFOS", ],
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
-            output_name="wzcr_yield",
+            output_name="yield_wzcr",
             legend_labels=legend_labels,
             signal_labels=["WWW", "VH"],
             donorm=False,
@@ -372,98 +412,6 @@ else:
             usercolors=histcolors,
             )
 
-    #__________________________________________________________________________________
-    # Draw the money plot (the 3 bin Njet-1 category plot)
-    p.plot_yields(
-            fnames=bkg_fnames,
-            sig_fnames=sig_fnames,
-            data_fname="{}/data.root".format(input_dir),
-            regions=[ "SRSS1JeeFull{}(1)".format(args.syst), "SRSS1JemFull{}(1)".format(args.syst), "SRSS1JmmFull{}(1)".format(args.syst)],
-            binlabels=[ "ee", "em", "mm"],
-            dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
-            output_name="yield_nj1",
-            legend_labels=legend_labels,
-            signal_labels=["WWW", "VH"],
-            donorm=False,
-            signal_scale=sig_scale,
-            hsuffix="__yield",
-            extraoptions={
-                "bkg_sort_method": "unsorted",
-                "legend_scalex": 2.8,
-                "legend_scaley": 0.8,
-                "lumi_value": lumi,
-                "print_yield": True,
-                "legend_ncolumns": 3,
-                "ratio_range": [0., 2.],
-                "ymax_scale": 1.3,
-                "blind": not args.draw_data, # BE CAREFUL!!!!!!!!!!!!!!!!!!
-                },
-            usercolors=histcolors,
-            )
-
-    #__________________________________________________________________________________
-    # Draw the money plot (the 3 bin Njet-1 category plot)
-    p.plot_yields(
-            fnames=bkg_fnames,
-            sig_fnames=sig_fnames,
-            data_fname="{}/data.root".format(input_dir),
-            regions=[ "SRSS1JeeFull{}(1)".format(args.syst), "SRSS1JemFull{}(1)".format(args.syst), "SRSS1JmmFull{}(1)".format(args.syst)],
-            binlabels=[ "ee", "em", "mm"],
-            dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
-            output_name="yield_nj1_cr",
-            legend_labels=legend_labels,
-            signal_labels=["WWW", "VH"],
-            donorm=False,
-            signal_scale=sig_scale,
-            hsuffix="__yield",
-            extraoptions={
-                "bkg_sort_method": "unsorted",
-                "legend_scalex": 2.8,
-                "legend_scaley": 0.8,
-                "lumi_value": lumi,
-                "print_yield": True,
-                "legend_ncolumns": 3,
-                "ratio_range": [0., 2.],
-                "ymax_scale": 1.3,
-                "blind": False, # BE CAREFUL!!!!!!!!!!!!!!!!!!
-                },
-            usercolors=histcolors,
-            )
-
-    #__________________________________________________________________________________
-    # Draw the money plot (the 12 bin plot)
-    binorder=[ "{}{}(1)".format(x, args.syst) for x in binorder9binSR ]
-    if args.order_by_purity:
-        binorder.reverse()
-        binlabels9binSR.reverse()
-    binorder = binorder9binSR[:6] + ["SRSS1JeeFull", "SRSS1JemFull", "SRSS1JmmFull"] + binorder9binSR[6:]
-    binlabels12binSR = binlabels9binSR[:6] + [ "ee-1j", "em-1j", "mm-1j"] + binlabels9binSR[6:]
-    p.plot_yields(
-            fnames=bkg_fnames,
-            sig_fnames=sig_fnames,
-            data_fname="{}/data.root".format(input_dir),
-            regions=binorder,
-            binlabels=binlabels12binSR,
-            dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
-            output_name="yield12_ordered" if args.order_by_purity else "yield12",
-            legend_labels=legend_labels,
-            signal_labels=["WWW", "VH"],
-            donorm=False,
-            signal_scale=sig_scale,
-            hsuffix="__yield",
-            extraoptions={
-                "bkg_sort_method": "unsorted",
-                "legend_scalex": 2.8,
-                "legend_scaley": 0.8,
-                "lumi_value": lumi,
-                "print_yield": True,
-                "legend_ncolumns": 3,
-                "ratio_range": [0., 2.],
-                "ymax_scale": 1.3,
-                "blind": not args.draw_data, # BE CAREFUL!!!!!!!!!!!!!!!!!!
-                },
-            usercolors=histcolors,
-            )
 
     #__________________________________________________________________________________
     # Draw the money plot (b-tagged CR)
@@ -471,8 +419,18 @@ else:
             fnames=bkg_fnames,
             sig_fnames=sig_fnames,
             data_fname="{}/data.root".format(input_dir),
-            regions=["CRBTageeFull{}(1)".format(args.syst), "CRBTagemFull{}(1)".format(args.syst), "CRBTagmmFull{}(1)".format(args.syst), "CRBTag0SFOSFull{}(1)".format(args.syst), "CRBTag1SFOSFull{}(1)".format(args.syst), "CRBTag2SFOSFull{}(1)".format(args.syst)],
-            binlabels=[ "ee", "em", "mm", "0SFOS", "1SFOS", "2SFOS" ],
+            regions=[
+                "CRBTageeFull{}(1)".format(args.syst),
+                "CRBTagemFull{}(1)".format(args.syst),
+                "CRBTagmmFull{}(1)".format(args.syst),
+                "CRBTag1JeeFull{}(1)".format(args.syst),
+                "CRBTag1JemFull{}(1)".format(args.syst),
+                "CRBTag1JmmFull{}(1)".format(args.syst),
+                "CRBTag0SFOSFull{}(1)".format(args.syst),
+                "CRBTag1SFOSFull{}(1)".format(args.syst),
+                "CRBTag2SFOSFull{}(1)".format(args.syst)
+                ],
+            binlabels=[ "ee", "em", "mm", "ee1j", "em1j", "mm1j", "0SFOS", "1SFOS", "2SFOS" ],
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             output_name="yield_bcr",
             legend_labels=legend_labels,
@@ -489,7 +447,49 @@ else:
                 "legend_ncolumns": 3,
                 "ratio_range": [0., 2.],
                 "ymax_scale": 1.3,
-                "blind": not args.draw_data, # BE CAREFUL!!!!!!!!!!!!!!!!!!
+                "blind": False,
+                },
+            usercolors=histcolors,
+            )
+
+    #__________________________________________________________________________________
+    # Draw the money plot (Application Region)
+    p.plot_yields(
+            fnames=bkg_fnames_mc_fakes,
+            sig_fnames=sig_fnames,
+            data_fname="{}/data.root".format(input_dir),
+            regions=[
+                "ARSSeeMjjInFull{}(1)".format(args.syst),
+                "ARSSemMjjInFull{}(1)".format(args.syst),
+                "ARSSmmMjjInFull{}(1)".format(args.syst),
+                "ARSSeeMjjOutFull{}(1)".format(args.syst),
+                "ARSSemMjjOutFull{}(1)".format(args.syst),
+                "ARSSmmMjjOutFull{}(1)".format(args.syst),
+                "ARSS1JeeFull{}(1)".format(args.syst),
+                "ARSS1JemFull{}(1)".format(args.syst),
+                "ARSS1JmmFull{}(1)".format(args.syst),
+                "AR0SFOSFull{}(1)".format(args.syst),
+                "AR1SFOSFull{}(1)".format(args.syst),
+                "AR2SFOSFull{}(1)".format(args.syst)
+                ],
+            binlabels=[ "ee", "em", "mm", "ee-out", "em-out", "mm-out", "ee1j", "em1j", "mm1j", "0SFOS", "1SFOS", "2SFOS" ],
+            dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
+            output_name="yield_ar",
+            legend_labels=legend_labels_mc_fakes,
+            signal_labels=["WWW", "VH"],
+            donorm=False,
+            signal_scale=sig_scale,
+            hsuffix="__yield",
+            extraoptions={
+                "bkg_sort_method": "unsorted",
+                "legend_scalex": 2.8,
+                "legend_scaley": 0.8,
+                "lumi_value": lumi,
+                "print_yield": True,
+                "legend_ncolumns": 3,
+                "ratio_range": [0., 2.],
+                "ymax_scale": 1.3,
+                "blind": False,
                 },
             usercolors=histcolors,
             )
