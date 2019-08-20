@@ -82,11 +82,12 @@ std::function<float()> Lambdas::EventWeight = [&]()
             purewgt = 1;
         else
         {
-          pileupreweight.load(input.year);
-            if (input.year == 2017 or input.year == 2018)
-                purewgt = pileupreweight.purewgt();
-            if (input.year == 2016)
-                purewgt = www.purewgt(); // 2016 ntuples have the weights already defined in the baby ntuples
+            pileupreweight.load(input.year);
+            purewgt = pileupreweight.purewgt();
+            // if (input.year == 2017 or input.year == 2018)
+            //     purewgt = pileupreweight.purewgt();
+            // if (input.year == 2016)
+            //     purewgt = www.purewgt(); // 2016 ntuples have the weights already defined in the baby ntuples
         }
 
         //
