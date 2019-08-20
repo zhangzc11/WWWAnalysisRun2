@@ -445,7 +445,7 @@ else:
                 "lumi_value": lumi,
                 "print_yield": True,
                 "legend_ncolumns": 3,
-                "ratio_range": [0., 2.],
+                "ratio_range": [0., 3.],
                 "ymax_scale": 1.3,
                 "blind": False,
                 },
