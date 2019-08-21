@@ -14,13 +14,30 @@ from pytable import Table
 import tabletex
 from errors import E
 
-input_ntup_tag = "FR2018_v5.1.5"
-analysis_tag = "test24"
-isSS = True
+def usage():
+    print "Usage:"
+    print ""
+    print "  python {} input_ntup_tag analysis_tag isSS(=0 or 1) (e.g. FR2018_v5.1.9 test_2019_08_21_0633)"
+    print ""
+    print ""
+    sys.exit()
+
+if len(sys.argv) <= 2:
+    usage()
+
+# input_ntup_tag = "FR2018_v5.1.9"
+# analysis_tag = "test_2019_08_21_0633"
+input_ntup_tag = sys.argv[1]
+analysis_tag = sys.argv[2]
+isSS = int(sys.argv[3])
 
 output_dirpath = "outputs/{}/{}/{}".format(input_ntup_tag, analysis_tag, "ss" if isSS else "3l")
+is2016 = "FR2016" in output_dirpath
 is2017 = "FR2017" in output_dirpath
-lumi = 41.3 if is2017 else 59.74
+is2018 = "FR2018" in output_dirpath
+if is2016: lumi = 35.9
+if is2017: lumi = 41.3
+if is2018: lumi = 59.74
 
 def plot(histnames, ps=0, sf=None, sfqcd=None, output_suffix="", dd_qcd=None):
 

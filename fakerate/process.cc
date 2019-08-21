@@ -40,12 +40,24 @@ int main(int argc, char** argv)
     const char* suffix = lepversion == 0 ? "_ss" : "_3l";
 
     // Hist map for retreiving histograms with fake rates and pileup reweights
-    RooUtil::HistMap purewgt2017("histmap/puw_2017.root:puw_central");
-    RooUtil::HistMap purewgt2018("histmap/puw_2018.root:puw_central");
-    RooUtil::HistMap qcd_mu(TString::Format("histmap/fakerate_2017%s.root:Mu_ptcorretarolledcoarse_qcd_fakerate", suffix));
-    RooUtil::HistMap qcd_el(TString::Format("histmap/fakerate_2017%s.root:El_ptcorretarolledcoarse_qcd_fakerate", suffix));
+    // RooUtil::HistMap purewgt2017("histmap/puw_2017.root:puw_central");
+    // RooUtil::HistMap purewgt2018("histmap/puw_2018.root:puw_central");
+    RooUtil::HistMap qcd_mu(TString::Format("histmap/fakerate_2017%s.root:Mu_ptcorretarolled_qcd_fakerate", suffix));
+    RooUtil::HistMap qcd_el(TString::Format("histmap/fakerate_2017%s.root:El_ptcorretarolled_qcd_fakerate", suffix));
     RooUtil::HistMap qcd_mu2018(TString::Format("histmap/fakerate_2018%s.root:Mu_ptcorretarolled_qcd_fakerate", suffix));
     RooUtil::HistMap qcd_el2018(TString::Format("histmap/fakerate_2018%s.root:El_ptcorretarolled_qcd_fakerate", suffix));
+    RooUtil::HistMap qcd_mu2016(TString::Format("histmap/fakerate_2016%s.root:Mu_ptcorretarolled_qcd_fakerate", suffix));
+    RooUtil::HistMap qcd_el2016(TString::Format("histmap/fakerate_2016%s.root:El_ptcorretarolled_qcd_fakerate", suffix));
+
+    RooUtil::HistMap histmap_purwegt_2016    ("histmap/puWeights_Run2.root:puWeight2016");
+    RooUtil::HistMap histmap_purwegt_2016_up ("histmap/puWeights_Run2.root:puWeight2016Up");
+    RooUtil::HistMap histmap_purwegt_2016_dn ("histmap/puWeights_Run2.root:puWeight2016Down");
+    RooUtil::HistMap histmap_purwegt_2017    ("histmap/puWeights_Run2.root:puWeight2017");
+    RooUtil::HistMap histmap_purwegt_2017_up ("histmap/puWeights_Run2.root:puWeight2017Up");
+    RooUtil::HistMap histmap_purwegt_2017_dn ("histmap/puWeights_Run2.root:puWeight2017Down");
+    RooUtil::HistMap histmap_purwegt_2018    ("histmap/puWeights_Run2.root:puWeight2018");
+    RooUtil::HistMap histmap_purwegt_2018_up ("histmap/puWeights_Run2.root:puWeight2018Up");
+    RooUtil::HistMap histmap_purwegt_2018_dn ("histmap/puWeights_Run2.root:puWeight2018Down");
 
     // Setting years
     int year = -1;
@@ -360,7 +372,7 @@ int main(int argc, char** argv)
     cutflow.getCut("MuClosureTight");
     cutflow.addCutToLastActiveCut("MuClosureTightNbgeq1"        , [&]() { return fr.nb() >= 1                                                                                                   ; } , [&]() { return 1.                                                 ; } ) ;
     cutflow.getCut("MuClosureLoose");
-    cutflow.addCutToLastActiveCut("MuClosureTightPredict"       , [&]() { return 1                                                                                                              ; } , [&]() { return (year == 2017 ? qcd_mu.eval(muptcorr , fabs(fr.lep_eta()[muidx])) : qcd_mu2018.eval(muptcorr , fabs(fr.lep_eta()[muidx])))  ; } ) ;
+    cutflow.addCutToLastActiveCut("MuClosureTightPredict"       , [&]() { return 1                                                                                                              ; } , [&]() { return (year == 2017 ? qcd_mu.eval(muptcorr , fabs(fr.lep_eta()[muidx])) : (year == 2018 ? qcd_mu2018.eval(muptcorr , fabs(fr.lep_eta()[muidx])) : qcd_mu2016.eval(muptcorr , fabs(fr.lep_eta()[muidx]))))  ; } ) ;
     cutflow.getCut("MuClosureTightPredict");
     cutflow.addCutToLastActiveCut("MuClosureTightBVetoPredict"  , [&]() { return fr.nb() == 0                                                                                                   ; } , [&]() { return 1                                                  ; } ) ;
     cutflow.getCut("MuClosureTightPredict");
@@ -401,7 +413,7 @@ int main(int argc, char** argv)
     cutflow.getCut("ElClosureTight");
     cutflow.addCutToLastActiveCut("ElClosureTightNbgeq1"        , [&]() { return fr.nb() >= 1                                                                                                   ; } , [&]() { return 1.                                                 ; } ) ;
     cutflow.getCut("ElClosureLoose");
-    cutflow.addCutToLastActiveCut("ElClosureTightPredict"       , [&]() { return 1                                                                                                              ; } , [&]() { return (year == 2017 ? qcd_el.eval(elptcorr, fabs(fr.lep_eta()[elidx])) : qcd_el2018.eval(elptcorr, fabs(fr.lep_eta()[elidx])))   ; } ) ;
+    cutflow.addCutToLastActiveCut("ElClosureTightPredict"       , [&]() { return 1                                                                                                              ; } , [&]() { return (year == 2017 ? qcd_el.eval(elptcorr, fabs(fr.lep_eta()[elidx])) : (year == 2018 ? qcd_el2018.eval(elptcorr, fabs(fr.lep_eta()[elidx])) : qcd_el2016.eval(elptcorr, fabs(fr.lep_eta()[elidx]))))   ; } ) ;
     cutflow.getCut("ElClosureTightPredict");
     cutflow.addCutToLastActiveCut("ElClosureTightBVetoPredict"  , [&]() { return fr.nb() == 0                                                                                                   ; } , [&]() { return 1                                                  ; } ) ;
     cutflow.getCut("ElClosureTightPredict");
@@ -488,7 +500,23 @@ int main(int argc, char** argv)
             if (looper.getCurrentFileName().Contains("FR2017")) year = 2017;
             if (looper.getCurrentFileName().Contains("FR2018")) year = 2018;
         }
-        weight = fr.isData() ? 1 : fr.evt_scale1fb() * (year == 2017 ? 41.3 : year == 2018 ? 59.74 : year == 2016 ? 35.9 : 0) * (year == 2017 ? purewgt2017.eval(fr.nTrueInt()) : year == 2018 ? purewgt2017.eval(fr.nTrueInt()) : year == 2016 ? 1 : 0);
+        float purewgt = 1;
+        if (year == 2016)
+        {
+            purewgt = histmap_purwegt_2016.eval(fr.nTrueInt());
+        }
+        else if (year == 2017)
+        {
+            purewgt = histmap_purwegt_2017.eval(fr.nTrueInt());
+        }
+        else if (year == 2018)
+        {
+            purewgt = histmap_purwegt_2018.eval(fr.nTrueInt());
+            if (fr.CMS4path().Contains("bcToE_TuneCP5_13TeV_pythia8_RunIIFall17"))
+                purewgt = histmap_purwegt_2017.eval(fr.nTrueInt());
+        }
+
+        weight = fr.isData() ? 1 : fr.evt_scale1fb() * (year == 2017 ? 41.3 : year == 2018 ? 59.74 : year == 2016 ? 35.9 : 0) * purewgt;
         presel = fr.firstgoodvertex() == 0;
         presel &= fr.Flag_AllEventFilters() > 0;
         presel &= fr.evt_passgoodrunlist() > 0;
