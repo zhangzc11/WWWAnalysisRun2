@@ -8,6 +8,26 @@ As of Mar. 2019, latest 2017 ntuple baby is:
     /nfs-7/userdata/phchang/WWW_babies/WWW2016_v1.2.2/grouped/
     /nfs-7/userdata/phchang/WWW_babies/WWW2017_v5.0.0/grouped/
 
+Current version (Updated August 21)
+
+    /nfs-7/userdata/phchang/WWW_babies/WWW2016_v5.1.9/grouped/
+    /nfs-7/userdata/phchang/WWW_babies/WWW2017_v5.1.9/grouped/
+    /nfs-7/userdata/phchang/WWW_babies/WWW2018_v5.1.9/grouped/
+
+## Quick start
+
+Because ```process.sh``` has a "kill trap" run the following by copying and pasting in to the terminal
+
+    export TAG=test_2019_08_21_1104
+    rm -rf hists/WWW2016_v5.1.9/${TAG}
+    rm -rf hists/WWW2017_v5.1.9/${TAG}
+    rm -rf hists/WWW2018_v5.1.9/${TAG}
+    time sh process.sh -i WWW2016_v5.1.9 -t ${TAG} -r phchang
+    time sh process.sh -i WWW2017_v5.1.9 -t ${TAG} -r phchang
+    time sh process.sh -i WWW2018_v5.1.9 -t ${TAG} -r phchang
+    python plot.py -i hists/WWW2016_v5.1.9/${TAG}
+    python plot.py -i hists/WWW2017_v5.1.9/${TAG}
+    python plot.py -i hists/WWW2018_v5.1.9/${TAG}
 
 ## Understanding the code
 
