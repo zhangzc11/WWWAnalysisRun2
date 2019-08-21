@@ -9,7 +9,7 @@
 #
 ################
 # The following defines the tag for this round of submission (change it every time you submit)
-job_tag = "test_2019_08_21_0742"
+job_tag = "test_2019_08_21_1407"
 
 #_____________________________________________________________________________________________
 # Create the samples mapping between the sample name -> the location of input sample hadoop directory and arguments map for each sample
@@ -27,25 +27,25 @@ samples_map[input_fr_ntup_tag+"_3l"] = base_dir_path
 arguments_map[input_fr_ntup_tag+"_3l"] = "1"
 sample_list.append(input_fr_ntup_tag+"_3l")
 
-# 2017
-input_fr_ntup_tag = "FR2017_v5.1.9"
-base_dir_path = "/hadoop/cms/store/user/phchang/metis/wwwbaby/{}/merged".format(input_fr_ntup_tag)
-samples_map[input_fr_ntup_tag+"_ss"] = base_dir_path
-arguments_map[input_fr_ntup_tag+"_ss"] = "0"
-sample_list.append(input_fr_ntup_tag+"_ss")
-samples_map[input_fr_ntup_tag+"_3l"] = base_dir_path
-arguments_map[input_fr_ntup_tag+"_3l"] = "1"
-sample_list.append(input_fr_ntup_tag+"_3l")
+# # 2017
+# input_fr_ntup_tag = "FR2017_v5.1.9"
+# base_dir_path = "/hadoop/cms/store/user/phchang/metis/wwwbaby/{}/merged".format(input_fr_ntup_tag)
+# samples_map[input_fr_ntup_tag+"_ss"] = base_dir_path
+# arguments_map[input_fr_ntup_tag+"_ss"] = "0"
+# sample_list.append(input_fr_ntup_tag+"_ss")
+# samples_map[input_fr_ntup_tag+"_3l"] = base_dir_path
+# arguments_map[input_fr_ntup_tag+"_3l"] = "1"
+# sample_list.append(input_fr_ntup_tag+"_3l")
 
-# 2018
-input_fr_ntup_tag = "FR2018_v5.1.9"
-base_dir_path = "/hadoop/cms/store/user/phchang/metis/wwwbaby/{}/merged".format(input_fr_ntup_tag)
-samples_map[input_fr_ntup_tag+"_ss"] = base_dir_path
-arguments_map[input_fr_ntup_tag+"_ss"] = "0"
-sample_list.append(input_fr_ntup_tag+"_ss")
-samples_map[input_fr_ntup_tag+"_3l"] = base_dir_path
-arguments_map[input_fr_ntup_tag+"_3l"] = "1"
-sample_list.append(input_fr_ntup_tag+"_3l")
+# # 2018
+# input_fr_ntup_tag = "FR2018_v5.1.9"
+# base_dir_path = "/hadoop/cms/store/user/phchang/metis/wwwbaby/{}/merged".format(input_fr_ntup_tag)
+# samples_map[input_fr_ntup_tag+"_ss"] = base_dir_path
+# arguments_map[input_fr_ntup_tag+"_ss"] = "0"
+# sample_list.append(input_fr_ntup_tag+"_ss")
+# samples_map[input_fr_ntup_tag+"_3l"] = base_dir_path
+# arguments_map[input_fr_ntup_tag+"_3l"] = "1"
+# sample_list.append(input_fr_ntup_tag+"_3l")
 
 # Now submit the job!
 import pyrootutil as ru
