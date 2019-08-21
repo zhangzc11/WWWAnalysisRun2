@@ -1,8 +1,9 @@
-YEAR2016=hists/WWW2016_v5.1.9/test_2019_08_20_1052
-YEAR2017=hists/WWW2017_v5.1.9/test_2019_08_20_1052
-YEAR2018=hists/WWW2018_v5.1.9/test_2019_08_20_1052
+TAG=test_2019_08_21_1104
+YEAR2016=hists/WWW2016_v5.1.9/${TAG}
+YEAR2017=hists/WWW2017_v5.1.9/${TAG}
+YEAR2018=hists/WWW2018_v5.1.9/${TAG}
 
-YEARCOMB=hists/combineyears_v5.1.9/test_2019_08_20_1052
+YEARCOMB=hists/combineyears_v5.1.9/${TAG}
 
 if [ ! -d "$YEARCOMB" ]; then
     echo "making dir $YEARCOMB"
