@@ -73,6 +73,7 @@ int main(int argc, char** argv)
         ("H,hist"        , "Book histogram")
         ("C,cutflow"     , "Book cutflows")
         ("L,eventlist"   , "Book event list")
+        ("K,skim"        , "Book ntuple skim")
         ("S,systematics" , "Also consider systematics (NOTE: Generally, this limits the number of histograms and cutflows. use -f,--force to run all.)")
         ("f,force"       , "force process all and not limit any number of histograms and cutflows")
         ("F,fake"        , "The event weight will be multiplied by fake weights")
@@ -185,6 +186,19 @@ int main(int argc, char** argv)
     else
     {
         ana.do_eventlist = false;
+    }
+
+    //_______________________________________________________________________________
+    // --skim
+    if (result.count("skim"))
+    {
+        ana.do_skim = true;
+        ana.skim_new_branches_created = false;
+    }
+    else
+    {
+        ana.do_skim = false;
+        ana.skim_new_branches_created = false;
     }
 
     //_______________________________________________________________________________
@@ -301,6 +315,7 @@ int main(int argc, char** argv)
     std::cout <<  " ana.n_events: " << ana.n_events <<  std::endl;
     std::cout <<  " ana.do_cutflow: " << ana.do_cutflow <<  std::endl;
     std::cout <<  " ana.do_eventlist: " << ana.do_eventlist <<  std::endl;
+    std::cout <<  " ana.do_skim: " << ana.do_skim <<  std::endl;
     std::cout <<  " ana.do_histograms: " << ana.do_histograms <<  std::endl;
     std::cout <<  " ana.do_systematics: " << ana.do_systematics <<  std::endl;
     std::cout <<  " ana.do_force: " << ana.do_force <<  std::endl;
@@ -1480,6 +1495,14 @@ int main(int argc, char** argv)
         if (ana.do_eventlist)
             ana.cutflow.bookEventLists();
 
+        // Book skim job
+        if (ana.do_skim)
+        {
+            TString output_file_name =ana.output_tfile->GetName();
+            output_file_name.ReplaceAll(".root","");
+            ana.looper.setSkim(TString::Format("%s_skim.root", output_file_name.Data()));
+        }
+
     }
 
 
@@ -1566,6 +1589,37 @@ int main(int argc, char** argv)
             if (input.year == 2016) fakerates.load2016(); // Not properly implemented
             if (input.year == 2017) fakerates.load2017();
             if (input.year == 2018) fakerates.load2018();
+            // Create new skim branches if necessary
+            if (ana.do_skim and not (ana.do_systematics and not ana.do_force))
+            {
+                if (not ana.skim_new_branches_created)
+                {
+                    ana.skim_new_branches_created = true;
+                    ana.tx = new RooUtil::TTreeX(ana.looper.getSkimTree());
+                    ana.tx->createBranch<float>("event_weight");
+                    ana.tx->createBranch<float>("trigger_scale_factor");
+                    ana.tx->createBranch<float>("lepton_scale_factor");
+                    ana.tx->createBranch<float>("btag_scale_factor");
+                    ana.tx->createBranch<int>("SRSSee");
+                    ana.tx->createBranch<int>("SRSSem");
+                    ana.tx->createBranch<int>("SRSSmm");
+                    ana.tx->createBranch<int>("SR0SFOS");
+                    ana.tx->createBranch<int>("SR1SFOS");
+                    ana.tx->createBranch<int>("SR2SFOS");
+                    ana.tx->createBranch<int>("SRSSeeMjjInFull");
+                    ana.tx->createBranch<int>("SRSSemMjjInFull");
+                    ana.tx->createBranch<int>("SRSSmmMjjInFull");
+                    ana.tx->createBranch<int>("SRSSeeMjjOutFull");
+                    ana.tx->createBranch<int>("SRSSemMjjOutFull");
+                    ana.tx->createBranch<int>("SRSSmmMjjOutFull");
+                    ana.tx->createBranch<int>("SRSS1JeeFull");
+                    ana.tx->createBranch<int>("SRSS1JemFull");
+                    ana.tx->createBranch<int>("SRSS1JmmFull");
+                    ana.tx->createBranch<int>("SR0SFOSFull");
+                    ana.tx->createBranch<int>("SR1SFOSFull");
+                    ana.tx->createBranch<int>("SR2SFOSFull");
+                }
+            }
         }
 
         // If splitting jobs are requested then determine whether to process the event or not based on remainder
@@ -1680,6 +1734,36 @@ int main(int argc, char** argv)
         //     }
         // }
 
+        if (ana.do_skim and not (ana.do_systematics and not ana.do_force))
+        {
+            if (ana.cutflow.getCut("CutSRDilep").pass || ana.cutflow.getCut("CutSRTrilep").pass)
+            {
+                ana.tx->setBranch<float>("event_weight", Lambdas::EventWeight());
+                ana.tx->setBranch<float>("trigger_scale_factor", Lambdas::TriggerScaleFactor());
+                ana.tx->setBranch<float>("lepton_scale_factor", Lambdas::LeptonScaleFactor());
+                ana.tx->setBranch<float>("btag_scale_factor", Lambdas::BTagScaleFactor());
+                ana.tx->setBranch<int>("SRSSee", ana.cutflow.getCut("SRSSee").pass);
+                ana.tx->setBranch<int>("SRSSem", ana.cutflow.getCut("SRSSem").pass);
+                ana.tx->setBranch<int>("SRSSmm", ana.cutflow.getCut("SRSSmm").pass);
+                ana.tx->setBranch<int>("SR0SFOS", ana.cutflow.getCut("SR0SFOS").pass);
+                ana.tx->setBranch<int>("SR1SFOS", ana.cutflow.getCut("SR1SFOS").pass);
+                ana.tx->setBranch<int>("SR2SFOS", ana.cutflow.getCut("SR2SFOS").pass);
+                ana.tx->setBranch<int>("SRSSeeMjjInFull", ana.cutflow.getCut("SRSSeeMjjInFull").pass);
+                ana.tx->setBranch<int>("SRSSemMjjInFull", ana.cutflow.getCut("SRSSemMjjInFull").pass);
+                ana.tx->setBranch<int>("SRSSmmMjjInFull", ana.cutflow.getCut("SRSSmmMjjInFull").pass);
+                ana.tx->setBranch<int>("SRSSeeMjjOutFull", ana.cutflow.getCut("SRSSeeMjjOutFull").pass);
+                ana.tx->setBranch<int>("SRSSemMjjOutFull", ana.cutflow.getCut("SRSSemMjjOutFull").pass);
+                ana.tx->setBranch<int>("SRSSmmMjjOutFull", ana.cutflow.getCut("SRSSmmMjjOutFull").pass);
+                ana.tx->setBranch<int>("SRSS1JeeFull", ana.cutflow.getCut("SRSS1JeeFull").pass);
+                ana.tx->setBranch<int>("SRSS1JemFull", ana.cutflow.getCut("SRSS1JemFull").pass);
+                ana.tx->setBranch<int>("SRSS1JmmFull", ana.cutflow.getCut("SRSS1JmmFull").pass);
+                ana.tx->setBranch<int>("SR0SFOSFull", ana.cutflow.getCut("SR0SFOSFull").pass);
+                ana.tx->setBranch<int>("SR1SFOSFull", ana.cutflow.getCut("SR1SFOSFull").pass);
+                ana.tx->setBranch<int>("SR2SFOSFull", ana.cutflow.getCut("SR2SFOSFull").pass);
+                ana.looper.fillSkim();
+            }
+        }
+
     }
 
     // If bookEventLists has been called then print the event lists into a text file for terminating node cuts (i.e. the final selections applied. e.g. SRSSeeFull, ..., etc.)
@@ -1699,5 +1783,10 @@ int main(int argc, char** argv)
     // Once done with the loop, now save all the histograms to the output file
     ana.cutflow.saveOutput();
 
+    if (ana.do_skim and not (ana.do_systematics and not ana.do_force))
+    {
+        ana.looper.getSkimTree()->SetName("t");
+        ana.looper.saveSkim();
+    }
 }
 

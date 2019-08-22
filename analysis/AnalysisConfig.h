@@ -37,6 +37,15 @@ public:
     // Boolean flag to whether or not book the eventlist
     bool do_eventlist;
 
+    // Boolean flag to whether or not book the skim job
+    bool do_skim;
+
+    // TTreeX to facilitate new skim branches
+    RooUtil::TTreeX* tx;
+
+    // Boolean flag to tell whether new branches have been created
+    bool skim_new_branches_created;
+
     // Boolean flag to whether or not book histograms and cutflows for systematic variations
     bool do_systematics;
 

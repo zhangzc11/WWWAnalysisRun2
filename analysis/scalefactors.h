@@ -822,7 +822,7 @@ class FakeRates
             float closure_err_pct = 0;
             float closure_ff = 0;
 
-            std::cout <<  " index: " << index <<  " www.lep_pdgId()[index]: " << www.lep_pdgId()[index] <<  " lepversion: " << lepversion <<  std::endl;
+            // std::cout <<  " index: " << index <<  " www.lep_pdgId()[index]: " << www.lep_pdgId()[index] <<  " lepversion: " << lepversion <<  std::endl;
 
             if (abs(www.lep_pdgId()[index]) == 11 and lepversion == 0)
             {
