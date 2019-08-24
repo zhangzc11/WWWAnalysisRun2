@@ -96,10 +96,7 @@ std::function<float()> Lambdas::EventWeight = [&]()
         float ffwgt = 1;
         if (ana.do_fake_estimation)
         {
-            if (input.year == 2017 or input.year == 2018)
-                ffwgt = fakerates.getFakeFactor();
-            else
-                ffwgt = www.ffwgt(); // 2016 ntuples have the weights already defined in the baby ntuples
+            ffwgt = fakerates.getFakeFactor();
             // Primarily the fake-factor will be applied to the data events
             // When we are at this point where the do_fake_estimation = true and we're running over background samples
             // then, it means that we're trying to do "ewk" subtraction (i.e. subtracting prompt contamination in AR)
