@@ -363,8 +363,8 @@ int main(int argc, char** argv)
     cutflow.getCut("Presel");
     cutflow.addCutToLastActiveCut("MuClosure"                   , [&]() { return (closureEvtType() == 0) * (fr.nj() >= 2) * (fr.nVlep() == 2) * (fr.lep_pt()[0] > 25.) * (fr.lep_pt()[1] > 25.) ; } , [&]() { return 1.                                                 ; } ) ;
     cutflow.getCut("MuClosure");
-    cutflow.addCutToLastActiveCut("MuClosureLoose"              , [&]() { return fr.lep_pass_VVV_cutbased_fo()[muidx] == 1                                                                      ; } , [&]() { return 1.                                                 ; } ) ;
-    cutflow.addCutToLastActiveCut("MuClosureTight"              , [&]() { return fr.lep_pass_VVV_cutbased_tight()[muidx] == 1                                                                   ; } , [&]() { return 1.                                                 ; } ) ;
+    cutflow.addCutToLastActiveCut("MuClosureLoose"              , [&]() { return fr.lep_pass_VVV_fo()[muidx] == 1                                                                      ; } , [&]() { return 1.                                                 ; } ) ;
+    cutflow.addCutToLastActiveCut("MuClosureTight"              , [&]() { return fr.lep_pass_VVV_tight()[muidx] == 1                                                                   ; } , [&]() { return 1.                                                 ; } ) ;
     cutflow.getCut("MuClosureTight");
     cutflow.addCutToLastActiveCut("MuClosureTightBVeto"         , [&]() { return fr.nb() == 0                                                                                                   ; } , [&]() { return 1.                                                 ; } ) ;
     cutflow.getCut("MuClosureTight");
@@ -404,8 +404,8 @@ int main(int argc, char** argv)
     cutflow.getCut("Presel");
     cutflow.addCutToLastActiveCut("ElClosure"                   , [&]() { return (closureEvtType() == 1) * (fr.nj() >= 2) * (fr.nVlep() == 2) * (fr.lep_pt()[0] > 25.) * (fr.lep_pt()[1] > 25.) ; } , [&]() { return 1.                                                 ; } ) ;
     cutflow.getCut("ElClosure");
-    cutflow.addCutToLastActiveCut("ElClosureLoose"              , [&]() { return fr.lep_pass_VVV_cutbased_fo()[elidx] == 1                                                                      ; } , [&]() { return 1.                                                 ; } ) ;
-    cutflow.addCutToLastActiveCut("ElClosureTight"              , [&]() { return fr.lep_pass_VVV_cutbased_tight()[elidx] == 1                                                                   ; } , [&]() { return 1.                                                 ; } ) ;
+    cutflow.addCutToLastActiveCut("ElClosureLoose"              , [&]() { return fr.lep_pass_VVV_fo()[elidx] == 1                                                                      ; } , [&]() { return 1.                                                 ; } ) ;
+    cutflow.addCutToLastActiveCut("ElClosureTight"              , [&]() { return fr.lep_pass_VVV_tight()[elidx] == 1                                                                   ; } , [&]() { return 1.                                                 ; } ) ;
     cutflow.getCut("ElClosureTight");
     cutflow.addCutToLastActiveCut("ElClosureTightBVeto"         , [&]() { return fr.nb() == 0                                                                                                   ; } , [&]() { return 1.                                                 ; } ) ;
     cutflow.getCut("ElClosureTight");
@@ -528,25 +528,28 @@ int main(int argc, char** argv)
         muptcorr = fr.lep_pt()[muidx]*(1 + max((double) 0. , (double) fr.lep_relIso03EAv2Lep()[muidx]-muiso_thresh));
         elptcorr = fr.lep_pt()[elidx]*(1 + max((double) 0. , (double) fr.lep_relIso03EAv2Lep()[elidx]-eliso_thresh));
         ptcorr = abs(fr.lep_pdgId()[0]) == 13 ? muptcorr : elptcorr;
-        if (lepversion == 0)
+        bool tightidpass = lepversion == 0 ? fr.lep_pass_VVV_tight()[0] == 1 : fr.lep_pass_VVV_3l_tight()[0] == 1;
+        bool looseidpass = lepversion == 0 ? fr.lep_pass_VVV_fo   ()[0] == 1 : fr.lep_pass_VVV_3l_fo   ()[0] == 1;
+
+        if (fr.lep_pt()[0] > 10.)
         {
-            onemu_cuts = (fr.nVlep() == 1) * (fr.lep_pt()[0] > 25.) * (fr.lep_pass_VVV_cutbased_tight()[0] == 1) * (abs(fr.lep_pdgId()[0])==13) * (fr.mc_HLT_SingleIsoMu17() > 0) * (jet_pt0>40.);
-            oneel_cuts = (fr.nVlep() == 1) * (fr.lep_pt()[0] > 25.) * (fr.lep_pass_VVV_cutbased_tight()[0] == 1) * (abs(fr.lep_pdgId()[0])==11) * (fr.mc_HLT_SingleIsoEl23() > 0) * (jet_pt0>40.);
+            onemu_cuts      = (fr.nVlep() == 1) * tightidpass * (abs(fr.lep_pdgId()[0])==13) * (fr.mc_HLT_SingleIsoMu8() > 0) * (jet_pt0>40.);
+            onemuloose_cuts = (fr.nVlep() == 1) * looseidpass * (abs(fr.lep_pdgId()[0])==13) * (fr.mc_HLT_SingleIsoMu8() > 0) * (jet_pt0>40.);
         }
-        else
+        else if (fr.lep_pt()[0] > 20.)
         {
-            onemu_cuts = (fr.nVlep() == 1) * (fr.lep_pt()[0] > 20.) * (fr.lep_pass_VVV_cutbased_3l_tight()[0] == 1) * (abs(fr.lep_pdgId()[0])==13) * (fr.mc_HLT_SingleIsoMu17() > 0) * (jet_pt0>40.);
-            oneel_cuts = (fr.nVlep() == 1) * (fr.lep_pt()[0] > 20.) * (fr.lep_pass_VVV_cutbased_3l_tight()[0] == 1) * (abs(fr.lep_pdgId()[0])==11) * (fr.mc_HLT_SingleIsoEl23() > 0) * (jet_pt0>40.);
+            onemu_cuts      = (fr.nVlep() == 1) * tightidpass * (abs(fr.lep_pdgId()[0])==13) * (fr.mc_HLT_SingleIsoMu17() > 0) * (jet_pt0>40.);
+            onemuloose_cuts = (fr.nVlep() == 1) * looseidpass * (abs(fr.lep_pdgId()[0])==13) * (fr.mc_HLT_SingleIsoMu17() > 0) * (jet_pt0>40.);
         }
-        if (lepversion == 0)
+        if (fr.lep_pt()[0] > 15.)
         {
-            onemuloose_cuts = (fr.nVlep() == 1) * (fr.lep_pt()[0] > 25.) * (fr.lep_pass_VVV_cutbased_fo()[0] == 1) * (abs(fr.lep_pdgId()[0])==13) * (fr.mc_HLT_SingleIsoMu17() > 0) * (jet_pt0>40.);
-            oneelloose_cuts = (fr.nVlep() == 1) * (fr.lep_pt()[0] > 25.) * (fr.lep_pass_VVV_cutbased_fo()[0] == 1) * (abs(fr.lep_pdgId()[0])==11) * (fr.mc_HLT_SingleIsoEl23() > 0) * (jet_pt0>40.);
+            oneel_cuts      = (fr.nVlep() == 1) * tightidpass * (abs(fr.lep_pdgId()[0])==11) * (fr.mc_HLT_SingleIsoEl12() > 0) * (jet_pt0>40.);
+            oneelloose_cuts = (fr.nVlep() == 1) * looseidpass * (abs(fr.lep_pdgId()[0])==11) * (fr.mc_HLT_SingleIsoEl12() > 0) * (jet_pt0>40.);
         }
-        else
+        else if (fr.lep_pt()[0] > 25.)
         {
-            onemuloose_cuts = (fr.nVlep() == 1) * (fr.lep_pt()[0] > 20.) * (fr.lep_pass_VVV_cutbased_3l_fo()[0] == 1) * (abs(fr.lep_pdgId()[0])==13) * (fr.mc_HLT_SingleIsoMu17() > 0) * (jet_pt0>40.);
-            oneelloose_cuts = (fr.nVlep() == 1) * (fr.lep_pt()[0] > 20.) * (fr.lep_pass_VVV_cutbased_3l_fo()[0] == 1) * (abs(fr.lep_pdgId()[0])==11) * (fr.mc_HLT_SingleIsoEl23() > 0) * (jet_pt0>40.);
+            oneel_cuts      = (fr.nVlep() == 1) * tightidpass * (abs(fr.lep_pdgId()[0])==11) * (fr.mc_HLT_SingleIsoEl23() > 0) * (jet_pt0>40.);
+            oneelloose_cuts = (fr.nVlep() == 1) * looseidpass * (abs(fr.lep_pdgId()[0])==11) * (fr.mc_HLT_SingleIsoEl23() > 0) * (jet_pt0>40.);
         }
 
         cutflow.fill();
@@ -564,7 +567,7 @@ int closureEvtType()
     const std::vector<int>& genPart_pdgId = fr.genPart_pdgId();
     const std::vector<int>& genPart_motherId = fr.genPart_motherId();
     const std::vector<int>& lep_pdgId = fr.lep_pdgId();
-    const std::vector<int>& lep_pass_VVV_cutbased_tight = fr.lep_pass_VVV_cutbased_tight();
+    const std::vector<int>& lep_pass_VVV_tight = fr.lep_pass_VVV_tight();
     int evt_type = -1;
     int ngenlepW = 0;
 //    DEBUGclass("genPart_pdgId->size() == %d", genPart_pdgId->size());
@@ -597,14 +600,14 @@ int closureEvtType()
     if (
             (lep_pdgId.size() == 2) and
             (abs(lep_pdgId[0]*lep_pdgId[1]) == 143) and
-            ((abs(lep_pdgId[0]) == 11 and lep_pass_VVV_cutbased_tight[0] == 1) or (abs(lep_pdgId[1]) == 11 and lep_pass_VVV_cutbased_tight[1] == 1)) and
+            ((abs(lep_pdgId[0]) == 11 and lep_pass_VVV_tight[0] == 1) or (abs(lep_pdgId[1]) == 11 and lep_pass_VVV_tight[1] == 1)) and
             (evt_type == 0)
        )
         return 0;
     else if (
             (lep_pdgId.size() == 2) and
             (abs(lep_pdgId[0]*lep_pdgId[1]) == 143) and
-            ((abs(lep_pdgId[0]) == 13 and lep_pass_VVV_cutbased_tight[0] == 1) or (abs(lep_pdgId[1]) == 13 and lep_pass_VVV_cutbased_tight[1] == 1)) and
+            ((abs(lep_pdgId[0]) == 13 and lep_pass_VVV_tight[0] == 1) or (abs(lep_pdgId[1]) == 13 and lep_pass_VVV_tight[1] == 1)) and
             (evt_type == 1)
        )
         return 1;
