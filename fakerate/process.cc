@@ -78,6 +78,8 @@ int main(int argc, char** argv)
     bool oneel_cuts;
     bool onemuloose_cuts;
     bool oneelloose_cuts;
+    float mu_ps;
+    float el_ps;
     // The pt corr v. eta are used to parametrize the fake rates
     // The boundaries are stored in std::vector
     const std::vector<float> eta_bounds = {0.0, 1.6, 2.4};
@@ -100,7 +102,7 @@ int main(int argc, char** argv)
     cutflow.addCutToLastActiveCut("TwoElHLT23"                  , [&]() { return (fr.nVlep()==2) * (fr.mc_HLT_SingleIsoEl23() > 0) * (fr.MllSS() > 60.) * (fr.MllSS() < 120.) * (jet_pt0 > 40.) ; } , [&]() { return fr.mc_HLT_SingleIsoEl23()                          ; } ) ;
 
     cutflow.getCut("Presel");
-    cutflow.addCutToLastActiveCut("OneMu"                       , [&]() { return onemu_cuts                                                                                                     ; } , [&]() { return fr.mc_HLT_SingleIsoMu17()                          ; } ) ;
+    cutflow.addCutToLastActiveCut("OneMu"                       , [&]() { return onemu_cuts                                                                                                     ; } , [&]() { return mu_ps                                              ; } ) ;
     cutflow.addCutToLastActiveCut("OneMuHighMET"                , [&]() { return (fr.met_pt() > 30.)                                                                                            ; } , [&]() { return 1.                                                 ; } ) ;
     cutflow.addCutToLastActiveCut("OneMuEWKCR"                  , [&]() { return (MT > 80.) * (MT < 120.)                                                                                       ; } , [&]() { return 1.                                                 ; } ) ;
     cutflow.getCut("OneMu");
@@ -112,7 +114,7 @@ int main(int argc, char** argv)
     cutflow.getCut("OneMu");
     cutflow.addCutToLastActiveCut("OneMuHighPt"                 , [&]() { return ptcorr > 50.                                                                                                   ; } , [&]() { return 1.                                                 ; } ) ;
     cutflow.getCut("Presel");
-    cutflow.addCutToLastActiveCut("OneEl"                       , [&]() { return oneel_cuts                                                                                                     ; } , [&]() { return fr.mc_HLT_SingleIsoEl23()                          ; } ) ;
+    cutflow.addCutToLastActiveCut("OneEl"                       , [&]() { return oneel_cuts                                                                                                     ; } , [&]() { return el_ps                                              ; } ) ;
     cutflow.addCutToLastActiveCut("OneElHighMET"                , [&]() { return (fr.met_pt() > 30.)                                                                                            ; } , [&]() { return 1.                                                 ; } ) ;
     cutflow.addCutToLastActiveCut("OneElEWKCR"                  , [&]() { return (MT > 80.) * (MT < 120.)                                                                                       ; } , [&]() { return 1.                                                 ; } ) ;
     cutflow.getCut("OneEl");
@@ -124,12 +126,12 @@ int main(int argc, char** argv)
     cutflow.getCut("OneEl");
     cutflow.addCutToLastActiveCut("OneElHighPt"                 , [&]() { return ptcorr > 50.                                                                                                   ; } , [&]() { return 1.                                                 ; } ) ;
     cutflow.getCut("Presel");
-    cutflow.addCutToLastActiveCut("OneMuLoose"                  , [&]() { return onemuloose_cuts                                                                                                ; } , [&]() { return fr.mc_HLT_SingleIsoMu17()                          ; } ) ;
+    cutflow.addCutToLastActiveCut("OneMuLoose"                  , [&]() { return onemuloose_cuts                                                                                                ; } , [&]() { return mu_ps                                              ; } ) ;
     cutflow.addCutToLastActiveCut("OneMuMR"                     , [&]() { return (fr.met_pt() < 20.) * (MT < 20.)                                                                               ; } , [&]() { return 1.                                                 ; } ) ;
     cutflow.getCut("OneMuLoose");
     cutflow.addCutToLastActiveCut("OneMuMR2"                    , [&]() { return MT < 20.                                                                                                       ; } , [&]() { return 1.                                                 ; } ) ;
     cutflow.getCut("Presel");
-    cutflow.addCutToLastActiveCut("OneElLoose"                  , [&]() { return oneelloose_cuts                                                                                                ; } , [&]() { return fr.mc_HLT_SingleIsoEl23()                          ; } ) ;
+    cutflow.addCutToLastActiveCut("OneElLoose"                  , [&]() { return oneelloose_cuts                                                                                                ; } , [&]() { return el_ps                                              ; } ) ;
     cutflow.addCutToLastActiveCut("OneElMR"                     , [&]() { return (fr.met_pt() < 20.) * (MT < 20.)                                                                               ; } , [&]() { return 1.                                                 ; } ) ;
     cutflow.getCut("OneElLoose");
     cutflow.addCutToLastActiveCut("OneElMR2"                    , [&]() { return MT < 20.                                                                                                       ; } , [&]() { return 1.                                                 ; } ) ;
@@ -531,25 +533,35 @@ int main(int argc, char** argv)
         bool tightidpass = lepversion == 0 ? fr.lep_pass_VVV_tight()[0] == 1 : fr.lep_pass_VVV_3l_tight()[0] == 1;
         bool looseidpass = lepversion == 0 ? fr.lep_pass_VVV_fo   ()[0] == 1 : fr.lep_pass_VVV_3l_fo   ()[0] == 1;
 
+        // int nVlep = 0;
+        // for (unsigned int ilep = 0; ilep < fr.lep_pt().size(); ++ilep)
+        // {
+        //     fr.lep_pt()[ilep]
+        // }
+
         if (fr.lep_pt()[0] > 10.)
         {
-            onemu_cuts      = (fr.nVlep() == 1) * tightidpass * (abs(fr.lep_pdgId()[0])==13) * (fr.mc_HLT_SingleIsoMu8() > 0) * (jet_pt0>40.);
-            onemuloose_cuts = (fr.nVlep() == 1) * looseidpass * (abs(fr.lep_pdgId()[0])==13) * (fr.mc_HLT_SingleIsoMu8() > 0) * (jet_pt0>40.);
+            onemu_cuts      = (fr.nVlep() == 1) and tightidpass and (abs(fr.lep_pdgId()[0])==13) and (fr.mc_HLT_SingleIsoMu8() > 0) and (jet_pt0>40.);
+            onemuloose_cuts = (fr.nVlep() == 1) and looseidpass and (abs(fr.lep_pdgId()[0])==13) and (fr.mc_HLT_SingleIsoMu8() > 0) and (jet_pt0>40.);
+            mu_ps = fr.mc_HLT_SingleIsoMu8();
         }
         else if (fr.lep_pt()[0] > 20.)
         {
-            onemu_cuts      = (fr.nVlep() == 1) * tightidpass * (abs(fr.lep_pdgId()[0])==13) * (fr.mc_HLT_SingleIsoMu17() > 0) * (jet_pt0>40.);
-            onemuloose_cuts = (fr.nVlep() == 1) * looseidpass * (abs(fr.lep_pdgId()[0])==13) * (fr.mc_HLT_SingleIsoMu17() > 0) * (jet_pt0>40.);
+            onemu_cuts      = (fr.nVlep() == 1) and tightidpass and (abs(fr.lep_pdgId()[0])==13) and (fr.mc_HLT_SingleIsoMu17() > 0) and (jet_pt0>40.);
+            onemuloose_cuts = (fr.nVlep() == 1) and looseidpass and (abs(fr.lep_pdgId()[0])==13) and (fr.mc_HLT_SingleIsoMu17() > 0) and (jet_pt0>40.);
+            mu_ps = fr.mc_HLT_SingleIsoMu17();
         }
         if (fr.lep_pt()[0] > 15.)
         {
-            oneel_cuts      = (fr.nVlep() == 1) * tightidpass * (abs(fr.lep_pdgId()[0])==11) * (fr.mc_HLT_SingleIsoEl12() > 0) * (jet_pt0>40.);
-            oneelloose_cuts = (fr.nVlep() == 1) * looseidpass * (abs(fr.lep_pdgId()[0])==11) * (fr.mc_HLT_SingleIsoEl12() > 0) * (jet_pt0>40.);
+            oneel_cuts      = (fr.nVlep() == 1) and tightidpass and (abs(fr.lep_pdgId()[0])==11) and (fr.mc_HLT_SingleIsoEl12() > 0) and (jet_pt0>40.);
+            oneelloose_cuts = (fr.nVlep() == 1) and looseidpass and (abs(fr.lep_pdgId()[0])==11) and (fr.mc_HLT_SingleIsoEl12() > 0) and (jet_pt0>40.);
+            el_ps = fr.mc_HLT_SingleIsoEl12();
         }
         else if (fr.lep_pt()[0] > 25.)
         {
-            oneel_cuts      = (fr.nVlep() == 1) * tightidpass * (abs(fr.lep_pdgId()[0])==11) * (fr.mc_HLT_SingleIsoEl23() > 0) * (jet_pt0>40.);
-            oneelloose_cuts = (fr.nVlep() == 1) * looseidpass * (abs(fr.lep_pdgId()[0])==11) * (fr.mc_HLT_SingleIsoEl23() > 0) * (jet_pt0>40.);
+            oneel_cuts      = (fr.nVlep() == 1) and tightidpass and (abs(fr.lep_pdgId()[0])==11) and (fr.mc_HLT_SingleIsoEl23() > 0) and (jet_pt0>40.);
+            oneelloose_cuts = (fr.nVlep() == 1) and looseidpass and (abs(fr.lep_pdgId()[0])==11) and (fr.mc_HLT_SingleIsoEl23() > 0) and (jet_pt0>40.);
+            el_ps = fr.mc_HLT_SingleIsoEl23();
         }
 
         cutflow.fill();

@@ -10,8 +10,8 @@ if [ -z $1 ]; then
 fi
 
 YEAR=$1
-INPUT_TAG=FR${YEAR}_v5.1.9
-TAG=test_2019_08_21_1407
+INPUT_TAG=FR${YEAR}_v5.2.0
+TAG=test_2019_08_25_1400
 
 mkdir -p outputs/${INPUT_TAG}/${TAG}/ss/
 mkdir -p outputs/${INPUT_TAG}/${TAG}/3l/
