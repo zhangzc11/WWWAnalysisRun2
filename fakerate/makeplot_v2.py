@@ -660,6 +660,8 @@ def main():
 
     ofile = r.TFile("histmap/fakerate_ss.root" if isSS else "histmap/fakerate_3l.root", "recreate")
 
+    ewksf_v2("OneMuLoose__nVlep")
+    ewksf_v2("OneMu__nVlep")
     ewksf_v2("OneMuLoose__pt")
     ewksf_v2("OneMu__pt")
     ewksf_v2("OneMuLoose__ptcorr")
@@ -716,6 +718,8 @@ def main():
         sferr = [0., sf01-sf01err, sf02-sf02err, sf03-sf03err, sf04-sf04err, sf05-sf05err, 0., sf11-sf11err, sf12-sf12err, sf13-sf13err, sf14-sf14err, sf15-sf15err]
     fakerate("OneMuTightMR2__ptcorretarolled" , "OneMuMR2__ptcorretarolled", sf=sf, sferr=sferr, sfden=sfden, sfdenerr=sfdenerr, tfile=ofile)
 
+    ewksf_v2("OneElLoose__nVlep")
+    ewksf_v2("OneEl__nVlep")
     ewksf_v2("OneElLoose__pt")
     ewksf_v2("OneEl__pt")
     ewksf_v2("OneElLoose__ptcorr")

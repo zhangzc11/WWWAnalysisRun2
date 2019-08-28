@@ -85,6 +85,13 @@ export COREDIR=$PWD/CORE/
 echo ">>> ./doAnalysis ${INPUTFILENAMES} output.root ${BABYMODE}"
 ./doAnalysis ${INPUTFILENAMES} output.root ${BABYMODE}
 
+if [ $? -eq 0 ]; then
+    echo "doAnalysis was successful"
+else
+    echo "doAnalysis failed!"
+    exit
+fi
+
 function lsroot {
     if [ -z $1 ];then
         echo "USAGE: lsroot rootfile"

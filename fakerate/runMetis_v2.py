@@ -9,7 +9,7 @@
 #
 ################
 # The following defines the tag for this round of submission (change it every time you submit)
-job_tag = "test_2019_08_25_1400"
+job_tag = "test_2019_08_28_1020"
 
 #_____________________________________________________________________________________________
 # Create the samples mapping between the sample name -> the location of input sample hadoop directory and arguments map for each sample
