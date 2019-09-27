@@ -1,5 +1,14 @@
 #include "lambdas.h"
-
+#include "xgboost/www_vs_lostlep_prompt_SS2J.h"
+#include "xgboost/www_vs_lostlep_prompt_SS1J.h"
+#include "xgboost/www_vs_lostlep_prompt_SFOS.h"
+#include "xgboost/www_vs_photon_fakes_SS2J.h"
+#include "xgboost/www_vs_photon_fakes_SS1J.h"
+#include "xgboost/www_vs_photon_fakes_SFOS.h"
+#include "xgboost/www_vs_photon_fakes_SS2J_noBtag.h"
+#include "xgboost/www_vs_photon_fakes_SS1J_noBtag.h"
+#include "xgboost/www_vs_photon_fakes_SFOS_noBtag.h"
+#include <vector>
 
 int this_run;
 int this_lumi;
@@ -165,7 +174,8 @@ std::function<float()> Lambdas::EventWeight = [&]()
         // Missing k-factor for v1.2.2 2016 baby ntuples (our first public result)
         if (input.do_www_xsec_scaling)
             weight *= 1.0384615385; // NLO cross section v. MadGraph cross section
-
+	
+	if(weight < -5.0) weight = 0.0;
         // Return the object
         return weight;
 
@@ -870,6 +880,23 @@ std::function<float()> Lambdas::CutSRTrilep = [&]()
                 return (www.nVlep() == 3) * (www.nLlep() == 3) * (www.nTlep() == 3) * (www.lep_pt()[0] > 25.) * (www.lep_pt()[1] > 20.) * (www.lep_pt()[2] > 20.);
         }
     };
+//______________________________________________________________________________________________
+// Dilep TTbar CR
+std::function<float()> Lambdas::CutCRTTbarDilep(Variation::ExpSyst expsyst, Variation::Var var){
+    return [&, expsyst, var]()
+    {
+        //if(not (Lambdas::METcut(expsyst,var,30.)()))  return false;
+	if(www.lep_pdgId().size() <= 1) return false; //two lepton
+	if(abs(www.lep_pdgId()[1]) == abs(www.lep_pdgId()[0])) return false; // OF
+	if(www.lep_pdgId()[1] * www.lep_pdgId()[0] > 0) return false; // OS
+        if(not (Lambdas::TwoCenJet30(expsyst,var)())) return false;//nj30 >= 2
+        if ((www.lep_p4()[0]+www.lep_p4()[1]).M()<12.) return false;
+        //if ((www.lep_p4()[0]+www.lep_p4()[1]).M()<76.) return false;
+        //if ((www.lep_p4()[0]+www.lep_p4()[1]).M()<106.) return false;
+        return true;
+    };
+}
+
 
 //______________________________________________________________________________________________
 // Lost-lepton CR Trilepton selection
@@ -966,9 +993,89 @@ std::function<LV()> Lambdas::jetVec(Variation::ExpSyst expsyst, Variation::Var v
     }
 }
 
+std::function<float()> Lambdas::isSRSSChannel = [&]() { return (www.passSSee() || www.passSSem() || www.passSSmm())*(www.MllSS()>40.); };
 std::function<float()> Lambdas::isSRSSeeChannel = [&]() { return (www.passSSee())*(www.MllSS()>40.); };
 std::function<float()> Lambdas::isSRSSemChannel = [&]() { return (www.passSSem())*(www.MllSS()>40.); };//2019/07/15: changed 30 --> 40
 std::function<float()> Lambdas::isSRSSmmChannel = [&]() { return (www.passSSmm())*(www.MllSS()>40.); };
+
+std::function<float()> Lambdas::SRDilepCutBDT2J = [&]() { 
+	if (VarXGBBDT(0) < 0.190) return false;
+	if (VarXGBBDT(3) < 0.860) return false;
+	return true;
+};
+
+std::function<float()> Lambdas::SRDilepCutBDT1J = [&]() { 
+	if (VarXGBBDT(1) < 0.230) return false;
+	if (VarXGBBDT(4) < 0.220) return false;
+	return true;
+};
+
+std::function<float()> Lambdas::SRTrilepCutBDT = [&]() { 
+	if (VarXGBBDT(2) < 0.630) return false;
+	if (VarXGBBDT(5) < 0.900) return false;
+	return true;
+};
+
+std::function<float()> Lambdas::SRDilepCutBDT2JeeMjjIn = [&]() {
+        if (VarXGBBDT(0) < 0.240) return false;
+        if (VarXGBBDT(6) < 0.830) return false;
+        return true;
+};
+std::function<float()> Lambdas::SRDilepCutBDT2JemMjjIn = [&]() {
+        if (VarXGBBDT(0) < 0.180) return false;
+        if (VarXGBBDT(6) < 0.790) return false;
+        return true;
+};
+std::function<float()> Lambdas::SRDilepCutBDT2JmmMjjIn = [&]() {
+        if (VarXGBBDT(0) < 0.150) return false;
+        if (VarXGBBDT(6) < 0.900) return false;
+        return true;
+};
+std::function<float()> Lambdas::SRDilepCutBDT2JeeMjjOut = [&]() {
+        if (VarXGBBDT(0) < 0.070) return false;
+        if (VarXGBBDT(6) < 0.630) return false;
+        return true;
+};
+std::function<float()> Lambdas::SRDilepCutBDT2JemMjjOut = [&]() {
+        if (VarXGBBDT(0) < 0.280) return false;
+        if (VarXGBBDT(6) < 0.920) return false;
+        return true;
+};
+std::function<float()> Lambdas::SRDilepCutBDT2JmmMjjOut = [&]() {
+        if (VarXGBBDT(0) < 0.190) return false;
+        if (VarXGBBDT(6) < 0.430) return false;
+        return true;
+};
+std::function<float()> Lambdas::SRDilepCutBDT1Jee = [&]() {
+        if (VarXGBBDT(1) < 0.110) return false;
+        if (VarXGBBDT(7) < 0.810) return false;
+        return true;
+};
+std::function<float()> Lambdas::SRDilepCutBDT1Jem = [&]() {
+        if (VarXGBBDT(1) < 0.220) return false;
+        if (VarXGBBDT(7) < 0.600) return false;
+        return true;
+};
+std::function<float()> Lambdas::SRDilepCutBDT1Jmm = [&]() {
+        if (VarXGBBDT(1) < 0.230) return false;
+        if (VarXGBBDT(7) < 0.720) return false;
+        return true;
+};
+std::function<float()> Lambdas::SRTrilepCutBDT0SFOS = [&]() {
+        if (VarXGBBDT(2) < 0.650) return false;
+        if (VarXGBBDT(8) < 0.970) return false;
+        return true;
+};
+std::function<float()> Lambdas::SRTrilepCutBDT1SFOS = [&]() {
+        if (VarXGBBDT(2) < 0.580) return false;
+        if (VarXGBBDT(8) < 0.660) return false;
+        return true;
+};
+std::function<float()> Lambdas::SRTrilepCutBDT2SFOS = [&]() {
+        if (VarXGBBDT(2) < 0.170) return false;
+        if (VarXGBBDT(8) < 0.640) return false;
+        return true;
+};
 
 std::function<float()> Lambdas::LeqOneJet(Variation::ExpSyst expsyst, Variation::Var var)
 {
@@ -1283,6 +1390,38 @@ std::function<float()> Lambdas::SSPreSelection(Variation::ExpSyst expsyst, Varia
     };
 }
 
+std::function<float()> Lambdas::SSPreSelectionNoNb(Variation::ExpSyst expsyst, Variation::Var var, bool invert_btag)
+{
+    return [&, expsyst, var, invert_btag]()
+    {
+        if (not (www.nisoTrack_mt2_cleaned_VVV_cutbased_veto()==0 )) return false;
+        if (Lambdas::isSRSSeeChannel){
+          if (not Lambdas::ZVetoSS) return false;
+        }
+        //if(not (Lambdas::NBveto(expsyst,var,invert_btag)())) return false;//nb = 0
+        if(not (Lambdas::TwoCenJet30(expsyst,var)()))        return false;//nj30 >= 2
+        
+        return true;
+    };
+}
+
+std::function<float()> Lambdas::SSPreSelectionBDT(Variation::ExpSyst expsyst, Variation::Var var, bool invert_btag)
+{
+    return [&, expsyst, var, invert_btag]()
+    {
+        if (not (www.nisoTrack_mt2_cleaned_VVV_cutbased_veto()==0 )) return false;
+        if (Lambdas::isSRSSeeChannel){
+          if (not Lambdas::ZVetoSS) return false;
+        }
+        //if(VarXGBBDT(0) < 0.3148) return false;
+        //if(VarXGBBDT(1) < 0.1677) return false;
+        if(not (Lambdas::NBveto(expsyst,var,invert_btag)())) return false;//nb = 0
+        if(not (Lambdas::TwoCenJet30(expsyst,var)()))        return false;//nj30 >= 2
+        
+        return true;
+    };
+}
+
 std::function<float()> Lambdas::METcut(Variation::ExpSyst expsyst, Variation::Var var,float value)
 {
     return [&, expsyst, var, value]()
@@ -1474,6 +1613,37 @@ std::function<float()> Lambdas::SSKinSel(Variation::ExpSyst expsyst, Variation::
     };
 }
 
+
+std::function<float()> Lambdas::SSKinSelNoMET(Variation::ExpSyst expsyst, Variation::Var var){
+    return [&, expsyst, var]()
+    {
+        if(not (Lambdas::Mllcut(40.))) return false;//nb = 0
+        //if(not (Lambdas::METcut(expsyst,var,60.)())) return false;//nb = 0
+        if(not (Lambdas::MTmaxcut(expsyst,var,90.)())) return false;//nb = 0 - cut here on 90. as it is the looser cut between Mjjin/Mjjout
+        return true;
+    };
+}
+
+std::function<float()> Lambdas::SSKinSelNoMTmax(Variation::ExpSyst expsyst, Variation::Var var){
+    return [&, expsyst, var]()
+    {
+        if(not (Lambdas::Mllcut(40.))) return false;//nb = 0
+        if(not (Lambdas::METcut(expsyst,var,60.)())) return false;//nb = 0
+        //if(not (Lambdas::MTmaxcut(expsyst,var,90.)())) return false;//nb = 0 - cut here on 90. as it is the looser cut between Mjjin/Mjjout
+        return true;
+    };
+}
+
+std::function<float()> Lambdas::SSKinSelBDT(Variation::ExpSyst expsyst, Variation::Var var){
+    return [&, expsyst, var]()
+    {
+        if(not (Lambdas::Mllcut(40.))) return false;//nb = 0
+        //if(not (Lambdas::METcut(expsyst,var,60.)())) return false;//nb = 0
+        //if(not (Lambdas::MTmaxcut(expsyst,var,90.)())) return false;//nb = 0 - cut here on 90. as it is the looser cut between Mjjin/Mjjout
+        return true;
+    };
+}
+
 std::function<float()> Lambdas::SSMjjIn(Variation::ExpSyst expsyst, Variation::Var var){
     return [&, expsyst, var]()
     {
@@ -1505,6 +1675,36 @@ std::function<float()> Lambdas::SS1JPreselection(Variation::ExpSyst expsyst, Var
     };
 }
 
+std::function<float()> Lambdas::SS1JPreselectionNoNb(Variation::ExpSyst expsyst, Variation::Var var, bool invert_btag){
+    return [&, expsyst, var,invert_btag]()
+    {
+        if (not (www.nisoTrack_mt2_cleaned_VVV_cutbased_veto()==0 )) return false;
+        if (Lambdas::isSRSSeeChannel()){
+          if (not Lambdas::ZVetoSS()) return false;
+        }
+        //if(not (Lambdas::NBveto(expsyst,var,invert_btag)())) return false;//nb = 0
+        if(not (Lambdas::OneCenJet30(expsyst,var)()))        return false;//nj30 >= 2
+        if(not (www.lep_pt()[1]>30.)) return false;//nb = 0
+        return true;
+    };
+}
+std::function<float()> Lambdas::SS1JPreselectionBDT(Variation::ExpSyst expsyst, Variation::Var var, bool invert_btag){
+    return [&, expsyst, var,invert_btag]()
+    {
+        if (not (www.nisoTrack_mt2_cleaned_VVV_cutbased_veto()==0 )) return false;
+        if (Lambdas::isSRSSeeChannel()){
+          if (not Lambdas::ZVetoSS()) return false;
+        }
+        //if(VarXGBBDT(0) < 0.3148) return false;
+        //if(VarXGBBDT(1) < 0.1677) return false;
+        if(not (Lambdas::NBveto(expsyst,var,invert_btag)())) return false;//nb = 0
+        if(not (Lambdas::OneCenJet30(expsyst,var)()))        return false;//nj30 >= 2
+        if(not (www.lep_pt()[1]>30.)) return false;//nb = 0
+        return true;
+    };
+}
+
+
 std::function<float()> Lambdas::SS1J(Variation::ExpSyst expsyst, Variation::Var var){
     return [&, expsyst, var]()
     {
@@ -1515,6 +1715,41 @@ std::function<float()> Lambdas::SS1J(Variation::ExpSyst expsyst, Variation::Var 
         return true;
     };
 }
+
+std::function<float()> Lambdas::SS1JNoMET(Variation::ExpSyst expsyst, Variation::Var var){
+    return [&, expsyst, var]()
+    {
+        if(not (Lambdas::Mllcut(40.))) return false;//nb = 0
+        //if(not (Lambdas::METcut(expsyst,var,75.)())) return false;//nb = 0
+        if(not (Lambdas::MTmaxcut(expsyst,var,90.)())) return false;//nb = 0
+        if(not (Lambdas::DRljMinCut(expsyst,var,1.5)())) return false;//nb = 0
+        return true;
+    };
+}
+
+std::function<float()> Lambdas::SS1JNoMTmax(Variation::ExpSyst expsyst, Variation::Var var){
+    return [&, expsyst, var]()
+    {
+        if(not (Lambdas::Mllcut(40.))) return false;//nb = 0
+        if(not (Lambdas::METcut(expsyst,var,75.)())) return false;//nb = 0
+        //if(not (Lambdas::MTmaxcut(expsyst,var,90.)())) return false;//nb = 0
+        if(not (Lambdas::DRljMinCut(expsyst,var,1.5)())) return false;//nb = 0
+        return true;
+    };
+}
+
+
+std::function<float()> Lambdas::SS1JBDT(Variation::ExpSyst expsyst, Variation::Var var){
+    return [&, expsyst, var]()
+    {
+        if(not (Lambdas::Mllcut(40.))) return false;//nb = 0
+        //if(not (Lambdas::METcut(expsyst,var,75.)())) return false;//nb = 0
+        //if(not (Lambdas::MTmaxcut(expsyst,var,90.)())) return false;//nb = 0
+        //if(not (Lambdas::DRljMinCut(expsyst,var,1.5)())) return false;//nb = 0
+        return true;
+    };
+}
+
 
 std::function<float()> Lambdas::SRSSeeSelection(Variation::ExpSyst expsyst, Variation::Var var)
 {
@@ -1599,6 +1834,31 @@ std::function<float()> Lambdas::ThreeLepPresel(Variation::ExpSyst expsyst, Varia
     };
 }
 
+
+std::function<float()> Lambdas::ThreeLepPreselNoNb(Variation::ExpSyst expsyst, Variation::Var var, bool invert_btag)
+{
+    return [&, expsyst, var, invert_btag]()
+    {
+        if(not (Lambdas::LeqOneJet30(expsyst,var)())) return false;//nb = 0
+        //if(not (Lambdas::NBveto(expsyst,var,invert_btag)())) return false;//nb = 0
+        if(not (www.lep_pt()[2]>30.)) return false;//nb = 0
+        return true;
+    };
+}
+
+std::function<float()> Lambdas::ThreeLepPreselBDT(Variation::ExpSyst expsyst, Variation::Var var, bool invert_btag)
+{
+    return [&, expsyst, var, invert_btag]()
+    {
+        if(not (Lambdas::LeqOneJet30(expsyst,var)())) return false;//nb = 0
+        //if(VarXGBBDT(1) < 0.40) return false;
+        if(not (Lambdas::NBveto(expsyst,var,invert_btag)())) return false;//nb = 0
+        if(not (www.lep_pt()[2]>30.)) return false;//nb = 0
+        return true;
+    };
+}
+
+
 std::function<float()> Lambdas::DYVetoes = [&]()
 {
         if(Lambdas::is0SFOS()){
@@ -1682,6 +1942,126 @@ std::function<float()> Lambdas::KinSel3L(Variation::ExpSyst expsyst, Variation::
 }
 
 
+std::function<float()> Lambdas::KinSel3LNoMET(Variation::ExpSyst expsyst, Variation::Var var)
+{
+    return [&, expsyst, var]()
+    {
+      /*
+      if(Lambdas::is0SFOS()){
+        if(not (Lambdas::METcut(expsyst,var,30.)())) return false;//nb = 0
+      }
+      if(Lambdas::is1SFOS()){
+        if(not (Lambdas::METcut(expsyst,var,45.)())) return false;//nb = 0
+      }
+      if(Lambdas::is2SFOS()){
+        if(not (Lambdas::METcut(expsyst,var,60.)())) return false;//nb = 0
+      }
+      */
+      if(not (Lambdas::MTmaxcut(expsyst,var,120.)())) return false;
+      if(not (Lambdas::DPhi3lMETcut(expsyst,var,2.1)())) return false;
+      return true;
+    };
+}
+
+
+std::function<float()> Lambdas::KinSel3LNoDPhi3lMET(Variation::ExpSyst expsyst, Variation::Var var)
+{
+    return [&, expsyst, var]()
+    {
+      if(Lambdas::is0SFOS()){
+        if(not (Lambdas::METcut(expsyst,var,30.)())) return false;//nb = 0
+      }
+      if(Lambdas::is1SFOS()){
+        if(not (Lambdas::METcut(expsyst,var,45.)())) return false;//nb = 0
+      }
+      if(Lambdas::is2SFOS()){
+        if(not (Lambdas::METcut(expsyst,var,60.)())) return false;//nb = 0
+      }
+      if(not (Lambdas::MTmaxcut(expsyst,var,120.)())) return false;
+      //if(not (Lambdas::DPhi3lMETcut(expsyst,var,2.1)())) return false;
+      return true;
+    };
+}
+
+
+std::function<float()> Lambdas::KinSel3LNoMTmax(Variation::ExpSyst expsyst, Variation::Var var)
+{
+    return [&, expsyst, var]()
+    {
+      if(Lambdas::is0SFOS()){
+        if(not (Lambdas::METcut(expsyst,var,30.)())) return false;//nb = 0
+      }
+      if(Lambdas::is1SFOS()){
+        if(not (Lambdas::METcut(expsyst,var,45.)())) return false;//nb = 0
+      }
+      if(Lambdas::is2SFOS()){
+        if(not (Lambdas::METcut(expsyst,var,60.)())) return false;//nb = 0
+      }
+      //if(not (Lambdas::MTmaxcut(expsyst,var,120.)())) return false;
+      if(not (Lambdas::DPhi3lMETcut(expsyst,var,2.1)())) return false;
+      return true;
+    };
+}
+
+
+std::function<float()> Lambdas::KinSel3LBDT(Variation::ExpSyst expsyst, Variation::Var var)
+{
+    return [&, expsyst, var]()
+    {
+      //if(Lambdas::is0SFOS()){
+      //  if(not (Lambdas::METcut(expsyst,var,30.)())) return false;//nb = 0
+      //}
+     // if(Lambdas::is1SFOS()){
+      //  if(not (Lambdas::METcut(expsyst,var,45.)())) return false;//nb = 0
+      //}
+      //if(Lambdas::is2SFOS()){
+      //  if(not (Lambdas::METcut(expsyst,var,60.)())) return false;//nb = 0
+      //}
+      //if(not (Lambdas::MTmaxcut(expsyst,var,120.)())) return false;
+      //if(not (Lambdas::DPhi3lMETcut(expsyst,var,2.1)())) return false;
+      return true;
+    };
+}
+
+
+std::function<float()> Lambdas::KinSel0SFOSBDT(Variation::ExpSyst expsyst, Variation::Var var)
+{
+    return [&, expsyst, var]()
+    {
+/*
+        if (not (
+                    jetVar(expsyst, var,
+                        [&]() { return (www.DPhi3lMET_up()>2.5); },
+                        [&]() { return (www.DPhi3lMET_dn()>2.5); },
+                        [&]() { return (www.DPhi3lMET()>2.5); },
+                        [&]() { return (www.DPhi3lMET_jerup()>2.5); },
+                        [&]() { return (www.DPhi3lMET_jerdn()>2.5); },
+                        [&]() { return (www.DPhi3lMET_jer()>2.5); }
+                        )()                                       )) return false;
+        if (not (
+                    jetVar(expsyst, var,
+                        [&]() { return www.met_up_pt()>30.; },
+                        [&]() { return www.met_dn_pt()>30.; },
+                        [&]() { return www.met_pt()>30.; },
+                        [&]() { return www.met_jerup_pt()>30.; },
+                        [&]() { return www.met_jerdn_pt()>30.; },
+                        [&]() { return www.met_jer_pt()>30.; }
+                        )()                                  )) return false;
+        if (not (
+                    jetVar(expsyst, var,
+                        [&]() { return www.MTmax3L()>90.; }, // TODO : Need to implement in baby maker
+                        [&]() { return www.MTmax3L()>90.; },
+                        [&]() { return www.MTmax3L()>90.; },
+                        [&]() { return www.MTmax3L()>90.; },
+                        [&]() { return www.MTmax3L()>90.; },
+                        [&]() { return www.MTmax3L()>90.; }
+                        )()                                  )) return false;
+*/
+        return true;
+    };
+}
+
+
 std::function<float()> Lambdas::KinSel0SFOS(Variation::ExpSyst expsyst, Variation::Var var)
 {
     return [&, expsyst, var]()
@@ -1714,6 +2094,44 @@ std::function<float()> Lambdas::KinSel0SFOS(Variation::ExpSyst expsyst, Variatio
                         [&]() { return www.MTmax3L()>90.; }
                         )()                                  )) return false;
         return true;
+    };
+}
+
+std::function<float()> Lambdas::KinSel1SFOSBDT(Variation::ExpSyst expsyst, Variation::Var var)
+{
+    return [&, expsyst, var]()
+    {
+/*
+        if (not (www.Pt3l() > 60.    )) return false;
+        if (not (
+                    jetVar(expsyst, var,
+                        [&]() { return (www.DPhi3lMET_up()>2.5); },
+                        [&]() { return (www.DPhi3lMET_dn()>2.5); },
+                        [&]() { return (www.DPhi3lMET()>2.5); },
+                        [&]() { return (www.DPhi3lMET_jerup()>2.5); },
+                        [&]() { return (www.DPhi3lMET_jerdn()>2.5); },
+                        [&]() { return (www.DPhi3lMET_jer()>2.5); }
+                        )()                                       )) return false;
+        if (not (
+                    jetVar(expsyst, var,
+                        [&]() { return www.met_up_pt()>40.; },
+                        [&]() { return www.met_dn_pt()>40.; },
+                        [&]() { return www.met_pt()>40.; },
+                        [&]() { return www.met_jerup_pt()>40.; },
+                        [&]() { return www.met_jerdn_pt()>40.; },
+                        [&]() { return www.met_jer_pt()>40.; }
+                        )()                                  )) return false;
+        if (not (
+                    jetVar(expsyst, var,
+                        [&]() { return www.MT3rd()>90.; }, // TODO : Need to implement in baby maker
+                        [&]() { return www.MT3rd()>90.; },
+                        [&]() { return www.MT3rd()>90.; },
+                        [&]() { return www.MT3rd()>90.; },
+                        [&]() { return www.MT3rd()>90.; },
+                        [&]() { return www.MT3rd()>90.; }
+                        )()                                  )) return false;
+*/ 
+       return true;
     };
 }
 
@@ -1752,6 +2170,36 @@ std::function<float()> Lambdas::KinSel1SFOS(Variation::ExpSyst expsyst, Variatio
         return true;
     };
 }
+
+std::function<float()> Lambdas::KinSel2SFOSBDT(Variation::ExpSyst expsyst, Variation::Var var)
+{
+    return [&, expsyst, var]()
+    {
+/*
+        if (not (www.Pt3l() > 60.    )) return false;
+        if (not (
+                    jetVar(expsyst, var,
+                        [&]() { return (www.DPhi3lMET_up()>2.5); },
+                        [&]() { return (www.DPhi3lMET_dn()>2.5); },
+                        [&]() { return (www.DPhi3lMET()>2.5); },
+                        [&]() { return (www.DPhi3lMET_jerup()>2.5); },
+                        [&]() { return (www.DPhi3lMET_jerdn()>2.5); },
+                        [&]() { return (www.DPhi3lMET_jer()>2.5); }
+                        )()                                       )) return false;
+        if (not (
+                    jetVar(expsyst, var,
+                        [&]() { return www.met_up_pt()>55.; },
+                        [&]() { return www.met_dn_pt()>55.; },
+                        [&]() { return www.met_pt()>55.; },
+                        [&]() { return www.met_jerup_pt()>55.; },
+                        [&]() { return www.met_jerdn_pt()>55.; },
+                        [&]() { return www.met_jer_pt()>55.; }
+                        )()                                  )) return false;
+*/
+        return true;
+    };
+}
+
 
 std::function<float()> Lambdas::KinSel2SFOS(Variation::ExpSyst expsyst, Variation::Var var)
 {
@@ -2006,4 +2454,85 @@ float getRawMVA(float notraw)
     return -0.5*log((2.0/(notraw+1))-1.0);
 }
 
+float VarXGBBDT(int idx, int var)
+{
+    //index:
+    //0 - www_vs_lostlep_prompt_SS2J
+    //1 - www_vs_lostlep_prompt_SS1J
+    //2 - www_vs_lostlep_prompt_SFOS
+    //3 - www_vs_photon_fakes_SS2J
+    //4 - www_vs_photon_fakes_SS1J
+    //5 - www_vs_photon_fakes_SFOS
+    //6 - www_vs_photon_fakes_SS2J_noBtag
+    //7 - www_vs_photon_fakes_SS1J_noBtag
+    //8 - www_vs_photon_fakes_SFOS_noBtag
+	 
+    //var: systematics
+    //+/-1: JES Up and Down
+    //+/-2: JER Up and Donw
+    //+/-3: MET up and Down
+    //+/-4 METpileup Up and Down
 
+    float evt_met_pt = www.met_pt();
+    float evt_nj30 = www.nj30();
+    float evt_nb = www.nb();
+    if(var == 1) evt_nb = www.nb_up();
+    if(var == -1) evt_nb = www.nb_dn();
+    float evt_lep1Pt = www.lep_pt().size() > 0 ? www.lep_pt()[0]  : -999;
+    float evt_lep2Pt = www.lep_pt().size() > 1 ? www.lep_pt()[1]  : -999;
+    float evt_lep3Pt = www.lep_pt().size() > 2 ? www.lep_pt()[2]  : -999;
+
+    float evt_lep1pdgId = www.lep_pdgId().size() > 0 ? www.lep_pdgId()[0]  : -999;
+    float evt_lep2pdgId = www.lep_pdgId().size() > 1 ? www.lep_pdgId()[1]  : -999;
+    float evt_lep3pdgId = www.lep_pdgId().size() > 2 ? www.lep_pdgId()[2]  : -999;
+
+    float evt_jet1Pt = www.jets_p4().size() > 0 ? www.jets_p4()[0].pt() : -999 ;
+    float evt_jet2Pt = www.jets_p4().size() > 1 ? www.jets_p4()[1].pt() : -999 ;
+    float evt_jet3Pt = www.jets_p4().size() > 2 ? www.jets_p4()[2].pt() : -999 ;
+    float evt_jet1BtagScore = www.jets_btag_score().size() > 0 ? www.jets_btag_score()[0] : -999;
+    float evt_jet2BtagScore = www.jets_btag_score().size() > 1 ? www.jets_btag_score()[1] : -999;
+    float evt_jet3BtagScore = www.jets_btag_score().size() > 2 ? www.jets_btag_score()[2] : -999;
+    float evt_Mljmin = www.Mljmin();
+    float evt_DRljmin = www.DRljmin();
+    float evt_DRljmax = www.DRljmax();
+    float evt_Pt2l = www.Pt2l();
+    float evt_MllSS = www.MllSS();
+    float evt_MTmax = www.MTmax();
+    float evt_MTmin = www.MTmin();
+    float evt_Mjj = www.Mjj();
+    float evt_MjjL = www.MjjL();
+    float evt_DetajjL = www.DetajjL();
+    float evt_Mll3L = www.Mll3L();
+    float evt_Mll3L1 = www.Mll3L1();
+    float evt_M3l = www.M3l();
+    float evt_Pt3l = www.Pt3l();
+    float evt_MTmax3L = www.MTmax3L();
+    float evt_DPhi3lMET = www.DPhi3lMET();
+    float evt_DRjj = www.DRjj();
+    float evt_DRjjDR1 = www.DRjjDR1();
+    float evt_MjjDR1 = www.MjjDR1();
+    float evt_nSFOS = www.nSFOS();
+
+    std::vector<float> test_sample_lostlep_prompt_SS2J{evt_met_pt,evt_lep1Pt,evt_lep2Pt,evt_lep1pdgId,evt_lep2pdgId,evt_jet1Pt,evt_jet2Pt,evt_jet3Pt,evt_nj30,evt_Mljmin,evt_DRljmin,evt_DRjj,evt_DRjjDR1,evt_Pt2l,evt_MllSS,evt_MTmax,evt_MTmin,evt_Mjj,evt_MjjL,evt_MjjDR1,evt_DetajjL};
+    std::vector<float> test_sample_lostlep_prompt_SS1J{evt_met_pt,evt_lep1Pt,evt_lep2Pt,evt_lep1pdgId,evt_lep2pdgId,evt_jet1Pt,evt_Mljmin,evt_DRljmin,evt_Pt2l,evt_MllSS,evt_MTmax,evt_MTmin};
+    std::vector<float> test_sample_lostlep_prompt_SFOS{evt_met_pt,evt_lep1Pt,evt_lep2Pt,evt_lep3Pt,evt_lep1pdgId,evt_lep2pdgId,evt_lep3pdgId,evt_jet1Pt,evt_jet2Pt,evt_jet3Pt,evt_nj30,evt_nSFOS,evt_Mll3L,evt_Mll3L1,evt_M3l,evt_Pt3l,evt_Pt2l,evt_MllSS,evt_MTmax3L,evt_MTmax,evt_MTmin,evt_DPhi3lMET};
+    std::vector<float> test_sample_photon_fakes_SS2J{evt_met_pt,evt_lep1Pt,evt_lep2Pt,evt_lep1pdgId,evt_lep2pdgId,evt_jet1Pt,evt_jet2Pt,evt_jet3Pt,evt_nj30,evt_nb,evt_jet1BtagScore,evt_jet2BtagScore,evt_jet3BtagScore,evt_Mljmin,evt_DRljmin,evt_DRjj,evt_DRjjDR1,evt_Pt2l,evt_MllSS,evt_MTmax,evt_MTmin,evt_Mjj,evt_MjjL,evt_MjjDR1,evt_DetajjL};
+    std::vector<float> test_sample_photon_fakes_SS1J{evt_met_pt,evt_lep1Pt,evt_lep2Pt,evt_lep1pdgId,evt_lep2pdgId,evt_jet1Pt,evt_nb,evt_jet1BtagScore,evt_jet2BtagScore,evt_jet3BtagScore,evt_Mljmin,evt_DRljmin,evt_Pt2l,evt_MllSS,evt_MTmax,evt_MTmin};
+    std::vector<float> test_sample_photon_fakes_SFOS{evt_met_pt,evt_lep1Pt,evt_lep2Pt,evt_lep3Pt,evt_lep1pdgId,evt_lep2pdgId,evt_lep3pdgId,evt_jet1Pt,evt_jet2Pt,evt_jet3Pt,evt_nj30,evt_nb,evt_jet1BtagScore,evt_jet2BtagScore,evt_jet3BtagScore,evt_nSFOS,evt_Mll3L,evt_Mll3L1,evt_M3l,evt_Pt3l,evt_Pt2l,evt_MllSS,evt_MTmax3L,evt_MTmax,evt_MTmin,evt_DPhi3lMET};
+    std::vector<float> test_sample_photon_fakes_SS2J_noBtag{evt_met_pt,evt_lep1Pt,evt_lep2Pt,evt_lep1pdgId,evt_lep2pdgId,evt_jet1Pt,evt_jet2Pt,evt_jet3Pt,evt_nj30,evt_Mljmin,evt_DRljmin,evt_DRjj,evt_DRjjDR1,evt_Pt2l,evt_MllSS,evt_MTmax,evt_MTmin,evt_Mjj,evt_MjjL,evt_MjjDR1,evt_DetajjL};
+    std::vector<float> test_sample_photon_fakes_SS1J_noBtag{evt_met_pt,evt_lep1Pt,evt_lep2Pt,evt_lep1pdgId,evt_lep2pdgId,evt_jet1Pt,evt_Mljmin,evt_DRljmin,evt_Pt2l,evt_MllSS,evt_MTmax,evt_MTmin};
+    std::vector<float> test_sample_photon_fakes_SFOS_noBtag{evt_met_pt,evt_lep1Pt,evt_lep2Pt,evt_lep3Pt,evt_lep1pdgId,evt_lep2pdgId,evt_lep3pdgId,evt_jet1Pt,evt_jet2Pt,evt_jet3Pt,evt_nj30,evt_nSFOS,evt_Mll3L,evt_Mll3L1,evt_M3l,evt_Pt3l,evt_Pt2l,evt_MllSS,evt_MTmax3L,evt_MTmax,evt_MTmin,evt_DPhi3lMET};
+
+    if(idx == 0) return www_vs_lostlep_prompt_SS2J(test_sample_lostlep_prompt_SS2J, true)[0];
+    if(idx == 1) return www_vs_lostlep_prompt_SS1J(test_sample_lostlep_prompt_SS1J, true)[0];
+    if(idx == 2) return www_vs_lostlep_prompt_SFOS(test_sample_lostlep_prompt_SFOS, true)[0];
+    if(idx == 3) return www_vs_photon_fakes_SS2J(test_sample_photon_fakes_SS2J, true)[0];
+    if(idx == 4) return www_vs_photon_fakes_SS1J(test_sample_photon_fakes_SS1J, true)[0];
+    if(idx == 5) return www_vs_photon_fakes_SFOS(test_sample_photon_fakes_SFOS, true)[0];
+    if(idx == 6) return www_vs_photon_fakes_SS2J_noBtag(test_sample_photon_fakes_SS2J_noBtag, true)[0];
+    if(idx == 7) return www_vs_photon_fakes_SS1J_noBtag(test_sample_photon_fakes_SS1J_noBtag, true)[0];
+    if(idx == 8) return www_vs_photon_fakes_SFOS_noBtag(test_sample_photon_fakes_SFOS_noBtag, true)[0];
+
+    else return 999;    
+
+}

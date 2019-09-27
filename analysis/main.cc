@@ -511,9 +511,21 @@ int main(int argc, char** argv)
     ana.histograms.addHistogram("DetajjVBS"                ,  180 , 0.      , 3.     , [&]() { return www.DetajjL()                                                                ; });
     ana.histograms.addHistogram("MET"                      ,  180 , 0.      , 180.   , [&]() { return www.met_pt()                                                                 ; });
     ana.histograms.addHistogram("METWide"                  ,  180 , 0.      , 300.   , [&]() { return www.met_pt()                                                                 ; });
+    ana.histograms.addHistogram("BDT_lostlep_prompt_SS2J"  ,  180 , 0.      , 1.0    , [&]() { return VarXGBBDT(0) ; });
+    ana.histograms.addHistogram("BDT_lostlep_prompt_SS1J"  ,  180 , 0.      , 1.0    , [&]() { return VarXGBBDT(1) ; });
+    ana.histograms.addHistogram("BDT_lostlep_prompt_SFOS"  ,  180 , 0.      , 1.0    , [&]() { return VarXGBBDT(2) ; });
+    ana.histograms.addHistogram("BDT_photon_fakes_SS2J"    ,  180 , 0.      , 1.0    , [&]() { return VarXGBBDT(3) ; });
+    ana.histograms.addHistogram("BDT_photon_fakes_SS1J"    ,  180 , 0.      , 1.0    , [&]() { return VarXGBBDT(4) ; });
+    ana.histograms.addHistogram("BDT_photon_fakes_SFOS"    ,  180 , 0.      , 1.0    , [&]() { return VarXGBBDT(5) ; });
+    ana.histograms.addHistogram("BDT_photon_fakes_SS2J_noBtag"    ,  180 , 0.      , 1.0    , [&]() { return VarXGBBDT(6) ; });
+    ana.histograms.addHistogram("BDT_photon_fakes_SS1J_noBtag"    ,  180 , 0.      , 1.0    , [&]() { return VarXGBBDT(7) ; });
+    ana.histograms.addHistogram("BDT_photon_fakes_SFOS_noBtag"    ,  180 , 0.      , 1.0    , [&]() { return VarXGBBDT(8) ; });
     ana.histograms.addHistogram("jets_pt0"                 ,  180 , 0.      , 250    , [&]() { return www.jets_p4().size() > 0 ? www.jets_p4()[0].pt()  : -999                     ; });
     ana.histograms.addHistogram("jets_pt1"                 ,  180 , 0.      , 150    , [&]() { return www.jets_p4().size() > 1 ? www.jets_p4()[1].pt()  : -999                     ; });
     ana.histograms.addHistogram("jets_pt2"                 ,  180 , 0.      , 150    , [&]() { return www.jets_p4().size() > 2 ? www.jets_p4()[2].pt()  : -999                     ; });
+    ana.histograms.addHistogram("jet0_btag_score"          ,  180 , 0.      , 1.0    , [&]() { return www.jets_btag_score().size() > 0 ? www.jets_btag_score()[0]  : -999                     ; });
+    ana.histograms.addHistogram("jet1_btag_score"          ,  180 , 0.      , 1.0    , [&]() { return www.jets_btag_score().size() > 1 ? www.jets_btag_score()[1]  : -999                     ; });
+    ana.histograms.addHistogram("jet2_btag_score"          ,  180 , 0.      , 1.0    , [&]() { return www.jets_btag_score().size() > 2 ? www.jets_btag_score()[2]  : -999                     ; });
     ana.histograms.addHistogram("jets_eta0"                ,  180 , -5.0    , 5.0    , [&]() { return www.jets_p4().size() > 0 ? www.jets_p4()[0].eta() : -999                     ; });
     ana.histograms.addHistogram("jets_eta1"                ,  180 , -5.0    , 5.0    , [&]() { return www.jets_p4().size() > 1 ? www.jets_p4()[1].eta() : -999                     ; });
     ana.histograms.addHistogram("jets_eta2"                ,  180 , -5.0    , 5.0    , [&]() { return www.jets_p4().size() > 2 ? www.jets_p4()[2].eta() : -999                     ; });
@@ -830,11 +842,34 @@ int main(int argc, char** argv)
         //************************************************************************************************************************************************************************************************
         //
         //
+        //TTBarDilep CR
+	ana.cutflow.getCut("CutSRDilep");
+        ana.cutflow.addCutToLastActiveCut("CRTTbarDilep"     , Lambdas::CutCRTTbarDilep  (Variation::JES, Variation::Nominal), UNITY);
+
         // SIGNAL REGION CUTS
         //
         //
         //************************************************************************************************************************************************************************************************
+	//SS2J, SS1J, SFOS channels
+	ana.cutflow.getCut("CutSRDilep");
+        ana.cutflow.addCutToLastActiveCut("SRSS"           , Lambdas::isSRSSChannel                                     , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSPreSelBDT"     , Lambdas::SSPreSelectionBDT  (Variation::JES, Variation::Nominal), UNITY);
+        //ana.cutflow.addCutToLastActiveCut("SRSSeeLowDetaMjjBDT" , Lambdas::LowDEtaMJJ      (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSKinSelBDT"     , Lambdas::SSKinSelBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSS2J3CATFullBDT"  , Lambdas::SRDilepCutBDT2J                                                       , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.getCut("SRSS");
+        ana.cutflow.addCutToLastActiveCut("SRSS1JPreBDT"  , Lambdas::SS1JPreselectionBDT (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSS1JBDT"  , Lambdas::SS1JBDT             (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSS1J3CATFullBDT"   , Lambdas::SRDilepCutBDT1J                                                         , UNITY);
 
+        ana.cutflow.getCut("CutSRTrilep");
+        ana.cutflow.addCutToLastActiveCut("SRSFOSPreSelBDT"    , Lambdas::ThreeLepPreselBDT  (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSFOSDYVetoBDT"    , Lambdas::DYAndZVetoes                                        , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSFOSBDT"    , Lambdas::KinSel3LBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSFOS3CATFullBDT"      , Lambdas::SRTrilepCutBDT                                                        , UNITY);
+
+
+	//////////	
         ana.cutflow.getCut("CutSRDilep");
         ana.cutflow.addCutToLastActiveCut("SRSSee"           , Lambdas::isSRSSeeChannel                                     , UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSSeePreSel"     , Lambdas::SSPreSelection  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
@@ -842,10 +877,85 @@ int main(int argc, char** argv)
         ana.cutflow.addCutToLastActiveCut("SRSSeeKinSel"     , Lambdas::SSKinSel        (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSSeeMjjIn"      , Lambdas::SSMjjIn         (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSSeeMjjInFull"  , UNITY                                                        , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.addCutToLastActiveCut("SRSSeeMjjInFullAndBDT"  , Lambdas::SRDilepCutBDT2JeeMjjIn                                                       , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.getCut("SRSSeeMjjInFull");
+        ana.cutflow.addCutToLastActiveCut("SRSSeeMjjInFullNotBDT"  , [&](){ return not Lambdas::SRDilepCutBDT2JeeMjjIn();}                                                       , UNITY); // Adding one more node with name "<Region>Full"
+	//N-1: Nb
+        ana.cutflow.getCut("SRSSee");
+        ana.cutflow.addCutToLastActiveCut("SRSSeePreSelNoNb"     , Lambdas::SSPreSelectionNoNb  (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSeeLowDetaMjjNoNb" , Lambdas::LowDEtaMJJ      (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSeeKinSelNoNb"     , Lambdas::SSKinSel        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSeeMjjInNoNb"      , Lambdas::SSMjjIn         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSeeMjjInFullNoNb"  , UNITY                                                        , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.addCutToLastActiveCut("SRSSeeMjjInFullNoNbAndBDT"  , Lambdas::SRDilepCutBDT2JeeMjjIn                                                       , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.getCut("SRSSeeMjjInFullNoNb");
+        ana.cutflow.addCutToLastActiveCut("SRSSeeMjjInFullNoNbNotBDT"  , [&](){ return not Lambdas::SRDilepCutBDT2JeeMjjIn();}                                                       , UNITY); // Adding one more node with name "<Region>Full"
+	//end of N-1 Nb
+	//N-1 MTmax
+	ana.cutflow.getCut("SRSSeeLowDetaMjj");
+        ana.cutflow.addCutToLastActiveCut("SRSSeeKinSelNoMTmax"     , Lambdas::SSKinSelNoMTmax        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSeeMjjInNoMTmax"      , Lambdas::SSMjjIn         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSeeMjjInFullNoMTmax"  , UNITY                                                        , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.addCutToLastActiveCut("SRSSeeMjjInFullNoMTmaxAndBDT"  , Lambdas::SRDilepCutBDT2JeeMjjIn                                                       , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.getCut("SRSSeeMjjInFullNoMTmax");
+        ana.cutflow.addCutToLastActiveCut("SRSSeeMjjInFullNoMTmaxNotBDT"  , [&](){ return not Lambdas::SRDilepCutBDT2JeeMjjIn();}                                                       , UNITY); // Adding one more node with name "<Region>Full"
+	//end of N-1 MTmax
+	//N-1 MET
+	ana.cutflow.getCut("SRSSeeLowDetaMjj");
+        ana.cutflow.addCutToLastActiveCut("SRSSeeKinSelNoMET"     , Lambdas::SSKinSelNoMET        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSeeMjjInNoMET"      , Lambdas::SSMjjIn         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSeeMjjInFullNoMET"  , UNITY                                                        , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.addCutToLastActiveCut("SRSSeeMjjInFullNoMETAndBDT"  , Lambdas::SRDilepCutBDT2JeeMjjIn                                                       , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.getCut("SRSSeeMjjInFullNoMET");
+        ana.cutflow.addCutToLastActiveCut("SRSSeeMjjInFullNoMETNotBDT"  , [&](){ return not Lambdas::SRDilepCutBDT2JeeMjjIn();}                                                       , UNITY); // Adding one more node with name "<Region>Full"
+	//end of N-1 MET
+
+
+
+
+        ana.cutflow.getCut("SRSSee");
+        ana.cutflow.addCutToLastActiveCut("SRSSeePreSelBDT"     , Lambdas::SSPreSelectionBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
+        //ana.cutflow.addCutToLastActiveCut("SRSSeeLowDetaMjjBDT" , Lambdas::LowDEtaMJJ      (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSeeKinSelBDT"     , Lambdas::SSKinSelBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSeeMjjInBDT"      , Lambdas::SSMjjIn         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSeeMjjInFullBDT"  , Lambdas::SRDilepCutBDT2JeeMjjIn                                                       , UNITY); // Adding one more node with name "<Region>Full"
         ana.cutflow.getCut("SRSSeeKinSel");
         ana.cutflow.addCutToLastActiveCut("SRSSeeMjjOut"     , Lambdas::SSMjjOut        (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSSeeMjjOutFull" , UNITY                                                        , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.addCutToLastActiveCut("SRSSeeMjjOutFullAndBDT" , Lambdas::SRDilepCutBDT2JeeMjjOut                                                        , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.getCut("SRSSeeMjjOutFull");
+ 	ana.cutflow.addCutToLastActiveCut("SRSSeeMjjOutFullNotBDT"  , [&](){ return not Lambdas::SRDilepCutBDT2JeeMjjOut();}                                                       , UNITY); // Adding one more node with name "<Region>Full"
+	//N-1: Nb
+        ana.cutflow.getCut("SRSSeeKinSelNoNb");
+        ana.cutflow.addCutToLastActiveCut("SRSSeeMjjOutNoNb"      , Lambdas::SSMjjOut         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSeeMjjOutFullNoNb"  , UNITY                                                        , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.addCutToLastActiveCut("SRSSeeMjjOutFullNoNbAndBDT"  , Lambdas::SRDilepCutBDT2JeeMjjOut                                                       , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.getCut("SRSSeeMjjOutFullNoNb");
+        ana.cutflow.addCutToLastActiveCut("SRSSeeMjjOutFullNoNbNotBDT"  , [&](){ return not Lambdas::SRDilepCutBDT2JeeMjjOut();}                                                       , UNITY); // Adding one more node with name "<Region>Full"
+	//end of N-1 Nb
+	//N-1: MTmax
+        ana.cutflow.getCut("SRSSeeKinSelNoMTmax");
+        ana.cutflow.addCutToLastActiveCut("SRSSeeMjjOutNoMTmax"      , Lambdas::SSMjjOut         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSeeMjjOutFullNoMTmax"  , UNITY                                                        , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.addCutToLastActiveCut("SRSSeeMjjOutFullNoMTmaxAndBDT"  , Lambdas::SRDilepCutBDT2JeeMjjOut                                                       , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.getCut("SRSSeeMjjOutFullNoMTmax");
+        ana.cutflow.addCutToLastActiveCut("SRSSeeMjjOutFullNoMTmaxNotBDT"  , [&](){ return not Lambdas::SRDilepCutBDT2JeeMjjOut();}                                                       , UNITY); // Adding one more node with name "<Region>Full"
+	//end of N-1 MTmax
+	//N-1: MET
+        ana.cutflow.getCut("SRSSeeKinSelNoMET");
+        ana.cutflow.addCutToLastActiveCut("SRSSeeMjjOutNoMET"      , Lambdas::SSMjjOut         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSeeMjjOutFullNoMET"  , UNITY                                                        , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.addCutToLastActiveCut("SRSSeeMjjOutFullNoMETAndBDT"  , Lambdas::SRDilepCutBDT2JeeMjjOut                                                       , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.getCut("SRSSeeMjjOutFullNoMET");
+        ana.cutflow.addCutToLastActiveCut("SRSSeeMjjOutFullNoMETNotBDT"  , [&](){ return not Lambdas::SRDilepCutBDT2JeeMjjOut();}                                                       , UNITY); // Adding one more node with name "<Region>Full"
+	//end of N-1 MET
 
+        ana.cutflow.getCut("SRSSee");
+        ana.cutflow.addCutToLastActiveCut("SRSSeePreSelBDTNoNb"     , Lambdas::SSPreSelectionNoNb  (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSeeKinSelBDTNoNb"     , Lambdas::SSKinSelBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSeeMjjOutBDT"     , Lambdas::SSMjjOut        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSeeMjjOutFullBDT" , Lambdas::SRDilepCutBDT2JeeMjjOut                                                        , UNITY); // Adding one more node with name "<Region>Full"
+	
         ana.cutflow.getCut("CutSRDilep");
         ana.cutflow.addCutToLastActiveCut("SRSSem"           , Lambdas::isSRSSemChannel                                     , UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSSemPreSel"     , Lambdas::SSPreSelection  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
@@ -853,9 +963,84 @@ int main(int argc, char** argv)
         ana.cutflow.addCutToLastActiveCut("SRSSemKinSel"     , Lambdas::SSKinSel        (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSSemMjjIn"      , Lambdas::SSMjjIn         (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSSemMjjInFull"  , UNITY                                                        , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.addCutToLastActiveCut("SRSSemMjjInFullAndBDT"  , Lambdas::SRDilepCutBDT2JemMjjIn                                                        , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.getCut("SRSSemMjjInFull");
+        ana.cutflow.addCutToLastActiveCut("SRSSemMjjInFullNotBDT"  , [&](){ return not Lambdas::SRDilepCutBDT2JemMjjIn();}                                                       , UNITY); // Adding one more node with name "<Region>Full"
+	//N-1: Nb
+        ana.cutflow.getCut("SRSSem");
+        ana.cutflow.addCutToLastActiveCut("SRSSemPreSelNoNb"     , Lambdas::SSPreSelectionNoNb  (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSemLowDetaMjjNoNb" , Lambdas::LowDEtaMJJ      (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSemKinSelNoNb"     , Lambdas::SSKinSel        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSemMjjInNoNb"      , Lambdas::SSMjjIn         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSemMjjInFullNoNb"  , UNITY                                                        , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.addCutToLastActiveCut("SRSSemMjjInFullNoNbAndBDT"  , Lambdas::SRDilepCutBDT2JemMjjIn                                                       , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.getCut("SRSSemMjjInFullNoNb");
+        ana.cutflow.addCutToLastActiveCut("SRSSemMjjInFullNoNbNotBDT"  , [&](){ return not Lambdas::SRDilepCutBDT2JemMjjIn();}                                                       , UNITY); // Adding one more node with name "<Region>Full"
+	//end of N-1 Nb
+	//N-1: MTmax
+        ana.cutflow.getCut("SRSSemLowDetaMjj");
+        ana.cutflow.addCutToLastActiveCut("SRSSemKinSelNoMTmax"     , Lambdas::SSKinSelNoMTmax        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSemMjjInNoMTmax"      , Lambdas::SSMjjIn         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSemMjjInFullNoMTmax"  , UNITY                                                        , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.addCutToLastActiveCut("SRSSemMjjInFullNoMTmaxAndBDT"  , Lambdas::SRDilepCutBDT2JemMjjIn                                                       , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.getCut("SRSSemMjjInFullNoMTmax");
+        ana.cutflow.addCutToLastActiveCut("SRSSemMjjInFullNoMTmaxNotBDT"  , [&](){ return not Lambdas::SRDilepCutBDT2JemMjjIn();}                                                       , UNITY); // Adding one more node with name "<Region>Full"
+	//end of N-1 MTmax
+	//N-1: MET
+        ana.cutflow.getCut("SRSSemLowDetaMjj");
+        ana.cutflow.addCutToLastActiveCut("SRSSemKinSelNoMET"     , Lambdas::SSKinSelNoMET        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSemMjjInNoMET"      , Lambdas::SSMjjIn         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSemMjjInFullNoMET"  , UNITY                                                        , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.addCutToLastActiveCut("SRSSemMjjInFullNoMETAndBDT"  , Lambdas::SRDilepCutBDT2JemMjjIn                                                       , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.getCut("SRSSemMjjInFullNoMET");
+        ana.cutflow.addCutToLastActiveCut("SRSSemMjjInFullNoMETNotBDT"  , [&](){ return not Lambdas::SRDilepCutBDT2JemMjjIn();}                                                       , UNITY); // Adding one more node with name "<Region>Full"
+	//end of N-1 MET
+
+
+
+        ana.cutflow.getCut("SRSSem");
+        ana.cutflow.addCutToLastActiveCut("SRSSemPreSelBDT"     , Lambdas::SSPreSelectionBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
+        //ana.cutflow.addCutToLastActiveCut("SRSSemLowDetaMjjBDT" , Lambdas::LowDEtaMJJ      (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSemKinSelBDT"     , Lambdas::SSKinSelBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSemMjjInBDT"      , Lambdas::SSMjjIn         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSemMjjInFullBDT"  , Lambdas::SRDilepCutBDT2JemMjjIn                                                        , UNITY); // Adding one more node with name "<Region>Full"
         ana.cutflow.getCut("SRSSemKinSel");
         ana.cutflow.addCutToLastActiveCut("SRSSemMjjOut"     , Lambdas::SSMjjOut        (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSSemMjjOutFull" , UNITY                                                        , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.addCutToLastActiveCut("SRSSemMjjOutFullAndBDT" , Lambdas::SRDilepCutBDT2JemMjjOut                                                        , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.getCut("SRSSemMjjOutFull");
+        ana.cutflow.addCutToLastActiveCut("SRSSemMjjOutFullNotBDT"  , [&](){ return not Lambdas::SRDilepCutBDT2JemMjjOut();}                                                       , UNITY); // Adding one more node with name "<Region>Full"
+
+	//N-1: Nb
+        ana.cutflow.getCut("SRSSemKinSelNoNb");
+        ana.cutflow.addCutToLastActiveCut("SRSSemMjjOutNoNb"      , Lambdas::SSMjjOut         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSemMjjOutFullNoNb"  , UNITY                                                        , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.addCutToLastActiveCut("SRSSemMjjOutFullNoNbAndBDT"  , Lambdas::SRDilepCutBDT2JemMjjOut                                                       , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.getCut("SRSSemMjjOutFullNoNb");
+        ana.cutflow.addCutToLastActiveCut("SRSSemMjjOutFullNoNbNotBDT"  , [&](){ return not Lambdas::SRDilepCutBDT2JemMjjOut();}                                                       , UNITY); // Adding one more node with name "<Region>Full"
+	//end of N-1 Nb
+	//N-1: MTmax
+        ana.cutflow.getCut("SRSSemKinSelNoMTmax");
+        ana.cutflow.addCutToLastActiveCut("SRSSemMjjOutNoMTmax"      , Lambdas::SSMjjOut         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSemMjjOutFullNoMTmax"  , UNITY                                                        , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.addCutToLastActiveCut("SRSSemMjjOutFullNoMTmaxAndBDT"  , Lambdas::SRDilepCutBDT2JemMjjOut                                                       , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.getCut("SRSSemMjjOutFullNoMTmax");
+        ana.cutflow.addCutToLastActiveCut("SRSSemMjjOutFullNoMTmaxNotBDT"  , [&](){ return not Lambdas::SRDilepCutBDT2JemMjjOut();}                                                       , UNITY); // Adding one more node with name "<Region>Full"
+	//end of N-1 MTmax
+	//N-1: MET
+        ana.cutflow.getCut("SRSSemKinSelNoMET");
+        ana.cutflow.addCutToLastActiveCut("SRSSemMjjOutNoMET"      , Lambdas::SSMjjOut         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSemMjjOutFullNoMET"  , UNITY                                                        , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.addCutToLastActiveCut("SRSSemMjjOutFullNoMETAndBDT"  , Lambdas::SRDilepCutBDT2JemMjjOut                                                       , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.getCut("SRSSemMjjOutFullNoMET");
+        ana.cutflow.addCutToLastActiveCut("SRSSemMjjOutFullNoMETNotBDT"  , [&](){ return not Lambdas::SRDilepCutBDT2JemMjjOut();}                                                       , UNITY); // Adding one more node with name "<Region>Full"
+	//end of N-1 MET
+
+        ana.cutflow.getCut("SRSSem");
+        ana.cutflow.addCutToLastActiveCut("SRSSemPreSelBDTNoNb"     , Lambdas::SSPreSelectionNoNb  (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSemKinSelBDTNoNb"     , Lambdas::SSKinSelBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSemMjjOutBDT"     , Lambdas::SSMjjOut        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSemMjjOutFullBDT" , Lambdas::SRDilepCutBDT2JemMjjOut                                                        , UNITY); // Adding one more node with name "<Region>Full"
 
         ana.cutflow.getCut("CutSRDilep");
         ana.cutflow.addCutToLastActiveCut("SRSSmm"           , Lambdas::isSRSSmmChannel                                     , UNITY);
@@ -864,22 +1049,199 @@ int main(int argc, char** argv)
         ana.cutflow.addCutToLastActiveCut("SRSSmmKinSel"     , Lambdas::SSKinSel        (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSSmmMjjIn"      , Lambdas::SSMjjIn         (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSSmmMjjInFull"  , UNITY                                                        , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.addCutToLastActiveCut("SRSSmmMjjInFullAndBDT"  , Lambdas::SRDilepCutBDT2JmmMjjIn                                                        , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.getCut("SRSSmmMjjInFull");
+        ana.cutflow.addCutToLastActiveCut("SRSSmmMjjInFullNotBDT"  , [&](){ return not Lambdas::SRDilepCutBDT2JmmMjjIn();}                                                       , UNITY); // Adding one more node with name "<Region>Full"
+	//N-1: Nb
+        ana.cutflow.getCut("SRSSmm");
+        ana.cutflow.addCutToLastActiveCut("SRSSmmPreSelNoNb"     , Lambdas::SSPreSelectionNoNb  (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSmmLowDetaMjjNoNb" , Lambdas::LowDEtaMJJ      (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSmmKinSelNoNb"     , Lambdas::SSKinSel        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSmmMjjInNoNb"      , Lambdas::SSMjjIn         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSmmMjjInFullNoNb"  , UNITY                                                        , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.addCutToLastActiveCut("SRSSmmMjjInFullNoNbAndBDT"  , Lambdas::SRDilepCutBDT2JmmMjjIn                                                       , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.getCut("SRSSmmMjjInFullNoNb");
+        ana.cutflow.addCutToLastActiveCut("SRSSmmMjjInFullNoNbNotBDT"  , [&](){ return not Lambdas::SRDilepCutBDT2JmmMjjIn();}                                                       , UNITY); // Adding one more node with name "<Region>Full"
+	//end of N-1 Nb
+	//N-1: MTmax
+        ana.cutflow.getCut("SRSSmmLowDetaMjj");
+        ana.cutflow.addCutToLastActiveCut("SRSSmmKinSelNoMTmax"     , Lambdas::SSKinSelNoMTmax        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSmmMjjInNoMTmax"      , Lambdas::SSMjjIn         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSmmMjjInFullNoMTmax"  , UNITY                                                        , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.addCutToLastActiveCut("SRSSmmMjjInFullNoMTmaxAndBDT"  , Lambdas::SRDilepCutBDT2JmmMjjIn                                                       , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.getCut("SRSSmmMjjInFullNoMTmax");
+        ana.cutflow.addCutToLastActiveCut("SRSSmmMjjInFullNoMTmaxNotBDT"  , [&](){ return not Lambdas::SRDilepCutBDT2JmmMjjIn();}                                                       , UNITY); // Adding one more node with name "<Region>Full"
+	//end of N-1 MTmax
+	//N-1: MET
+        ana.cutflow.getCut("SRSSmmLowDetaMjj");
+        ana.cutflow.addCutToLastActiveCut("SRSSmmKinSelNoMET"     , Lambdas::SSKinSelNoMET        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSmmMjjInNoMET"      , Lambdas::SSMjjIn         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSmmMjjInFullNoMET"  , UNITY                                                        , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.addCutToLastActiveCut("SRSSmmMjjInFullNoMETAndBDT"  , Lambdas::SRDilepCutBDT2JmmMjjIn                                                       , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.getCut("SRSSmmMjjInFullNoMET");
+        ana.cutflow.addCutToLastActiveCut("SRSSmmMjjInFullNoMETNotBDT"  , [&](){ return not Lambdas::SRDilepCutBDT2JmmMjjIn();}                                                       , UNITY); // Adding one more node with name "<Region>Full"
+	//end of N-1 MET
+
+
+	ana.cutflow.getCut("SRSSmm");
+        ana.cutflow.addCutToLastActiveCut("SRSSmmPreSelBDT"     , Lambdas::SSPreSelectionBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
+        //ana.cutflow.addCutToLastActiveCut("SRSSmmLowDetaMjjBDT" , Lambdas::LowDEtaMJJ      (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSmmKinSelBDT"     , Lambdas::SSKinSelBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSmmMjjInBDT"      , Lambdas::SSMjjIn         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSmmMjjInFullBDT"  , Lambdas::SRDilepCutBDT2JmmMjjIn                                                        , UNITY); // Adding one more node with name "<Region>Full"
         ana.cutflow.getCut("SRSSmmKinSel");
         ana.cutflow.addCutToLastActiveCut("SRSSmmMjjOut"     , Lambdas::SSMjjOut        (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSSmmMjjOutFull" , UNITY                                                        , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.addCutToLastActiveCut("SRSSmmMjjOutFullAndBDT" , Lambdas::SRDilepCutBDT2JmmMjjOut                                                        , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.getCut("SRSSmmMjjOutFull");
+        ana.cutflow.addCutToLastActiveCut("SRSSmmMjjOutFullNotBDT"  , [&](){ return not Lambdas::SRDilepCutBDT2JmmMjjOut();}                                                       , UNITY); // Adding one more node with name "<Region>Full"
+
+	//N-1: Nb
+        ana.cutflow.getCut("SRSSmmKinSelNoNb");
+        ana.cutflow.addCutToLastActiveCut("SRSSmmMjjOutNoNb"      , Lambdas::SSMjjOut         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSmmMjjOutFullNoNb"  , UNITY                                                        , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.addCutToLastActiveCut("SRSSmmMjjOutFullNoNbAndBDT"  , Lambdas::SRDilepCutBDT2JmmMjjOut                                                       , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.getCut("SRSSmmMjjOutFullNoNb");
+        ana.cutflow.addCutToLastActiveCut("SRSSmmMjjOutFullNoNbNotBDT"  , [&](){ return not Lambdas::SRDilepCutBDT2JmmMjjOut();}                                                       , UNITY); // Adding one more node with name "<Region>Full"
+	//end of N-1 Nb
+	
+	//N-1: MTmax
+        ana.cutflow.getCut("SRSSmmKinSelNoMTmax");
+        ana.cutflow.addCutToLastActiveCut("SRSSmmMjjOutNoMTmax"      , Lambdas::SSMjjOut         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSmmMjjOutFullNoMTmax"  , UNITY                                                        , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.addCutToLastActiveCut("SRSSmmMjjOutFullNoMTmaxAndBDT"  , Lambdas::SRDilepCutBDT2JmmMjjOut                                                       , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.getCut("SRSSmmMjjOutFullNoMTmax");
+        ana.cutflow.addCutToLastActiveCut("SRSSmmMjjOutFullNoMTmaxNotBDT"  , [&](){ return not Lambdas::SRDilepCutBDT2JmmMjjOut();}                                                       , UNITY); // Adding one more node with name "<Region>Full"
+	//end of N-1 MTmax
+	
+	//N-1: MET
+        ana.cutflow.getCut("SRSSmmKinSelNoMET");
+        ana.cutflow.addCutToLastActiveCut("SRSSmmMjjOutNoMET"      , Lambdas::SSMjjOut         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSmmMjjOutFullNoMET"  , UNITY                                                        , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.addCutToLastActiveCut("SRSSmmMjjOutFullNoMETAndBDT"  , Lambdas::SRDilepCutBDT2JmmMjjOut                                                       , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.getCut("SRSSmmMjjOutFullNoMET");
+        ana.cutflow.addCutToLastActiveCut("SRSSmmMjjOutFullNoMETNotBDT"  , [&](){ return not Lambdas::SRDilepCutBDT2JmmMjjOut();}                                                       , UNITY); // Adding one more node with name "<Region>Full"
+	//end of N-1 MET
+
+        ana.cutflow.getCut("SRSSmm");
+        ana.cutflow.addCutToLastActiveCut("SRSSmmPreSelBDTNoNb"     , Lambdas::SSPreSelectionNoNb  (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSmmKinSelBDTNoNb"     , Lambdas::SSKinSelBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSmmMjjOutBDT"     , Lambdas::SSMjjOut        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSmmMjjOutFullBDT" , Lambdas::SRDilepCutBDT2JmmMjjOut                                                        , UNITY); // Adding one more node with name "<Region>Full"
         
         ana.cutflow.getCut("SRSSee");
         ana.cutflow.addCutToLastActiveCut("SRSS1Jee1JPre"  , Lambdas::SS1JPreselection (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSS1Jee1JKin"  , Lambdas::SS1J             (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSS1JeeFull"   , UNITY                                                         , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSS1JeeFullAndBDT"   , Lambdas::SRDilepCutBDT1Jee                                                         , UNITY);
+        ana.cutflow.getCut("SRSS1JeeFull");
+        ana.cutflow.addCutToLastActiveCut("SRSS1JeeFullNotBDT"   , [&](){ return not Lambdas::SRDilepCutBDT1Jee();}                                                         , UNITY);
+	// N-1 Nb
+        ana.cutflow.getCut("SRSSee");
+        ana.cutflow.addCutToLastActiveCut("SRSS1Jee1JPreNoNb"  , Lambdas::SS1JPreselectionNoNb (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSS1Jee1JKinNoNb"  , Lambdas::SS1J             (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSS1JeeFullNoNb"   , UNITY                                                         , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSS1JeeFullNoNbAndBDT"   , Lambdas::SRDilepCutBDT1Jee                                                         , UNITY);
+        ana.cutflow.getCut("SRSS1JeeFullNoNb");
+        ana.cutflow.addCutToLastActiveCut("SRSS1JeeFullNoNbNotBDT"   , [&](){ return not Lambdas::SRDilepCutBDT1Jee();}                                                         , UNITY);
+	// end of N-1 Nb
+	// N-1 MTmax
+        ana.cutflow.getCut("SRSS1Jee1JPre");
+        ana.cutflow.addCutToLastActiveCut("SRSS1Jee1JKinNoMTmax"  , Lambdas::SS1JNoMTmax             (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSS1JeeFullNoMTmax"   , UNITY                                                         , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSS1JeeFullNoMTmaxAndBDT"   , Lambdas::SRDilepCutBDT1Jee                                                         , UNITY);
+        ana.cutflow.getCut("SRSS1JeeFullNoMTmax");
+        ana.cutflow.addCutToLastActiveCut("SRSS1JeeFullNoMTmaxNotBDT"   , [&](){ return not Lambdas::SRDilepCutBDT1Jee();}                                                         , UNITY);
+	// end of N-1 MTmax
+	// N-1 MET
+        ana.cutflow.getCut("SRSS1Jee1JPre");
+        ana.cutflow.addCutToLastActiveCut("SRSS1Jee1JKinNoMET"  , Lambdas::SS1JNoMET             (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSS1JeeFullNoMET"   , UNITY                                                         , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSS1JeeFullNoMETAndBDT"   , Lambdas::SRDilepCutBDT1Jee                                                         , UNITY);
+        ana.cutflow.getCut("SRSS1JeeFullNoMET");
+        ana.cutflow.addCutToLastActiveCut("SRSS1JeeFullNoMETNotBDT"   , [&](){ return not Lambdas::SRDilepCutBDT1Jee();}                                                         , UNITY);
+	// end of N-1 MET
+
         ana.cutflow.getCut("SRSSem");
         ana.cutflow.addCutToLastActiveCut("SRSS1Jem1JPre"  , Lambdas::SS1JPreselection (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSS1Jem1JKin"  , Lambdas::SS1J             (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSS1JemFull"   , UNITY                                                         , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSS1JemFullAndBDT"   , Lambdas::SRDilepCutBDT1Jem                                                         , UNITY);
+        ana.cutflow.getCut("SRSS1JemFull");
+        ana.cutflow.addCutToLastActiveCut("SRSS1JemFullNotBDT"   , [&](){ return not Lambdas::SRDilepCutBDT1Jem();}                                                         , UNITY);
+	// N-1 Nb
+        ana.cutflow.getCut("SRSSem");
+        ana.cutflow.addCutToLastActiveCut("SRSS1Jem1JPreNoNb"  , Lambdas::SS1JPreselectionNoNb (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSS1Jem1JKinNoNb"  , Lambdas::SS1J             (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSS1JemFullNoNb"   , UNITY                                                         , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSS1JemFullNoNbAndBDT"   , Lambdas::SRDilepCutBDT1Jem                                                         , UNITY);
+        ana.cutflow.getCut("SRSS1JemFullNoNb");
+        ana.cutflow.addCutToLastActiveCut("SRSS1JemFullNoNbNotBDT"   , [&](){ return not Lambdas::SRDilepCutBDT1Jem();}                                                         , UNITY);
+	// end of N-1 Nb
+	// N-1 MTmax
+        ana.cutflow.getCut("SRSS1Jem1JPre");
+        ana.cutflow.addCutToLastActiveCut("SRSS1Jem1JKinNoMTmax"  , Lambdas::SS1JNoMTmax             (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSS1JemFullNoMTmax"   , UNITY                                                         , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSS1JemFullNoMTmaxAndBDT"   , Lambdas::SRDilepCutBDT1Jem                                                         , UNITY);
+        ana.cutflow.getCut("SRSS1JemFullNoMTmax");
+        ana.cutflow.addCutToLastActiveCut("SRSS1JemFullNoMTmaxNotBDT"   , [&](){ return not Lambdas::SRDilepCutBDT1Jem();}                                                         , UNITY);
+	// end of N-1 MTmax
+	// N-1 MET
+        ana.cutflow.getCut("SRSS1Jem1JPre");
+        ana.cutflow.addCutToLastActiveCut("SRSS1Jem1JKinNoMET"  , Lambdas::SS1JNoMET             (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSS1JemFullNoMET"   , UNITY                                                         , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSS1JemFullNoMETAndBDT"   , Lambdas::SRDilepCutBDT1Jem                                                         , UNITY);
+        ana.cutflow.getCut("SRSS1JemFullNoMET");
+        ana.cutflow.addCutToLastActiveCut("SRSS1JemFullNoMETNotBDT"   , [&](){ return not Lambdas::SRDilepCutBDT1Jem();}                                                         , UNITY);
+	// end of N-1 MET
+
+
         ana.cutflow.getCut("SRSSmm");
         ana.cutflow.addCutToLastActiveCut("SRSS1Jmm1JPre"  , Lambdas::SS1JPreselection (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSS1Jmm1JKin"  , Lambdas::SS1J             (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSS1JmmFull"   , UNITY                                                         , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSS1JmmFullAndBDT"   , Lambdas::SRDilepCutBDT1Jmm                                                         , UNITY);
+        ana.cutflow.getCut("SRSS1JmmFull");
+        ana.cutflow.addCutToLastActiveCut("SRSS1JmmFullNotBDT"   , [&](){ return not Lambdas::SRDilepCutBDT1Jmm();}                                                         , UNITY);
+	// N-1 Nb
+        ana.cutflow.getCut("SRSSmm");
+        ana.cutflow.addCutToLastActiveCut("SRSS1Jmm1JPreNoNb"  , Lambdas::SS1JPreselectionNoNb (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSS1Jmm1JKinNoNb"  , Lambdas::SS1J             (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSS1JmmFullNoNb"   , UNITY                                                         , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSS1JmmFullNoNbAndBDT"   , Lambdas::SRDilepCutBDT1Jmm                                                         , UNITY);
+        ana.cutflow.getCut("SRSS1JmmFullNoNb");
+        ana.cutflow.addCutToLastActiveCut("SRSS1JmmFullNoNbNotBDT"   , [&](){ return not Lambdas::SRDilepCutBDT1Jmm();}                                                         , UNITY);
+	// end of N-1 Nb
+ 	// N-1 MTmax
+        ana.cutflow.getCut("SRSS1Jmm1JPre");
+        ana.cutflow.addCutToLastActiveCut("SRSS1Jmm1JKinNoMTmax"  , Lambdas::SS1JNoMTmax             (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSS1JmmFullNoMTmax"   , UNITY                                                         , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSS1JmmFullNoMTmaxAndBDT"   , Lambdas::SRDilepCutBDT1Jmm                                                         , UNITY);
+        ana.cutflow.getCut("SRSS1JmmFullNoMTmax");
+        ana.cutflow.addCutToLastActiveCut("SRSS1JmmFullNoMTmaxNotBDT"   , [&](){ return not Lambdas::SRDilepCutBDT1Jmm();}                                                         , UNITY);
+	// end of N-1 MTmax
+  	// N-1 MET
+        ana.cutflow.getCut("SRSS1Jmm1JPre");
+        ana.cutflow.addCutToLastActiveCut("SRSS1Jmm1JKinNoMET"  , Lambdas::SS1JNoMET             (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSS1JmmFullNoMET"   , UNITY                                                         , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSS1JmmFullNoMETAndBDT"   , Lambdas::SRDilepCutBDT1Jmm                                                         , UNITY);
+        ana.cutflow.getCut("SRSS1JmmFullNoMET");
+        ana.cutflow.addCutToLastActiveCut("SRSS1JmmFullNoMETNotBDT"   , [&](){ return not Lambdas::SRDilepCutBDT1Jmm();}                                                         , UNITY);
+	// end of N-1 MET
+ 
+        ana.cutflow.getCut("SRSSee");
+        ana.cutflow.addCutToLastActiveCut("SRSS1Jee1JPreBDT"  , Lambdas::SS1JPreselectionNoNb (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSS1JeeBDT"  , Lambdas::SS1JBDT             (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSS1JeeFullBDT"   , Lambdas::SRDilepCutBDT1Jee                                                         , UNITY);
+        ana.cutflow.getCut("SRSSem");
+        ana.cutflow.addCutToLastActiveCut("SRSS1Jem1JPreBDT"  , Lambdas::SS1JPreselectionNoNb (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSS1JemBDT"  , Lambdas::SS1JBDT             (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSS1JemFullBDT"   , Lambdas::SRDilepCutBDT1Jem                                                         , UNITY);
+        ana.cutflow.getCut("SRSSmm");
+        ana.cutflow.addCutToLastActiveCut("SRSS1Jmm1JPreBDT"  , Lambdas::SS1JPreselectionNoNb (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSS1JmmBDT"  , Lambdas::SS1JBDT             (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSS1JmmFullBDT"   , Lambdas::SRDilepCutBDT1Jmm                                                         , UNITY);
+
 
         ana.cutflow.getCut("CutSRTrilep");
         ana.cutflow.addCutToLastActiveCut("SR0SFOS"          , Lambdas::is0SFOS                                             , UNITY);
@@ -887,6 +1249,47 @@ int main(int argc, char** argv)
         ana.cutflow.addCutToLastActiveCut("SR0SFOSDYVeto"    , Lambdas::DYAndZVetoes                                        , UNITY);
         ana.cutflow.addCutToLastActiveCut("SR0SFOSKinSel"    , Lambdas::KinSel3L        (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("SR0SFOSFull"      , UNITY                                                        , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR0SFOSFullAndBDT"      , Lambdas::SRTrilepCutBDT0SFOS                                                        , UNITY);
+        ana.cutflow.getCut("SR0SFOSFull");
+        ana.cutflow.addCutToLastActiveCut("SR0SFOSFullNotBDT"      , [&](){ return not Lambdas::SRTrilepCutBDT0SFOS();}                                                        , UNITY);
+
+	//N-1 Nb
+        ana.cutflow.getCut("SR0SFOS");
+        ana.cutflow.addCutToLastActiveCut("SR0SFOSPreSelNoNb"    , Lambdas::ThreeLepPreselNoNb  (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR0SFOSDYVetoNoNb"    , Lambdas::DYAndZVetoes                                        , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR0SFOSKinSelNoNb"    , Lambdas::KinSel3L        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR0SFOSFullNoNb"      , UNITY                                                        , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR0SFOSFullNoNbAndBDT"      , Lambdas::SRTrilepCutBDT0SFOS                                                        , UNITY);
+        ana.cutflow.getCut("SR0SFOSFullNoNb");
+        ana.cutflow.addCutToLastActiveCut("SR0SFOSFullNoNbNotBDT"      , [&](){ return not Lambdas::SRTrilepCutBDT0SFOS();}                                                        , UNITY);
+	//end of N-1 Nb
+	//N-1 MTmax
+        ana.cutflow.getCut("SR0SFOSDYVeto");
+        ana.cutflow.addCutToLastActiveCut("SR0SFOSKinSelNoMTmax"    , Lambdas::KinSel3LNoMTmax        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR0SFOSFullNoMTmax"      , UNITY                                                        , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR0SFOSFullNoMTmaxAndBDT"      , Lambdas::SRTrilepCutBDT0SFOS                                                        , UNITY);
+        ana.cutflow.getCut("SR0SFOSFullNoMTmax");
+        ana.cutflow.addCutToLastActiveCut("SR0SFOSFullNoMTmaxNotBDT"      , [&](){ return not Lambdas::SRTrilepCutBDT0SFOS();}                                                        , UNITY);
+	//end of N-1 MTmax
+	
+	//N-1 DPhi3lMET
+        ana.cutflow.getCut("SR0SFOSDYVeto");
+        ana.cutflow.addCutToLastActiveCut("SR0SFOSKinSelNoDPhi3lMET"    , Lambdas::KinSel3LNoDPhi3lMET        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR0SFOSFullNoDPhi3lMET"      , UNITY                                                        , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR0SFOSFullNoDPhi3lMETAndBDT"      , Lambdas::SRTrilepCutBDT0SFOS                                                        , UNITY);
+        ana.cutflow.getCut("SR0SFOSFullNoDPhi3lMET");
+        ana.cutflow.addCutToLastActiveCut("SR0SFOSFullNoDPhi3lMETNotBDT"      , [&](){ return not Lambdas::SRTrilepCutBDT0SFOS();}                                                        , UNITY);
+	//end of N-1 DPhi3lMET
+
+	//N-1 MET
+        ana.cutflow.getCut("SR0SFOSDYVeto");
+        ana.cutflow.addCutToLastActiveCut("SR0SFOSKinSelNoMET"    , Lambdas::KinSel3LNoMET        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR0SFOSFullNoMET"      , UNITY                                                        , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR0SFOSFullNoMETAndBDT"      , Lambdas::SRTrilepCutBDT0SFOS                                                        , UNITY);
+        ana.cutflow.getCut("SR0SFOSFullNoMET");
+        ana.cutflow.addCutToLastActiveCut("SR0SFOSFullNoMETNotBDT"      , [&](){ return not Lambdas::SRTrilepCutBDT0SFOS();}                                                        , UNITY);
+	//end of N-1 MET
+
 
         ana.cutflow.getCut("CutSRTrilep");
         ana.cutflow.addCutToLastActiveCut("SR1SFOS"          , Lambdas::is1SFOS                                             , UNITY);
@@ -894,6 +1297,47 @@ int main(int argc, char** argv)
         ana.cutflow.addCutToLastActiveCut("SR1SFOSDYVeto"    , Lambdas::DYAndZVetoes                                        , UNITY);
         ana.cutflow.addCutToLastActiveCut("SR1SFOSKinSel"    , Lambdas::KinSel3L        (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("SR1SFOSFull"      , UNITY                                                        , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR1SFOSFullAndBDT"      , Lambdas::SRTrilepCutBDT1SFOS                                                        , UNITY);
+        ana.cutflow.getCut("SR1SFOSFull");
+        ana.cutflow.addCutToLastActiveCut("SR1SFOSFullNotBDT"      , [&](){ return not Lambdas::SRTrilepCutBDT1SFOS();}                                                        , UNITY);
+
+	//N-1 Nb
+        ana.cutflow.getCut("SR1SFOS");
+        ana.cutflow.addCutToLastActiveCut("SR1SFOSPreSelNoNb"    , Lambdas::ThreeLepPreselNoNb  (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR1SFOSDYVetoNoNb"    , Lambdas::DYAndZVetoes                                        , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR1SFOSKinSelNoNb"    , Lambdas::KinSel3L        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR1SFOSFullNoNb"      , UNITY                                                        , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR1SFOSFullNoNbAndBDT"      , Lambdas::SRTrilepCutBDT1SFOS                                                        , UNITY);
+        ana.cutflow.getCut("SR1SFOSFullNoNb");
+        ana.cutflow.addCutToLastActiveCut("SR1SFOSFullNoNbNotBDT"      , [&](){ return not Lambdas::SRTrilepCutBDT1SFOS();}                                                        , UNITY);
+	//end of N-1 Nb
+	//N-1 MTmax
+        ana.cutflow.getCut("SR1SFOSDYVeto");
+        ana.cutflow.addCutToLastActiveCut("SR1SFOSKinSelNoMTmax"    , Lambdas::KinSel3LNoMTmax        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR1SFOSFullNoMTmax"      , UNITY                                                        , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR1SFOSFullNoMTmaxAndBDT"      , Lambdas::SRTrilepCutBDT1SFOS                                                        , UNITY);
+        ana.cutflow.getCut("SR1SFOSFullNoMTmax");
+        ana.cutflow.addCutToLastActiveCut("SR1SFOSFullNoMTmaxNotBDT"      , [&](){ return not Lambdas::SRTrilepCutBDT1SFOS();}                                                        , UNITY);
+	//end of N-1 MTmax
+	//N-1 DPhi3lMET
+        ana.cutflow.getCut("SR1SFOSDYVeto");
+        ana.cutflow.addCutToLastActiveCut("SR1SFOSKinSelNoDPhi3lMET"    , Lambdas::KinSel3LNoDPhi3lMET        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR1SFOSFullNoDPhi3lMET"      , UNITY                                                        , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR1SFOSFullNoDPhi3lMETAndBDT"      , Lambdas::SRTrilepCutBDT1SFOS                                                        , UNITY);
+        ana.cutflow.getCut("SR1SFOSFullNoDPhi3lMET");
+        ana.cutflow.addCutToLastActiveCut("SR1SFOSFullNoDPhi3lMETNotBDT"      , [&](){ return not Lambdas::SRTrilepCutBDT1SFOS();}                                                        , UNITY);
+	//end of N-1 DPhi3lMET
+
+	//N-1 MET
+        ana.cutflow.getCut("SR1SFOSDYVeto");
+        ana.cutflow.addCutToLastActiveCut("SR1SFOSKinSelNoMET"    , Lambdas::KinSel3LNoMET        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR1SFOSFullNoMET"      , UNITY                                                        , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR1SFOSFullNoMETAndBDT"      , Lambdas::SRTrilepCutBDT1SFOS                                                        , UNITY);
+        ana.cutflow.getCut("SR1SFOSFullNoMET");
+        ana.cutflow.addCutToLastActiveCut("SR1SFOSFullNoMETNotBDT"      , [&](){ return not Lambdas::SRTrilepCutBDT1SFOS();}                                                        , UNITY);
+	//end of N-1 MET
+
+
 
         ana.cutflow.getCut("CutSRTrilep");
         ana.cutflow.addCutToLastActiveCut("SR2SFOS"          , Lambdas::is2SFOS                                             , UNITY);
@@ -901,6 +1345,67 @@ int main(int argc, char** argv)
         ana.cutflow.addCutToLastActiveCut("SR2SFOSDYVeto"    , Lambdas::DYAndZVetoes                                        , UNITY);
         ana.cutflow.addCutToLastActiveCut("SR2SFOSKinSel"    , Lambdas::KinSel3L        (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("SR2SFOSFull"      , UNITY                                                        , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR2SFOSFullAndBDT"      , Lambdas::SRTrilepCutBDT2SFOS                                                        , UNITY);
+        ana.cutflow.getCut("SR2SFOSFull");
+        ana.cutflow.addCutToLastActiveCut("SR2SFOSFullNotBDT"      , [&](){ return not Lambdas::SRTrilepCutBDT2SFOS();}                                                        , UNITY);
+
+	//N-1 Nb
+        ana.cutflow.getCut("SR2SFOS");
+        ana.cutflow.addCutToLastActiveCut("SR2SFOSPreSelNoNb"    , Lambdas::ThreeLepPreselNoNb  (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR2SFOSDYVetoNoNb"    , Lambdas::DYAndZVetoes                                        , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR2SFOSKinSelNoNb"    , Lambdas::KinSel3L        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR2SFOSFullNoNb"      , UNITY                                                        , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR2SFOSFullNoNbAndBDT"      , Lambdas::SRTrilepCutBDT2SFOS                                                        , UNITY);
+        ana.cutflow.getCut("SR2SFOSFullNoNb");
+        ana.cutflow.addCutToLastActiveCut("SR2SFOSFullNoNbNotBDT"      , [&](){ return not Lambdas::SRTrilepCutBDT2SFOS();}                                                        , UNITY);
+	//end of N-1 Nb
+	//N-1 MTmax
+        ana.cutflow.getCut("SR2SFOSDYVeto");
+        ana.cutflow.addCutToLastActiveCut("SR2SFOSKinSelNoMTmax"    , Lambdas::KinSel3LNoMTmax        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR2SFOSFullNoMTmax"      , UNITY                                                        , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR2SFOSFullNoMTmaxAndBDT"      , Lambdas::SRTrilepCutBDT2SFOS                                                        , UNITY);
+        ana.cutflow.getCut("SR2SFOSFullNoMTmax");
+        ana.cutflow.addCutToLastActiveCut("SR2SFOSFullNoMTmaxNotBDT"      , [&](){ return not Lambdas::SRTrilepCutBDT2SFOS();}                                                        , UNITY);
+	//end of N-1 MTmax
+	//N-1 DPhi3lMET
+        ana.cutflow.getCut("SR2SFOSDYVeto");
+        ana.cutflow.addCutToLastActiveCut("SR2SFOSKinSelNoDPhi3lMET"    , Lambdas::KinSel3LNoDPhi3lMET        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR2SFOSFullNoDPhi3lMET"      , UNITY                                                        , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR2SFOSFullNoDPhi3lMETAndBDT"      , Lambdas::SRTrilepCutBDT2SFOS                                                        , UNITY);
+        ana.cutflow.getCut("SR2SFOSFullNoDPhi3lMET");
+        ana.cutflow.addCutToLastActiveCut("SR2SFOSFullNoDPhi3lMETNotBDT"      , [&](){ return not Lambdas::SRTrilepCutBDT2SFOS();}                                                        , UNITY);
+	//end of N-1 DPhi3lMET
+
+	//N-1 MET
+        ana.cutflow.getCut("SR2SFOSDYVeto");
+        ana.cutflow.addCutToLastActiveCut("SR2SFOSKinSelNoMET"    , Lambdas::KinSel3LNoMET        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR2SFOSFullNoMET"      , UNITY                                                        , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR2SFOSFullNoMETAndBDT"      , Lambdas::SRTrilepCutBDT2SFOS                                                        , UNITY);
+        ana.cutflow.getCut("SR2SFOSFullNoMET");
+        ana.cutflow.addCutToLastActiveCut("SR2SFOSFullNoMETNotBDT"      , [&](){ return not Lambdas::SRTrilepCutBDT2SFOS();}                                                        , UNITY);
+	//end of N-1 MET
+
+
+
+
+        ana.cutflow.getCut("SR0SFOS");
+        ana.cutflow.addCutToLastActiveCut("SR0SFOSPreSelBDT"    , Lambdas::ThreeLepPreselBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
+        ana.cutflow.addCutToLastActiveCut("SR0SFOSDYVetoBDT"    , Lambdas::DYAndZVetoes                                        , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR0SFOSBDT"    , Lambdas::KinSel3LBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR0SFOSFullBDT"      , Lambdas::SRTrilepCutBDT0SFOS                                                        , UNITY);
+
+        ana.cutflow.getCut("SR1SFOS");
+        ana.cutflow.addCutToLastActiveCut("SR1SFOSPreSelBDT"    , Lambdas::ThreeLepPreselBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
+        ana.cutflow.addCutToLastActiveCut("SR1SFOSDYVetoBDT"    , Lambdas::DYAndZVetoes                                        , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR1SFOSBDT"    , Lambdas::KinSel3LBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR1SFOSFullBDT"      , Lambdas::SRTrilepCutBDT1SFOS                                                        , UNITY);
+
+        ana.cutflow.getCut("SR2SFOS");
+        ana.cutflow.addCutToLastActiveCut("SR2SFOSPreSelBDT"    , Lambdas::ThreeLepPreselBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
+        ana.cutflow.addCutToLastActiveCut("SR2SFOSDYVetoBDT"    , Lambdas::DYAndZVetoes                                        , UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR2SFOSBDT"    , Lambdas::KinSel3LBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR2SFOSFullBDT"      , Lambdas::SRTrilepCutBDT2SFOS                                                        , UNITY);
+
 
         //************************************************************************************************************************************************************************************************
         //
@@ -985,6 +1490,74 @@ int main(int argc, char** argv)
         ana.cutflow.addCutToLastActiveCut("WZCR2SFOSKinSel"    , Lambdas::KinSel3L        (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("WZCR2SFOSFull"      , UNITY                                                        , UNITY);
 
+	//WZCR for BDT method
+	
+        ana.cutflow.getCut("WZCRSSee");
+        ana.cutflow.addCutToLastActiveCut("WZCRSSeePreSelBDT"     , Lambdas::SSPreSelectionBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
+        ana.cutflow.addCutToLastActiveCut("WZCRSSeeKinSelBDT"     , Lambdas::SSKinSelBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCRSSeeMjjInBDT"      , Lambdas::SSMjjIn         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCRSSeeMjjInFullBDT"  , Lambdas::SRDilepCutBDT2JeeMjjIn                                             , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.getCut("WZCRSSee");
+        ana.cutflow.addCutToLastActiveCut("WZCRSSeePreSelBDTNoNb"     , Lambdas::SSPreSelectionNoNb  (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCRSSeeKinSelBDTNoNb"     , Lambdas::SSKinSelBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCRSSeeMjjOutBDT"         , Lambdas::SSMjjOut         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCRSSeeMjjOutFullBDT"     , Lambdas::SRDilepCutBDT2JeeMjjOut                                            , UNITY); // Adding one more node with name "<Region>Full"
+ 
+        ana.cutflow.getCut("WZCRSSem");
+        ana.cutflow.addCutToLastActiveCut("WZCRSSemPreSelBDT"     , Lambdas::SSPreSelectionBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
+        ana.cutflow.addCutToLastActiveCut("WZCRSSemKinSelBDT"     , Lambdas::SSKinSelBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCRSSemMjjInBDT"      , Lambdas::SSMjjIn         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCRSSemMjjInFullBDT"  , Lambdas::SRDilepCutBDT2JemMjjIn                                             , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.getCut("WZCRSSem");
+        ana.cutflow.addCutToLastActiveCut("WZCRSSemPreSelBDTNoNb"     , Lambdas::SSPreSelectionNoNb  (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCRSSemKinSelBDTNoNb"     , Lambdas::SSKinSelBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCRSSemMjjOutBDT"         , Lambdas::SSMjjOut         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCRSSemMjjOutFullBDT"     , Lambdas::SRDilepCutBDT2JemMjjOut                                            , UNITY); // Adding one more node with name "<Region>Full"
+      
+        ana.cutflow.getCut("WZCRSSmm");
+        ana.cutflow.addCutToLastActiveCut("WZCRSSmmPreSelBDT"     , Lambdas::SSPreSelectionBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
+        ana.cutflow.addCutToLastActiveCut("WZCRSSmmKinSelBDT"     , Lambdas::SSKinSelBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCRSSmmMjjInBDT"      , Lambdas::SSMjjIn         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCRSSmmMjjInFullBDT"  , Lambdas::SRDilepCutBDT2JmmMjjIn                                             , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.getCut("WZCRSSmm");
+        ana.cutflow.addCutToLastActiveCut("WZCRSSmmPreSelBDTNoNb"     , Lambdas::SSPreSelectionNoNb  (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCRSSmmKinSelBDTNoNb"     , Lambdas::SSKinSelBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCRSSmmMjjOutBDT"         , Lambdas::SSMjjOut         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCRSSmmMjjOutFullBDT"     , Lambdas::SRDilepCutBDT2JmmMjjOut                                            , UNITY); // Adding one more node with name "<Region>Full"
+
+        ana.cutflow.getCut("WZCRSSee");
+        ana.cutflow.addCutToLastActiveCut("WZCRSS1Jee1JPreBDT"  , Lambdas::SS1JPreselectionNoNb (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCRSS1JeeBDT"     , Lambdas::SS1JBDT             (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCRSS1JeeFullBDT"   , Lambdas::SRDilepCutBDT1Jee                                             , UNITY);
+
+        ana.cutflow.getCut("WZCRSSem");
+        ana.cutflow.addCutToLastActiveCut("WZCRSS1Jem1JPreBDT"  , Lambdas::SS1JPreselectionNoNb (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCRSS1JemBDT"     , Lambdas::SS1JBDT             (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCRSS1JemFullBDT"   , Lambdas::SRDilepCutBDT1Jem                                             , UNITY);
+
+        ana.cutflow.getCut("WZCRSSmm");
+        ana.cutflow.addCutToLastActiveCut("WZCRSS1Jmm1JPreBDT"  , Lambdas::SS1JPreselectionNoNb (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCRSS1JmmBDT"     , Lambdas::SS1JBDT             (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCRSS1JmmFullBDT"   , Lambdas::SRDilepCutBDT1Jmm                                             , UNITY);
+
+        ana.cutflow.getCut("WZCR0SFOS");
+        ana.cutflow.addCutToLastActiveCut("WZCR0SFOSPreSelBDT"    , Lambdas::ThreeLepPreselBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
+        ana.cutflow.addCutToLastActiveCut("WZCR0SFOSDYVetoBDT"    , Lambdas::DYVetoes                                            , UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCR0SFOSBDT"       , Lambdas::KinSel3LBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCR0SFOSFullBDT"   , Lambdas::SRTrilepCutBDT0SFOS                                           , UNITY);
+
+        ana.cutflow.getCut("WZCR1SFOS");
+        ana.cutflow.addCutToLastActiveCut("WZCR1SFOSPreSelBDT"    , Lambdas::ThreeLepPreselBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
+        ana.cutflow.addCutToLastActiveCut("WZCR1SFOSDYVetoBDT"    , Lambdas::DYVetoes                                            , UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCR1SFOSBDT"       , Lambdas::KinSel3LBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCR1SFOSFullBDT"   , Lambdas::SRTrilepCutBDT1SFOS                                           , UNITY);
+
+        ana.cutflow.getCut("WZCR2SFOS");
+        ana.cutflow.addCutToLastActiveCut("WZCR2SFOSPreSelBDT"    , Lambdas::ThreeLepPreselBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
+        ana.cutflow.addCutToLastActiveCut("WZCR2SFOSDYVetoBDT"    , Lambdas::DYVetoes                                            , UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCR2SFOSBDT"       , Lambdas::KinSel3LBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCR2SFOSFullBDT"   , Lambdas::SRTrilepCutBDT2SFOS                                           , UNITY);
+
         //************************************************************************************************************************************************************************************************
         //
         //
@@ -1059,6 +1632,77 @@ int main(int argc, char** argv)
         ana.cutflow.addCutToLastActiveCut("AR2SFOSDYVeto"    , Lambdas::DYAndZVetoes                                        , UNITY);
         ana.cutflow.addCutToLastActiveCut("AR2SFOSKinSel"    , Lambdas::KinSel3L        (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("AR2SFOSFull"      , UNITY                                                        , UNITY);
+
+	//Application region for BDT method
+	
+        ana.cutflow.getCut("ARSSee");
+        ana.cutflow.addCutToLastActiveCut("ARSSeePreSelBDT"     , Lambdas::SSPreSelectionBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
+        ana.cutflow.addCutToLastActiveCut("ARSSeeKinSelBDT"     , Lambdas::SSKinSelBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("ARSSeeMjjInBDT"      , Lambdas::SSMjjIn         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("ARSSeeMjjInFullBDT"  , Lambdas::SRDilepCutBDT2JeeMjjIn                                       , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.getCut("ARSSee");
+        ana.cutflow.addCutToLastActiveCut("ARSSeePreSelBDTNoNb"     , Lambdas::SSPreSelectionNoNb  (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("ARSSeeKinSelBDTNoNb"     , Lambdas::SSKinSelBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("ARSSeeMjjOutBDT"      , Lambdas::SSMjjOut         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("ARSSeeMjjOutFullBDT"  , Lambdas::SRDilepCutBDT2JeeMjjOut                                       , UNITY); // Adding one more node with name "<Region>Full"
+
+
+        ana.cutflow.getCut("ARSSem");
+        ana.cutflow.addCutToLastActiveCut("ARSSemPreSelBDT"     , Lambdas::SSPreSelectionBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
+        ana.cutflow.addCutToLastActiveCut("ARSSemKinSelBDT"     , Lambdas::SSKinSelBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("ARSSemMjjInBDT"      , Lambdas::SSMjjIn         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("ARSSemMjjInFullBDT"  , Lambdas::SRDilepCutBDT2JemMjjIn                                       , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.getCut("ARSSem");
+        ana.cutflow.addCutToLastActiveCut("ARSSemPreSelBDTNoNb"     , Lambdas::SSPreSelectionNoNb  (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("ARSSemKinSelBDTNoNb"     , Lambdas::SSKinSelBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("ARSSemMjjOutBDT"      , Lambdas::SSMjjOut         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("ARSSemMjjOutFullBDT"  , Lambdas::SRDilepCutBDT2JemMjjOut                                       , UNITY); // Adding one more node with name "<Region>Full"
+
+
+        ana.cutflow.getCut("ARSSmm");
+        ana.cutflow.addCutToLastActiveCut("ARSSmmPreSelBDT"     , Lambdas::SSPreSelectionBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
+        ana.cutflow.addCutToLastActiveCut("ARSSmmKinSelBDT"     , Lambdas::SSKinSelBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("ARSSmmMjjInBDT"      , Lambdas::SSMjjIn         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("ARSSmmMjjInFullBDT"  , Lambdas::SRDilepCutBDT2JmmMjjIn                                       , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.getCut("ARSSmm");
+        ana.cutflow.addCutToLastActiveCut("ARSSmmPreSelBDTNoNb"     , Lambdas::SSPreSelectionNoNb  (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("ARSSmmKinSelBDTNoNb"     , Lambdas::SSKinSelBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("ARSSmmMjjOutBDT"      , Lambdas::SSMjjOut         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("ARSSmmMjjOutFullBDT"  , Lambdas::SRDilepCutBDT2JmmMjjOut                                       , UNITY); // Adding one more node with name "<Region>Full"
+
+
+        ana.cutflow.getCut("ARSSee");
+        ana.cutflow.addCutToLastActiveCut("ARSS1Jee1JPreBDT"  , Lambdas::SS1JPreselectionNoNb (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("ARSS1JeeBDT"       , Lambdas::SS1JBDT             (Variation::JES, Variation::Nominal) , UNITY);
+        ana.cutflow.addCutToLastActiveCut("ARSS1JeeFullBDT"   , Lambdas::SRDilepCutBDT1Jee                                        , UNITY);
+
+        ana.cutflow.getCut("ARSSem");
+        ana.cutflow.addCutToLastActiveCut("ARSS1Jem1JPreBDT"  , Lambdas::SS1JPreselectionNoNb (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("ARSS1JemBDT"       , Lambdas::SS1JBDT             (Variation::JES, Variation::Nominal) , UNITY);
+        ana.cutflow.addCutToLastActiveCut("ARSS1JemFullBDT"   , Lambdas::SRDilepCutBDT1Jem                                        , UNITY);
+
+        ana.cutflow.getCut("ARSSmm");
+        ana.cutflow.addCutToLastActiveCut("ARSS1Jmm1JPreBDT"  , Lambdas::SS1JPreselectionNoNb (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("ARSS1JmmBDT"       , Lambdas::SS1JBDT             (Variation::JES, Variation::Nominal) , UNITY);
+        ana.cutflow.addCutToLastActiveCut("ARSS1JmmFullBDT"   , Lambdas::SRDilepCutBDT1Jmm                                        , UNITY);
+
+        ana.cutflow.getCut("AR0SFOS");
+        ana.cutflow.addCutToLastActiveCut("AR0SFOSPreSelBDT"    , Lambdas::ThreeLepPreselBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
+        ana.cutflow.addCutToLastActiveCut("AR0SFOSDYVetoBDT"    , Lambdas::DYAndZVetoes                                           , UNITY);
+        ana.cutflow.addCutToLastActiveCut("AR0SFOSBDT"          , Lambdas::KinSel3LBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("AR0SFOSFullBDT"      , Lambdas::SRTrilepCutBDT0SFOS                                    , UNITY);
+
+        ana.cutflow.getCut("AR1SFOS");
+        ana.cutflow.addCutToLastActiveCut("AR1SFOSPreSelBDT"    , Lambdas::ThreeLepPreselBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
+        ana.cutflow.addCutToLastActiveCut("AR1SFOSDYVetoBDT"    , Lambdas::DYAndZVetoes                                           , UNITY);
+        ana.cutflow.addCutToLastActiveCut("AR1SFOSBDT"          , Lambdas::KinSel3LBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("AR1SFOSFullBDT"      , Lambdas::SRTrilepCutBDT1SFOS                                    , UNITY);
+
+        ana.cutflow.getCut("AR2SFOS");
+        ana.cutflow.addCutToLastActiveCut("AR2SFOSPreSelBDT"    , Lambdas::ThreeLepPreselBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
+        ana.cutflow.addCutToLastActiveCut("AR2SFOSDYVetoBDT"    , Lambdas::DYAndZVetoes                                           , UNITY);
+        ana.cutflow.addCutToLastActiveCut("AR2SFOSBDT"          , Lambdas::KinSel3LBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("AR2SFOSFullBDT"      , Lambdas::SRTrilepCutBDT2SFOS                                    , UNITY);
 
         //************************************************************************************************************************************************************************************************
         //
@@ -1600,12 +2244,24 @@ int main(int argc, char** argv)
                     ana.tx->createBranch<float>("trigger_scale_factor");
                     ana.tx->createBranch<float>("lepton_scale_factor");
                     ana.tx->createBranch<float>("btag_scale_factor");
+                    ana.tx->createBranch<int>("CutSRDilep");
+                    ana.tx->createBranch<int>("CRTTbarDilep");
+                    ana.tx->createBranch<int>("CutSRTrilep");
                     ana.tx->createBranch<int>("SRSSee");
                     ana.tx->createBranch<int>("SRSSem");
                     ana.tx->createBranch<int>("SRSSmm");
+                    ana.tx->createBranch<int>("SRSSeePreSel");
+                    ana.tx->createBranch<int>("SRSSemPreSel");
+                    ana.tx->createBranch<int>("SRSSmmPreSel");
+                    ana.tx->createBranch<int>("SRSS1Jee1JPre");
+                    ana.tx->createBranch<int>("SRSS1Jem1JPre");
+                    ana.tx->createBranch<int>("SRSS1Jmm1JPre");
                     ana.tx->createBranch<int>("SR0SFOS");
                     ana.tx->createBranch<int>("SR1SFOS");
                     ana.tx->createBranch<int>("SR2SFOS");
+                    ana.tx->createBranch<int>("SR0SFOSPreSel");
+                    ana.tx->createBranch<int>("SR1SFOSPreSel");
+                    ana.tx->createBranch<int>("SR2SFOSPreSel");
                     ana.tx->createBranch<int>("SRSSeeMjjInFull");
                     ana.tx->createBranch<int>("SRSSemMjjInFull");
                     ana.tx->createBranch<int>("SRSSmmMjjInFull");
@@ -1618,6 +2274,52 @@ int main(int argc, char** argv)
                     ana.tx->createBranch<int>("SR0SFOSFull");
                     ana.tx->createBranch<int>("SR1SFOSFull");
                     ana.tx->createBranch<int>("SR2SFOSFull");
+                    ana.tx->createBranch<int>("SRSSeeMjjInBDT");
+                    ana.tx->createBranch<int>("SRSSemMjjInBDT");
+                    ana.tx->createBranch<int>("SRSSmmMjjInBDT");
+                    ana.tx->createBranch<int>("SRSSeeMjjOutBDT");
+                    ana.tx->createBranch<int>("SRSSemMjjOutBDT");
+                    ana.tx->createBranch<int>("SRSSmmMjjOutBDT");
+                    ana.tx->createBranch<int>("SRSS1JeeBDT");
+                    ana.tx->createBranch<int>("SRSS1JemBDT");
+                    ana.tx->createBranch<int>("SRSS1JmmBDT");
+                    ana.tx->createBranch<int>("SR0SFOSBDT");
+                    ana.tx->createBranch<int>("SR1SFOSBDT");
+                    ana.tx->createBranch<int>("SR2SFOSBDT");
+                    ana.tx->createBranch<int>("SRSSeeMjjInFullBDT");
+                    ana.tx->createBranch<int>("SRSSemMjjInFullBDT");
+                    ana.tx->createBranch<int>("SRSSmmMjjInFullBDT");
+                    ana.tx->createBranch<int>("SRSSeeMjjOutFullBDT");
+                    ana.tx->createBranch<int>("SRSSemMjjOutFullBDT");
+                    ana.tx->createBranch<int>("SRSSmmMjjOutFullBDT");
+                    ana.tx->createBranch<int>("SRSS1JeeFullBDT");
+                    ana.tx->createBranch<int>("SRSS1JemFullBDT");
+                    ana.tx->createBranch<int>("SRSS1JmmFullBDT");
+                    ana.tx->createBranch<int>("SR0SFOSFullBDT");
+                    ana.tx->createBranch<int>("SR1SFOSFullBDT");
+                    ana.tx->createBranch<int>("SR2SFOSFullBDT");
+		    //variables for BDT input
+                    ana.tx->createBranch<float>("lep1Pt");
+                    ana.tx->createBranch<float>("lep2Pt");
+                    ana.tx->createBranch<float>("lep3Pt");
+                    ana.tx->createBranch<float>("lep1pdgId");
+                    ana.tx->createBranch<float>("lep2pdgId");
+                    ana.tx->createBranch<float>("lep3pdgId");
+                    ana.tx->createBranch<float>("jet1Pt");
+                    ana.tx->createBranch<float>("jet2Pt");
+                    ana.tx->createBranch<float>("jet3Pt");
+                    ana.tx->createBranch<float>("jet1BtagScore");
+                    ana.tx->createBranch<float>("jet2BtagScore");
+                    ana.tx->createBranch<float>("jet3BtagScore");
+                    ana.tx->createBranch<float>("BDT_lostlep_prompt_SS2J");
+                    ana.tx->createBranch<float>("BDT_lostlep_prompt_SS1J");
+                    ana.tx->createBranch<float>("BDT_lostlep_prompt_SFOS");
+                    ana.tx->createBranch<float>("BDT_photon_fakes_SS2J");
+                    ana.tx->createBranch<float>("BDT_photon_fakes_SS1J");
+                    ana.tx->createBranch<float>("BDT_photon_fakes_SFOS");
+                    ana.tx->createBranch<float>("BDT_photon_fakes_SS2J_noBtag");
+                    ana.tx->createBranch<float>("BDT_photon_fakes_SS1J_noBtag");
+                    ana.tx->createBranch<float>("BDT_photon_fakes_SFOS_noBtag");
                 }
             }
         }
@@ -1736,18 +2438,32 @@ int main(int argc, char** argv)
 
         if (ana.do_skim and not (ana.do_systematics and not ana.do_force))
         {
-            if (ana.cutflow.getCut("CutSRDilep").pass || ana.cutflow.getCut("CutSRTrilep").pass)
+            //if (ana.cutflow.getCut("CutSRDilep").pass || ana.cutflow.getCut("CutSRTrilep").pass)
+            //if (ana.cutflow.getCut("CRTTbarDilep").pass)
+            if (ana.cutflow.getCut("SRSS1JmmFullBDT").pass  || ana.cutflow.getCut("SRSS1JmmFull").pass)
             {
                 ana.tx->setBranch<float>("event_weight", Lambdas::EventWeight());
                 ana.tx->setBranch<float>("trigger_scale_factor", Lambdas::TriggerScaleFactor());
                 ana.tx->setBranch<float>("lepton_scale_factor", Lambdas::LeptonScaleFactor());
                 ana.tx->setBranch<float>("btag_scale_factor", Lambdas::BTagScaleFactor());
+                ana.tx->setBranch<int>("CutSRDilep", ana.cutflow.getCut("CutSRDilep").pass);
+                ana.tx->setBranch<int>("CRTTbarDilep", ana.cutflow.getCut("CRTTbarDilep").pass);
+                ana.tx->setBranch<int>("CutSRTrilep", ana.cutflow.getCut("CutSRTrilep").pass);
                 ana.tx->setBranch<int>("SRSSee", ana.cutflow.getCut("SRSSee").pass);
                 ana.tx->setBranch<int>("SRSSem", ana.cutflow.getCut("SRSSem").pass);
                 ana.tx->setBranch<int>("SRSSmm", ana.cutflow.getCut("SRSSmm").pass);
+                ana.tx->setBranch<int>("SRSSeePreSel", ana.cutflow.getCut("SRSSeePreSel").pass);
+                ana.tx->setBranch<int>("SRSSemPreSel", ana.cutflow.getCut("SRSSemPreSel").pass);
+                ana.tx->setBranch<int>("SRSSmmPreSel", ana.cutflow.getCut("SRSSmmPreSel").pass);
+                ana.tx->setBranch<int>("SRSS1Jee1JPre", ana.cutflow.getCut("SRSS1Jee1JPre").pass);
+                ana.tx->setBranch<int>("SRSS1Jem1JPre", ana.cutflow.getCut("SRSS1Jem1JPre").pass);
+                ana.tx->setBranch<int>("SRSS1Jmm1JPre", ana.cutflow.getCut("SRSS1Jmm1JPre").pass);
                 ana.tx->setBranch<int>("SR0SFOS", ana.cutflow.getCut("SR0SFOS").pass);
                 ana.tx->setBranch<int>("SR1SFOS", ana.cutflow.getCut("SR1SFOS").pass);
                 ana.tx->setBranch<int>("SR2SFOS", ana.cutflow.getCut("SR2SFOS").pass);
+                ana.tx->setBranch<int>("SR0SFOSPreSel", ana.cutflow.getCut("SR0SFOSPreSel").pass);
+                ana.tx->setBranch<int>("SR1SFOSPreSel", ana.cutflow.getCut("SR1SFOSPreSel").pass);
+                ana.tx->setBranch<int>("SR2SFOSPreSel", ana.cutflow.getCut("SR2SFOSPreSel").pass);
                 ana.tx->setBranch<int>("SRSSeeMjjInFull", ana.cutflow.getCut("SRSSeeMjjInFull").pass);
                 ana.tx->setBranch<int>("SRSSemMjjInFull", ana.cutflow.getCut("SRSSemMjjInFull").pass);
                 ana.tx->setBranch<int>("SRSSmmMjjInFull", ana.cutflow.getCut("SRSSmmMjjInFull").pass);
@@ -1760,6 +2476,55 @@ int main(int argc, char** argv)
                 ana.tx->setBranch<int>("SR0SFOSFull", ana.cutflow.getCut("SR0SFOSFull").pass);
                 ana.tx->setBranch<int>("SR1SFOSFull", ana.cutflow.getCut("SR1SFOSFull").pass);
                 ana.tx->setBranch<int>("SR2SFOSFull", ana.cutflow.getCut("SR2SFOSFull").pass);
+
+                ana.tx->setBranch<int>("SRSSeeMjjInBDT", ana.cutflow.getCut("SRSSeeMjjInBDT").pass);
+                ana.tx->setBranch<int>("SRSSemMjjInBDT", ana.cutflow.getCut("SRSSemMjjInBDT").pass);
+                ana.tx->setBranch<int>("SRSSmmMjjInBDT", ana.cutflow.getCut("SRSSmmMjjInBDT").pass);
+                ana.tx->setBranch<int>("SRSSeeMjjOutBDT", ana.cutflow.getCut("SRSSeeMjjOutBDT").pass);
+                ana.tx->setBranch<int>("SRSSemMjjOutBDT", ana.cutflow.getCut("SRSSemMjjOutBDT").pass);
+                ana.tx->setBranch<int>("SRSSmmMjjOutBDT", ana.cutflow.getCut("SRSSmmMjjOutBDT").pass);
+                ana.tx->setBranch<int>("SRSS1JeeBDT", ana.cutflow.getCut("SRSS1JeeBDT").pass);
+                ana.tx->setBranch<int>("SRSS1JemBDT", ana.cutflow.getCut("SRSS1JemBDT").pass);
+                ana.tx->setBranch<int>("SRSS1JmmBDT", ana.cutflow.getCut("SRSS1JmmBDT").pass);
+                ana.tx->setBranch<int>("SR0SFOSBDT", ana.cutflow.getCut("SR0SFOSBDT").pass);
+                ana.tx->setBranch<int>("SR1SFOSBDT", ana.cutflow.getCut("SR1SFOSBDT").pass);
+                ana.tx->setBranch<int>("SR2SFOSBDT", ana.cutflow.getCut("SR2SFOSBDT").pass);
+
+                ana.tx->setBranch<int>("SRSSeeMjjInFullBDT", ana.cutflow.getCut("SRSSeeMjjInFullBDT").pass);
+                ana.tx->setBranch<int>("SRSSemMjjInFullBDT", ana.cutflow.getCut("SRSSemMjjInFullBDT").pass);
+                ana.tx->setBranch<int>("SRSSmmMjjInFullBDT", ana.cutflow.getCut("SRSSmmMjjInFullBDT").pass);
+                ana.tx->setBranch<int>("SRSSeeMjjOutFullBDT", ana.cutflow.getCut("SRSSeeMjjOutFullBDT").pass);
+                ana.tx->setBranch<int>("SRSSemMjjOutFullBDT", ana.cutflow.getCut("SRSSemMjjOutFullBDT").pass);
+                ana.tx->setBranch<int>("SRSSmmMjjOutFullBDT", ana.cutflow.getCut("SRSSmmMjjOutFullBDT").pass);
+                ana.tx->setBranch<int>("SRSS1JeeFullBDT", ana.cutflow.getCut("SRSS1JeeFullBDT").pass);
+                ana.tx->setBranch<int>("SRSS1JemFullBDT", ana.cutflow.getCut("SRSS1JemFullBDT").pass);
+                ana.tx->setBranch<int>("SRSS1JmmFullBDT", ana.cutflow.getCut("SRSS1JmmFullBDT").pass);
+                ana.tx->setBranch<int>("SR0SFOSFullBDT", ana.cutflow.getCut("SR0SFOSFullBDT").pass);
+                ana.tx->setBranch<int>("SR1SFOSFullBDT", ana.cutflow.getCut("SR1SFOSFullBDT").pass);
+                ana.tx->setBranch<int>("SR2SFOSFullBDT", ana.cutflow.getCut("SR2SFOSFullBDT").pass);
+
+		//variables for BDT input
+                ana.tx->setBranch<float>("lep1Pt", www.lep_pt().size() > 0 ? www.lep_pt()[0]  : -999);
+                ana.tx->setBranch<float>("lep2Pt", www.lep_pt().size() > 1 ? www.lep_pt()[1]  : -999);
+                ana.tx->setBranch<float>("lep3Pt", www.lep_pt().size() > 2 ? www.lep_pt()[2]  : -999);
+                ana.tx->setBranch<float>("lep1pdgId", www.lep_pdgId().size() > 0 ? www.lep_pdgId()[0]  : -999);
+                ana.tx->setBranch<float>("lep2pdgId", www.lep_pdgId().size() > 1 ? www.lep_pdgId()[1]  : -999);
+                ana.tx->setBranch<float>("lep3pdgId", www.lep_pdgId().size() > 2 ? www.lep_pdgId()[2]  : -999);
+                ana.tx->setBranch<float>("jet1Pt", www.jets_p4().size() > 0 ? www.jets_p4()[0].pt()  : -999);
+                ana.tx->setBranch<float>("jet2Pt", www.jets_p4().size() > 1 ? www.jets_p4()[1].pt()  : -999);
+                ana.tx->setBranch<float>("jet3Pt", www.jets_p4().size() > 2 ? www.jets_p4()[2].pt()  : -999);
+                ana.tx->setBranch<float>("jet1BtagScore", www.jets_btag_score().size() > 0 ? www.jets_btag_score()[0]  : -999);
+                ana.tx->setBranch<float>("jet2BtagScore", www.jets_btag_score().size() > 1 ? www.jets_btag_score()[1]  : -999);
+                ana.tx->setBranch<float>("jet3BtagScore", www.jets_btag_score().size() > 2 ? www.jets_btag_score()[2]  : -999);
+                ana.tx->setBranch<float>("BDT_lostlep_prompt_SS2J", VarXGBBDT(0));
+                ana.tx->setBranch<float>("BDT_lostlep_prompt_SS1J", VarXGBBDT(1));
+                ana.tx->setBranch<float>("BDT_lostlep_prompt_SFOS", VarXGBBDT(2));
+                ana.tx->setBranch<float>("BDT_photon_fakes_SS2J", VarXGBBDT(3));
+                ana.tx->setBranch<float>("BDT_photon_fakes_SS1J", VarXGBBDT(4));
+                ana.tx->setBranch<float>("BDT_photon_fakes_SFOS", VarXGBBDT(5));
+                ana.tx->setBranch<float>("BDT_photon_fakes_SS2J_noBtag", VarXGBBDT(6));
+                ana.tx->setBranch<float>("BDT_photon_fakes_SS1J_noBtag", VarXGBBDT(7));
+                ana.tx->setBranch<float>("BDT_photon_fakes_SFOS_noBtag", VarXGBBDT(8));
                 ana.looper.fillSkim();
             }
         }
