@@ -226,6 +226,18 @@ binorder9binSR=[
     "SR1SFOSFull",
     "SR2SFOSFull",
     ]
+binorder9binPreSel=[
+    'SRSS1Jee1JPre',
+    'SRSS1Jem1JPre',
+    'SRSS1Jmm1JPre',
+    'SRSSeePreSel',
+    'SRSSemPreSel',
+    'SRSSmmPreSel',
+    'SR0SFOSPreSel',
+    'SR1SFOSPreSel',
+    'SR2SFOSPreSel',
+    ]
+
 if args.usewhatSR:
     binorder9binSR = args.whatSR[0].split(',')
 binlabels9binSR=[
@@ -412,6 +424,35 @@ else:
             usercolors=histcolors,
             )
 
+    #__________________________________________________________________________________
+    # Draw the money plot (the preselection plots)
+    p.plot_yields(
+            fnames=bkg_fnames,
+            sig_fnames=sig_fnames,
+            data_fname="{}/data.root".format(input_dir),
+            regions=binorder9binPreSel,
+            binlabels=binorder9binPreSel,
+            dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
+            output_name="yield_presel",
+            legend_labels=legend_labels,
+            signal_labels=["WWW", "VH"],
+            donorm=False,
+            signal_scale=sig_scale,
+            hsuffix="__yield",
+            extraoptions={
+                "bkg_sort_method": "unsorted",
+                "legend_scalex": 2.8,
+                "legend_scaley": 0.8,
+                "lumi_value": lumi,
+                "print_yield": True,
+                "legend_ncolumns": 3,
+                "ratio_range": [0., 2.],
+                "ymax_scale": 1.3,
+                #"yaxis_range": [0., 46.],
+                "blind": not args.draw_data, # BE CAREFUL!!!!!!!!!!!!!!!!!!
+                },
+            usercolors=histcolors,
+            )
 
     #__________________________________________________________________________________
     # Draw the money plot (b-tagged CR)
