@@ -221,7 +221,8 @@ std::function<float()> Lambdas::TriggerScaleFactor = [&]()
         // For 2016 the trigsf branch in the TTree holds the proper trigger scalefactors
         // TODO UPDATE THIS for 2017 and 2018
         // For now, using 2016 trigger scale factor for 2017/2018 (these are almost identical to 1 anyways...
-        return input.is_data ? 1 : www.trigsf();
+        //return input.is_data ? 1 : www.trigsf();
+        return 1;
     };
 
 //______________________________________________________________________________________________
@@ -240,11 +241,6 @@ std::function<float()> Lambdas::LeptonScaleFactor = [&]()
 // B-tagging scale factors
 std::function<float()> Lambdas::BTagScaleFactor = [&]() { return www.weight_btagsf(); };
 
-
-
-
-
-
 //***************************************************************************************************************
 //
 //
@@ -259,7 +255,7 @@ std::function<float()> Lambdas::LepSFVariation(Variation::Var var)
 {
     return [&, var]()
     {
-        if (input.year == 2016)
+/*        if (input.year == 2016)
         {
             if (var == Variation::Up)
                 return www.lepsf() == 0 ? 0 : www.lepsf_up() / www.lepsf() ;
@@ -280,6 +276,7 @@ std::function<float()> Lambdas::LepSFVariation(Variation::Var var)
             }
         }
         else // else if (input.year == 2018) // TODO 2018 scale factor is not provided yet
+*/
         {
             if (var == Variation::Up)
             {
@@ -294,14 +291,13 @@ std::function<float()> Lambdas::LepSFVariation(Variation::Var var)
         }
     };
 }
-
 //______________________________________________________________________________________________
 // Trigger scale factor variations
 std::function<float()> Lambdas::TriggerSFVariation(Variation::Var var)
 {
     return [&, var]()
     {
-        if (input.year == 2016)
+/*        if (input.year == 2016)
         {
             if (var == Variation::Up)
                 return www.trigsf() == 0 ? 0 : www.trigsf_up() / www.trigsf();
@@ -322,7 +318,7 @@ std::function<float()> Lambdas::TriggerSFVariation(Variation::Var var)
             }
         }
         else // else if (input.year == 2018) // TODO 2018 scale factor is not provided yet
-        {
+ */       {
             if (var == Variation::Up)
             {
                 // TODO UPDATE THIS
@@ -413,7 +409,7 @@ std::function<float()> Lambdas::FakeFactorVariation(Variation::FakeVar fakevar_,
 
     return [&, fakevar_, var_]()
     {
-        static Variation::FakeVar fakevar;
+    /*    static Variation::FakeVar fakevar;
         static Variation::Var var;
 
         fakevar = fakevar_;
@@ -776,7 +772,9 @@ std::function<float()> Lambdas::FakeFactorVariation(Variation::FakeVar fakevar_,
             }
         }
 
-
+*/
+                // TODO
+                return float(1);
     };
 
 }
@@ -1128,6 +1126,22 @@ std::function<float()> Lambdas::MjjOut(Variation::ExpSyst expsyst, Variation::Va
 }
 
 std::function<float()> Lambdas::ZVetoSS = [&]() { return fabs(www.MllSS()-91.1876)>20.; };
+std::function<float()> Lambdas::NBvetoSoft(Variation::ExpSyst expsyst, Variation::Var var){// kept the variations in case we need these
+    return [&, expsyst, var]()
+   {
+           int nsoftbtag  = 0;
+           for(unsigned int i = 0; i<www.svs_nTrks().size(); ++i){
+            bool passID = true;
+            if (www.svs_nTrks().at(i) < 3) passID = false;
+            if (www.svs_distXYval().at(i) >= 3.0) passID = false;
+            if (www.svs_dist3Dsig().at(i) <= 4.0) passID = false;
+            if (cos(www.svs_anglePV().at(i)) <= 0.98) passID = false;
+           if(passID) nsoftbtag++; 
+   } 
+   if(nsoftbtag>0) return false;
+   return true;
+ }; 
+}
 
 std::function<float()> Lambdas::NBveto(Variation::ExpSyst expsyst, Variation::Var var, bool invert_btag){
     return [&, expsyst, var, invert_btag]()
@@ -1274,6 +1288,7 @@ std::function<float()> Lambdas::SSPreSelection(Variation::ExpSyst expsyst, Varia
           if (not Lambdas::ZVetoSS) return false;
         }
         if(not (Lambdas::NBveto(expsyst,var,invert_btag)())) return false;//nb = 0
+//        if(not (Lambdas::NBvetoSoft(expsyst,var)()))         return false;//nb soft = 0
         if(not (Lambdas::TwoCenJet30(expsyst,var)()))        return false;//nj30 >= 2
         
         return true;
@@ -1497,6 +1512,7 @@ std::function<float()> Lambdas::SS1JPreselection(Variation::ExpSyst expsyst, Var
         }
         if(not (Lambdas::NBveto(expsyst,var,invert_btag)())) return false;//nb = 0
         if(not (Lambdas::OneCenJet30(expsyst,var)()))        return false;//nj30 >= 2
+//        if(not (Lambdas::NBvetoSoft(expsyst,var)()))         return false;//nb soft = 0
         if(not (www.lep_pt()[1]>30.)) return false;//nb = 0
         return true;
     };
@@ -1591,6 +1607,7 @@ std::function<float()> Lambdas::ThreeLepPresel(Variation::ExpSyst expsyst, Varia
     {
         if(not (Lambdas::LeqOneJet30(expsyst,var)())) return false;//nb = 0
         if(not (Lambdas::NBveto(expsyst,var,invert_btag)())) return false;//nb = 0
+//        if(not (Lambdas::NBvetoSoft(expsyst,var)()))         return false;//nb soft = 0
         if(not (www.lep_pt()[2]>30.)) return false;//nb = 0
         return true;
     };
