@@ -114,6 +114,11 @@ namespace Lambdas
     //************************************************
 
     // This part contains selections related to selecting "two tight leptons", or "one tight + one loose" etc...
+    std::function<float()> LepPtThresholds(float val1=25., float val2=25., float val3=-1.);
+    std::function<float()> PassCustomIsolation(float eleiso=0.10, float muoniso=0.15);
+
+    extern std::function<float()> PassTightIsolation;
+    extern std::function<float()> PassTightIsolationAR;
     extern std::function<float()> CutSRDilep; // Two tight leptons
     extern std::function<float()> CutSRTrilep; // Three tight leptons
     extern std::function<float()> CutCRTrilep; // Three tight leptons but with slightly different pt...
@@ -154,9 +159,9 @@ namespace Lambdas
     std::function<float()> LeqOneJet30(   Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal); // Less than or equal to One jets above 30 GeV 
     std::function<float()> OneCenJet30(   Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal); // One central jets above 30 GeV 
     std::function<float()> TwoCenJet30(   Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal); // Two central jets above 30 GeV 
-    std::function<float()> NumberCenJet30(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal); // Two central jets above 30 GeV 
+    std::function<float()> NumberCenJet30(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);  
     std::function<float()> NBveto(        Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, bool invert_btag=false);
-    std::function<float()> NBvetoSoft(        Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()> NBvetoSoft(    Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, bool invert_btag=false);
     std::function<float()> NBcut(         Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, bool invert_btag=false, int value = 1);
     std::function<float()> NBmedcut(      Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, bool invert_btag=false, int value = 1);
     std::function<float()> LowDEtajj(     Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, float value = 2.5); // Low Detajj
