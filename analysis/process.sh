@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# trap "kill 0" EXIT
+trap "kill 0" EXIT
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
