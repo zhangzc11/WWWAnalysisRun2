@@ -1239,8 +1239,8 @@ std::function<float()> Lambdas::NBvetoSoft(Variation::ExpSyst expsyst, Variation
             if (cos(www.svs_anglePV().at(i)) <= 0.98) passID = false;
            if(passID) nsoftbtag++; 
    } 
-   if(     invert_btag  and nsoftbtag >0) return false;
-   if((not invert_btag) and nsoftbtag==0) return false;
+   //if(     invert_btag  and nsoftbtag >0) return false;
+   if((not invert_btag) and nsoftbtag > 0)) return false;
    return true;
  }; 
 }
