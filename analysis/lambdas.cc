@@ -1613,7 +1613,7 @@ std::function<float()> Lambdas::SS1JPreselection(Variation::ExpSyst expsyst, Var
         if (Lambdas::isSRSSeeChannel()){
           if (not Lambdas::ZVetoSS()) return false;
         }
-//        if(not (Lambdas::NBveto(expsyst,var,invert_btag)())) return false;//nb = 0
+        if(not (Lambdas::NBveto(expsyst,var,invert_btag)())) return false;//nb = 0
         if(not (Lambdas::OneCenJet30(expsyst,var)()))        return false;
 //        if(not (Lambdas::NBvetoSoft(expsyst,var)()))         return false;//nb soft = 0
         return true;
