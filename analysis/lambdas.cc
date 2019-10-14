@@ -1240,7 +1240,7 @@ std::function<float()> Lambdas::NBvetoSoft(Variation::ExpSyst expsyst, Variation
            if(passID) nsoftbtag++; 
    } 
    //if(     invert_btag  and nsoftbtag >0) return false;
-   if((not invert_btag) and nsoftbtag > 0)) return false;
+   if((not invert_btag) and nsoftbtag > 0) return false;
    return true;
  }; 
 }
