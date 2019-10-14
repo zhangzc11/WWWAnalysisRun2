@@ -129,12 +129,30 @@ std::function<float()> Lambdas::EventWeight = [&]()
         // Xsec error corrections
         //
         if ((input.current_file_name.Contains("wg_lnug_amcatnlo_1.root") or input.current_file_name.Contains("wg_lvg_amcatnlo_1.root")) // Because the short name was different between 2017 and 2018... (stupid of me...)
-                and (input.baby_version.EqualTo("5.1.4") or input.baby_version.EqualTo("5.1.6") or input.baby_version.EqualTo("5.1.8") or input.baby_version.EqualTo("5.1.9") or input.baby_version.Contains("5.2."))
-                and (input.baby_type.EqualTo("Loose") or input.baby_type.EqualTo("WWW")))
+            //   and (input.baby_version.EqualTo("5.1.4") or input.baby_version.EqualTo("5.1.6") or input.baby_version.EqualTo("5.1.8") or input.baby_version.EqualTo("5.1.9") or input.baby_version.Contains("5.2."))
+            //    and (input.baby_type.EqualTo("Loose") or input.baby_type.EqualTo("WWW"))
+            )
         {
             weight *= 163. / 405.27;
         }
 
+        if (input.year == 2017)
+        {
+            if (input.current_file_name.Contains("www_amcatnlo_1.root") or input.current_file_name.Contains("vh_nonbb_amcatnlo_1.root"))
+            {
+                unsigned int genelemu = 0;
+                for (unsigned int gidx = 0; gidx < www.genPart_pdgId().size(); ++gidx)
+                {
+                    if (abs(www.genPart_motherId()[gidx]) == 24 and (abs(www.genPart_pdgId()[gidx]) == 11 or abs(www.genPart_pdgId()[gidx]) == 13))
+                        ++genelemu;
+                }
+                if (genelemu >= 2) weight = 0.;
+            }
+            if (input.current_file_name.Contains("www_2l_amcatnlo_1.root"))
+                weight *= 0.119316*4.011538;
+            if (input.current_file_name.Contains("vh_nonbb_2l_amcatnlo_"))
+                weight *= 0.088057*3.552239;
+        }
         if (input.year == 2018)
         {
             if (input.current_file_name.Contains("www_amcatnlo_1.root") or input.current_file_name.Contains("vh_nonbb_amcatnlo_1.root"))
@@ -1970,6 +1988,10 @@ std::function<float()> Lambdas::Nj1CRKinSel(Variation::ExpSyst expsyst, Variatio
 
 std::function<float()> Lambdas::isSSem = [&]() { return (www.lep_pdgId().size() > 1) and (www.lep_pdgId()[0] * www.lep_pdgId()[1] == 143) and (abs(www.lep_pdgId()[1]) == 13); };
 std::function<float()> Lambdas::isSSme = [&]() { return (www.lep_pdgId().size() > 1) and (www.lep_pdgId()[0] * www.lep_pdgId()[1] == 143) and (abs(www.lep_pdgId()[1]) == 11); };
+
+std::function<float()> Lambdas::is0SFOSeem = [&]() { return (www.lep_pdgId().size() > 2) and (Lambdas::is0SFOS) and ((abs(www.lep_pdgId()[0])+abs(www.lep_pdgId()[1])+abs(www.lep_pdgId()[2]))==35); };
+std::function<float()> Lambdas::is0SFOSemm = [&]() { return (www.lep_pdgId().size() > 2) and (Lambdas::is0SFOS) and ((abs(www.lep_pdgId()[0])+abs(www.lep_pdgId()[1])+abs(www.lep_pdgId()[2]))==37); };
+
 
 std::function<float()> Lambdas::GammaCR(Variation::ExpSyst expsyst, Variation::Var var)
 {

@@ -221,6 +221,8 @@ namespace Lambdas
     // Split by channel
     extern std::function<float()> isSSem;
     extern std::function<float()> isSSme;
+    extern std::function<float()> is0SFOSeem;
+    extern std::function<float()> is0SFOSemm;
 
     extern std::function<float()> isWZCRSS;
     extern std::function<float()> isWZCR3L;
