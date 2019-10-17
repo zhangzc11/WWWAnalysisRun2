@@ -889,23 +889,216 @@ std::function<float()> Lambdas::PassCustomIsolation(float eleiso, float muoniso)
 }
 std::function<float()> Lambdas::PassTightIsolation = [&]()
     {
-      if (ana.do_fake_estimation){
-        if(     www.nVlep()==2 and www.nLlep()==2 and www.nTlep()==1) return true;//exactly one lepton to pass medium isolation
-        else if(www.nVlep()==3 and www.nLlep()==3 and www.nTlep()==2) return true;//exactly two leptons to pass medium isolation
-      }
-      else {
-        if(     www.nVlep()==2 and www.nLlep()==2 and www.nTlep()==2) return true;//exactly two lepton to pass medium isolation
-        else if(www.nVlep()==3 and www.nLlep()==3 and www.nTlep()==3) return true;//exactly three leptons to pass medium isolation
-      }
-      return false;
+
+        // lepton counters for various different kinds
+        int ntightele = 0;   // < 0.05
+        int nmediumele = 0;  // < 0.10
+        int nlooseeleSS = 0; // < 0.40 (w/  3ch_agree)
+        int nlooseele3l = 0; // < 0.40 (w/o 3ch_agree)
+        int ntightmuo = 0;   // < 0.04
+        int nmediummuo = 0;  // < 0.15
+        int nloosemuo = 0;   // < 0.40
+
+        // The 2016 version of EA correction uses "version-2"
+        const std::vector<float>& reliso = (input.year == 2016) ? www.lep_relIso03EAv2Lep() : www.lep_relIso03EALep();
+
+        // Loop over lepton container and count number of leptons of each category
+        for (unsigned int i = 0; i < www.lep_pdgId().size(); ++i)
+        {
+
+            // Electron IDs
+            if (abs(www.lep_pdgId()[i]) == 11)
+            {
+                if (www.lep_pass_VVV_fo()[i]    and reliso[i] < 0.05) ++ntightele;
+                if (www.lep_pass_VVV_fo()[i]    and reliso[i] < 0.40) ++nlooseeleSS;
+                if (www.lep_pass_VVV_3l_fo()[i] and reliso[i] < 0.40) ++nlooseele3l;
+                if (www.lep_pass_VVV_3l_fo()[i] and reliso[i] < 0.10) ++nmediumele;
+            }
+
+            // Muon IDs
+            if (abs(www.lep_pdgId()[i]) == 13)
+            {
+                if (www.lep_pass_VVV_fo()[i] and reliso[i] < 0.04) ++ntightmuo;
+                if (www.lep_pass_VVV_fo()[i] and reliso[i] < 0.40) ++nloosemuo;
+                if (www.lep_pass_VVV_fo()[i] and reliso[i] < 0.15) ++nmediummuo;
+            }
+
+        }
+
+        // If it is same-sign category
+        if (www.nVlep() == 2)
+        {
+
+            // For data-driven estimate it will run over as if it's SR and require "loose-but-not-tight" requirements
+            if (ana.do_fake_estimation)
+            {
+                // Passes 2 loose leptons but only 1 passes tight
+                if ((nlooseeleSS + nloosemuo) == 2 and (ntightele + ntightmuo) == 1) return true;
+            }
+            else
+            {
+                // Passes 2 loose leptons and also 2 passes tight
+                if ((nlooseeleSS + nloosemuo) == 2 and (ntightele + ntightmuo) == 2) return true;
+            }
+
+        }
+
+        // If it is three lepton category
+        if (www.nVlep() == 3)
+        {
+
+            // For data-driven estimate it will run over as if it's SR and require "loose-but-not-tight" requirements
+            if (ana.do_fake_estimation)
+            {
+
+                // 0SFOS region eem
+                if (www.nSFOS() == 0 and (abs(www.lep_pdgId()[0]) + abs(www.lep_pdgId()[1]) + abs(www.lep_pdgId()[2])) == 35) //eem
+                {
+
+                    // Of the "ee" in the "eem" leptons, only one electron fails the tight requirement
+                    if (nlooseeleSS == 2 and nloosemuo == 1 and ntightele == 1 and nmediummuo == 1) return true;
+
+                }
+
+                // 0SFOS region emm
+                else if (www.nSFOS() == 0 and (abs(www.lep_pdgId()[0]) + abs(www.lep_pdgId()[1]) + abs(www.lep_pdgId()[2])) == 37) //emm
+                {
+
+                    // Of the "mm" in the "emm" leptons, only one muon fails the tight requirement
+                    if (nlooseele3l == 1 and nloosemuo == 2 and nmediumele == 1 and ntightmuo == 1) return true;
+
+                }
+
+                // The rest (i.e. 1SFOS or 2SFOS)
+                else if (www.nSFOS() > 0)
+                {
+
+                    // Straight forward 3 loose and 2 tight
+                    if ((nlooseele3l + nloosemuo) == 3 and (nmediumele + nmediummuo) == 2) return true;
+
+                }
+
+            }
+            else
+            {
+
+                // 0SFOS region eem
+                if (www.nSFOS() == 0 and (abs(www.lep_pdgId()[0]) + abs(www.lep_pdgId()[1]) + abs(www.lep_pdgId()[2])) == 35) //eem
+                {
+
+                    if ((nlooseeleSS + nloosemuo) == 3 and (ntightele + nmediummuo) == 3) return true;
+
+                }
+
+                // 0SFOS region emm
+                else if (www.nSFOS() == 0 and (abs(www.lep_pdgId()[0]) + abs(www.lep_pdgId()[1]) + abs(www.lep_pdgId()[2])) == 37) //emm
+                {
+
+                    if ((nlooseele3l + nloosemuo) == 3 and (nmediumele + ntightmuo) == 3) return true;
+
+                }
+
+                // >=1SFOS region
+                else if (www.nSFOS() > 0)
+                {
+
+                    if ((nlooseele3l + nloosemuo) == 3 and (nmediumele + nmediummuo) == 3) return true;
+
+                }
+
+            }
+        }
+
+        // If it reaches here, it failed to pass tight isolation so reject event
+        return false;
+
     };
 
 std::function<float()> Lambdas::PassTightIsolationAR = [&]()
     {
-      if(     www.nVlep()==2 and www.nLlep()==2 and www.nTlep()==1) return true;//exactly one lepton to pass medium isolation
-      else if(www.nVlep()==3 and www.nLlep()==3 and www.nTlep()==2) return true;//exactly two leptons to pass medium isolation
-      return false;
+
+        // lepton counters for various different kinds
+        int ntightele = 0;   // < 0.05
+        int nmediumele = 0;  // < 0.10
+        int nlooseeleSS = 0; // < 0.40 (w/  3ch_agree)
+        int nlooseele3l = 0; // < 0.40 (w/o 3ch_agree)
+        int ntightmuo = 0;   // < 0.04
+        int nmediummuo = 0;  // < 0.15
+        int nloosemuo = 0;   // < 0.40
+
+        // The 2016 version of EA correction uses "version-2"
+        const std::vector<float>& reliso = (input.year == 2016) ? www.lep_relIso03EAv2Lep() : www.lep_relIso03EALep();
+
+        // Loop over lepton container and count number of leptons of each category
+        for (unsigned int i = 0; i < www.lep_pdgId().size(); ++i)
+        {
+
+            // Electron IDs
+            if (abs(www.lep_pdgId()[i]) == 11)
+            {
+                if (www.lep_pass_VVV_fo()[i]    and reliso[i] < 0.05) ++ntightele;
+                if (www.lep_pass_VVV_fo()[i]    and reliso[i] < 0.40) ++nlooseeleSS;
+                if (www.lep_pass_VVV_3l_fo()[i] and reliso[i] < 0.40) ++nlooseele3l;
+                if (www.lep_pass_VVV_3l_fo()[i] and reliso[i] < 0.10) ++nmediumele;
+            }
+
+            // Muon IDs
+            if (abs(www.lep_pdgId()[i]) == 13)
+            {
+                if (www.lep_pass_VVV_fo()[i] and reliso[i] < 0.04) ++ntightmuo;
+                if (www.lep_pass_VVV_fo()[i] and reliso[i] < 0.40) ++nloosemuo;
+                if (www.lep_pass_VVV_fo()[i] and reliso[i] < 0.15) ++nmediummuo;
+            }
+
+        }
+
+        // If it is same-sign category
+        if (www.nVlep() == 2)
+        {
+
+            // Passes 2 loose leptons but only 1 passes tight
+            if ((nlooseeleSS + nloosemuo) == 2 and (ntightele + ntightmuo) == 1) return true;
+
+        }
+
+        // If it is three lepton category
+        if (www.nVlep() == 3)
+        {
+
+            // 0SFOS region eem
+            if (www.nSFOS() == 0 and (abs(www.lep_pdgId()[0]) + abs(www.lep_pdgId()[1]) + abs(www.lep_pdgId()[2])) == 35) //eem
+            {
+
+                // Of the "ee" in the "eem" leptons, only one electron fails the tight requirement
+                if (nlooseeleSS == 2 and nloosemuo == 1 and ntightele == 1 and nmediummuo == 1) return true;
+
+            }
+
+            // 0SFOS region emm
+            else if (www.nSFOS() == 0 and (abs(www.lep_pdgId()[0]) + abs(www.lep_pdgId()[1]) + abs(www.lep_pdgId()[2])) == 37) //emm
+            {
+
+                // Of the "mm" in the "emm" leptons, only one muon fails the tight requirement
+                if (nlooseele3l == 1 and nloosemuo == 2 and nmediumele == 1 and ntightmuo == 1) return true;
+
+            }
+
+            // The rest (i.e. 1SFOS or 2SFOS)
+            else if (www.nSFOS() > 0)
+            {
+
+                // Straight forward 3 loose and 2 tight
+                if ((nlooseele3l + nloosemuo) == 3 and (nmediumele + nmediummuo) == 2) return true;
+
+            }
+
+        }
+
+        // If it reaches here, it failed to pass tight isolation so reject event
+        return false;
+
     };
+
 //______________________________________________________________________________________________
 // SR Dilepton selection
 std::function<float()> Lambdas::CutSRDilep = [&]()
@@ -918,12 +1111,12 @@ std::function<float()> Lambdas::CutSRDilep = [&]()
         if(not(Lambdas::LepPtThresholds(25.,25.,-1)))           return false;
         if(not(getRawMVA(fabs(www.lep_MVA()[0])) > mva_threshold and getRawMVA(fabs(www.lep_MVA()[1])) > mva_threshold)) return false; // to be tested
         if (ana.do_fake_estimation){
-          //if(not(Lambdas::PassTightIsolationAR()))              return false;
-          if(not(Lambdas::PassCustomIsolation(0.10,0.15)()==1)) return false;
+          if(not(Lambdas::PassTightIsolationAR()))              return false;
+          //if(not(Lambdas::PassCustomIsolation(0.10,0.15)()==1)) return false;
         }
         else {
-          //if(not(Lambdas::PassTightIsolation()))                return false;
-          if(not(Lambdas::PassCustomIsolation(0.10,0.15)()==2)) return false;
+          if(not(Lambdas::PassTightIsolation()))                return false;
+          //if(not(Lambdas::PassCustomIsolation(0.10,0.15)()==2)) return false;
         }
         return true;
     };
@@ -939,12 +1132,12 @@ std::function<float()> Lambdas::CutSRTrilep = [&]()
         if(not(Lambdas::LepPtThresholds(25.,20.,20.)))          return false;
         //if(not(getRawMVA(fabs(www.lep_MVA()[0])) > mva_threshold and getRawMVA(fabs(www.lep_MVA()[1])) > mva_threshold) and getRawMVA(fabs(www.lep_MVA()[3])) > mva_threshold)) return false; // to be tested
         if (ana.do_fake_estimation){
-          //if(not(Lambdas::PassTightIsolationAR()))              return false;
-          if(not(Lambdas::PassCustomIsolation(0.10,0.15)()==2)) return false;
+          if(not(Lambdas::PassTightIsolationAR()))              return false;
+          //if(not(Lambdas::PassCustomIsolation(0.10,0.15)()==2)) return false;
         }
         else {
-          //if(not(Lambdas::PassTightIsolation()))                return false;
-          if(not(Lambdas::PassCustomIsolation(0.10,0.15)()==3)) return false;
+          if(not(Lambdas::PassTightIsolation()))                return false;
+          //if(not(Lambdas::PassCustomIsolation(0.10,0.15)()==3)) return false;
         }
         return true;
     };
@@ -960,8 +1153,8 @@ std::function<float()> Lambdas::CutCRTrilep = [&]()
         if(not(www.nVlep() == 3 and www.nLlep() == 3))        return false;
         if(not(Lambdas::LepPtThresholds(25.,20.,20.)))        return false;
         //if(not(getRawMVA(fabs(www.lep_MVA()[0])) > mva_threshold and getRawMVA(fabs(www.lep_MVA()[1])) > mva_threshold) and getRawMVA(fabs(www.lep_MVA()[3])) > mva_threshold)) return false; // to be tested
-        //if(not(Lambdas::PassTightIsolation()))                return false;
-        if(not(Lambdas::PassCustomIsolation(0.10,0.15)()==3)) return false;
+        if(not(Lambdas::PassTightIsolation()))                return false;
+        //if(not(Lambdas::PassCustomIsolation(0.10,0.15)()==3)) return false;
         return true;
     };
 
@@ -976,8 +1169,8 @@ std::function<float()> Lambdas::CutARDilep = [&]()
         if(not(www.nVlep() == 2 and www.nLlep() == 2))        return false;
         if(not(Lambdas::LepPtThresholds(25.,25.,-1)))         return false;
         if(not(getRawMVA(fabs(www.lep_MVA()[0])) > mva_threshold and getRawMVA(fabs(www.lep_MVA()[1])) > mva_threshold)) return false; // to be tested
-        //if(not(Lambdas::PassTightIsolationAR()))              return false;
-        if(not(Lambdas::PassCustomIsolation(0.10,0.15)()==1)) return false;
+        if(not(Lambdas::PassTightIsolationAR()))              return false;
+        //if(not(Lambdas::PassCustomIsolation(0.10,0.15)()==1)) return false;
         return true;
     };
 
@@ -990,8 +1183,8 @@ std::function<float()> Lambdas::CutARTrilep = [&]()
         if(not(www.nVlep() == 3 and www.nLlep() == 3))        return false;
         if(not(Lambdas::LepPtThresholds(25.,20.,20.)))        return false;
         //if(not(getRawMVA(fabs(www.lep_MVA()[0])) > mva_threshold and getRawMVA(fabs(www.lep_MVA()[1])) > mva_threshold) and getRawMVA(fabs(www.lep_MVA()[3])) > mva_threshold)) return false; // to be tested
-        //if(not(Lambdas::PassTightIsolationAR()))              return false;
-        if(not(Lambdas::PassCustomIsolation(0.10,0.15)()==2)) return false;
+        if(not(Lambdas::PassTightIsolationAR()))              return false;
+        //if(not(Lambdas::PassCustomIsolation(0.10,0.15)()==2)) return false;
         return true;
     };
 
