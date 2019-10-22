@@ -1421,7 +1421,7 @@ std::function<float()> Lambdas::MjjOut(Variation::ExpSyst expsyst, Variation::Va
 
 std::function<float()> Lambdas::ZVetoSS = [&]() { return fabs(www.MllSS()-91.1876)>20.; };
 std::function<float()> Lambdas::NBvetoSoft(Variation::ExpSyst expsyst, Variation::Var var, bool invert_btag){// kept the variations in case we need these
-    return [&, expsyst, var]()
+  return [&, expsyst, var, invert_btag]()
    {
            int nsoftbtag  = 0;
            for(unsigned int i = 0; i<www.svs_nTrks().size(); ++i){
