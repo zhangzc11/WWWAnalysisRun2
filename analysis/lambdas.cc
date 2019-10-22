@@ -1261,7 +1261,7 @@ std::function<float()> Lambdas::isSRSSmmChannel = [&]() { return (www.passSSmm()
 
 std::function<float()> Lambdas::LeqOneJet(Variation::ExpSyst expsyst, Variation::Var var)
 {
-    return jetVar(expsyst, var, 
+    return jetVar(expsyst, var,
             [&]() { return (www.nj_up()<= 1); },
             [&]() { return (www.nj_dn()<= 1); },
             [&]() { return (www.nj()<= 1); },
@@ -1273,7 +1273,7 @@ std::function<float()> Lambdas::LeqOneJet(Variation::ExpSyst expsyst, Variation:
 
 std::function<float()> Lambdas::LeqOneJet30(Variation::ExpSyst expsyst, Variation::Var var)
 {
-    return jetVar(expsyst, var, 
+    return jetVar(expsyst, var,
             [&]() { return (www.nj30_up()<= 1); },
             [&]() { return (www.nj30_dn()<= 1); },
             [&]() { return (www.nj30()<= 1); },
@@ -1285,7 +1285,7 @@ std::function<float()> Lambdas::LeqOneJet30(Variation::ExpSyst expsyst, Variatio
 
 std::function<float()> Lambdas::OneCenJet30(Variation::ExpSyst expsyst, Variation::Var var)
 {
-    return jetVar(expsyst, var, 
+    return jetVar(expsyst, var,
             [&]() { return (www.nj30_up()== 1); },
             [&]() { return (www.nj30_dn()== 1); },
             [&]() { return (www.nj30()== 1); },
@@ -1297,7 +1297,7 @@ std::function<float()> Lambdas::OneCenJet30(Variation::ExpSyst expsyst, Variatio
 
 std::function<float()> Lambdas::TwoCenJet30(Variation::ExpSyst expsyst, Variation::Var var)
 {
-    return jetVar(expsyst, var, 
+    return jetVar(expsyst, var,
             [&]() { return (www.nj30_up()>= 2); },
             [&]() { return (www.nj30_dn()>= 2); },
             [&]() { return (www.nj30()>= 2); },
@@ -1309,7 +1309,7 @@ std::function<float()> Lambdas::TwoCenJet30(Variation::ExpSyst expsyst, Variatio
 
 std::function<float()> Lambdas::CenJet30Cut(Variation::ExpSyst expsyst, Variation::Var var, int value)
 {
-    return jetVar(expsyst, var, 
+    return jetVar(expsyst, var,
             [&, value]() { return (www.nj30_up()>= value); },
             [&, value]() { return (www.nj30_dn()>= value); },
             [&, value]() { return (www.nj30()>= value); },
@@ -1321,7 +1321,7 @@ std::function<float()> Lambdas::CenJet30Cut(Variation::ExpSyst expsyst, Variatio
 
 std::function<float()> Lambdas::NumberCenJet30(Variation::ExpSyst expsyst, Variation::Var var)
 {
-    return jetVar(expsyst, var, 
+    return jetVar(expsyst, var,
             [&]() { return (www.nj30_up()); },
             [&]() { return (www.nj30_dn()); },
             [&]() { return (www.nj30()); },
@@ -1334,7 +1334,7 @@ std::function<float()> Lambdas::NumberCenJet30(Variation::ExpSyst expsyst, Varia
 
 std::function<float()> Lambdas::LowDEtajj(Variation::ExpSyst expsyst, Variation::Var var, float value)
 {
-    return jetVar(expsyst, var, 
+    return jetVar(expsyst, var,
             [&, value]() { return (www.DetajjL_up()   < value); },
             [&, value]() { return (www.DetajjL_dn()   < value); },
             [&, value]() { return (www.DetajjL()      < value); },
@@ -1346,7 +1346,7 @@ std::function<float()> Lambdas::LowDEtajj(Variation::ExpSyst expsyst, Variation:
 
 std::function<float()> Lambdas::LowMjj(Variation::ExpSyst expsyst, Variation::Var var,float value)
 {
-    return jetVar(expsyst, var, 
+    return jetVar(expsyst, var,
             [&, value]() { return (www.MjjL_up()   < value); },
             [&, value]() { return (www.MjjL_dn()   < value); },
             [&, value]() { return (www.MjjL()      < value); },
@@ -1397,7 +1397,7 @@ std::function<float()> Lambdas::HighMJJDeta(Variation::ExpSyst expsyst, Variatio
 
 std::function<float()> Lambdas::MjjIn(Variation::ExpSyst expsyst, Variation::Var var)
 {
-    return jetVar(expsyst, var, 
+    return jetVar(expsyst, var,
             [&]() { return (fabs(www.Mjj_up()   -80.)<15.); },
             [&]() { return (fabs(www.Mjj_dn()   -80.)<15.); },
             [&]() { return (fabs(www.Mjj()      -80.)<15.); },
@@ -1409,7 +1409,7 @@ std::function<float()> Lambdas::MjjIn(Variation::ExpSyst expsyst, Variation::Var
 
 std::function<float()> Lambdas::MjjOut(Variation::ExpSyst expsyst, Variation::Var var)
 {
-    return jetVar(expsyst, var, 
+    return jetVar(expsyst, var,
             [&]() { return (fabs(www.Mjj_up()   -80.)>=15.); },
             [&]() { return (fabs(www.Mjj_dn()   -80.)>=15.); },
             [&]() { return (fabs(www.Mjj()      -80.)>=15.); },
@@ -1421,21 +1421,21 @@ std::function<float()> Lambdas::MjjOut(Variation::ExpSyst expsyst, Variation::Va
 
 std::function<float()> Lambdas::ZVetoSS = [&]() { return fabs(www.MllSS()-91.1876)>20.; };
 std::function<float()> Lambdas::NBvetoSoft(Variation::ExpSyst expsyst, Variation::Var var, bool invert_btag){// kept the variations in case we need these
-    return [&, expsyst, var]()
-   {
-           int nsoftbtag  = 0;
-           for(unsigned int i = 0; i<www.svs_nTrks().size(); ++i){
+    return [&, expsyst, var, invert_btag]()
+    {
+        int nsoftbtag  = 0;
+        for (unsigned int i = 0; i<www.svs_nTrks().size(); ++i)
+        {
             bool passID = true;
             if (www.svs_nTrks().at(i) < 3)            passID = false;
             if (www.svs_distXYval().at(i) >= 3.0)     passID = false;
             if (www.svs_dist3Dsig().at(i) <= 4.0)     passID = false;
             if (cos(www.svs_anglePV().at(i)) <= 0.98) passID = false;
-           if(passID) nsoftbtag++; 
-   } 
-   //if(     invert_btag  and nsoftbtag >0) return false;
-   if((not invert_btag) and nsoftbtag > 0) return false;
-   return true;
- }; 
+            if(passID) nsoftbtag++;
+        }
+        if((not invert_btag) and nsoftbtag > 0) return false;
+        return true;
+    };
 }
 
 std::function<float()> Lambdas::NBveto(Variation::ExpSyst expsyst, Variation::Var var, bool invert_btag){
@@ -1560,7 +1560,7 @@ std::function<float()> Lambdas::NBmedcut(Variation::ExpSyst expsyst, Variation::
             }
           }
         }
-          
+
         if (not invert_btag)
         {
           if ( nbmed<value ) return false;
@@ -1585,7 +1585,7 @@ std::function<float()> Lambdas::SSPreSelection(Variation::ExpSyst expsyst, Varia
         if(not (Lambdas::NBveto(expsyst,var,invert_btag)())) return false;//nb = 0
 //        if(not (Lambdas::NBvetoSoft(expsyst,var)()))         return false;//nb soft = 0
         if(not (Lambdas::TwoCenJet30(expsyst,var)()))        return false;//nj30 >= 2
-        
+
         return true;
     };
 }
@@ -1619,34 +1619,34 @@ std::function<float()> Lambdas::MTmaxcut(Variation::ExpSyst expsyst, Variation::
       if(www.nLlep()==2){
        if (not (
                     jetVar(expsyst, var,
-                        [&, value]() { return www.MTmax_up()   >value; }, 
-                        [&, value]() { return www.MTmax_dn()   >value; }, 
-                        [&, value]() { return www.MTmax()      >value; }, 
-                        [&, value]() { return www.MTmax_jerup()>value; }, 
-                        [&, value]() { return www.MTmax_jerdn()>value; }, 
-                        [&, value]() { return www.MTmax_jer()  >value; }  
+                        [&, value]() { return www.MTmax_up()   >value; },
+                        [&, value]() { return www.MTmax_dn()   >value; },
+                        [&, value]() { return www.MTmax()      >value; },
+                        [&, value]() { return www.MTmax_jerup()>value; },
+                        [&, value]() { return www.MTmax_jerdn()>value; },
+                        [&, value]() { return www.MTmax_jer()  >value; }
                         )()                                  )) return false;
       }
       if(www.nLlep()==3 and www.nSFOS()==1){
        if (not (
                     jetVar(expsyst, var,
-                        [&, value]() { return www.MT3rd_up()   >value; }, 
-                        [&, value]() { return www.MT3rd_dn()   >value; }, 
-                        [&, value]() { return www.MT3rd()      >value; }, 
-                        [&, value]() { return www.MT3rd_jerup()>value; }, 
-                        [&, value]() { return www.MT3rd_jerdn()>value; }, 
-                        [&, value]() { return www.MT3rd_jer()  >value; }  
+                        [&, value]() { return www.MT3rd_up()   >value; },
+                        [&, value]() { return www.MT3rd_dn()   >value; },
+                        [&, value]() { return www.MT3rd()      >value; },
+                        [&, value]() { return www.MT3rd_jerup()>value; },
+                        [&, value]() { return www.MT3rd_jerdn()>value; },
+                        [&, value]() { return www.MT3rd_jer()  >value; }
                         )()                                  )) return false;
       }
       if(www.nLlep()==3 and (not (www.nSFOS()==1)) ){
        if (not (
                     jetVar(expsyst, var,
-                        [&, value]() { return www.MTmax3L_up()   >value; }, 
-                        [&, value]() { return www.MTmax3L_dn()   >value; }, 
-                        [&, value]() { return www.MTmax3L()      >value; }, 
-                        [&, value]() { return www.MTmax3L_jerup()>value; }, 
-                        [&, value]() { return www.MTmax3L_jerdn()>value; }, 
-                        [&, value]() { return www.MTmax3L_jer()  >value; }  
+                        [&, value]() { return www.MTmax3L_up()   >value; },
+                        [&, value]() { return www.MTmax3L_dn()   >value; },
+                        [&, value]() { return www.MTmax3L()      >value; },
+                        [&, value]() { return www.MTmax3L_jerup()>value; },
+                        [&, value]() { return www.MTmax3L_jerdn()>value; },
+                        [&, value]() { return www.MTmax3L_jer()  >value; }
                         )()                                  )) return false;
       }
       return true;
@@ -1660,12 +1660,12 @@ std::function<float()> Lambdas::MTmax3Lcut(Variation::ExpSyst expsyst, Variation
     {
        if (not (
                     jetVar(expsyst, var,
-                        [&, value]() { return www.MTmax3L_up()   >value; }, 
-                        [&, value]() { return www.MTmax3L_dn()   >value; }, 
-                        [&, value]() { return www.MTmax3L()      >value; }, 
-                        [&, value]() { return www.MTmax3L_jerup()>value; }, 
-                        [&, value]() { return www.MTmax3L_jerdn()>value; }, 
-                        [&, value]() { return www.MTmax3L_jer()  >value; }  
+                        [&, value]() { return www.MTmax3L_up()   >value; },
+                        [&, value]() { return www.MTmax3L_dn()   >value; },
+                        [&, value]() { return www.MTmax3L()      >value; },
+                        [&, value]() { return www.MTmax3L_jerup()>value; },
+                        [&, value]() { return www.MTmax3L_jerdn()>value; },
+                        [&, value]() { return www.MTmax3L_jer()  >value; }
                         )()                                  )) return false;
       return true;
     };
@@ -1691,7 +1691,7 @@ std::function<float()> Lambdas::DRljMinCut(Variation::ExpSyst expsyst, Variation
 
         float minDRlj=9e5;
         unsigned int numjets = Lambdas::NumberCenJet30(expsyst,var)();
-        for(unsigned int i = 0; i<www.lep_p4().size(); ++i){          
+        for(unsigned int i = 0; i<www.lep_p4().size(); ++i){
           for(unsigned int j = 0; j<numjets; ++j){//now all jets - that's not what I want
             LV jet = jetVec(expsyst, var,
                             [&]() { return www.jets30_up_p4()[j]; },
@@ -1709,15 +1709,15 @@ std::function<float()> Lambdas::DRljMinCut(Variation::ExpSyst expsyst, Variation
       }
       if (not (
                jetVar(expsyst, var,
-                      [&, value]() { return www.DRljmin_up()   <value; }, 
-                      [&, value]() { return www.DRljmin_dn()   <value; }, 
-                      [&, value]() { return www.DRljmin()      <value; }, 
-                      [&, value]() { return www.DRljmin_jerup()<value; }, 
-                      [&, value]() { return www.DRljmin_jerdn()<value; }, 
-                      [&, value]() { return www.DRljmin_jer()  <value; }  
+                      [&, value]() { return www.DRljmin_up()   <value; },
+                      [&, value]() { return www.DRljmin_dn()   <value; },
+                      [&, value]() { return www.DRljmin()      <value; },
+                      [&, value]() { return www.DRljmin_jerup()<value; },
+                      [&, value]() { return www.DRljmin_jerdn()<value; },
+                      [&, value]() { return www.DRljmin_jer()  <value; }
                       )()                                  )) return false;
       return true;
-      
+
     };
 }
 
@@ -1741,7 +1741,7 @@ std::function<float()> Lambdas::DRljMin3LCut(Variation::ExpSyst expsyst, Variati
 
         float minDRlj=9e5;
         unsigned int numjets = Lambdas::NumberCenJet30(expsyst,var)();
-        for(unsigned int i = 0; i<www.lep_p4().size(); ++i){          
+        for(unsigned int i = 0; i<www.lep_p4().size(); ++i){
           for(unsigned int j = 0; j<numjets; ++j){//now all jets - that's not what I want
             LV jet = jetVec(expsyst, var,
                             [&]() { return www.jets30_up_p4()[j]; },
@@ -1759,22 +1759,22 @@ std::function<float()> Lambdas::DRljMin3LCut(Variation::ExpSyst expsyst, Variati
       }
       if (not (
                jetVar(expsyst, var,
-                      [&, value]() { return www.DRljmin3L_up()   >value; }, 
-                      [&, value]() { return www.DRljmin3L_dn()   >value; }, 
-                      [&, value]() { return www.DRljmin3L()      >value; }, 
-                      [&, value]() { return www.DRljmin3L_jerup()>value; }, 
-                      [&, value]() { return www.DRljmin3L_jerdn()>value; }, 
-                      [&, value]() { return www.DRljmin3L_jer()  >value; }  
+                      [&, value]() { return www.DRljmin3L_up()   >value; },
+                      [&, value]() { return www.DRljmin3L_dn()   >value; },
+                      [&, value]() { return www.DRljmin3L()      >value; },
+                      [&, value]() { return www.DRljmin3L_jerup()>value; },
+                      [&, value]() { return www.DRljmin3L_jerdn()>value; },
+                      [&, value]() { return www.DRljmin3L_jer()  >value; }
                       )()                                  )) return false;
       return true;
-      
+
     };
 }
 
 std::function<float()> Lambdas::SSKinSel(Variation::ExpSyst expsyst, Variation::Var var){
     return [&, expsyst, var]()
     {
-        if(not (Lambdas::Mllcut(20.)()))                   return false;
+        if(not (Lambdas::Mllcut(20.)()))                 return false;
         if(not (Lambdas::METcut(expsyst,var,45.)()))     return false;
         if (not (Lambdas::isSRSSmmChannel())){
           if(not (Lambdas::MTmaxcut(expsyst,var,90.)())) return false;
@@ -2102,7 +2102,7 @@ std::function<float()> Lambdas::isWZCR3L = [&]() {
         if (not (Lambdas::HasZ_3L() ))                 return false;
         return true;
 };
-  
+
 std::function<float()> Lambdas::Nj1DRljMin(Variation::ExpSyst expsyst, Variation::Var var)
 {
     return [&, expsyst, var]()
@@ -2150,7 +2150,7 @@ std::function<float()> Lambdas::Nj1CRKinSel(Variation::ExpSyst expsyst, Variatio
                         [&]() { return www.met_jerup_pt()<30.; },
                         [&]() { return www.met_jerdn_pt()<30.; },
                         [&]() { return www.met_jer_pt()<30.; }
-                        )()                                   
+                        )()
                    )
                    or
                    ((www.nSFOS() == 1) and
@@ -2161,7 +2161,7 @@ std::function<float()> Lambdas::Nj1CRKinSel(Variation::ExpSyst expsyst, Variatio
                         [&]() { return www.met_jerup_pt()<40.; },
                         [&]() { return www.met_jerdn_pt()<40.; },
                         [&]() { return www.met_jer_pt()<40.; }
-                        )()                                   
+                        )()
                    )
                    or
                    ((www.nSFOS() == 2) and
@@ -2172,7 +2172,7 @@ std::function<float()> Lambdas::Nj1CRKinSel(Variation::ExpSyst expsyst, Variatio
                         [&]() { return www.met_jerup_pt()<55.; },
                         [&]() { return www.met_jerdn_pt()<55.; },
                         [&]() { return www.met_jer_pt()<55.; }
-                        )()                                   
+                        )()
                    )
                     )) return false;
         return true;
