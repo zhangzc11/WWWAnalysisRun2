@@ -1108,7 +1108,7 @@ std::function<float()> Lambdas::CutSRDilep = [&]()
         // If the looper is looping over to do fake estimation, even though it is "SR dilep" selection require nTlep == 1, nLlep = 2. (i.e. AR)
         // This is to ensure that the histogram outputs will have the same name with proper fake estimation
         if(not(www.nVlep() == 2 and www.nLlep() == 2))          return false;
-        if(not(Lambdas::LepPtThresholds(25.,25.,-1)))           return false;
+        if(not(Lambdas::LepPtThresholds(25.,25.,-1)()))         return false;
         if(not(getRawMVA(fabs(www.lep_MVA()[0])) > mva_threshold and getRawMVA(fabs(www.lep_MVA()[1])) > mva_threshold)) return false; // to be tested
         if (ana.do_fake_estimation){
           if(not(Lambdas::PassTightIsolationAR()))              return false;
@@ -1129,7 +1129,7 @@ std::function<float()> Lambdas::CutSRTrilep = [&]()
         // This is to ensure that the histogram outputs will have the same name with proper fake estimation
         //float mva_threshold = input.year == 2018 ? 7 : -1;
         if(not(www.nVlep() == 3 and www.nLlep() == 3))          return false;
-        if(not(Lambdas::LepPtThresholds(25.,20.,20.)))          return false;
+        if(not(Lambdas::LepPtThresholds(25.,20.,20.)()))        return false;
         //if(not(getRawMVA(fabs(www.lep_MVA()[0])) > mva_threshold and getRawMVA(fabs(www.lep_MVA()[1])) > mva_threshold) and getRawMVA(fabs(www.lep_MVA()[3])) > mva_threshold)) return false; // to be tested
         if (ana.do_fake_estimation){
           if(not(Lambdas::PassTightIsolationAR()))              return false;
@@ -1151,7 +1151,7 @@ std::function<float()> Lambdas::CutCRTrilep = [&]()
         // When this is required, it will implicitly require that the lep_pt is 25 GeV for the two same-sign leptons. This is a bit vague and could be improved...
         //float mva_threshold = input.year == 2018 ? 7 : -1;
         if(not(www.nVlep() == 3 and www.nLlep() == 3))        return false;
-        if(not(Lambdas::LepPtThresholds(25.,20.,20.)))        return false;
+        if(not(Lambdas::LepPtThresholds(25.,20.,20.)()))      return false;
         //if(not(getRawMVA(fabs(www.lep_MVA()[0])) > mva_threshold and getRawMVA(fabs(www.lep_MVA()[1])) > mva_threshold) and getRawMVA(fabs(www.lep_MVA()[3])) > mva_threshold)) return false; // to be tested
         if(not(Lambdas::PassTightIsolation()))                return false;
         //if(not(Lambdas::PassCustomIsolation(0.10,0.15)()==3)) return false;
@@ -1167,7 +1167,7 @@ std::function<float()> Lambdas::CutARDilep = [&]()
         // If the looper is looping over to do fake estimation, even though it is "SR dilep" selection require nTlep == 1, nLlep = 2. (i.e. AR)
         // This is to ensure that the histogram outputs will have the same name with proper fake estimation
         if(not(www.nVlep() == 2 and www.nLlep() == 2))        return false;
-        if(not(Lambdas::LepPtThresholds(25.,25.,-1)))         return false;
+        if(not(Lambdas::LepPtThresholds(25.,25.,-1)()))       return false;
         if(not(getRawMVA(fabs(www.lep_MVA()[0])) > mva_threshold and getRawMVA(fabs(www.lep_MVA()[1])) > mva_threshold)) return false; // to be tested
         if(not(Lambdas::PassTightIsolationAR()))              return false;
         //if(not(Lambdas::PassCustomIsolation(0.10,0.15)()==1)) return false;
@@ -1181,7 +1181,7 @@ std::function<float()> Lambdas::CutARTrilep = [&]()
         // Straight up application region selection. No fake factors are gonna be applied and the application region will be checked with data / MC
         //float mva_threshold = input.year == 2018 ? 7 : -1;
         if(not(www.nVlep() == 3 and www.nLlep() == 3))        return false;
-        if(not(Lambdas::LepPtThresholds(25.,20.,20.)))        return false;
+        if(not(Lambdas::LepPtThresholds(25.,20.,20.)()))      return false;
         //if(not(getRawMVA(fabs(www.lep_MVA()[0])) > mva_threshold and getRawMVA(fabs(www.lep_MVA()[1])) > mva_threshold) and getRawMVA(fabs(www.lep_MVA()[3])) > mva_threshold)) return false; // to be tested
         if(not(Lambdas::PassTightIsolationAR()))              return false;
         //if(not(Lambdas::PassCustomIsolation(0.10,0.15)()==2)) return false;
@@ -1255,9 +1255,9 @@ std::function<LV()> Lambdas::jetVec(Variation::ExpSyst expsyst, Variation::Var v
     }
 }
 
-std::function<float()> Lambdas::isSRSSeeChannel = [&]() { return (www.passSSee())*(www.MllSS()>40.); };
-std::function<float()> Lambdas::isSRSSemChannel = [&]() { return (www.passSSem())*(www.MllSS()>40.); };//2019/07/15: changed 30 --> 40
-std::function<float()> Lambdas::isSRSSmmChannel = [&]() { return (www.passSSmm())*(www.MllSS()>40.); };
+std::function<float()> Lambdas::isSRSSeeChannel = [&]() { return (www.passSSee())*(www.MllSS()>20.); };
+std::function<float()> Lambdas::isSRSSemChannel = [&]() { return (www.passSSem())*(www.MllSS()>20.); };//2019/07/15: changed 30 --> 40
+std::function<float()> Lambdas::isSRSSmmChannel = [&]() { return (www.passSSmm())*(www.MllSS()>20.); };
 
 std::function<float()> Lambdas::LeqOneJet(Variation::ExpSyst expsyst, Variation::Var var)
 {
@@ -1579,8 +1579,8 @@ std::function<float()> Lambdas::SSPreSelection(Variation::ExpSyst expsyst, Varia
     return [&, expsyst, var, invert_btag]()
     {
         if (not (www.nisoTrack_mt2_cleaned_VVV_cutbased_veto()==0 )) return false;
-        if (Lambdas::isSRSSeeChannel){
-          if (not Lambdas::ZVetoSS) return false;
+        if (Lambdas::isSRSSeeChannel()){
+          if (not Lambdas::ZVetoSS()) return false;
         }
         if(not (Lambdas::NBveto(expsyst,var,invert_btag)())) return false;//nb = 0
 //        if(not (Lambdas::NBvetoSoft(expsyst,var)()))         return false;//nb soft = 0
@@ -1774,9 +1774,9 @@ std::function<float()> Lambdas::DRljMin3LCut(Variation::ExpSyst expsyst, Variati
 std::function<float()> Lambdas::SSKinSel(Variation::ExpSyst expsyst, Variation::Var var){
     return [&, expsyst, var]()
     {
-        if(not (Lambdas::Mllcut(20.)))                   return false;
+        if(not (Lambdas::Mllcut(20.)()))                   return false;
         if(not (Lambdas::METcut(expsyst,var,45.)()))     return false;
-        if (not (Lambdas::isSRSSmmChannel)){
+        if (not (Lambdas::isSRSSmmChannel())){
           if(not (Lambdas::MTmaxcut(expsyst,var,90.)())) return false;
         }
         return true;
@@ -1816,7 +1816,7 @@ std::function<float()> Lambdas::SS1JPreselection(Variation::ExpSyst expsyst, Var
 std::function<float()> Lambdas::SS1J(Variation::ExpSyst expsyst, Variation::Var var){
     return [&, expsyst, var]()
     {
-        if(not (Lambdas::Mllcut(20.)))                   return false;
+        if(not (Lambdas::Mllcut(20.)()))                 return false;
         if(not (Lambdas::METcut(expsyst,var,45.)()))     return false;
         if(not (Lambdas::MTmaxcut(expsyst,var,90.)()))   return false;
         if(not (Lambdas::DRljMinCut(expsyst,var,1.5)())) return false;
@@ -2182,21 +2182,21 @@ std::function<float()> Lambdas::Nj1CRKinSel(Variation::ExpSyst expsyst, Variatio
 std::function<float()> Lambdas::isSSem = [&]() { return (www.lep_pdgId().size() > 1) and (www.lep_pdgId()[0] * www.lep_pdgId()[1] == 143) and (abs(www.lep_pdgId()[1]) == 13); };
 std::function<float()> Lambdas::isSSme = [&]() { return (www.lep_pdgId().size() > 1) and (www.lep_pdgId()[0] * www.lep_pdgId()[1] == 143) and (abs(www.lep_pdgId()[1]) == 11); };
 
-std::function<float()> Lambdas::is0SFOSeem = [&]() { return (www.lep_pdgId().size() > 2) and (Lambdas::is0SFOS) and ((abs(www.lep_pdgId()[0])+abs(www.lep_pdgId()[1])+abs(www.lep_pdgId()[2]))==35); };
-std::function<float()> Lambdas::is0SFOSemm = [&]() { return (www.lep_pdgId().size() > 2) and (Lambdas::is0SFOS) and ((abs(www.lep_pdgId()[0])+abs(www.lep_pdgId()[1])+abs(www.lep_pdgId()[2]))==37); };
+std::function<float()> Lambdas::is0SFOSeem = [&]() { return (www.lep_pdgId().size() > 2) and (Lambdas::is0SFOS()) and ((abs(www.lep_pdgId()[0])+abs(www.lep_pdgId()[1])+abs(www.lep_pdgId()[2]))==35); };
+std::function<float()> Lambdas::is0SFOSemm = [&]() { return (www.lep_pdgId().size() > 2) and (Lambdas::is0SFOS()) and ((abs(www.lep_pdgId()[0])+abs(www.lep_pdgId()[1])+abs(www.lep_pdgId()[2]))==37); };
 
 
 std::function<float()> Lambdas::GammaCR(Variation::ExpSyst expsyst, Variation::Var var)
 {
     return [&, expsyst, var]()
     {
-        if(Lambdas::is0SFOS){
+        if(Lambdas::is0SFOS()){
           if( (Lambdas::METcut(expsyst,var,30.)())) return false;//nb = 0
         }
-        if(Lambdas::is1SFOS){
+        if(Lambdas::is1SFOS()){
           if( (Lambdas::METcut(expsyst,var,45.)())) return false;//nb = 0
         }
-        if(Lambdas::is2SFOS){
+        if(Lambdas::is2SFOS()){
           if( (Lambdas::METcut(expsyst,var,60.)())) return false;//nb = 0
         }
       return true;
