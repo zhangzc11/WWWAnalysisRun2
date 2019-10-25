@@ -96,10 +96,7 @@ std::function<float()> Lambdas::EventWeight = [&]()
         float ffwgt = 1;
         if (ana.do_fake_estimation)
         {
-            if (input.year == 2017 or input.year == 2018)
-                ffwgt = fakerates.getFakeFactor();
-            else
-                ffwgt = www.ffwgt(); // 2016 ntuples have the weights already defined in the baby ntuples
+            ffwgt = fakerates.getFakeFactor();
             // Primarily the fake-factor will be applied to the data events
             // When we are at this point where the do_fake_estimation = true and we're running over background samples
             // then, it means that we're trying to do "ewk" subtraction (i.e. subtracting prompt contamination in AR)
@@ -132,12 +129,30 @@ std::function<float()> Lambdas::EventWeight = [&]()
         // Xsec error corrections
         //
         if ((input.current_file_name.Contains("wg_lnug_amcatnlo_1.root") or input.current_file_name.Contains("wg_lvg_amcatnlo_1.root")) // Because the short name was different between 2017 and 2018... (stupid of me...)
-                and (input.baby_version.EqualTo("5.1.4") or input.baby_version.EqualTo("5.1.6") or input.baby_version.EqualTo("5.1.8") or input.baby_version.EqualTo("5.1.9"))
-                and (input.baby_type.EqualTo("Loose") or input.baby_type.EqualTo("WWW")))
+            //   and (input.baby_version.EqualTo("5.1.4") or input.baby_version.EqualTo("5.1.6") or input.baby_version.EqualTo("5.1.8") or input.baby_version.EqualTo("5.1.9") or input.baby_version.Contains("5.2."))
+            //    and (input.baby_type.EqualTo("Loose") or input.baby_type.EqualTo("WWW"))
+            )
         {
             weight *= 163. / 405.27;
         }
 
+        if (input.year == 2017)
+        {
+            if (input.current_file_name.Contains("www_amcatnlo_1.root") or input.current_file_name.Contains("vh_nonbb_amcatnlo_1.root"))
+            {
+                unsigned int genelemu = 0;
+                for (unsigned int gidx = 0; gidx < www.genPart_pdgId().size(); ++gidx)
+                {
+                    if (abs(www.genPart_motherId()[gidx]) == 24 and (abs(www.genPart_pdgId()[gidx]) == 11 or abs(www.genPart_pdgId()[gidx]) == 13))
+                        ++genelemu;
+                }
+                if (genelemu >= 2) weight = 0.;
+            }
+            if (input.current_file_name.Contains("www_2l_amcatnlo_1.root"))
+                weight *= 0.119316*4.011538;
+            if (input.current_file_name.Contains("vh_nonbb_2l_amcatnlo_"))
+                weight *= 0.088057*3.552239;
+        }
         if (input.year == 2018)
         {
             if (input.current_file_name.Contains("www_amcatnlo_1.root") or input.current_file_name.Contains("vh_nonbb_amcatnlo_1.root"))
@@ -224,7 +239,8 @@ std::function<float()> Lambdas::TriggerScaleFactor = [&]()
         // For 2016 the trigsf branch in the TTree holds the proper trigger scalefactors
         // TODO UPDATE THIS for 2017 and 2018
         // For now, using 2016 trigger scale factor for 2017/2018 (these are almost identical to 1 anyways...
-        return input.is_data ? 1 : www.trigsf();
+        //return input.is_data ? 1 : www.trigsf();
+        return 1;
     };
 
 //______________________________________________________________________________________________
@@ -243,11 +259,6 @@ std::function<float()> Lambdas::LeptonScaleFactor = [&]()
 // B-tagging scale factors
 std::function<float()> Lambdas::BTagScaleFactor = [&]() { return www.weight_btagsf(); };
 
-
-
-
-
-
 //***************************************************************************************************************
 //
 //
@@ -262,7 +273,7 @@ std::function<float()> Lambdas::LepSFVariation(Variation::Var var)
 {
     return [&, var]()
     {
-        if (input.year == 2016)
+/*        if (input.year == 2016)
         {
             if (var == Variation::Up)
                 return www.lepsf() == 0 ? 0 : www.lepsf_up() / www.lepsf() ;
@@ -283,6 +294,7 @@ std::function<float()> Lambdas::LepSFVariation(Variation::Var var)
             }
         }
         else // else if (input.year == 2018) // TODO 2018 scale factor is not provided yet
+*/
         {
             if (var == Variation::Up)
             {
@@ -297,14 +309,13 @@ std::function<float()> Lambdas::LepSFVariation(Variation::Var var)
         }
     };
 }
-
 //______________________________________________________________________________________________
 // Trigger scale factor variations
 std::function<float()> Lambdas::TriggerSFVariation(Variation::Var var)
 {
     return [&, var]()
     {
-        if (input.year == 2016)
+/*        if (input.year == 2016)
         {
             if (var == Variation::Up)
                 return www.trigsf() == 0 ? 0 : www.trigsf_up() / www.trigsf();
@@ -325,7 +336,7 @@ std::function<float()> Lambdas::TriggerSFVariation(Variation::Var var)
             }
         }
         else // else if (input.year == 2018) // TODO 2018 scale factor is not provided yet
-        {
+ */       {
             if (var == Variation::Up)
             {
                 // TODO UPDATE THIS
@@ -416,7 +427,7 @@ std::function<float()> Lambdas::FakeFactorVariation(Variation::FakeVar fakevar_,
 
     return [&, fakevar_, var_]()
     {
-        static Variation::FakeVar fakevar;
+    /*    static Variation::FakeVar fakevar;
         static Variation::Var var;
 
         fakevar = fakevar_;
@@ -779,7 +790,9 @@ std::function<float()> Lambdas::FakeFactorVariation(Variation::FakeVar fakevar_,
             }
         }
 
-
+*/
+                // TODO
+                return float(1);
     };
 
 }
@@ -835,6 +848,257 @@ std::function<float()> Lambdas::AlphaSVariation(Variation::Var var)
 //
 //***************************************************************************************************************
 
+std::function<float()> Lambdas::LepPtThresholds(float val1, float val2, float val3)
+{
+  return [&, val1, val2, val3]()
+    {
+      if(val1>0 and www.nLlep() < 1) return false;
+      if(val2>0 and www.nLlep() < 2) return false;
+      if(val3>0 and www.nLlep() < 3) return false;
+      if(val1>0 and www.lep_pt()[0] < val1) return false;
+      if(val2>0 and www.lep_pt()[1] < val2) return false;
+      if(val3>0 and www.lep_pt()[2] < val3) return false;
+      return true;
+    };
+}
+
+std::function<float()> Lambdas::PassCustomIsolation(float eleiso, float muoniso)
+//POG: muon: iso < 0.15 has eff = 0.95 | tight WP, egamma: iso (from cutbased) < 0.0478+0.506/pT or 0.0658+0.963/pT for eff = 80% | medium WP recommended for W/Z
+//for electrons choose 0.1 which is about 0.0658+0.963/20.
+{
+  return [&, eleiso, muoniso]()
+    {
+      int npass = 0;
+      if(input.year==2016){
+        if(www.nLlep()>=1 && abs(www.lep_pdgId()[0])==11 && www.lep_relIso03EAv2Lep()[0]<eleiso) ++npass;
+        if(www.nLlep()>=2 && abs(www.lep_pdgId()[1])==11 && www.lep_relIso03EAv2Lep()[1]<eleiso) ++npass;
+        if(www.nLlep()>=3 && abs(www.lep_pdgId()[2])==11 && www.lep_relIso03EAv2Lep()[2]<eleiso) ++npass;
+        if(www.nLlep()>=1 && abs(www.lep_pdgId()[0])==13 && www.lep_relIso03EAv2Lep()[0]<muoniso) ++npass;
+        if(www.nLlep()>=2 && abs(www.lep_pdgId()[1])==13 && www.lep_relIso03EAv2Lep()[1]<muoniso) ++npass;
+        if(www.nLlep()>=3 && abs(www.lep_pdgId()[2])==13 && www.lep_relIso03EAv2Lep()[2]<muoniso) ++npass;
+      } else {
+        if(www.nLlep()>=1 && abs(www.lep_pdgId()[0])==11 && www.lep_relIso03EALep()[0]<eleiso) ++npass;
+        if(www.nLlep()>=2 && abs(www.lep_pdgId()[1])==11 && www.lep_relIso03EALep()[1]<eleiso) ++npass;
+        if(www.nLlep()>=3 && abs(www.lep_pdgId()[2])==11 && www.lep_relIso03EALep()[2]<eleiso) ++npass;
+        if(www.nLlep()>=1 && abs(www.lep_pdgId()[0])==13 && www.lep_relIso03EALep()[0]<muoniso) ++npass;
+        if(www.nLlep()>=2 && abs(www.lep_pdgId()[1])==13 && www.lep_relIso03EALep()[1]<muoniso) ++npass;
+        if(www.nLlep()>=3 && abs(www.lep_pdgId()[2])==13 && www.lep_relIso03EALep()[2]<muoniso) ++npass;
+      }
+      return npass;
+    };
+}
+std::function<float()> Lambdas::PassTightIsolation = [&]()
+    {
+
+        // lepton counters for various different kinds
+        int ntightele = 0;   // < 0.05
+        int nmediumele = 0;  // < 0.10
+        int nlooseeleSS = 0; // < 0.40 (w/  3ch_agree)
+        int nlooseele3l = 0; // < 0.40 (w/o 3ch_agree)
+        int ntightmuo = 0;   // < 0.04
+        int nmediummuo = 0;  // < 0.15
+        int nloosemuo = 0;   // < 0.40
+
+        // The 2016 version of EA correction uses "version-2"
+        const std::vector<float>& reliso = (input.year == 2016) ? www.lep_relIso03EAv2Lep() : www.lep_relIso03EALep();
+
+        // Loop over lepton container and count number of leptons of each category
+        for (unsigned int i = 0; i < www.lep_pdgId().size(); ++i)
+        {
+
+            // Electron IDs
+            if (abs(www.lep_pdgId()[i]) == 11)
+            {
+                if (www.lep_pass_VVV_fo()[i]    and reliso[i] < 0.05) ++ntightele;
+                if (www.lep_pass_VVV_fo()[i]    and reliso[i] < 0.40) ++nlooseeleSS;
+                if (www.lep_pass_VVV_3l_fo()[i] and reliso[i] < 0.40) ++nlooseele3l;
+                if (www.lep_pass_VVV_3l_fo()[i] and reliso[i] < 0.10) ++nmediumele;
+            }
+
+            // Muon IDs
+            if (abs(www.lep_pdgId()[i]) == 13)
+            {
+                if (www.lep_pass_VVV_fo()[i] and reliso[i] < 0.04) ++ntightmuo;
+                if (www.lep_pass_VVV_fo()[i] and reliso[i] < 0.40) ++nloosemuo;
+                if (www.lep_pass_VVV_fo()[i] and reliso[i] < 0.15) ++nmediummuo;
+            }
+
+        }
+
+        // If it is same-sign category
+        if (www.nVlep() == 2)
+        {
+
+            // For data-driven estimate it will run over as if it's SR and require "loose-but-not-tight" requirements
+            if (ana.do_fake_estimation)
+            {
+                // Passes 2 loose leptons but only 1 passes tight
+                if ((nlooseeleSS + nloosemuo) == 2 and (ntightele + ntightmuo) == 1) return true;
+            }
+            else
+            {
+                // Passes 2 loose leptons and also 2 passes tight
+                if ((nlooseeleSS + nloosemuo) == 2 and (ntightele + ntightmuo) == 2) return true;
+            }
+
+        }
+
+        // If it is three lepton category
+        if (www.nVlep() == 3)
+        {
+
+            // For data-driven estimate it will run over as if it's SR and require "loose-but-not-tight" requirements
+            if (ana.do_fake_estimation)
+            {
+
+                // 0SFOS region eem
+                if (www.nSFOS() == 0 and (abs(www.lep_pdgId()[0]) + abs(www.lep_pdgId()[1]) + abs(www.lep_pdgId()[2])) == 35) //eem
+                {
+
+                    // Of the "ee" in the "eem" leptons, only one electron fails the tight requirement
+                    if (nlooseeleSS == 2 and nloosemuo == 1 and ntightele == 1 and nmediummuo == 1) return true;
+
+                }
+
+                // 0SFOS region emm
+                else if (www.nSFOS() == 0 and (abs(www.lep_pdgId()[0]) + abs(www.lep_pdgId()[1]) + abs(www.lep_pdgId()[2])) == 37) //emm
+                {
+
+                    // Of the "mm" in the "emm" leptons, only one muon fails the tight requirement
+                    if (nlooseele3l == 1 and nloosemuo == 2 and nmediumele == 1 and ntightmuo == 1) return true;
+
+                }
+
+                // The rest (i.e. 1SFOS or 2SFOS)
+                else if (www.nSFOS() > 0)
+                {
+
+                    // Straight forward 3 loose and 2 tight
+                    if ((nlooseele3l + nloosemuo) == 3 and (nmediumele + nmediummuo) == 2) return true;
+
+                }
+
+            }
+            else
+            {
+
+                // 0SFOS region eem
+                if (www.nSFOS() == 0 and (abs(www.lep_pdgId()[0]) + abs(www.lep_pdgId()[1]) + abs(www.lep_pdgId()[2])) == 35) //eem
+                {
+
+                    if ((nlooseeleSS + nloosemuo) == 3 and (ntightele + nmediummuo) == 3) return true;
+
+                }
+
+                // 0SFOS region emm
+                else if (www.nSFOS() == 0 and (abs(www.lep_pdgId()[0]) + abs(www.lep_pdgId()[1]) + abs(www.lep_pdgId()[2])) == 37) //emm
+                {
+
+                    if ((nlooseele3l + nloosemuo) == 3 and (nmediumele + ntightmuo) == 3) return true;
+
+                }
+
+                // >=1SFOS region
+                else if (www.nSFOS() > 0)
+                {
+
+                    if ((nlooseele3l + nloosemuo) == 3 and (nmediumele + nmediummuo) == 3) return true;
+
+                }
+
+            }
+        }
+
+        // If it reaches here, it failed to pass tight isolation so reject event
+        return false;
+
+    };
+
+std::function<float()> Lambdas::PassTightIsolationAR = [&]()
+    {
+
+        // lepton counters for various different kinds
+        int ntightele = 0;   // < 0.05
+        int nmediumele = 0;  // < 0.10
+        int nlooseeleSS = 0; // < 0.40 (w/  3ch_agree)
+        int nlooseele3l = 0; // < 0.40 (w/o 3ch_agree)
+        int ntightmuo = 0;   // < 0.04
+        int nmediummuo = 0;  // < 0.15
+        int nloosemuo = 0;   // < 0.40
+
+        // The 2016 version of EA correction uses "version-2"
+        const std::vector<float>& reliso = (input.year == 2016) ? www.lep_relIso03EAv2Lep() : www.lep_relIso03EALep();
+
+        // Loop over lepton container and count number of leptons of each category
+        for (unsigned int i = 0; i < www.lep_pdgId().size(); ++i)
+        {
+
+            // Electron IDs
+            if (abs(www.lep_pdgId()[i]) == 11)
+            {
+                if (www.lep_pass_VVV_fo()[i]    and reliso[i] < 0.05) ++ntightele;
+                if (www.lep_pass_VVV_fo()[i]    and reliso[i] < 0.40) ++nlooseeleSS;
+                if (www.lep_pass_VVV_3l_fo()[i] and reliso[i] < 0.40) ++nlooseele3l;
+                if (www.lep_pass_VVV_3l_fo()[i] and reliso[i] < 0.10) ++nmediumele;
+            }
+
+            // Muon IDs
+            if (abs(www.lep_pdgId()[i]) == 13)
+            {
+                if (www.lep_pass_VVV_fo()[i] and reliso[i] < 0.04) ++ntightmuo;
+                if (www.lep_pass_VVV_fo()[i] and reliso[i] < 0.40) ++nloosemuo;
+                if (www.lep_pass_VVV_fo()[i] and reliso[i] < 0.15) ++nmediummuo;
+            }
+
+        }
+
+        // If it is same-sign category
+        if (www.nVlep() == 2)
+        {
+
+            // Passes 2 loose leptons but only 1 passes tight
+            if ((nlooseeleSS + nloosemuo) == 2 and (ntightele + ntightmuo) == 1) return true;
+
+        }
+
+        // If it is three lepton category
+        if (www.nVlep() == 3)
+        {
+
+            // 0SFOS region eem
+            if (www.nSFOS() == 0 and (abs(www.lep_pdgId()[0]) + abs(www.lep_pdgId()[1]) + abs(www.lep_pdgId()[2])) == 35) //eem
+            {
+
+                // Of the "ee" in the "eem" leptons, only one electron fails the tight requirement
+                if (nlooseeleSS == 2 and nloosemuo == 1 and ntightele == 1 and nmediummuo == 1) return true;
+
+            }
+
+            // 0SFOS region emm
+            else if (www.nSFOS() == 0 and (abs(www.lep_pdgId()[0]) + abs(www.lep_pdgId()[1]) + abs(www.lep_pdgId()[2])) == 37) //emm
+            {
+
+                // Of the "mm" in the "emm" leptons, only one muon fails the tight requirement
+                if (nlooseele3l == 1 and nloosemuo == 2 and nmediumele == 1 and ntightmuo == 1) return true;
+
+            }
+
+            // The rest (i.e. 1SFOS or 2SFOS)
+            else if (www.nSFOS() > 0)
+            {
+
+                // Straight forward 3 loose and 2 tight
+                if ((nlooseele3l + nloosemuo) == 3 and (nmediumele + nmediummuo) == 2) return true;
+
+            }
+
+        }
+
+        // If it reaches here, it failed to pass tight isolation so reject event
+        return false;
+
+    };
+
 //______________________________________________________________________________________________
 // SR Dilepton selection
 std::function<float()> Lambdas::CutSRDilep = [&]()
@@ -843,10 +1107,18 @@ std::function<float()> Lambdas::CutSRDilep = [&]()
         float mva_threshold = input.year == 2018 ? 7 : -1;
         // If the looper is looping over to do fake estimation, even though it is "SR dilep" selection require nTlep == 1, nLlep = 2. (i.e. AR)
         // This is to ensure that the histogram outputs will have the same name with proper fake estimation
-        if (ana.do_fake_estimation)
-            return (www.nVlep() == 2) * (www.nLlep() == 2) * (www.nTlep() == 1) * (www.lep_pt()[0]>25.) * (www.lep_pt()[1]>25.) * (getRawMVA(fabs(www.lep_MVA()[0])) > mva_threshold) * (getRawMVA(fabs(www.lep_MVA()[1])) > mva_threshold);
-        else
-            return (www.nVlep() == 2) * (www.nLlep() == 2) * (www.nTlep() == 2) * (www.lep_pt()[0]>25.) * (www.lep_pt()[1]>25.) * (getRawMVA(fabs(www.lep_MVA()[0])) > mva_threshold) * (getRawMVA(fabs(www.lep_MVA()[1])) > mva_threshold);
+        if(not(www.nVlep() == 2 and www.nLlep() == 2))          return false;
+        if(not(Lambdas::LepPtThresholds(25.,25.,-1)()))         return false;
+        if(not(getRawMVA(fabs(www.lep_MVA()[0])) > mva_threshold and getRawMVA(fabs(www.lep_MVA()[1])) > mva_threshold)) return false; // to be tested
+        if (ana.do_fake_estimation){
+          if(not(Lambdas::PassTightIsolationAR()))              return false;
+          //if(not(Lambdas::PassCustomIsolation(0.10,0.15)()==1)) return false;
+        }
+        else {
+          if(not(Lambdas::PassTightIsolation()))                return false;
+          //if(not(Lambdas::PassCustomIsolation(0.10,0.15)()==2)) return false;
+        }
+        return true;
     };
 
 //______________________________________________________________________________________________
@@ -855,20 +1127,19 @@ std::function<float()> Lambdas::CutSRTrilep = [&]()
     {
         // If the looper is looping over to do fake estimation, even though it is "SR trilep" selection require nTlep == 2, nLlep = 3. (i.e. AR)
         // This is to ensure that the histogram outputs will have the same name with proper fake estimation
-        if (input.year == 2018)
-        {
-            if (ana.do_fake_estimation)
-                return (www.nVlep() == 3) * (www.nLlep() == 3) * (www.nTlep() == 2) * (www.lep_pt()[0] > 25.) * (www.lep_pt()[1] > 20.) * (www.lep_pt()[2] > 20.);
-            else
-                return (www.nVlep() == 3) * (www.nLlep() == 3) * (www.nTlep() == 3) * (www.lep_pt()[0] > 25.) * (www.lep_pt()[1] > 20.) * (www.lep_pt()[2] > 20.);
+        //float mva_threshold = input.year == 2018 ? 7 : -1;
+        if(not(www.nVlep() == 3 and www.nLlep() == 3))          return false;
+        if(not(Lambdas::LepPtThresholds(25.,20.,20.)()))        return false;
+        //if(not(getRawMVA(fabs(www.lep_MVA()[0])) > mva_threshold and getRawMVA(fabs(www.lep_MVA()[1])) > mva_threshold) and getRawMVA(fabs(www.lep_MVA()[3])) > mva_threshold)) return false; // to be tested
+        if (ana.do_fake_estimation){
+          if(not(Lambdas::PassTightIsolationAR()))              return false;
+          //if(not(Lambdas::PassCustomIsolation(0.10,0.15)()==2)) return false;
         }
-        else
-        {
-            if (ana.do_fake_estimation)
-                return (www.nVlep() == 3) * (www.nLlep() == 3) * (www.nTlep() == 2) * (www.lep_pt()[0] > 25.) * (www.lep_pt()[1] > 20.) * (www.lep_pt()[2] > 20.);
-            else
-                return (www.nVlep() == 3) * (www.nLlep() == 3) * (www.nTlep() == 3) * (www.lep_pt()[0] > 25.) * (www.lep_pt()[1] > 20.) * (www.lep_pt()[2] > 20.);
+        else {
+          if(not(Lambdas::PassTightIsolation()))                return false;
+          //if(not(Lambdas::PassCustomIsolation(0.10,0.15)()==3)) return false;
         }
+        return true;
     };
 
 //______________________________________________________________________________________________
@@ -878,7 +1149,13 @@ std::function<float()> Lambdas::CutCRTrilep = [&]()
         // NOTE: One thing to note here is that even though it is asking for 25/20/20 pt at a later cut stage higher pt cuts will be applied
         // For example, for the lost-lepton control regions for the same-sign channels, out of the 3 leptons it will be required that the two same-sign ones pass same-sign tight ID.
         // When this is required, it will implicitly require that the lep_pt is 25 GeV for the two same-sign leptons. This is a bit vague and could be improved...
-        return (www.nVlep() == 3) * (www.nLlep() == 3) * (www.nTlep() == 3) * (www.lep_pt()[0] > 25.) * (www.lep_pt()[1] > 20.) * (www.lep_pt()[2] > 20.);
+        //float mva_threshold = input.year == 2018 ? 7 : -1;
+        if(not(www.nVlep() == 3 and www.nLlep() == 3))        return false;
+        if(not(Lambdas::LepPtThresholds(25.,20.,20.)()))      return false;
+        //if(not(getRawMVA(fabs(www.lep_MVA()[0])) > mva_threshold and getRawMVA(fabs(www.lep_MVA()[1])) > mva_threshold) and getRawMVA(fabs(www.lep_MVA()[3])) > mva_threshold)) return false; // to be tested
+        if(not(Lambdas::PassTightIsolation()))                return false;
+        //if(not(Lambdas::PassCustomIsolation(0.10,0.15)()==3)) return false;
+        return true;
     };
 
 //______________________________________________________________________________________________
@@ -886,7 +1163,15 @@ std::function<float()> Lambdas::CutCRTrilep = [&]()
 std::function<float()> Lambdas::CutARDilep = [&]()
     {
         // Straight up application region selection. No fake factors are gonna be applied and the application region will be checked with data / MC
-        return (www.nVlep() == 2) * (www.nLlep() == 2) * (www.nTlep() == 1) * (www.lep_pt()[0]>25.) * (www.lep_pt()[1]>25.);
+        float mva_threshold = input.year == 2018 ? 7 : -1;
+        // If the looper is looping over to do fake estimation, even though it is "SR dilep" selection require nTlep == 1, nLlep = 2. (i.e. AR)
+        // This is to ensure that the histogram outputs will have the same name with proper fake estimation
+        if(not(www.nVlep() == 2 and www.nLlep() == 2))        return false;
+        if(not(Lambdas::LepPtThresholds(25.,25.,-1)()))       return false;
+        if(not(getRawMVA(fabs(www.lep_MVA()[0])) > mva_threshold and getRawMVA(fabs(www.lep_MVA()[1])) > mva_threshold)) return false; // to be tested
+        if(not(Lambdas::PassTightIsolationAR()))              return false;
+        //if(not(Lambdas::PassCustomIsolation(0.10,0.15)()==1)) return false;
+        return true;
     };
 
 //______________________________________________________________________________________________
@@ -894,10 +1179,14 @@ std::function<float()> Lambdas::CutARDilep = [&]()
 std::function<float()> Lambdas::CutARTrilep = [&]()
     {
         // Straight up application region selection. No fake factors are gonna be applied and the application region will be checked with data / MC
-        return (www.nVlep() == 3) * (www.nLlep() == 3) * (www.nTlep() == 2) * (www.lep_pt()[0]>25.) * (www.lep_pt()[1]>20.) * (www.lep_pt()[2]>20.);
+        //float mva_threshold = input.year == 2018 ? 7 : -1;
+        if(not(www.nVlep() == 3 and www.nLlep() == 3))        return false;
+        if(not(Lambdas::LepPtThresholds(25.,20.,20.)()))      return false;
+        //if(not(getRawMVA(fabs(www.lep_MVA()[0])) > mva_threshold and getRawMVA(fabs(www.lep_MVA()[1])) > mva_threshold) and getRawMVA(fabs(www.lep_MVA()[3])) > mva_threshold)) return false; // to be tested
+        if(not(Lambdas::PassTightIsolationAR()))              return false;
+        //if(not(Lambdas::PassCustomIsolation(0.10,0.15)()==2)) return false;
+        return true;
     };
-
-
 
 
 //***************************************************************************************************************
@@ -966,13 +1255,13 @@ std::function<LV()> Lambdas::jetVec(Variation::ExpSyst expsyst, Variation::Var v
     }
 }
 
-std::function<float()> Lambdas::isSRSSeeChannel = [&]() { return (www.passSSee())*(www.MllSS()>40.); };
-std::function<float()> Lambdas::isSRSSemChannel = [&]() { return (www.passSSem())*(www.MllSS()>40.); };//2019/07/15: changed 30 --> 40
-std::function<float()> Lambdas::isSRSSmmChannel = [&]() { return (www.passSSmm())*(www.MllSS()>40.); };
+std::function<float()> Lambdas::isSRSSeeChannel = [&]() { return (www.passSSee())*(www.MllSS()>20.); };
+std::function<float()> Lambdas::isSRSSemChannel = [&]() { return (www.passSSem())*(www.MllSS()>20.); };//2019/07/15: changed 30 --> 40
+std::function<float()> Lambdas::isSRSSmmChannel = [&]() { return (www.passSSmm())*(www.MllSS()>20.); };
 
 std::function<float()> Lambdas::LeqOneJet(Variation::ExpSyst expsyst, Variation::Var var)
 {
-    return jetVar(expsyst, var, 
+    return jetVar(expsyst, var,
             [&]() { return (www.nj_up()<= 1); },
             [&]() { return (www.nj_dn()<= 1); },
             [&]() { return (www.nj()<= 1); },
@@ -984,7 +1273,7 @@ std::function<float()> Lambdas::LeqOneJet(Variation::ExpSyst expsyst, Variation:
 
 std::function<float()> Lambdas::LeqOneJet30(Variation::ExpSyst expsyst, Variation::Var var)
 {
-    return jetVar(expsyst, var, 
+    return jetVar(expsyst, var,
             [&]() { return (www.nj30_up()<= 1); },
             [&]() { return (www.nj30_dn()<= 1); },
             [&]() { return (www.nj30()<= 1); },
@@ -996,7 +1285,7 @@ std::function<float()> Lambdas::LeqOneJet30(Variation::ExpSyst expsyst, Variatio
 
 std::function<float()> Lambdas::OneCenJet30(Variation::ExpSyst expsyst, Variation::Var var)
 {
-    return jetVar(expsyst, var, 
+    return jetVar(expsyst, var,
             [&]() { return (www.nj30_up()== 1); },
             [&]() { return (www.nj30_dn()== 1); },
             [&]() { return (www.nj30()== 1); },
@@ -1008,7 +1297,7 @@ std::function<float()> Lambdas::OneCenJet30(Variation::ExpSyst expsyst, Variatio
 
 std::function<float()> Lambdas::TwoCenJet30(Variation::ExpSyst expsyst, Variation::Var var)
 {
-    return jetVar(expsyst, var, 
+    return jetVar(expsyst, var,
             [&]() { return (www.nj30_up()>= 2); },
             [&]() { return (www.nj30_dn()>= 2); },
             [&]() { return (www.nj30()>= 2); },
@@ -1020,7 +1309,7 @@ std::function<float()> Lambdas::TwoCenJet30(Variation::ExpSyst expsyst, Variatio
 
 std::function<float()> Lambdas::CenJet30Cut(Variation::ExpSyst expsyst, Variation::Var var, int value)
 {
-    return jetVar(expsyst, var, 
+    return jetVar(expsyst, var,
             [&, value]() { return (www.nj30_up()>= value); },
             [&, value]() { return (www.nj30_dn()>= value); },
             [&, value]() { return (www.nj30()>= value); },
@@ -1032,7 +1321,7 @@ std::function<float()> Lambdas::CenJet30Cut(Variation::ExpSyst expsyst, Variatio
 
 std::function<float()> Lambdas::NumberCenJet30(Variation::ExpSyst expsyst, Variation::Var var)
 {
-    return jetVar(expsyst, var, 
+    return jetVar(expsyst, var,
             [&]() { return (www.nj30_up()); },
             [&]() { return (www.nj30_dn()); },
             [&]() { return (www.nj30()); },
@@ -1045,7 +1334,7 @@ std::function<float()> Lambdas::NumberCenJet30(Variation::ExpSyst expsyst, Varia
 
 std::function<float()> Lambdas::LowDEtajj(Variation::ExpSyst expsyst, Variation::Var var, float value)
 {
-    return jetVar(expsyst, var, 
+    return jetVar(expsyst, var,
             [&, value]() { return (www.DetajjL_up()   < value); },
             [&, value]() { return (www.DetajjL_dn()   < value); },
             [&, value]() { return (www.DetajjL()      < value); },
@@ -1057,7 +1346,7 @@ std::function<float()> Lambdas::LowDEtajj(Variation::ExpSyst expsyst, Variation:
 
 std::function<float()> Lambdas::LowMjj(Variation::ExpSyst expsyst, Variation::Var var,float value)
 {
-    return jetVar(expsyst, var, 
+    return jetVar(expsyst, var,
             [&, value]() { return (www.MjjL_up()   < value); },
             [&, value]() { return (www.MjjL_dn()   < value); },
             [&, value]() { return (www.MjjL()      < value); },
@@ -1108,7 +1397,7 @@ std::function<float()> Lambdas::HighMJJDeta(Variation::ExpSyst expsyst, Variatio
 
 std::function<float()> Lambdas::MjjIn(Variation::ExpSyst expsyst, Variation::Var var)
 {
-    return jetVar(expsyst, var, 
+    return jetVar(expsyst, var,
             [&]() { return (fabs(www.Mjj_up()   -80.)<15.); },
             [&]() { return (fabs(www.Mjj_dn()   -80.)<15.); },
             [&]() { return (fabs(www.Mjj()      -80.)<15.); },
@@ -1120,7 +1409,7 @@ std::function<float()> Lambdas::MjjIn(Variation::ExpSyst expsyst, Variation::Var
 
 std::function<float()> Lambdas::MjjOut(Variation::ExpSyst expsyst, Variation::Var var)
 {
-    return jetVar(expsyst, var, 
+    return jetVar(expsyst, var,
             [&]() { return (fabs(www.Mjj_up()   -80.)>=15.); },
             [&]() { return (fabs(www.Mjj_dn()   -80.)>=15.); },
             [&]() { return (fabs(www.Mjj()      -80.)>=15.); },
@@ -1131,6 +1420,23 @@ std::function<float()> Lambdas::MjjOut(Variation::ExpSyst expsyst, Variation::Va
 }
 
 std::function<float()> Lambdas::ZVetoSS = [&]() { return fabs(www.MllSS()-91.1876)>20.; };
+std::function<float()> Lambdas::NBvetoSoft(Variation::ExpSyst expsyst, Variation::Var var, bool invert_btag){// kept the variations in case we need these
+    return [&, expsyst, var, invert_btag]()
+    {
+        int nsoftbtag  = 0;
+        for (unsigned int i = 0; i<www.svs_nTrks().size(); ++i)
+        {
+            bool passID = true;
+            if (www.svs_nTrks().at(i) < 3)            passID = false;
+            if (www.svs_distXYval().at(i) >= 3.0)     passID = false;
+            if (www.svs_dist3Dsig().at(i) <= 4.0)     passID = false;
+            if (cos(www.svs_anglePV().at(i)) <= 0.98) passID = false;
+            if(passID) nsoftbtag++;
+        }
+        if((not invert_btag) and nsoftbtag > 0) return false;
+        return true;
+    };
+}
 
 std::function<float()> Lambdas::NBveto(Variation::ExpSyst expsyst, Variation::Var var, bool invert_btag){
     return [&, expsyst, var, invert_btag]()
@@ -1254,7 +1560,7 @@ std::function<float()> Lambdas::NBmedcut(Variation::ExpSyst expsyst, Variation::
             }
           }
         }
-          
+
         if (not invert_btag)
         {
           if ( nbmed<value ) return false;
@@ -1273,12 +1579,13 @@ std::function<float()> Lambdas::SSPreSelection(Variation::ExpSyst expsyst, Varia
     return [&, expsyst, var, invert_btag]()
     {
         if (not (www.nisoTrack_mt2_cleaned_VVV_cutbased_veto()==0 )) return false;
-        if (Lambdas::isSRSSeeChannel){
-          if (not Lambdas::ZVetoSS) return false;
+        if (Lambdas::isSRSSeeChannel()){
+          if (not Lambdas::ZVetoSS()) return false;
         }
         if(not (Lambdas::NBveto(expsyst,var,invert_btag)())) return false;//nb = 0
+//        if(not (Lambdas::NBvetoSoft(expsyst,var)()))         return false;//nb soft = 0
         if(not (Lambdas::TwoCenJet30(expsyst,var)()))        return false;//nj30 >= 2
-        
+
         return true;
     };
 }
@@ -1312,34 +1619,34 @@ std::function<float()> Lambdas::MTmaxcut(Variation::ExpSyst expsyst, Variation::
       if(www.nLlep()==2){
        if (not (
                     jetVar(expsyst, var,
-                        [&, value]() { return www.MTmax_up()   >value; }, 
-                        [&, value]() { return www.MTmax_dn()   >value; }, 
-                        [&, value]() { return www.MTmax()      >value; }, 
-                        [&, value]() { return www.MTmax_jerup()>value; }, 
-                        [&, value]() { return www.MTmax_jerdn()>value; }, 
-                        [&, value]() { return www.MTmax_jer()  >value; }  
+                        [&, value]() { return www.MTmax_up()   >value; },
+                        [&, value]() { return www.MTmax_dn()   >value; },
+                        [&, value]() { return www.MTmax()      >value; },
+                        [&, value]() { return www.MTmax_jerup()>value; },
+                        [&, value]() { return www.MTmax_jerdn()>value; },
+                        [&, value]() { return www.MTmax_jer()  >value; }
                         )()                                  )) return false;
       }
       if(www.nLlep()==3 and www.nSFOS()==1){
        if (not (
                     jetVar(expsyst, var,
-                        [&, value]() { return www.MT3rd_up()   >value; }, 
-                        [&, value]() { return www.MT3rd_dn()   >value; }, 
-                        [&, value]() { return www.MT3rd()      >value; }, 
-                        [&, value]() { return www.MT3rd_jerup()>value; }, 
-                        [&, value]() { return www.MT3rd_jerdn()>value; }, 
-                        [&, value]() { return www.MT3rd_jer()  >value; }  
+                        [&, value]() { return www.MT3rd_up()   >value; },
+                        [&, value]() { return www.MT3rd_dn()   >value; },
+                        [&, value]() { return www.MT3rd()      >value; },
+                        [&, value]() { return www.MT3rd_jerup()>value; },
+                        [&, value]() { return www.MT3rd_jerdn()>value; },
+                        [&, value]() { return www.MT3rd_jer()  >value; }
                         )()                                  )) return false;
       }
       if(www.nLlep()==3 and (not (www.nSFOS()==1)) ){
        if (not (
                     jetVar(expsyst, var,
-                        [&, value]() { return www.MTmax3L_up()   >value; }, 
-                        [&, value]() { return www.MTmax3L_dn()   >value; }, 
-                        [&, value]() { return www.MTmax3L()      >value; }, 
-                        [&, value]() { return www.MTmax3L_jerup()>value; }, 
-                        [&, value]() { return www.MTmax3L_jerdn()>value; }, 
-                        [&, value]() { return www.MTmax3L_jer()  >value; }  
+                        [&, value]() { return www.MTmax3L_up()   >value; },
+                        [&, value]() { return www.MTmax3L_dn()   >value; },
+                        [&, value]() { return www.MTmax3L()      >value; },
+                        [&, value]() { return www.MTmax3L_jerup()>value; },
+                        [&, value]() { return www.MTmax3L_jerdn()>value; },
+                        [&, value]() { return www.MTmax3L_jer()  >value; }
                         )()                                  )) return false;
       }
       return true;
@@ -1353,12 +1660,12 @@ std::function<float()> Lambdas::MTmax3Lcut(Variation::ExpSyst expsyst, Variation
     {
        if (not (
                     jetVar(expsyst, var,
-                        [&, value]() { return www.MTmax3L_up()   >value; }, 
-                        [&, value]() { return www.MTmax3L_dn()   >value; }, 
-                        [&, value]() { return www.MTmax3L()      >value; }, 
-                        [&, value]() { return www.MTmax3L_jerup()>value; }, 
-                        [&, value]() { return www.MTmax3L_jerdn()>value; }, 
-                        [&, value]() { return www.MTmax3L_jer()  >value; }  
+                        [&, value]() { return www.MTmax3L_up()   >value; },
+                        [&, value]() { return www.MTmax3L_dn()   >value; },
+                        [&, value]() { return www.MTmax3L()      >value; },
+                        [&, value]() { return www.MTmax3L_jerup()>value; },
+                        [&, value]() { return www.MTmax3L_jerdn()>value; },
+                        [&, value]() { return www.MTmax3L_jer()  >value; }
                         )()                                  )) return false;
       return true;
     };
@@ -1384,7 +1691,7 @@ std::function<float()> Lambdas::DRljMinCut(Variation::ExpSyst expsyst, Variation
 
         float minDRlj=9e5;
         unsigned int numjets = Lambdas::NumberCenJet30(expsyst,var)();
-        for(unsigned int i = 0; i<www.lep_p4().size(); ++i){          
+        for(unsigned int i = 0; i<www.lep_p4().size(); ++i){
           for(unsigned int j = 0; j<numjets; ++j){//now all jets - that's not what I want
             LV jet = jetVec(expsyst, var,
                             [&]() { return www.jets30_up_p4()[j]; },
@@ -1402,15 +1709,15 @@ std::function<float()> Lambdas::DRljMinCut(Variation::ExpSyst expsyst, Variation
       }
       if (not (
                jetVar(expsyst, var,
-                      [&, value]() { return www.DRljmin_up()   <value; }, 
-                      [&, value]() { return www.DRljmin_dn()   <value; }, 
-                      [&, value]() { return www.DRljmin()      <value; }, 
-                      [&, value]() { return www.DRljmin_jerup()<value; }, 
-                      [&, value]() { return www.DRljmin_jerdn()<value; }, 
-                      [&, value]() { return www.DRljmin_jer()  <value; }  
+                      [&, value]() { return www.DRljmin_up()   <value; },
+                      [&, value]() { return www.DRljmin_dn()   <value; },
+                      [&, value]() { return www.DRljmin()      <value; },
+                      [&, value]() { return www.DRljmin_jerup()<value; },
+                      [&, value]() { return www.DRljmin_jerdn()<value; },
+                      [&, value]() { return www.DRljmin_jer()  <value; }
                       )()                                  )) return false;
       return true;
-      
+
     };
 }
 
@@ -1434,7 +1741,7 @@ std::function<float()> Lambdas::DRljMin3LCut(Variation::ExpSyst expsyst, Variati
 
         float minDRlj=9e5;
         unsigned int numjets = Lambdas::NumberCenJet30(expsyst,var)();
-        for(unsigned int i = 0; i<www.lep_p4().size(); ++i){          
+        for(unsigned int i = 0; i<www.lep_p4().size(); ++i){
           for(unsigned int j = 0; j<numjets; ++j){//now all jets - that's not what I want
             LV jet = jetVec(expsyst, var,
                             [&]() { return www.jets30_up_p4()[j]; },
@@ -1452,24 +1759,26 @@ std::function<float()> Lambdas::DRljMin3LCut(Variation::ExpSyst expsyst, Variati
       }
       if (not (
                jetVar(expsyst, var,
-                      [&, value]() { return www.DRljmin3L_up()   >value; }, 
-                      [&, value]() { return www.DRljmin3L_dn()   >value; }, 
-                      [&, value]() { return www.DRljmin3L()      >value; }, 
-                      [&, value]() { return www.DRljmin3L_jerup()>value; }, 
-                      [&, value]() { return www.DRljmin3L_jerdn()>value; }, 
-                      [&, value]() { return www.DRljmin3L_jer()  >value; }  
+                      [&, value]() { return www.DRljmin3L_up()   >value; },
+                      [&, value]() { return www.DRljmin3L_dn()   >value; },
+                      [&, value]() { return www.DRljmin3L()      >value; },
+                      [&, value]() { return www.DRljmin3L_jerup()>value; },
+                      [&, value]() { return www.DRljmin3L_jerdn()>value; },
+                      [&, value]() { return www.DRljmin3L_jer()  >value; }
                       )()                                  )) return false;
       return true;
-      
+
     };
 }
 
 std::function<float()> Lambdas::SSKinSel(Variation::ExpSyst expsyst, Variation::Var var){
     return [&, expsyst, var]()
     {
-        if(not (Lambdas::Mllcut(40.))) return false;//nb = 0
-        if(not (Lambdas::METcut(expsyst,var,60.)())) return false;//nb = 0
-        if(not (Lambdas::MTmaxcut(expsyst,var,90.)())) return false;//nb = 0 - cut here on 90. as it is the looser cut between Mjjin/Mjjout
+        if(not (Lambdas::Mllcut(20.)()))                 return false;
+        if(not (Lambdas::METcut(expsyst,var,45.)()))     return false;
+        if (not (Lambdas::isSRSSmmChannel())){
+          if(not (Lambdas::MTmaxcut(expsyst,var,90.)())) return false;
+        }
         return true;
     };
 }
@@ -1477,7 +1786,7 @@ std::function<float()> Lambdas::SSKinSel(Variation::ExpSyst expsyst, Variation::
 std::function<float()> Lambdas::SSMjjIn(Variation::ExpSyst expsyst, Variation::Var var){
     return [&, expsyst, var]()
     {
-        if(not (Lambdas::MjjIn(expsyst,var)())) return false;//nb = 0
+        if(not (Lambdas::MjjIn(expsyst,var)())) return false;
         return true;
     };
 }
@@ -1485,8 +1794,7 @@ std::function<float()> Lambdas::SSMjjIn(Variation::ExpSyst expsyst, Variation::V
 std::function<float()> Lambdas::SSMjjOut(Variation::ExpSyst expsyst, Variation::Var var){
     return [&, expsyst, var]()
     {
-        if(not (Lambdas::MjjOut(expsyst,var)())) return false;//nb = 0
-        if(not (Lambdas::MTmaxcut(expsyst,var,120.)())) return false;//nb = 0
+        if(not (Lambdas::MjjOut(expsyst,var)())) return false;
         return true;
     };
 }
@@ -1499,8 +1807,8 @@ std::function<float()> Lambdas::SS1JPreselection(Variation::ExpSyst expsyst, Var
           if (not Lambdas::ZVetoSS()) return false;
         }
         if(not (Lambdas::NBveto(expsyst,var,invert_btag)())) return false;//nb = 0
-        if(not (Lambdas::OneCenJet30(expsyst,var)()))        return false;//nj30 >= 2
-        if(not (www.lep_pt()[1]>30.)) return false;//nb = 0
+        if(not (Lambdas::OneCenJet30(expsyst,var)()))        return false;
+//        if(not (Lambdas::NBvetoSoft(expsyst,var)()))         return false;//nb soft = 0
         return true;
     };
 }
@@ -1508,10 +1816,10 @@ std::function<float()> Lambdas::SS1JPreselection(Variation::ExpSyst expsyst, Var
 std::function<float()> Lambdas::SS1J(Variation::ExpSyst expsyst, Variation::Var var){
     return [&, expsyst, var]()
     {
-        if(not (Lambdas::Mllcut(40.))) return false;//nb = 0
-        if(not (Lambdas::METcut(expsyst,var,75.)())) return false;//nb = 0
-        if(not (Lambdas::MTmaxcut(expsyst,var,90.)())) return false;//nb = 0
-        if(not (Lambdas::DRljMinCut(expsyst,var,1.5)())) return false;//nb = 0
+        if(not (Lambdas::Mllcut(20.)()))                 return false;
+        if(not (Lambdas::METcut(expsyst,var,45.)()))     return false;
+        if(not (Lambdas::MTmaxcut(expsyst,var,90.)()))   return false;
+        if(not (Lambdas::DRljMinCut(expsyst,var,1.5)())) return false;
         return true;
     };
 }
@@ -1592,9 +1900,9 @@ std::function<float()> Lambdas::ThreeLepPresel(Variation::ExpSyst expsyst, Varia
 {
     return [&, expsyst, var, invert_btag]()
     {
-        if(not (Lambdas::LeqOneJet30(expsyst,var)())) return false;//nb = 0
-        if(not (Lambdas::NBveto(expsyst,var,invert_btag)())) return false;//nb = 0
-        if(not (www.lep_pt()[2]>30.)) return false;//nb = 0
+        if(not (Lambdas::LeqOneJet30(expsyst,var)()))        return false;
+        if(not (Lambdas::NBveto(expsyst,var,invert_btag)())) return false;
+//        if(not (Lambdas::NBvetoSoft(expsyst,var)()))         return false;
         return true;
     };
 }
@@ -1667,16 +1975,14 @@ std::function<float()> Lambdas::KinSel3L(Variation::ExpSyst expsyst, Variation::
     return [&, expsyst, var]()
     {
       if(Lambdas::is0SFOS()){
-        if(not (Lambdas::METcut(expsyst,var,30.)())) return false;//nb = 0
+        return true;//right now I don't apply anything, best option seems to be tightening IDs only
       }
-      if(Lambdas::is1SFOS()){
-        if(not (Lambdas::METcut(expsyst,var,45.)())) return false;//nb = 0
+      else {
+        if(not (Lambdas::METcut(expsyst,var,60.)()))       return false;
+        if(not (Lambdas::MTmaxcut(expsyst,var,90.)()))     return false;
+        if (not (www.Pt3l() > 50.    ))                    return false;
+        if(not (Lambdas::DPhi3lMETcut(expsyst,var,2.5)())) return false;
       }
-      if(Lambdas::is2SFOS()){
-        if(not (Lambdas::METcut(expsyst,var,60.)())) return false;//nb = 0
-      }
-      if(not (Lambdas::MTmaxcut(expsyst,var,120.)())) return false;
-      if(not (Lambdas::DPhi3lMETcut(expsyst,var,2.1)())) return false;
       return true;
     };
 }
@@ -1796,7 +2102,7 @@ std::function<float()> Lambdas::isWZCR3L = [&]() {
         if (not (Lambdas::HasZ_3L() ))                 return false;
         return true;
 };
-  
+
 std::function<float()> Lambdas::Nj1DRljMin(Variation::ExpSyst expsyst, Variation::Var var)
 {
     return [&, expsyst, var]()
@@ -1844,7 +2150,7 @@ std::function<float()> Lambdas::Nj1CRKinSel(Variation::ExpSyst expsyst, Variatio
                         [&]() { return www.met_jerup_pt()<30.; },
                         [&]() { return www.met_jerdn_pt()<30.; },
                         [&]() { return www.met_jer_pt()<30.; }
-                        )()                                   
+                        )()
                    )
                    or
                    ((www.nSFOS() == 1) and
@@ -1855,7 +2161,7 @@ std::function<float()> Lambdas::Nj1CRKinSel(Variation::ExpSyst expsyst, Variatio
                         [&]() { return www.met_jerup_pt()<40.; },
                         [&]() { return www.met_jerdn_pt()<40.; },
                         [&]() { return www.met_jer_pt()<40.; }
-                        )()                                   
+                        )()
                    )
                    or
                    ((www.nSFOS() == 2) and
@@ -1866,7 +2172,7 @@ std::function<float()> Lambdas::Nj1CRKinSel(Variation::ExpSyst expsyst, Variatio
                         [&]() { return www.met_jerup_pt()<55.; },
                         [&]() { return www.met_jerdn_pt()<55.; },
                         [&]() { return www.met_jer_pt()<55.; }
-                        )()                                   
+                        )()
                    )
                     )) return false;
         return true;
@@ -1876,17 +2182,21 @@ std::function<float()> Lambdas::Nj1CRKinSel(Variation::ExpSyst expsyst, Variatio
 std::function<float()> Lambdas::isSSem = [&]() { return (www.lep_pdgId().size() > 1) and (www.lep_pdgId()[0] * www.lep_pdgId()[1] == 143) and (abs(www.lep_pdgId()[1]) == 13); };
 std::function<float()> Lambdas::isSSme = [&]() { return (www.lep_pdgId().size() > 1) and (www.lep_pdgId()[0] * www.lep_pdgId()[1] == 143) and (abs(www.lep_pdgId()[1]) == 11); };
 
+std::function<float()> Lambdas::is0SFOSeem = [&]() { return (www.lep_pdgId().size() > 2) and (Lambdas::is0SFOS()) and ((abs(www.lep_pdgId()[0])+abs(www.lep_pdgId()[1])+abs(www.lep_pdgId()[2]))==35); };
+std::function<float()> Lambdas::is0SFOSemm = [&]() { return (www.lep_pdgId().size() > 2) and (Lambdas::is0SFOS()) and ((abs(www.lep_pdgId()[0])+abs(www.lep_pdgId()[1])+abs(www.lep_pdgId()[2]))==37); };
+
+
 std::function<float()> Lambdas::GammaCR(Variation::ExpSyst expsyst, Variation::Var var)
 {
     return [&, expsyst, var]()
     {
-        if(Lambdas::is0SFOS){
+        if(Lambdas::is0SFOS()){
           if( (Lambdas::METcut(expsyst,var,30.)())) return false;//nb = 0
         }
-        if(Lambdas::is1SFOS){
+        if(Lambdas::is1SFOS()){
           if( (Lambdas::METcut(expsyst,var,45.)())) return false;//nb = 0
         }
-        if(Lambdas::is2SFOS){
+        if(Lambdas::is2SFOS()){
           if( (Lambdas::METcut(expsyst,var,60.)())) return false;//nb = 0
         }
       return true;
