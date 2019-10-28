@@ -803,9 +803,6 @@ class FakeRates
             else if (www.nVlep() == 3)
             {
 
-                // Loop over lepton container and find the lepton that pass loose but not tight
-                std::vector<int> fake_lep_idxs;
-
                 // 0SFOS region eem
                 if (www.nSFOS() == 0 and (abs(www.lep_pdgId()[0]) + abs(www.lep_pdgId()[1]) + abs(www.lep_pdgId()[2])) == 35) //eem
                 {
@@ -879,6 +876,12 @@ class FakeRates
                     return -1;
                 }
 
+            }
+
+            // If neither nVlep == 2 or nVlep == 3 then it's not of interest to WWW
+            else
+            {
+                return -1;
             }
 
             // By now, only one lepton index should be pushed to fake_lep_idxs.
