@@ -4,7 +4,11 @@
 #include "wwwtree.h"
 #include "rooutil/rooutil.h"
 #include "InputConfig.h"
-#include "lambdas.h"
+
+namespace Lambdas
+{
+    extern std::function<float()> PassTightIsolationAR;
+}
 
 //_______________________________________________________________________________________________________
 class LeptonScaleFactors
@@ -759,12 +763,12 @@ class FakeRates
             // The 2016 version of EA correction uses "version-2"
             const std::vector<float>& reliso = (input.year == 2016) ? www.lep_relIso03EAv2Lep() : www.lep_relIso03EALep();
 
+            // Loop over lepton container and find the lepton that pass loose but not tight
+            std::vector<int> fake_lep_idxs;
+
             // If it is same-sign category
             if (www.nVlep() == 2)
             {
-
-                // Loop over lepton container and find the lepton that pass loose but not tight
-                std::vector<int> fake_lep_idxs;
 
                 for (unsigned int i = 0; i < www.lep_pdgId().size(); ++i)
                 {
@@ -844,9 +848,6 @@ class FakeRates
                 // The rest (i.e. 1SFOS or 2SFOS)
                 else if (www.nSFOS() > 0)
                 {
-
-                    // Straight forward 3 loose and 2 tight
-                    if ((nlooseele3l + nloosemuo) == 3 and (nmediumele + nmediummuo) == 2) return true;
 
                     for (unsigned int i = 0; i < www.lep_pdgId().size(); ++i)
                     {
