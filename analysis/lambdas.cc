@@ -1903,6 +1903,14 @@ std::function<float()> Lambdas::ThreeLepPresel(Variation::ExpSyst expsyst, Varia
         if(not (Lambdas::LeqOneJet30(expsyst,var)()))        return false;
         if(not (Lambdas::NBveto(expsyst,var,invert_btag)())) return false;
 //        if(not (Lambdas::NBvetoSoft(expsyst,var)()))         return false;
+        if(Lambdas::is0SFOS()){
+          if(not (www.lep_p4()[2].Pt()>25.))                 return false;
+          if(not (www.lep_p4()[1].Pt()>25.))                 return false;
+          if(not (www.lep_p4()[0].Pt()>25.))                 return false;
+        }
+        if(Lambdas::is1SFOS() or Lambdas::is2SFOS()){
+          if(Lambdas::CenJet30Cut(expsyst,var,1)())          return false;
+        }
         return true;
     };
 }
@@ -1978,7 +1986,7 @@ std::function<float()> Lambdas::KinSel3L(Variation::ExpSyst expsyst, Variation::
         return true;//right now I don't apply anything, best option seems to be tightening IDs only
       }
       else {
-        if(not (Lambdas::METcut(expsyst,var,60.)()))       return false;
+        //if(not (Lambdas::METcut(expsyst,var,60.)()))       return false;
         if(not (Lambdas::MTmaxcut(expsyst,var,90.)()))     return false;
         if (not (www.Pt3l() > 50.    ))                    return false;
         if(not (Lambdas::DPhi3lMETcut(expsyst,var,2.5)())) return false;

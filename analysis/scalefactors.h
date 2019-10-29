@@ -5,6 +5,11 @@
 #include "rooutil/rooutil.h"
 #include "InputConfig.h"
 
+namespace Lambdas
+{
+    extern std::function<float()> PassTightIsolationAR;
+}
+
 //_______________________________________________________________________________________________________
 class LeptonScaleFactors
 {
@@ -631,9 +636,9 @@ class FakeRates
         RooUtil::HistMap* histmap_2018_fr_3l_el_closure;
         RooUtil::HistMap* histmap_2018_fr_3l_mu_closure;
 
-        const float muiso_ss_thresh = 0.03;
-        const float eliso_ss_thresh = 0.03;
-        const float muiso_3l_thresh = 0.07;
+        const float muiso_ss_thresh = 0.04;
+        const float eliso_ss_thresh = 0.05;
+        const float muiso_3l_thresh = 0.04;
         const float eliso_3l_thresh = 0.05;
 
         FakeRates()
@@ -673,6 +678,7 @@ class FakeRates
             histmap_2018_fr_ss_mu_closure = 0;
             histmap_2018_fr_3l_el_closure = 0;
             histmap_2018_fr_3l_mu_closure = 0;
+
         }
 
         ~FakeRates()
@@ -689,14 +695,14 @@ class FakeRates
 
         void load2016()
         {
-            if (not histmap_2016_fr_ss_el        ) histmap_2016_fr_ss_el         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerates/fakerate_2016_ss.root:El_ptcorretarolled_data_fakerate");
-            if (not histmap_2016_fr_ss_mu        ) histmap_2016_fr_ss_mu         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerates/fakerate_2016_ss.root:Mu_ptcorretarolled_data_fakerate");
-            if (not histmap_2016_fr_3l_el        ) histmap_2016_fr_3l_el         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerates/fakerate_2016_3l.root:El_ptcorretarolled_data_fakerate");
-            if (not histmap_2016_fr_3l_mu        ) histmap_2016_fr_3l_mu         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerates/fakerate_2016_3l.root:Mu_ptcorretarolled_data_fakerate");
-            if (not histmap_2016_fr_ss_el_closure) histmap_2016_fr_ss_el_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerates/fakerate_2016_ss.root:El_ptcorretarolled_data_fakerateclosure");
-            if (not histmap_2016_fr_ss_mu_closure) histmap_2016_fr_ss_mu_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerates/fakerate_2016_ss.root:Mu_ptcorretarolled_data_fakerateclosure");
-            if (not histmap_2016_fr_3l_el_closure) histmap_2016_fr_3l_el_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerates/fakerate_2016_3l.root:El_ptcorretarolled_data_fakerateclosure");
-            if (not histmap_2016_fr_3l_mu_closure) histmap_2016_fr_3l_mu_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerates/fakerate_2016_3l.root:Mu_ptcorretarolled_data_fakerateclosure");
+            if (not histmap_2016_fr_ss_el        ) histmap_2016_fr_ss_el         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2016_ss.root:El_ptcorretarolled_data_fakerate");
+            if (not histmap_2016_fr_ss_mu        ) histmap_2016_fr_ss_mu         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2016_ss.root:Mu_ptcorretarolled_data_fakerate");
+            if (not histmap_2016_fr_3l_el        ) histmap_2016_fr_3l_el         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2016_3l.root:El_ptcorretarolled_data_fakerate");
+            if (not histmap_2016_fr_3l_mu        ) histmap_2016_fr_3l_mu         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2016_3l.root:Mu_ptcorretarolled_data_fakerate");
+            if (not histmap_2016_fr_ss_el_closure) histmap_2016_fr_ss_el_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2016_ss.root:El_ptcorretarolled_data_fakerateclosure");
+            if (not histmap_2016_fr_ss_mu_closure) histmap_2016_fr_ss_mu_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2016_ss.root:Mu_ptcorretarolled_data_fakerateclosure");
+            if (not histmap_2016_fr_3l_el_closure) histmap_2016_fr_3l_el_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2016_3l.root:El_ptcorretarolled_data_fakerateclosure");
+            if (not histmap_2016_fr_3l_mu_closure) histmap_2016_fr_3l_mu_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2016_3l.root:Mu_ptcorretarolled_data_fakerateclosure");
             histmap_fr_ss_el         = histmap_2016_fr_ss_el;
             histmap_fr_ss_mu         = histmap_2016_fr_ss_mu;
             histmap_fr_3l_el         = histmap_2016_fr_3l_el;
@@ -709,14 +715,14 @@ class FakeRates
 
         void load2017()
         {
-            if (not histmap_2017_fr_ss_el        ) histmap_2017_fr_ss_el         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerates/fakerate_2017_ss.root:El_ptcorretarolled_data_fakerate");
-            if (not histmap_2017_fr_ss_mu        ) histmap_2017_fr_ss_mu         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerates/fakerate_2017_ss.root:Mu_ptcorretarolled_data_fakerate");
-            if (not histmap_2017_fr_3l_el        ) histmap_2017_fr_3l_el         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerates/fakerate_2017_3l.root:El_ptcorretarolled_data_fakerate");
-            if (not histmap_2017_fr_3l_mu        ) histmap_2017_fr_3l_mu         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerates/fakerate_2017_3l.root:Mu_ptcorretarolled_data_fakerate");
-            if (not histmap_2017_fr_ss_el_closure) histmap_2017_fr_ss_el_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerates/fakerate_2017_ss.root:El_ptcorretarolled_data_fakerateclosure");
-            if (not histmap_2017_fr_ss_mu_closure) histmap_2017_fr_ss_mu_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerates/fakerate_2017_ss.root:Mu_ptcorretarolled_data_fakerateclosure");
-            if (not histmap_2017_fr_3l_el_closure) histmap_2017_fr_3l_el_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerates/fakerate_2017_3l.root:El_ptcorretarolled_data_fakerateclosure");
-            if (not histmap_2017_fr_3l_mu_closure) histmap_2017_fr_3l_mu_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerates/fakerate_2017_3l.root:Mu_ptcorretarolled_data_fakerateclosure");
+            if (not histmap_2017_fr_ss_el        ) histmap_2017_fr_ss_el         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2017_ss.root:El_ptcorretarolled_data_fakerate");
+            if (not histmap_2017_fr_ss_mu        ) histmap_2017_fr_ss_mu         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2017_ss.root:Mu_ptcorretarolled_data_fakerate");
+            if (not histmap_2017_fr_3l_el        ) histmap_2017_fr_3l_el         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2017_3l.root:El_ptcorretarolled_data_fakerate");
+            if (not histmap_2017_fr_3l_mu        ) histmap_2017_fr_3l_mu         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2017_3l.root:Mu_ptcorretarolled_data_fakerate");
+            if (not histmap_2017_fr_ss_el_closure) histmap_2017_fr_ss_el_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2017_ss.root:El_ptcorretarolled_data_fakerateclosure");
+            if (not histmap_2017_fr_ss_mu_closure) histmap_2017_fr_ss_mu_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2017_ss.root:Mu_ptcorretarolled_data_fakerateclosure");
+            if (not histmap_2017_fr_3l_el_closure) histmap_2017_fr_3l_el_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2017_3l.root:El_ptcorretarolled_data_fakerateclosure");
+            if (not histmap_2017_fr_3l_mu_closure) histmap_2017_fr_3l_mu_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2017_3l.root:Mu_ptcorretarolled_data_fakerateclosure");
             histmap_fr_ss_el         = histmap_2017_fr_ss_el;
             histmap_fr_ss_mu         = histmap_2017_fr_ss_mu;
             histmap_fr_3l_el         = histmap_2017_fr_3l_el;
@@ -729,14 +735,14 @@ class FakeRates
 
         void load2018()
         {
-            if (not histmap_2018_fr_ss_el        ) histmap_2018_fr_ss_el         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerates/fakerate_2018_ss.root:El_ptcorretarolled_data_fakerate");
-            if (not histmap_2018_fr_ss_mu        ) histmap_2018_fr_ss_mu         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerates/fakerate_2018_ss.root:Mu_ptcorretarolled_data_fakerate");
-            if (not histmap_2018_fr_3l_el        ) histmap_2018_fr_3l_el         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerates/fakerate_2018_3l.root:El_ptcorretarolled_data_fakerate");
-            if (not histmap_2018_fr_3l_mu        ) histmap_2018_fr_3l_mu         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerates/fakerate_2018_3l.root:Mu_ptcorretarolled_data_fakerate");
-            if (not histmap_2018_fr_ss_el_closure) histmap_2018_fr_ss_el_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerates/fakerate_2018_ss.root:El_ptcorretarolled_data_fakerateclosure");
-            if (not histmap_2018_fr_ss_mu_closure) histmap_2018_fr_ss_mu_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerates/fakerate_2018_ss.root:Mu_ptcorretarolled_data_fakerateclosure");
-            if (not histmap_2018_fr_3l_el_closure) histmap_2018_fr_3l_el_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerates/fakerate_2018_3l.root:El_ptcorretarolled_data_fakerateclosure");
-            if (not histmap_2018_fr_3l_mu_closure) histmap_2018_fr_3l_mu_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/fakerates/fakerate_2018_3l.root:Mu_ptcorretarolled_data_fakerateclosure");
+            if (not histmap_2018_fr_ss_el        ) histmap_2018_fr_ss_el         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2018_ss.root:El_ptcorretarolled_data_fakerate");
+            if (not histmap_2018_fr_ss_mu        ) histmap_2018_fr_ss_mu         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2018_ss.root:Mu_ptcorretarolled_data_fakerate");
+            if (not histmap_2018_fr_3l_el        ) histmap_2018_fr_3l_el         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2018_3l.root:El_ptcorretarolled_data_fakerate");
+            if (not histmap_2018_fr_3l_mu        ) histmap_2018_fr_3l_mu         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2018_3l.root:Mu_ptcorretarolled_data_fakerate");
+            if (not histmap_2018_fr_ss_el_closure) histmap_2018_fr_ss_el_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2018_ss.root:El_ptcorretarolled_data_fakerateclosure");
+            if (not histmap_2018_fr_ss_mu_closure) histmap_2018_fr_ss_mu_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2018_ss.root:Mu_ptcorretarolled_data_fakerateclosure");
+            if (not histmap_2018_fr_3l_el_closure) histmap_2018_fr_3l_el_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2018_3l.root:El_ptcorretarolled_data_fakerateclosure");
+            if (not histmap_2018_fr_3l_mu_closure) histmap_2018_fr_3l_mu_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2018_3l.root:Mu_ptcorretarolled_data_fakerateclosure");
             histmap_fr_ss_el         = histmap_2018_fr_ss_el;
             histmap_fr_ss_mu         = histmap_2018_fr_ss_mu;
             histmap_fr_3l_el         = histmap_2018_fr_3l_el;
@@ -749,23 +755,138 @@ class FakeRates
 
         int getFakeLepIndex()
         {
-            // Check the number of leptons
-            if ((www.nLlep() - 1) != www.nTlep())
+
+            // First check that this event is part of application region
+            if (not Lambdas::PassTightIsolationAR())
                 return -1;
 
-            // Retrieve the flags for the lepton ID
-            const vector<int>& istight = www.nVlep() == 2 ? www.lep_pass_VVV_cutbased_tight() : www.lep_pass_VVV_cutbased_3l_tight();
-            const vector<int>& isloose = www.nVlep() == 2 ? www.lep_pass_VVV_cutbased_fo() : www.lep_pass_VVV_cutbased_3l_fo();
+            // The 2016 version of EA correction uses "version-2"
+            const std::vector<float>& reliso = (input.year == 2016) ? www.lep_relIso03EAv2Lep() : www.lep_relIso03EALep();
 
-            // Figure out the index by whichever one is the loose but not tight
-            int index = -1;
-            for (int ilep = 0; ilep < www.nLlep(); ++ilep)
+            // Loop over lepton container and find the lepton that pass loose but not tight
+            std::vector<int> fake_lep_idxs;
+
+            // If it is same-sign category
+            if (www.nVlep() == 2)
             {
-                if (!istight[ilep] && isloose[ilep])
-                    index = ilep;
+
+                for (unsigned int i = 0; i < www.lep_pdgId().size(); ++i)
+                {
+
+                    // Electron IDs
+                    if (abs(www.lep_pdgId()[i]) == 11)
+                    {
+                        // Loose but not tight (Same-sign ID)
+                        if ((www.lep_pass_VVV_fo()[i] and reliso[i] >= 0.05) and (www.lep_pass_VVV_fo()[i] and reliso[i] <  0.40))
+                            fake_lep_idxs.push_back(i);
+                    }
+
+                    // Muon IDs
+                    if (abs(www.lep_pdgId()[i]) == 13)
+                    {
+                        if ((www.lep_pass_VVV_fo()[i] and reliso[i] >= 0.04) and (www.lep_pass_VVV_fo()[i] and reliso[i] < 0.40))
+                            fake_lep_idxs.push_back(i);
+                    }
+
+                }
+
+                if (fake_lep_idxs.size() != 1)
+                {
+                    // Something is wrong!
+                    std::cout << "I did not find the loose-but-not-tight lepton to apply the fake rate, although I think I should have found one" << std::endl;
+                    return -1;
+                }
+
             }
 
-            return index;
+            // If it is three lepton category
+            else if (www.nVlep() == 3)
+            {
+
+                // 0SFOS region eem
+                if (www.nSFOS() == 0 and (abs(www.lep_pdgId()[0]) + abs(www.lep_pdgId()[1]) + abs(www.lep_pdgId()[2])) == 35) //eem
+                {
+
+                    for (unsigned int i = 0; i < www.lep_pdgId().size(); ++i)
+                    {
+
+                        // Electron IDs
+                        if (abs(www.lep_pdgId()[i]) == 11)
+                        {
+                            // Loose but not tight (Same-sign ID)
+                            if ((www.lep_pass_VVV_fo()[i] and reliso[i] >= 0.05) and (www.lep_pass_VVV_fo()[i] and reliso[i] <  0.40))
+                                fake_lep_idxs.push_back(i);
+                        }
+
+                    }
+
+                }
+
+                // 0SFOS region emm
+                else if (www.nSFOS() == 0 and (abs(www.lep_pdgId()[0]) + abs(www.lep_pdgId()[1]) + abs(www.lep_pdgId()[2])) == 37) //emm
+                {
+
+                    for (unsigned int i = 0; i < www.lep_pdgId().size(); ++i)
+                    {
+
+                        // Muon IDs
+                        if (abs(www.lep_pdgId()[i]) == 13)
+                        {
+                            // Loose but not tight (Same-sign ID)
+                            if ((www.lep_pass_VVV_fo()[i] and reliso[i] >= 0.04) and (www.lep_pass_VVV_fo()[i] and reliso[i] <  0.40))
+                                fake_lep_idxs.push_back(i);
+                        }
+
+                    }
+
+
+                }
+
+                // The rest (i.e. 1SFOS or 2SFOS)
+                else if (www.nSFOS() > 0)
+                {
+
+                    for (unsigned int i = 0; i < www.lep_pdgId().size(); ++i)
+                    {
+
+                        // Electron IDs
+                        if (abs(www.lep_pdgId()[i]) == 11)
+                        {
+                            // Loose but not tight (three-lep ID)
+                            if ((www.lep_pass_VVV_3l_fo()[i] and reliso[i] >= 0.1) and (www.lep_pass_VVV_3l_fo()[i] and reliso[i] <  0.40))
+                                fake_lep_idxs.push_back(i);
+                        }
+
+                        // Muon IDs
+                        if (abs(www.lep_pdgId()[i]) == 13)
+                        {
+                            // Loose but not tight (three-lep ID)
+                            if ((www.lep_pass_VVV_fo()[i] and reliso[i] >= 0.15) and (www.lep_pass_VVV_fo()[i] and reliso[i] <  0.40))
+                                fake_lep_idxs.push_back(i);
+                        }
+
+                    }
+
+                }
+
+                if (fake_lep_idxs.size() != 1)
+                {
+                    // Something is wrong!
+                    std::cout << "I did not find the loose-but-not-tight lepton to apply the fake rate, although I think I should have found one" << std::endl;
+                    return -1;
+                }
+
+            }
+
+            // If neither nVlep == 2 or nVlep == 3 then it's not of interest to WWW
+            else
+            {
+                return -1;
+            }
+
+            // By now, only one lepton index should be pushed to fake_lep_idxs.
+            return fake_lep_idxs[0];
+
         }
 
         float getPtCorr()
@@ -776,29 +897,45 @@ class FakeRates
                 return 0;
 
             // Create an int to indicate which lepton id fakerate to use
-            int lepversion = 0;
-            if (www.nLlep() >= 3)
-                lepversion = 1;
+            float eliso_thresh;
+            float muiso_thresh;
+            if (www.nVlep() == 2)
+            {
+                eliso_thresh = 0.05;
+                muiso_thresh = 0.04;
+            }
+            else if (www.nVlep() == 3 and www.nSFOS() == 0 and (abs(www.lep_pdgId()[0]) + abs(www.lep_pdgId()[1]) + abs(www.lep_pdgId()[2])) == 35)
+            {
+                eliso_thresh = 0.05;
+                muiso_thresh = 0.04;
+            }
+            else if (www.nVlep() == 3 and www.nSFOS() == 0 and (abs(www.lep_pdgId()[0]) + abs(www.lep_pdgId()[1]) + abs(www.lep_pdgId()[2])) == 37)
+            {
+                eliso_thresh = 0.05;
+                muiso_thresh = 0.04;
+            }
+            else if (www.nVlep() == 3 and www.nSFOS() > 0)
+            {
+                eliso_thresh = 0.10;
+                muiso_thresh = 0.15;
+            }
 
+            // The 2016 version of EA correction uses "version-2"
+            const std::vector<float>& reliso = (input.year == 2016) ? www.lep_relIso03EAv2Lep() : www.lep_relIso03EALep();
+
+            // Compute the ptcorr
             float ptcorr = -1;
-            if (abs(www.lep_pdgId()[index]) == 11 and lepversion == 0)
+            if (abs(www.lep_pdgId()[index]) == 11)
             {
-                ptcorr = www.lep_pt()[index] * (1 + max((double) 0. , (double) www.lep_relIso03EAv2Lep()[index]-eliso_ss_thresh));
+                ptcorr = www.lep_pt()[index] * (1 + max((double) 0. , (double) reliso[index]-eliso_thresh));
             }
-            else if (abs(www.lep_pdgId()[index]) == 13 and lepversion == 0)
+            else if (abs(www.lep_pdgId()[index]) == 13)
             {
-                ptcorr = www.lep_pt()[index] * (1 + max((double) 0. , (double) www.lep_relIso03EAv2Lep()[index]-muiso_ss_thresh));
-//                std::cout <<  " ptcorr: " << ptcorr <<  " fabs(www.lep_eta()[index]): " << fabs(www.lep_eta()[index]) <<  " fr: " << fr <<  " muiso_ss_thresh: " << muiso_ss_thresh <<  std::endl;
+                ptcorr = www.lep_pt()[index] * (1 + max((double) 0. , (double) reliso[index]-muiso_thresh));
             }
-            else if (abs(www.lep_pdgId()[index]) == 11 and lepversion == 1)
-            {
-                ptcorr = www.lep_pt()[index] * (1 + max((double) 0. , (double) www.lep_relIso03EAv2Lep()[index]-eliso_3l_thresh));
-            }
-            else if (abs(www.lep_pdgId()[index]) == 13 and lepversion == 1)
-            {
-                ptcorr = www.lep_pt()[index] * (1 + max((double) 0. , (double) www.lep_relIso03EAv2Lep()[index]-muiso_3l_thresh));
-            }
+
             return ptcorr;
+
         }
 
         float getFakeFactor(int err=0, int lepflav=0, bool doclosureerr=false)
@@ -809,8 +946,22 @@ class FakeRates
 
             // Create an int to indicate which lepton id fakerate to use
             int lepversion = 0;
-            if (www.nLlep() >= 3)
+            if (www.nVlep() == 2)
+            {
+                lepversion = 0;
+            }
+            else if (www.nVlep() == 3 and www.nSFOS() == 0 and (abs(www.lep_pdgId()[0]) + abs(www.lep_pdgId()[1]) + abs(www.lep_pdgId()[2])) == 35)
+            {
                 lepversion = 1;
+            }
+            else if (www.nVlep() == 3 and www.nSFOS() == 0 and (abs(www.lep_pdgId()[0]) + abs(www.lep_pdgId()[1]) + abs(www.lep_pdgId()[2])) == 37)
+            {
+                lepversion = 1;
+            }
+            else if (www.nVlep() == 3 and www.nSFOS() > 0)
+            {
+                lepversion = 2;
+            }
 
             int lepid = abs(www.lep_pdgId()[index]);
             bool lepidmatchforerror = abs(lepid) == abs(lepflav);
@@ -901,6 +1052,58 @@ class FakeRates
             }
             else if (abs(www.lep_pdgId()[index]) == 13 and lepversion == 1)
             {
+                if (doclosureerr)
+                {
+                    if (err == 1 and lepidmatchforerror)
+                        fr = histmap_fr_3l_mu_closure->eval_up(ptcorr, fabs(www.lep_eta()[index]));
+                    else if (err ==-1 and lepidmatchforerror)
+                        fr = histmap_fr_3l_mu_closure->eval_down(ptcorr, fabs(www.lep_eta()[index]));
+                    else
+                        fr = histmap_fr_3l_mu_closure->eval(ptcorr, fabs(www.lep_eta()[index]));
+                    nom_fr = histmap_fr_3l_mu_closure->eval(ptcorr, fabs(www.lep_eta()[index]));
+                    closure_err_pct = fr / nom_fr;
+                    closure_ff = (nom_fr / (1 - nom_fr)) * (closure_err_pct);
+                    fr = (closure_ff / (1 + closure_ff));
+                }
+                else
+                {
+                    if (err == 1 and lepidmatchforerror)
+                        fr = histmap_fr_3l_mu->eval_up(ptcorr, fabs(www.lep_eta()[index]));
+                    else if (err ==-1 and lepidmatchforerror)
+                        fr = histmap_fr_3l_mu->eval_down(ptcorr, fabs(www.lep_eta()[index]));
+                    else
+                        fr = histmap_fr_3l_mu->eval(ptcorr, fabs(www.lep_eta()[index]));
+                }
+            }
+            else if (abs(www.lep_pdgId()[index]) == 11 and lepversion == 2)
+            {
+                // TODO: Need to update
+                if (doclosureerr)
+                {
+                    if (err == 1 and lepidmatchforerror)
+                        fr = histmap_fr_3l_el_closure->eval_up(ptcorr, fabs(www.lep_eta()[index]));
+                    else if (err ==-1 and lepidmatchforerror)
+                        fr = histmap_fr_3l_el_closure->eval_down(ptcorr, fabs(www.lep_eta()[index]));
+                    else
+                        fr = histmap_fr_3l_el_closure->eval(ptcorr, fabs(www.lep_eta()[index]));
+                    nom_fr = histmap_fr_3l_el_closure->eval(ptcorr, fabs(www.lep_eta()[index]));
+                    closure_err_pct = fr / nom_fr;
+                    closure_ff = (nom_fr / (1 - nom_fr)) * (closure_err_pct);
+                    fr = (closure_ff / (1 + closure_ff));
+                }
+                else
+                {
+                    if (err == 1 and lepidmatchforerror)
+                        fr = histmap_fr_3l_el->eval_up(ptcorr, fabs(www.lep_eta()[index]));
+                    else if (err ==-1 and lepidmatchforerror)
+                        fr = histmap_fr_3l_el->eval_down(ptcorr, fabs(www.lep_eta()[index]));
+                    else
+                        fr = histmap_fr_3l_el->eval(ptcorr, fabs(www.lep_eta()[index]));
+                }
+            }
+            else if (abs(www.lep_pdgId()[index]) == 13 and lepversion == 2)
+            {
+                // TODO: Need to update
                 if (doclosureerr)
                 {
                     if (err == 1 and lepidmatchforerror)
