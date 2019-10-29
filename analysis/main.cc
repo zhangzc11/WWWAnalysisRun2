@@ -544,10 +544,10 @@ int main(int argc, char** argv)
     ana.histograms.addHistogram("lep_ptcorr"               ,  180 , 0.      , 150    , [&]() { return fakerates.getPtCorr()                                                        ; });
     ana.histograms.addHistogram("el_ptcorr"                ,  {0., 20., 25., 30., 35., 50., 150.}, [&]() { return abs(www.lep_pdgId()[fakerates.getFakeLepIndex()]) == 11 ? fakerates.getPtCorr() : 0; });
     ana.histograms.addHistogram("mu_ptcorr"                ,  {0., 20., 25., 30., 35., 50., 150.}, [&]() { return abs(www.lep_pdgId()[fakerates.getFakeLepIndex()]) == 13 ? fakerates.getPtCorr() : 0; });
-    ana.histograms.addHistogram("el_ptcorr_cen"            ,  {0., 20., 25., 30., 35., 50., 150.}, [&]() { return abs(www.lep_pdgId()[fakerates.getFakeLepIndex()]) == 11 and fabs(www.lep_pdgId()[fakerates.getFakeLepIndex()]) < 1.6 ? fakerates.getPtCorr() : 0; });
-    ana.histograms.addHistogram("mu_ptcorr_cen"            ,  {0., 20., 25., 30., 35., 50., 150.}, [&]() { return abs(www.lep_pdgId()[fakerates.getFakeLepIndex()]) == 13 and fabs(www.lep_pdgId()[fakerates.getFakeLepIndex()]) < 1.6 ? fakerates.getPtCorr() : 0; });
-    ana.histograms.addHistogram("el_ptcorr_fwd"            ,  {0., 20., 25., 30., 35., 50., 150.}, [&]() { return abs(www.lep_pdgId()[fakerates.getFakeLepIndex()]) == 11 and fabs(www.lep_pdgId()[fakerates.getFakeLepIndex()]) >=1.6 ? fakerates.getPtCorr() : 0; });
-    ana.histograms.addHistogram("mu_ptcorr_fwd"            ,  {0., 20., 25., 30., 35., 50., 150.}, [&]() { return abs(www.lep_pdgId()[fakerates.getFakeLepIndex()]) == 13 and fabs(www.lep_pdgId()[fakerates.getFakeLepIndex()]) >=1.6 ? fakerates.getPtCorr() : 0; });
+    ana.histograms.addHistogram("el_ptcorr_cen"            ,  {0., 20., 25., 30., 35., 50., 150.}, [&]() { return abs(www.lep_pdgId()[fakerates.getFakeLepIndex()]) == 11 and fabs(www.lep_eta()[fakerates.getFakeLepIndex()]) < 1.6 ? fakerates.getPtCorr() : 0; });
+    ana.histograms.addHistogram("mu_ptcorr_cen"            ,  {0., 20., 25., 30., 35., 50., 150.}, [&]() { return abs(www.lep_pdgId()[fakerates.getFakeLepIndex()]) == 13 and fabs(www.lep_eta()[fakerates.getFakeLepIndex()]) < 1.6 ? fakerates.getPtCorr() : 0; });
+    ana.histograms.addHistogram("el_ptcorr_fwd"            ,  {0., 20., 25., 30., 35., 50., 150.}, [&]() { return abs(www.lep_pdgId()[fakerates.getFakeLepIndex()]) == 11 and fabs(www.lep_eta()[fakerates.getFakeLepIndex()]) >=1.6 ? fakerates.getPtCorr() : 0; });
+    ana.histograms.addHistogram("mu_ptcorr_fwd"            ,  {0., 20., 25., 30., 35., 50., 150.}, [&]() { return abs(www.lep_pdgId()[fakerates.getFakeLepIndex()]) == 13 and fabs(www.lep_eta()[fakerates.getFakeLepIndex()]) >=1.6 ? fakerates.getPtCorr() : 0; });
     ana.histograms.addHistogram("nj"                       ,  7   , 0.      , 7.     , [&]() { return www.nj()                                                                     ; });
     ana.histograms.addHistogram("nj30"                     ,  7   , 0.      , 7.     , [&]() { return www.nj30()                                                                   ; });
     ana.histograms.addHistogram("nb"                       ,  5   , 0.      , 5.     , [&]() { return www.nb()                                                                     ; });
@@ -613,6 +613,64 @@ int main(int argc, char** argv)
           }
         }
         return maxmuoiso;
+      });
+    ana.histograms.addHistogram("ele_fake_ptcoretahist"      ,  14 , 0.0     , 14.0    , [&]() {
+        if (www.lep_pdgId().size()<1) return float(-999.);
+        vector<float> reliso = ((input.year == 2016) ? (www.lep_relIso03EAv2Lep()) : (www.lep_relIso03EALep()));
+        float maxeleiso = -1;
+        bool fakeele = false;
+        float ptcor = -1;//0: <20, 1: 20-25, 2: 25-30, 3: 30-35, 4: 35-50, 5: 50-inf //+0.5
+        float eta = -1;//0: <1.6, +6: for >=6
+        for(unsigned int i = 0; i<reliso.size(); ++i){
+          if(abs(www.lep_pdgId()[i])!=11)   continue;
+          if(www.lep_motherIdSS()[i]>=0)    continue;
+          if(www.lep_motherIdSS()[i]==(-3)) continue;
+          if(reliso[i]>maxeleiso) maxeleiso = reliso[i];
+          else                    continue;
+          fakeele = true;
+          if(abs(www.lep_p4()[i].Eta())<1.6) eta = 0.;
+          else                               eta = 7.;
+          float lepcorpt = www.lep_pt()[i];
+          if((www.nSFOS()>=1) or (www.nSFOS()==0 and ((abs(www.lep_pdgId()[0])+abs(www.lep_pdgId()[1])+abs(www.lep_pdgId()[2]))==37) ) ) lepcorpt *= (1.+std::max(0.,reliso[i]-0.10));
+          else lepcorpt *= (1.+std::max(0.,reliso[i]-0.05));
+          if(     lepcorpt<20.)  ptcor = 1.5;
+          else if(lepcorpt<25.)  ptcor = 2.5;
+          else if(lepcorpt<30.)  ptcor = 3.5;
+          else if(lepcorpt<35.)  ptcor = 4.5;
+          else if(lepcorpt<50.)  ptcor = 5.5;
+          else                   ptcor = 6.5;
+        }
+        if(fakeele) return ptcor+eta;
+        return float(-999.);
+      });
+    ana.histograms.addHistogram("muo_fake_ptcoretahist"      ,  14 , 0.0     , 14.0    , [&]() {
+        if (www.lep_pdgId().size()<1) return float(-999.);
+        vector<float> reliso = ((input.year == 2016) ? (www.lep_relIso03EAv2Lep()) : (www.lep_relIso03EALep()));
+        float maxeleiso = -1.;
+        bool fakemuo = false;
+        float ptcor = -1;//0: <20, 1: 20-25, 2: 25-30, 3: 30-35, 4: 35-50, 5: 50-inf //+0.5
+        float eta = -1;//0: <1.6, +6: for >=6
+        for(unsigned int i = 0; i<reliso.size(); ++i){
+          if(abs(www.lep_pdgId()[i])!=13)   continue;
+          if(www.lep_motherIdSS()[i]>=0)    continue;
+          if(www.lep_motherIdSS()[i]==(-3)) continue;
+          if(reliso[i]>maxeleiso) maxeleiso = reliso[i];
+          else                    continue;
+          fakemuo = true;
+          if(abs(www.lep_p4()[i].Eta())<1.6) eta = 0.;
+          else                               eta = 7.;
+          float lepcorpt = www.lep_pt()[i];
+          if((www.nSFOS()>=1) or (www.nSFOS()==0 and ((abs(www.lep_pdgId()[0])+abs(www.lep_pdgId()[1])+abs(www.lep_pdgId()[2]))==35) ) ) lepcorpt *= (1.+std::max(0.,reliso[i]-0.15));
+          else lepcorpt *= (1.+std::max(0.,reliso[i]-0.04));
+          if(     lepcorpt<20.)  ptcor = 1.5;
+          else if(lepcorpt<25.)  ptcor = 2.5;
+          else if(lepcorpt<30.)  ptcor = 3.5;
+          else if(lepcorpt<35.)  ptcor = 4.5;
+          else if(lepcorpt<50.)  ptcor = 5.5;
+          else                   ptcor = 6.5;
+        }
+        if(fakemuo) return ptcor+eta;
+        return float(-999.);
       });
     ana.histograms.addHistogram("JetCentrality"            ,  180 , 0.      , 10.    , [&]()
             {
