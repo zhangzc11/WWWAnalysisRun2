@@ -1233,11 +1233,14 @@ int main(int argc, char** argv)
         ana.cutflow.addCutToLastActiveCut("WWVBSVRHighDEta" , Lambdas::HighDeta        (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("WWVBSVR"         , Lambdas::HighMJJ         (Variation::JES, Variation::Nominal), UNITY);
 
-        ana.cutflow.getCut("SRSSPresel");
+        ana.cutflow.getCut("CutSRDilep");
         ana.cutflow.addCutToLastActiveCut("ttWVRPresel"     , Lambdas::CenJet30Cut     (Variation::JES, Variation::Nominal,4), UNITY);//geq 4j
         ana.cutflow.addCutToLastActiveCut("ttWVRlNBgeq1"    , Lambdas::NBcut           (Variation::JES, Variation::Nominal,1), Lambdas::BTagScaleFactor);//geq 1b (loose)
+        ana.cutflow.getCut("ttWVRPresel");
         ana.cutflow.addCutToLastActiveCut("ttWVRmNBgeq1"    , Lambdas::NBmedcut        (Variation::JES, Variation::Nominal,1), Lambdas::BTagScaleFactor);
+        ana.cutflow.getCut("ttWVRPresel");
         ana.cutflow.addCutToLastActiveCut("ttWVRlNBgeq2"    , Lambdas::NBcut           (Variation::JES, Variation::Nominal,2), Lambdas::BTagScaleFactor);//geq 2b (loose)
+        ana.cutflow.getCut("ttWVRPresel");
         ana.cutflow.addCutToLastActiveCut("ttWVRmNBgeq2"    , Lambdas::NBmedcut        (Variation::JES, Variation::Nominal,2), Lambdas::BTagScaleFactor);
 
         ana.cutflow.getCut("CutSRTrilep");
