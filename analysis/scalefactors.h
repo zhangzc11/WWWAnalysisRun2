@@ -604,37 +604,53 @@ class FakeRates
         RooUtil::HistMap* histmap_fr_ss_mu;
         RooUtil::HistMap* histmap_fr_3l_el;
         RooUtil::HistMap* histmap_fr_3l_mu;
+        RooUtil::HistMap* histmap_fr_3l_el_medium;
+        RooUtil::HistMap* histmap_fr_3l_mu_medium;
         RooUtil::HistMap* histmap_fr_ss_el_closure;
         RooUtil::HistMap* histmap_fr_ss_mu_closure;
         RooUtil::HistMap* histmap_fr_3l_el_closure;
         RooUtil::HistMap* histmap_fr_3l_mu_closure;
+        RooUtil::HistMap* histmap_fr_3l_el_medium_closure;
+        RooUtil::HistMap* histmap_fr_3l_mu_medium_closure;
 
         RooUtil::HistMap* histmap_2016_fr_ss_el;
         RooUtil::HistMap* histmap_2016_fr_ss_mu;
         RooUtil::HistMap* histmap_2016_fr_3l_el;
         RooUtil::HistMap* histmap_2016_fr_3l_mu;
+        RooUtil::HistMap* histmap_2016_fr_3l_el_medium;
+        RooUtil::HistMap* histmap_2016_fr_3l_mu_medium;
         RooUtil::HistMap* histmap_2016_fr_ss_el_closure;
         RooUtil::HistMap* histmap_2016_fr_ss_mu_closure;
         RooUtil::HistMap* histmap_2016_fr_3l_el_closure;
         RooUtil::HistMap* histmap_2016_fr_3l_mu_closure;
+        RooUtil::HistMap* histmap_2016_fr_3l_el_medium_closure;
+        RooUtil::HistMap* histmap_2016_fr_3l_mu_medium_closure;
 
         RooUtil::HistMap* histmap_2017_fr_ss_el;
         RooUtil::HistMap* histmap_2017_fr_ss_mu;
         RooUtil::HistMap* histmap_2017_fr_3l_el;
         RooUtil::HistMap* histmap_2017_fr_3l_mu;
+        RooUtil::HistMap* histmap_2017_fr_3l_el_medium;
+        RooUtil::HistMap* histmap_2017_fr_3l_mu_medium;
         RooUtil::HistMap* histmap_2017_fr_ss_el_closure;
         RooUtil::HistMap* histmap_2017_fr_ss_mu_closure;
         RooUtil::HistMap* histmap_2017_fr_3l_el_closure;
         RooUtil::HistMap* histmap_2017_fr_3l_mu_closure;
+        RooUtil::HistMap* histmap_2017_fr_3l_el_medium_closure;
+        RooUtil::HistMap* histmap_2017_fr_3l_mu_medium_closure;
 
         RooUtil::HistMap* histmap_2018_fr_ss_el;
         RooUtil::HistMap* histmap_2018_fr_ss_mu;
         RooUtil::HistMap* histmap_2018_fr_3l_el;
         RooUtil::HistMap* histmap_2018_fr_3l_mu;
+        RooUtil::HistMap* histmap_2018_fr_3l_el_medium;
+        RooUtil::HistMap* histmap_2018_fr_3l_mu_medium;
         RooUtil::HistMap* histmap_2018_fr_ss_el_closure;
         RooUtil::HistMap* histmap_2018_fr_ss_mu_closure;
         RooUtil::HistMap* histmap_2018_fr_3l_el_closure;
         RooUtil::HistMap* histmap_2018_fr_3l_mu_closure;
+        RooUtil::HistMap* histmap_2018_fr_3l_el_medium_closure;
+        RooUtil::HistMap* histmap_2018_fr_3l_mu_medium_closure;
 
         const float muiso_ss_thresh = 0.04;
         const float eliso_ss_thresh = 0.05;
@@ -656,28 +672,40 @@ class FakeRates
             histmap_2016_fr_ss_mu = 0;
             histmap_2016_fr_3l_el = 0;
             histmap_2016_fr_3l_mu = 0;
+            histmap_2016_fr_3l_el_medium = 0;
+            histmap_2016_fr_3l_mu_medium = 0;
             histmap_2016_fr_ss_el_closure = 0;
             histmap_2016_fr_ss_mu_closure = 0;
             histmap_2016_fr_3l_el_closure = 0;
             histmap_2016_fr_3l_mu_closure = 0;
+            histmap_2016_fr_3l_el_medium_closure = 0;
+            histmap_2016_fr_3l_mu_medium_closure = 0;
 
             histmap_2017_fr_ss_el = 0;
             histmap_2017_fr_ss_mu = 0;
             histmap_2017_fr_3l_el = 0;
             histmap_2017_fr_3l_mu = 0;
+            histmap_2017_fr_3l_el_medium = 0;
+            histmap_2017_fr_3l_mu_medium = 0;
             histmap_2017_fr_ss_el_closure = 0;
             histmap_2017_fr_ss_mu_closure = 0;
             histmap_2017_fr_3l_el_closure = 0;
             histmap_2017_fr_3l_mu_closure = 0;
+            histmap_2017_fr_3l_el_medium_closure = 0;
+            histmap_2017_fr_3l_mu_medium_closure = 0;
 
             histmap_2018_fr_ss_el = 0;
             histmap_2018_fr_ss_mu = 0;
             histmap_2018_fr_3l_el = 0;
             histmap_2018_fr_3l_mu = 0;
+            histmap_2018_fr_3l_el_medium = 0;
+            histmap_2018_fr_3l_mu_medium = 0;
             histmap_2018_fr_ss_el_closure = 0;
             histmap_2018_fr_ss_mu_closure = 0;
             histmap_2018_fr_3l_el_closure = 0;
             histmap_2018_fr_3l_mu_closure = 0;
+            histmap_2018_fr_3l_el_medium_closure = 0;
+            histmap_2018_fr_3l_mu_medium_closure = 0;
 
         }
 
@@ -687,10 +715,14 @@ class FakeRates
             delete histmap_fr_ss_mu;
             delete histmap_fr_3l_el;
             delete histmap_fr_3l_mu;
+            delete histmap_fr_3l_el_medium;
+            delete histmap_fr_3l_mu_medium;
             delete histmap_fr_ss_el_closure;
             delete histmap_fr_ss_mu_closure;
             delete histmap_fr_3l_el_closure;
             delete histmap_fr_3l_mu_closure;
+            delete histmap_fr_3l_el_medium_closure;
+            delete histmap_fr_3l_mu_medium_closure;
         }
 
         void load2016()
@@ -701,8 +733,10 @@ class FakeRates
             if (not histmap_2016_fr_3l_mu        ) histmap_2016_fr_3l_mu         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2016_3l.root:Mu_ptcorretarolled_data_fakerate");
             if (not histmap_2016_fr_ss_el_closure) histmap_2016_fr_ss_el_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2016_ss.root:El_ptcorretarolled_data_fakerateclosure");
             if (not histmap_2016_fr_ss_mu_closure) histmap_2016_fr_ss_mu_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2016_ss.root:Mu_ptcorretarolled_data_fakerateclosure");
-            if (not histmap_2016_fr_3l_el_closure) histmap_2016_fr_3l_el_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2016_3l.root:El_ptcorretarolled_data_fakerateclosure");
-            if (not histmap_2016_fr_3l_mu_closure) histmap_2016_fr_3l_mu_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2016_3l.root:Mu_ptcorretarolled_data_fakerateclosure");
+            if (not histmap_2016_fr_3l_el_medium        ) histmap_2016_fr_3l_el_medium         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2016_3l.root:El_ptcorretarolled_data_fakerate");
+            if (not histmap_2016_fr_3l_mu_medium        ) histmap_2016_fr_3l_mu_medium         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2016_3l.root:Mu_ptcorretarolled_data_fakerate");
+            if (not histmap_2016_fr_3l_el_medium_closure) histmap_2016_fr_3l_el_medium_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2016_3l.root:El_ptcorretarolled_data_fakerateclosure");
+            if (not histmap_2016_fr_3l_mu_medium_closure) histmap_2016_fr_3l_mu_medium_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2016_3l.root:Mu_ptcorretarolled_data_fakerateclosure");
             histmap_fr_ss_el         = histmap_2016_fr_ss_el;
             histmap_fr_ss_mu         = histmap_2016_fr_ss_mu;
             histmap_fr_3l_el         = histmap_2016_fr_3l_el;
@@ -711,6 +745,10 @@ class FakeRates
             histmap_fr_ss_mu_closure = histmap_2016_fr_ss_mu_closure;
             histmap_fr_3l_el_closure = histmap_2016_fr_3l_el_closure;
             histmap_fr_3l_mu_closure = histmap_2016_fr_3l_mu_closure;
+            histmap_fr_3l_el_medium         = histmap_2016_fr_3l_el_medium;
+            histmap_fr_3l_mu_medium         = histmap_2016_fr_3l_mu_medium;
+            histmap_fr_3l_el_medium_closure = histmap_2016_fr_3l_el_medium_closure;
+            histmap_fr_3l_mu_medium_closure = histmap_2016_fr_3l_mu_medium_closure;
         }
 
         void load2017()
@@ -723,6 +761,10 @@ class FakeRates
             if (not histmap_2017_fr_ss_mu_closure) histmap_2017_fr_ss_mu_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2017_ss.root:Mu_ptcorretarolled_data_fakerateclosure");
             if (not histmap_2017_fr_3l_el_closure) histmap_2017_fr_3l_el_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2017_3l.root:El_ptcorretarolled_data_fakerateclosure");
             if (not histmap_2017_fr_3l_mu_closure) histmap_2017_fr_3l_mu_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2017_3l.root:Mu_ptcorretarolled_data_fakerateclosure");
+            if (not histmap_2017_fr_3l_el_medium        ) histmap_2017_fr_3l_el_medium         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2017_3l.root:El_ptcorretarolled_data_fakerate");
+            if (not histmap_2017_fr_3l_mu_medium        ) histmap_2017_fr_3l_mu_medium         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2017_3l.root:Mu_ptcorretarolled_data_fakerate");
+            if (not histmap_2017_fr_3l_el_medium_closure) histmap_2017_fr_3l_el_medium_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2017_3l.root:El_ptcorretarolled_data_fakerateclosure");
+            if (not histmap_2017_fr_3l_mu_medium_closure) histmap_2017_fr_3l_mu_medium_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2017_3l.root:Mu_ptcorretarolled_data_fakerateclosure");
             histmap_fr_ss_el         = histmap_2017_fr_ss_el;
             histmap_fr_ss_mu         = histmap_2017_fr_ss_mu;
             histmap_fr_3l_el         = histmap_2017_fr_3l_el;
@@ -731,6 +773,10 @@ class FakeRates
             histmap_fr_ss_mu_closure = histmap_2017_fr_ss_mu_closure;
             histmap_fr_3l_el_closure = histmap_2017_fr_3l_el_closure;
             histmap_fr_3l_mu_closure = histmap_2017_fr_3l_mu_closure;
+            histmap_fr_3l_el_medium         = histmap_2017_fr_3l_el_medium;
+            histmap_fr_3l_mu_medium         = histmap_2017_fr_3l_mu_medium;
+            histmap_fr_3l_el_medium_closure = histmap_2017_fr_3l_el_medium_closure;
+            histmap_fr_3l_mu_medium_closure = histmap_2017_fr_3l_mu_medium_closure;
         }
 
         void load2018()
@@ -743,6 +789,10 @@ class FakeRates
             if (not histmap_2018_fr_ss_mu_closure) histmap_2018_fr_ss_mu_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2018_ss.root:Mu_ptcorretarolled_data_fakerateclosure");
             if (not histmap_2018_fr_3l_el_closure) histmap_2018_fr_3l_el_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2018_3l.root:El_ptcorretarolled_data_fakerateclosure");
             if (not histmap_2018_fr_3l_mu_closure) histmap_2018_fr_3l_mu_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2018_3l.root:Mu_ptcorretarolled_data_fakerateclosure");
+            if (not histmap_2018_fr_3l_el_medium        ) histmap_2018_fr_3l_el_medium         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2018_3l.root:El_ptcorretarolled_data_fakerate");
+            if (not histmap_2018_fr_3l_mu_medium        ) histmap_2018_fr_3l_mu_medium         = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2018_3l.root:Mu_ptcorretarolled_data_fakerate");
+            if (not histmap_2018_fr_3l_el_medium_closure) histmap_2018_fr_3l_el_medium_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2018_3l.root:El_ptcorretarolled_data_fakerateclosure");
+            if (not histmap_2018_fr_3l_mu_medium_closure) histmap_2018_fr_3l_mu_medium_closure = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/FR_v5.3.0/test4_2019_10_27/fakerate_2018_3l.root:Mu_ptcorretarolled_data_fakerateclosure");
             histmap_fr_ss_el         = histmap_2018_fr_ss_el;
             histmap_fr_ss_mu         = histmap_2018_fr_ss_mu;
             histmap_fr_3l_el         = histmap_2018_fr_3l_el;
@@ -751,6 +801,10 @@ class FakeRates
             histmap_fr_ss_mu_closure = histmap_2018_fr_ss_mu_closure;
             histmap_fr_3l_el_closure = histmap_2018_fr_3l_el_closure;
             histmap_fr_3l_mu_closure = histmap_2018_fr_3l_mu_closure;
+            histmap_fr_3l_el_medium         = histmap_2018_fr_3l_el_medium;
+            histmap_fr_3l_mu_medium         = histmap_2018_fr_3l_mu_medium;
+            histmap_fr_3l_el_medium_closure = histmap_2018_fr_3l_el_medium_closure;
+            histmap_fr_3l_mu_medium_closure = histmap_2018_fr_3l_mu_medium_closure;
         }
 
         int getFakeLepIndex()
@@ -1077,16 +1131,15 @@ class FakeRates
             }
             else if (abs(www.lep_pdgId()[index]) == 11 and lepversion == 2)
             {
-                // TODO: Need to update
                 if (doclosureerr)
                 {
                     if (err == 1 and lepidmatchforerror)
-                        fr = histmap_fr_3l_el_closure->eval_up(ptcorr, fabs(www.lep_eta()[index]));
+                        fr = histmap_fr_3l_el_medium_closure->eval_up(ptcorr, fabs(www.lep_eta()[index]));
                     else if (err ==-1 and lepidmatchforerror)
-                        fr = histmap_fr_3l_el_closure->eval_down(ptcorr, fabs(www.lep_eta()[index]));
+                        fr = histmap_fr_3l_el_medium_closure->eval_down(ptcorr, fabs(www.lep_eta()[index]));
                     else
-                        fr = histmap_fr_3l_el_closure->eval(ptcorr, fabs(www.lep_eta()[index]));
-                    nom_fr = histmap_fr_3l_el_closure->eval(ptcorr, fabs(www.lep_eta()[index]));
+                        fr = histmap_fr_3l_el_medium_closure->eval(ptcorr, fabs(www.lep_eta()[index]));
+                    nom_fr = histmap_fr_3l_el_medium_closure->eval(ptcorr, fabs(www.lep_eta()[index]));
                     closure_err_pct = fr / nom_fr;
                     closure_ff = (nom_fr / (1 - nom_fr)) * (closure_err_pct);
                     fr = (closure_ff / (1 + closure_ff));
@@ -1094,25 +1147,24 @@ class FakeRates
                 else
                 {
                     if (err == 1 and lepidmatchforerror)
-                        fr = histmap_fr_3l_el->eval_up(ptcorr, fabs(www.lep_eta()[index]));
+                        fr = histmap_fr_3l_el_medium->eval_up(ptcorr, fabs(www.lep_eta()[index]));
                     else if (err ==-1 and lepidmatchforerror)
-                        fr = histmap_fr_3l_el->eval_down(ptcorr, fabs(www.lep_eta()[index]));
+                        fr = histmap_fr_3l_el_medium->eval_down(ptcorr, fabs(www.lep_eta()[index]));
                     else
-                        fr = histmap_fr_3l_el->eval(ptcorr, fabs(www.lep_eta()[index]));
+                        fr = histmap_fr_3l_el_medium->eval(ptcorr, fabs(www.lep_eta()[index]));
                 }
             }
             else if (abs(www.lep_pdgId()[index]) == 13 and lepversion == 2)
             {
-                // TODO: Need to update
                 if (doclosureerr)
                 {
                     if (err == 1 and lepidmatchforerror)
-                        fr = histmap_fr_3l_mu_closure->eval_up(ptcorr, fabs(www.lep_eta()[index]));
+                        fr = histmap_fr_3l_mu_medium_closure->eval_up(ptcorr, fabs(www.lep_eta()[index]));
                     else if (err ==-1 and lepidmatchforerror)
-                        fr = histmap_fr_3l_mu_closure->eval_down(ptcorr, fabs(www.lep_eta()[index]));
+                        fr = histmap_fr_3l_mu_medium_closure->eval_down(ptcorr, fabs(www.lep_eta()[index]));
                     else
-                        fr = histmap_fr_3l_mu_closure->eval(ptcorr, fabs(www.lep_eta()[index]));
-                    nom_fr = histmap_fr_3l_mu_closure->eval(ptcorr, fabs(www.lep_eta()[index]));
+                        fr = histmap_fr_3l_mu_medium_closure->eval(ptcorr, fabs(www.lep_eta()[index]));
+                    nom_fr = histmap_fr_3l_mu_medium_closure->eval(ptcorr, fabs(www.lep_eta()[index]));
                     closure_err_pct = fr / nom_fr;
                     closure_ff = (nom_fr / (1 - nom_fr)) * (closure_err_pct);
                     fr = (closure_ff / (1 + closure_ff));
@@ -1120,11 +1172,11 @@ class FakeRates
                 else
                 {
                     if (err == 1 and lepidmatchforerror)
-                        fr = histmap_fr_3l_mu->eval_up(ptcorr, fabs(www.lep_eta()[index]));
+                        fr = histmap_fr_3l_mu_medium->eval_up(ptcorr, fabs(www.lep_eta()[index]));
                     else if (err ==-1 and lepidmatchforerror)
-                        fr = histmap_fr_3l_mu->eval_down(ptcorr, fabs(www.lep_eta()[index]));
+                        fr = histmap_fr_3l_mu_medium->eval_down(ptcorr, fabs(www.lep_eta()[index]));
                     else
-                        fr = histmap_fr_3l_mu->eval(ptcorr, fabs(www.lep_eta()[index]));
+                        fr = histmap_fr_3l_mu_medium->eval(ptcorr, fabs(www.lep_eta()[index]));
                 }
             }
             else
