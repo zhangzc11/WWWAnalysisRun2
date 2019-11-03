@@ -697,6 +697,28 @@ int main(int argc, char** argv)
                 return float(sqrt(2*Et1*Et2*(1.0 - cos(phi1-phi2))));
             });
 
+    ana.histograms.addHistogram("ele_fake_iso_eta0pt0",  180, 0.0, 0.4, [&]() { return Lambdas::fake_iso(0, 11); });
+    ana.histograms.addHistogram("ele_fake_iso_eta0pt1",  180, 0.0, 0.4, [&]() { return Lambdas::fake_iso(1, 11); });
+    ana.histograms.addHistogram("ele_fake_iso_eta0pt2",  180, 0.0, 0.4, [&]() { return Lambdas::fake_iso(2, 11); });
+    ana.histograms.addHistogram("ele_fake_iso_eta0pt3",  180, 0.0, 0.4, [&]() { return Lambdas::fake_iso(3, 11); });
+    ana.histograms.addHistogram("ele_fake_iso_eta0pt4",  180, 0.0, 0.4, [&]() { return Lambdas::fake_iso(4, 11); });
+    ana.histograms.addHistogram("ele_fake_iso_eta1pt0",  180, 0.0, 0.4, [&]() { return Lambdas::fake_iso(5, 11); });
+    ana.histograms.addHistogram("ele_fake_iso_eta1pt1",  180, 0.0, 0.4, [&]() { return Lambdas::fake_iso(6, 11); });
+    ana.histograms.addHistogram("ele_fake_iso_eta1pt2",  180, 0.0, 0.4, [&]() { return Lambdas::fake_iso(7, 11); });
+    ana.histograms.addHistogram("ele_fake_iso_eta1pt3",  180, 0.0, 0.4, [&]() { return Lambdas::fake_iso(8, 11); });
+    ana.histograms.addHistogram("ele_fake_iso_eta1pt4",  180, 0.0, 0.4, [&]() { return Lambdas::fake_iso(9, 11); });
+
+    ana.histograms.addHistogram("muo_fake_iso_eta0pt0",  180, 0.0, 0.4, [&]() { return Lambdas::fake_iso(0, 13); });
+    ana.histograms.addHistogram("muo_fake_iso_eta0pt1",  180, 0.0, 0.4, [&]() { return Lambdas::fake_iso(1, 13); });
+    ana.histograms.addHistogram("muo_fake_iso_eta0pt2",  180, 0.0, 0.4, [&]() { return Lambdas::fake_iso(2, 13); });
+    ana.histograms.addHistogram("muo_fake_iso_eta0pt3",  180, 0.0, 0.4, [&]() { return Lambdas::fake_iso(3, 13); });
+    ana.histograms.addHistogram("muo_fake_iso_eta0pt4",  180, 0.0, 0.4, [&]() { return Lambdas::fake_iso(4, 13); });
+    ana.histograms.addHistogram("muo_fake_iso_eta1pt0",  180, 0.0, 0.4, [&]() { return Lambdas::fake_iso(5, 13); });
+    ana.histograms.addHistogram("muo_fake_iso_eta1pt1",  180, 0.0, 0.4, [&]() { return Lambdas::fake_iso(6, 13); });
+    ana.histograms.addHistogram("muo_fake_iso_eta1pt2",  180, 0.0, 0.4, [&]() { return Lambdas::fake_iso(7, 13); });
+    ana.histograms.addHistogram("muo_fake_iso_eta1pt3",  180, 0.0, 0.4, [&]() { return Lambdas::fake_iso(8, 13); });
+    ana.histograms.addHistogram("muo_fake_iso_eta1pt4",  180, 0.0, 0.4, [&]() { return Lambdas::fake_iso(9, 13); });
+
     // One bin histogram to hold the total yield at this cut stage
     ana.histograms.addHistogram("yield"                    ,  1   , 0.      , 1      , [&]() { return 0                                                                            ; });
 

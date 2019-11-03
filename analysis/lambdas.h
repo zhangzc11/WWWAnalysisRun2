@@ -237,6 +237,8 @@ namespace Lambdas
     std::function<float()> ttZWZfitRegion(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
 
     std::function<float()> KinSelNj1ee(   Variation::ExpSyst expsyst, Variation::Var var);
+
+    float fake_iso(int idx, int pdgid);
 }
 
 bool passTrigger2016();

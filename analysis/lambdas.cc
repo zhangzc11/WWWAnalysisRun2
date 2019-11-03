@@ -2324,4 +2324,134 @@ float getRawMVA(float notraw)
     return -0.5*log((2.0/(notraw+1))-1.0);
 }
 
+//_______________________________________________________________________________________________________
+float Lambdas::fake_iso(int idx, int pdgid)
+{
+    if (www.lep_pdgId().size() < 1)
+        return float(-999.);
+
+    float maxiso = -1;
+    bool isfake = false;
+    float ptcor = -1;//0: <20, 1: 20-25, 2: 25-30, 3: 30-35, 4: 35-50, 5: 50-inf //+0.5
+    float eta = -1;//0: <1.6, +6: for >=6
+
+    const float thresh3l = (abs(pdgid) == 11 ? 0.10 : 0.15);
+    const float threshss = (abs(pdgid) == 11 ? 0.05 : 0.04);
+    const float thresh = ((www.nVlep() == 2) or (www.nVlep() == 3 and www.nSFOS() == 0)) ? threshss : thresh3l;
+
+    vector<float> reliso = ((input.year == 2016) ? (www.lep_relIso03EAv2Lep()) : (www.lep_relIso03EALep()));
+
+    for (unsigned int i = 0; i < reliso.size(); ++i)
+    {
+
+        if (abs(www.lep_pdgId()[i]) != pdgid)
+            continue;
+        if (www.lep_motherIdSS()[i] >= 0)
+            continue;
+        if (www.lep_motherIdSS()[i] == (-3))
+            continue;
+
+        if (reliso[i] > maxiso)
+            maxiso = reliso[i];
+        else
+            continue;
+
+        isfake = true;
+
+        if (abs(www.lep_p4()[i].Eta()) < 1.6)
+            eta = 0.;
+        else
+            eta = 5.;
+
+        float lepcorpt = www.lep_pt()[i];
+        lepcorpt *= (1. + std::max(0., (double) reliso[i] - thresh));
+
+        if (lepcorpt < 20.)
+            ptcor = 0;
+        else if (lepcorpt < 25.)
+            ptcor = 1;
+        else if (lepcorpt < 30.)
+            ptcor = 2;
+        else if (lepcorpt < 35.)
+            ptcor = 3;
+        else
+            ptcor = 4;
+    }
+
+    if (isfake)
+    {
+        if (idx == ptcor + eta)
+        {
+            return maxiso;
+        }
+        else
+        {
+            return -999.;
+        }
+    }
+    else
+    {
+        return -999.;
+    }
+
+}
+
+// ana.histograms.addHistogram("ele_fake_ptcoretahist"      ,  14 , 0.0     , 14.0    , [&]() {
+//         if (www.lep_pdgId().size()<1) return float(-999.);
+//         vector<float> reliso = ((input.year == 2016) ? (www.lep_relIso03EAv2Lep()) : (www.lep_relIso03EALep()));
+//         float maxeleiso = -1;
+//         bool fakeele = false;
+//         float ptcor = -1;//0: <20, 1: 20-25, 2: 25-30, 3: 30-35, 4: 35-50, 5: 50-inf //+0.5
+//         float eta = -1;//0: <1.6, +6: for >=6
+//         for(unsigned int i = 0; i<reliso.size(); ++i){
+//         if(abs(www.lep_pdgId()[i])!=11)   continue;
+//         if(www.lep_motherIdSS()[i]>=0)    continue;
+//         if(www.lep_motherIdSS()[i]==(-3)) continue;
+//         if(reliso[i]>maxeleiso) maxeleiso = reliso[i];
+//         else                    continue;
+//         fakeele = true;
+//         if(abs(www.lep_p4()[i].Eta())<1.6) eta = 0.;
+//         else                               eta = 7.;
+//         float lepcorpt = www.lep_pt()[i];
+//         if((www.nSFOS()>=1) or (www.nSFOS()==0 and ((abs(www.lep_pdgId()[0])+abs(www.lep_pdgId()[1])+abs(www.lep_pdgId()[2]))==37) ) ) lepcorpt *= (1.+std::max(0.,reliso[i]-0.10));
+//         else lepcorpt *= (1.+std::max(0.,reliso[i]-0.05));
+//         if(     lepcorpt<20.)  ptcor = 1.5;
+//         else if(lepcorpt<25.)  ptcor = 2.5;
+//         else if(lepcorpt<30.)  ptcor = 3.5;
+//         else if(lepcorpt<35.)  ptcor = 4.5;
+//         else if(lepcorpt<50.)  ptcor = 5.5;
+//         else                   ptcor = 6.5;
+//         }
+//         if(fakeele) return ptcor+eta;
+//         return float(-999.);
+// });
+// ana.histograms.addHistogram("muo_fake_ptcoretahist"      ,  14 , 0.0     , 14.0    , [&]() {
+//         if (www.lep_pdgId().size()<1) return float(-999.);
+//         vector<float> reliso = ((input.year == 2016) ? (www.lep_relIso03EAv2Lep()) : (www.lep_relIso03EALep()));
+//         float maxeleiso = -1.;
+//         bool fakemuo = false;
+//         float ptcor = -1;//0: <20, 1: 20-25, 2: 25-30, 3: 30-35, 4: 35-50, 5: 50-inf //+0.5
+//         float eta = -1;//0: <1.6, +6: for >=6
+//         for(unsigned int i = 0; i<reliso.size(); ++i){
+//         if(abs(www.lep_pdgId()[i])!=13)   continue;
+//         if(www.lep_motherIdSS()[i]>=0)    continue;
+//         if(www.lep_motherIdSS()[i]==(-3)) continue;
+//         if(reliso[i]>maxeleiso) maxeleiso = reliso[i];
+//         else                    continue;
+//         fakemuo = true;
+//         if(abs(www.lep_p4()[i].Eta())<1.6) eta = 0.;
+//         else                               eta = 7.;
+//         float lepcorpt = www.lep_pt()[i];
+//         if((www.nSFOS()>=1) or (www.nSFOS()==0 and ((abs(www.lep_pdgId()[0])+abs(www.lep_pdgId()[1])+abs(www.lep_pdgId()[2]))==35) ) ) lepcorpt *= (1.+std::max(0.,reliso[i]-0.15));
+//         else lepcorpt *= (1.+std::max(0.,reliso[i]-0.04));
+//         if(     lepcorpt<20.)  ptcor = 1.5;
+//         else if(lepcorpt<25.)  ptcor = 2.5;
+//         else if(lepcorpt<30.)  ptcor = 3.5;
+//         else if(lepcorpt<35.)  ptcor = 4.5;
+//         else if(lepcorpt<50.)  ptcor = 5.5;
+//         else                   ptcor = 6.5;
+//         }
+//         if(fakemuo) return ptcor+eta;
+//         return float(-999.);
+// });
 
