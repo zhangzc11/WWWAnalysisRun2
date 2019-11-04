@@ -1258,6 +1258,7 @@ std::function<LV()> Lambdas::jetVec(Variation::ExpSyst expsyst, Variation::Var v
 std::function<float()> Lambdas::isSRSSeeChannel = [&]() { return (www.passSSee())*(www.MllSS()>20.); };
 std::function<float()> Lambdas::isSRSSemChannel = [&]() { return (www.passSSem())*(www.MllSS()>20.); };//2019/07/15: changed 30 --> 40
 std::function<float()> Lambdas::isSRSSmmChannel = [&]() { return (www.passSSmm())*(www.MllSS()>20.); };
+std::function<float()> Lambdas::isSRSS = [&]() { return (Lambdas::isSRSSeeChannel() or Lambdas::isSRSSemChannel() or Lambdas::isSRSSmmChannel()); };
 
 std::function<float()> Lambdas::LeqOneJet(Variation::ExpSyst expsyst, Variation::Var var)
 {
@@ -1472,9 +1473,9 @@ std::function<float()> Lambdas::NBveto(Variation::ExpSyst expsyst, Variation::Va
 std::function<float()> Lambdas::NBcut(Variation::ExpSyst expsyst, Variation::Var var, bool invert_btag, int value){
   return [&, expsyst, var, invert_btag, value]()
     {
-        if (not invert_btag)
+        if (invert_btag)
         {
-            if (not (
+            if (
                         jetVar(expsyst, var,
                             [&, value]() { return (www.nb_up()   >=value); },
                             [&, value]() { return (www.nb_dn()   >=value); },
@@ -1482,11 +1483,11 @@ std::function<float()> Lambdas::NBcut(Variation::ExpSyst expsyst, Variation::Var
                             [&, value]() { return (www.nb_jerup()>=value); },
                             [&, value]() { return (www.nb_jerdn()>=value); },
                             [&, value]() { return (www.nb_jer()  >=value); }
-                            )()                                    )) return false;
+                            )()                                    ) return false;
         }
         else
         {
-            if (not (
+            if (
                         jetVar(expsyst, var,
                             [&, value]() { return (www.nb_up()   <value); },
                             [&, value]() { return (www.nb_dn()   <value); },
@@ -1494,7 +1495,7 @@ std::function<float()> Lambdas::NBcut(Variation::ExpSyst expsyst, Variation::Var
                             [&, value]() { return (www.nb_jerup()<value); },
                             [&, value]() { return (www.nb_jerdn()<value); },
                             [&, value]() { return (www.nb_jer()  <value); }
-                            )()                                    )) return false;
+                            )()                                    ) return false;
         }
         return true;
     };
@@ -1561,13 +1562,13 @@ std::function<float()> Lambdas::NBmedcut(Variation::ExpSyst expsyst, Variation::
           }
         }
 
-        if (not invert_btag)
+        if (invert_btag)
         {
-          if ( nbmed<value ) return false;
+          if (nbmed>=value ) return false;
         }
         else
         {
-          if (nbmed>=value ) return false;
+          if (nbmed< value ) return false;
         }
         return true;
     };
@@ -1988,9 +1989,75 @@ std::function<float()> Lambdas::KinSel3L(Variation::ExpSyst expsyst, Variation::
       else {
         //if(not (Lambdas::METcut(expsyst,var,60.)()))       return false;
         if(not (Lambdas::MTmaxcut(expsyst,var,90.)()))     return false;
-        if (not (www.Pt3l() > 50.    ))                    return false;
+        if(not (www.Pt3l() > 50.    ))                     return false;
         if(not (Lambdas::DPhi3lMETcut(expsyst,var,2.5)())) return false;
       }
+      return true;
+    };
+}
+
+std::function<float()> Lambdas::KinSel3LInvertMTmax(Variation::ExpSyst expsyst, Variation::Var var)
+{
+    return [&, expsyst, var]()
+    {
+      //if(not (Lambdas::METcut(expsyst,var,60.)()))       return false;
+      if(    (Lambdas::MTmaxcut(expsyst,var,90.)()))     return false;
+      if(not (www.Pt3l() > 50.    ))                     return false;
+      if(not (Lambdas::DPhi3lMETcut(expsyst,var,2.5)())) return false;
+      return true;
+    };
+}
+
+std::function<float()> Lambdas::KinSel3LInvertPt3l(Variation::ExpSyst expsyst, Variation::Var var)
+{
+    return [&, expsyst, var]()
+    {
+      //if(not (Lambdas::METcut(expsyst,var,60.)()))       return false;
+      if(not (Lambdas::MTmaxcut(expsyst,var,90.)()))     return false;
+      if(    (www.Pt3l() > 50.    ))                     return false;
+      if(not (Lambdas::DPhi3lMETcut(expsyst,var,2.5)())) return false;
+      return true;
+   };
+}
+
+std::function<float()> Lambdas::KinSel3LInvertDPhi(Variation::ExpSyst expsyst, Variation::Var var)
+{
+    return [&, expsyst, var]()
+    {
+      //if(not (Lambdas::METcut(expsyst,var,60.)()))       return false;
+      if(not (Lambdas::MTmaxcut(expsyst,var,90.)()))     return false;
+      if(not (www.Pt3l() > 50.    ))                     return false;
+      if(    (Lambdas::DPhi3lMETcut(expsyst,var,2.5)())) return false;
+      return true;
+    };
+}
+std::function<float()> Lambdas::KinSel3LInvertExOne(Variation::ExpSyst expsyst, Variation::Var var)
+{
+    return [&, expsyst, var]()
+    {
+      if(Lambdas::KinSel3LInvertMTmax(expsyst, var)()) return true;
+      if(Lambdas::KinSel3LInvertPt3l( expsyst, var)()) return true;
+      if(Lambdas::KinSel3LInvertDPhi( expsyst, var)()) return true;
+      return false;
+    };
+}
+std::function<float()> Lambdas::KinSel3LInvertOne(Variation::ExpSyst expsyst, Variation::Var var)
+{
+    return [&, expsyst, var]()
+    {
+      if(not (Lambdas::MTmaxcut(expsyst,var,90.)()))     return true;
+      if(not (www.Pt3l() > 50.    ))                     return true;
+      if(not (Lambdas::DPhi3lMETcut(expsyst,var,2.5)())) return true;
+      return false;
+    };
+}
+std::function<float()> Lambdas::KinSel3LInvertAll(Variation::ExpSyst expsyst, Variation::Var var)
+{
+    return [&, expsyst, var]()
+    {
+      if(    (Lambdas::MTmaxcut(expsyst,var,90.)()))     return false;
+      if(    (www.Pt3l() > 50.    ))                     return false;
+      if(    (Lambdas::DPhi3lMETcut(expsyst,var,2.5)())) return false;
       return true;
     };
 }
@@ -2096,9 +2163,11 @@ std::function<float()> Lambdas::KinSel2SFOS(Variation::ExpSyst expsyst, Variatio
 
 std::function<float()> Lambdas::HasZ_SS = [&]() { return (abs(www.Mll3L()-91.1876)<20.||abs(www.Mll3L1()-91.1876)<20.); };//2019/07/16: changed this from 10 to 20 GeV to unify things
 std::function<float()> Lambdas::HasZ_3L = [&]() { return (abs(www.Mll3L()-91.1876)<20.||abs(www.Mll3L1()-91.1876)<20.); };
+std::function<float()> Lambdas::HasZcand_SS = [&]() { return (www.nSFOS()>=1); };//no Z mass window
+std::function<float()> Lambdas::HasZcand_3L = [&]() { return (www.nSFOS()>=1); };//no Z mass window
 
-std::function<float()> Lambdas::isWZCRSS = [&]() {
-        if (not (Lambdas::HasZ_SS() ))                 return false;
+std::function<float()> Lambdas::isWZCRSScand = [&]() {//no Z mass window
+        if (not (Lambdas::HasZcand_SS() ))             return false;
         if (www.lep_idx0_SS()<0)                       return false;
         if (www.lep_idx1_SS()<0)                       return false;
         if (www.lep_p4()[www.lep_idx0_SS() ].Pt()<25.) return false;
@@ -2106,7 +2175,21 @@ std::function<float()> Lambdas::isWZCRSS = [&]() {
         return true;
 };
 
+std::function<float()> Lambdas::isWZCRSS = [&]() {//Z mass window
+        if (not (Lambdas::HasZ_SS() ))                 return false;//nSFOS>=1 does not work, so do the lep3idx thing
+        if (www.lep_idx0_SS()<0)                       return false;
+        if (www.lep_idx1_SS()<0)                       return false;
+        if (www.lep_p4()[www.lep_idx0_SS() ].Pt()<25.) return false;
+        if (www.lep_p4()[www.lep_idx1_SS() ].Pt()<25.) return false;
+        int lep3idx = 0;
+        if(www.lep_idx0_SS()==0 || www.lep_idx1_SS()==0) lep3idx = 1;
+        if(www.lep_idx0_SS()==1 || www.lep_idx1_SS()==1) lep3idx = 2;
+        if( ((www.lep_pdgId()[www.lep_idx0_SS()])!=(-(www.lep_pdgId()[lep3idx]))) and ((www.lep_pdgId()[www.lep_idx1_SS()])!=(-(www.lep_pdgId()[lep3idx]))) ) return false;
+        return true;
+};
+
 std::function<float()> Lambdas::isWZCR3L = [&]() {
+        if (not (Lambdas::HasZcand_3L() ))             return false;
         if (not (Lambdas::HasZ_3L() ))                 return false;
         return true;
 };
@@ -2194,7 +2277,7 @@ std::function<float()> Lambdas::is0SFOSeem = [&]() { return (www.lep_pdgId().siz
 std::function<float()> Lambdas::is0SFOSemm = [&]() { return (www.lep_pdgId().size() > 2) and (Lambdas::is0SFOS()) and ((abs(www.lep_pdgId()[0])+abs(www.lep_pdgId()[1])+abs(www.lep_pdgId()[2]))==37); };
 
 
-std::function<float()> Lambdas::GammaCR(Variation::ExpSyst expsyst, Variation::Var var)
+std::function<float()> Lambdas::GammaCR(Variation::ExpSyst expsyst, Variation::Var var)//does not work anymore, as we don't have a MET cut
 {
     return [&, expsyst, var]()
     {
@@ -2210,6 +2293,22 @@ std::function<float()> Lambdas::GammaCR(Variation::ExpSyst expsyst, Variation::V
       return true;
     };
 }
+
+std::function<float()> Lambdas::GammaCRLowMT(Variation::ExpSyst expsyst, Variation::Var var)
+{
+    return [&, expsyst, var]()
+    {
+        if(Lambdas::is0SFOS()){
+          return false;//need to veto 0 SFOS
+        }
+        else if(Lambdas::is1SFOS() or Lambdas::is2SFOS()){
+          if(Lambdas::MTmaxcut(expsyst,var,90.)())     return false;
+        }
+        return true;
+    };
+}
+std::function<float()> Lambdas::GammaCRLowPt3l = [&]() { return ((www.nSFOS()>0) and (www.Pt3l() <= 50.)); };//need to veto 0 SFOS
+
 
 std::function<float()> Lambdas::ttZWZfitRegion(Variation::ExpSyst expsyst, Variation::Var var)
 {

@@ -153,6 +153,7 @@ namespace Lambdas
     extern std::function<float()> isSRSSeeChannel;
     extern std::function<float()> isSRSSemChannel;
     extern std::function<float()> isSRSSmmChannel;
+    extern std::function<float()> isSRSS;
 
     std::function<float()> CenJet30Cut(   Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, int value = 0);
     std::function<float()> LeqOneJet(     Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal); 
@@ -213,10 +214,19 @@ namespace Lambdas
     std::function<float()> KinSel0SFOS( Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
     std::function<float()> KinSel1SFOS( Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
     std::function<float()> KinSel2SFOS( Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()> KinSel3LInvertExOne(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()> KinSel3LInvertOne(  Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()> KinSel3LInvertMTmax(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()> KinSel3LInvertDPhi( Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()> KinSel3LInvertPt3l( Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()> KinSel3LInvertAll(  Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
 
+    
     // Inverting z-veto for lost-lepton CR
     extern std::function<float()> HasZ_SS;
     extern std::function<float()> HasZ_3L;
+    extern std::function<float()> HasZcand_SS;
+    extern std::function<float()> HasZcand_3L;
 
     // Split by channel
     extern std::function<float()> isSSem;
@@ -225,14 +235,16 @@ namespace Lambdas
     extern std::function<float()> is0SFOSemm;
 
     extern std::function<float()> isWZCRSS;
+    extern std::function<float()> isWZCRSScand;
     extern std::function<float()> isWZCR3L;
     
     std::function<float()> Nj1DRljMin(   Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
     std::function<float()> Nj1CRKinSel(  Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
 
     // Gamma CR
-    //extern std::function<float()> GammaCR;
-    std::function<float()> GammaCR(       Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()>        GammaCR(     Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()>        GammaCRLowMT(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    extern std::function<float()> GammaCRLowPt3l;
 
     std::function<float()> ttZWZfitRegion(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
 

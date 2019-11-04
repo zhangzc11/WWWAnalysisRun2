@@ -227,15 +227,15 @@ binorder9binSR=[
     "SR2SFOSFull",
     ]
 binorder9binPreSel=[
-    'SRSS1Jee1JPre',
-    'SRSS1Jem1JPre',
-    'SRSS1Jmm1JPre',
-    'SRSSeePreSel',
-    'SRSSemPreSel',
-    'SRSSmmPreSel',
-    'SR0SFOSPreSel',
-    'SR1SFOSPreSel',
-    'SR2SFOSPreSel',
+    'SRSSeeNsoftbVeto',
+    'SRSSemNsoftbVeto',
+    'SRSSmmNsoftbVeto',
+    'SRSS1JeeNsoftbVeto',
+    'SRSS1JemNsoftbVeto',
+    'SRSS1JmmNsoftbVeto',
+    'SR0SFOSNsoftbVeto',
+    'SR1SFOSNsoftbVeto',
+    'SR2SFOSNsoftbVeto',
     ]
 
 if args.usewhatSR:

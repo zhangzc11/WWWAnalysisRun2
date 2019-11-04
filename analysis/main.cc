@@ -1245,29 +1245,62 @@ int main(int argc, char** argv)
         //
         //************************************************************************************************************************************************************************************************
 
+        //validation of photon fakes
         ana.cutflow.getCut("CutSRTrilep");
-        ana.cutflow.addCutToLastActiveCut("GammaCR"         , Lambdas::GammaCR         (Variation::JES, Variation::Nominal), UNITY);//inverted MET cut
-
+        ana.cutflow.addCutToLastActiveCut("GammaCRLowMT"         , Lambdas::GammaCRLowMT(Variation::JES, Variation::Nominal), UNITY);//inverted MET cut
+        ana.cutflow.getCut("CutSRTrilep");
+        ana.cutflow.addCutToLastActiveCut("GammaCRLowPt3l"       , Lambdas::GammaCRLowPt3l                                  , UNITY);//inverted MET cut
+        ana.cutflow.addCutToLastActiveCut("GammaCRLowPt3lMT"     , Lambdas::GammaCRLowMT(Variation::JES, Variation::Nominal), UNITY);//inverted MET cut
+        //validation of WWjj (WW VBS)
         ana.cutflow.getCut("CutSRDilep");
         ana.cutflow.addCutToLastActiveCut("SRSSPresel"      , Lambdas::SSPreSelection  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
         ana.cutflow.addCutToLastActiveCut("WWVBSVRHighMJJ"  , Lambdas::HighMJJ         (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.getCut("SRSSPresel");
         ana.cutflow.addCutToLastActiveCut("WWVBSVRHighDEta" , Lambdas::HighDeta        (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("WWVBSVR"         , Lambdas::HighMJJ         (Variation::JES, Variation::Nominal), UNITY);
-
+        //validation of ttW
         ana.cutflow.getCut("CutSRDilep");
         ana.cutflow.addCutToLastActiveCut("ttWVRPresel"     , Lambdas::CenJet30Cut     (Variation::JES, Variation::Nominal,4), UNITY);//geq 4j
-        ana.cutflow.addCutToLastActiveCut("ttWVRlNBgeq1"    , Lambdas::NBcut           (Variation::JES, Variation::Nominal,1), Lambdas::BTagScaleFactor);//geq 1b (loose)
+        ana.cutflow.addCutToLastActiveCut("ttWVRlNBgeq1"    , Lambdas::NBcut           (Variation::JES, Variation::Nominal,false,1), Lambdas::BTagScaleFactor);//geq 1b (loose)
         ana.cutflow.getCut("ttWVRPresel");
-        ana.cutflow.addCutToLastActiveCut("ttWVRmNBgeq1"    , Lambdas::NBmedcut        (Variation::JES, Variation::Nominal,1), Lambdas::BTagScaleFactor);
+        ana.cutflow.addCutToLastActiveCut("ttWVRmNBgeq1"    , Lambdas::NBmedcut        (Variation::JES, Variation::Nominal,false,1), Lambdas::BTagScaleFactor);
         ana.cutflow.getCut("ttWVRPresel");
-        ana.cutflow.addCutToLastActiveCut("ttWVRlNBgeq2"    , Lambdas::NBcut           (Variation::JES, Variation::Nominal,2), Lambdas::BTagScaleFactor);//geq 2b (loose)
+        ana.cutflow.addCutToLastActiveCut("ttWVRlNBgeq2"    , Lambdas::NBcut           (Variation::JES, Variation::Nominal,false,2), Lambdas::BTagScaleFactor);//geq 2b (loose)
         ana.cutflow.getCut("ttWVRPresel");
-        ana.cutflow.addCutToLastActiveCut("ttWVRmNBgeq2"    , Lambdas::NBmedcut        (Variation::JES, Variation::Nominal,2), Lambdas::BTagScaleFactor);
-
+        ana.cutflow.addCutToLastActiveCut("ttWVRmNBgeq2"    , Lambdas::NBmedcut        (Variation::JES, Variation::Nominal,false,2), Lambdas::BTagScaleFactor);
+        //fit WZ vs. ttZ
         ana.cutflow.getCut("CutSRTrilep");
         ana.cutflow.addCutToLastActiveCut("ttZWZfitRegion"  , Lambdas::ttZWZfitRegion  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
+        //WZ validation SS
+        ana.cutflow.getCut("CutWZCRTrilep");
+        ana.cutflow.addCutToLastActiveCut("WZCRSSnoZmass"           , Lambdas::isWZCRSScand                                        , UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCRSSnoZcand"           , Lambdas::isSRSS                                              , UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCRSSnoZmassPreSel"     , Lambdas::SSPreSelection  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
+        ana.cutflow.addCutToLastActiveCut("WZCRSSnoZmassNsoftbVeto" , Lambdas::NBvetoSoft      (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCRSSnoZmassLowDetaMjj" , Lambdas::LowDEtaMJJ      (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCRSSnoZmassKinSel"     , Lambdas::SSKinSel        (Variation::JES, Variation::Nominal), UNITY);      
+        ana.cutflow.getCut("WZCRSSnoZcand");
+        ana.cutflow.addCutToLastActiveCut("WZCRSS1JnoZcand1JPre"     , Lambdas::SS1JPreselection (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCRSS1JnoZcandNsoftbVeto", Lambdas::NBvetoSoft       (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCRSS1JnoZcand1JKin"     , Lambdas::SS1J             (Variation::JES, Variation::Nominal), UNITY);
+        //WZ validation 3l
+        ana.cutflow.getCut("CutWZCRTrilep");
+        ana.cutflow.addCutToLastActiveCut("WZCR3LnoZmass"                 , Lambdas::HasZcand_3L                                            , UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCR3LnoZmassPreSel"           , Lambdas::ThreeLepPresel     (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
+        ana.cutflow.addCutToLastActiveCut("WZCR3LnoZmassDYVeto"           , Lambdas::DYVetoes                                               , UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCR3LnoZmassNsoftbVeto"       , Lambdas::NBvetoSoft         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCR3LnoZmassKinSelInvertOne"  , Lambdas::KinSel3LInvertOne  (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCR3LnoZmassKinSelInvertExOne", Lambdas::KinSel3LInvertExOne(Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.getCut("WZCR3LnoZmassKinSelInvertOne");
+        ana.cutflow.addCutToLastActiveCut("WZCR3LnoZmassKinSelInvertMTmax", Lambdas::KinSel3LInvertMTmax(Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.getCut("WZCR3LnoZmassKinSelInvertOne");
+        ana.cutflow.addCutToLastActiveCut("WZCR3LnoZmassKinSelInvertDPhi" , Lambdas::KinSel3LInvertDPhi (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.getCut("WZCR3LnoZmassKinSelInvertOne");
+        ana.cutflow.addCutToLastActiveCut("WZCR3LnoZmassKinSelInvertPt3l" , Lambdas::KinSel3LInvertPt3l (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.getCut("WZCR3LnoZmassKinSelInvertOne");
+        ana.cutflow.addCutToLastActiveCut("WZCR3LnoZmassKinSelInvertAll"  , Lambdas::KinSel3LInvertAll  (Variation::JES, Variation::Nominal), UNITY);
 
+        
     };
 
     // Here I create hook for users to add various cuts and histograms of their choice to make their own studies
