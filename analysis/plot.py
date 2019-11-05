@@ -226,17 +226,22 @@ binorder9binSR=[
     "SR1SFOSFull",
     "SR2SFOSFull",
     ]
-binorder9binPreSel=[
-    'SRSS1Jee1JPre',
-    'SRSS1Jem1JPre',
-    'SRSS1Jmm1JPre',
-    'SRSSeePreSel',
-    'SRSSemPreSel',
-    'SRSSmmPreSel',
-    'SR0SFOSPreSel',
-    'SR1SFOSPreSel',
-    'SR2SFOSPreSel',
+
+binorder9binSRnoFull=[
+    "SRSSeeMjjIn",
+    "SRSSemMjjIn",
+    "SRSSmmMjjIn",
+    "SRSSeeMjjOut",
+    "SRSSemMjjOut",
+    "SRSSmmMjjOut",
+    "SRSS1Jee",
+    "SRSS1Jem",
+    "SRSS1Jmm",    
+    "SR0SFOS",
+    "SR1SFOS",
+    "SR2SFOS",
     ]
+
 
 if args.usewhatSR:
     binorder9binSR = args.whatSR[0].split(',')
@@ -303,7 +308,7 @@ if hist_filters:
             data_fname="{}/data.root".format(input_dir),
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             legend_labels=legend_labels,
-            signal_labels=["WWW", "VH"],
+            signal_labels=["WWW ", "VH"],
             donorm=False,
             filter_pattern=hist_filters,
             signal_scale=sig_scale,
@@ -372,7 +377,7 @@ else:
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             output_name="yield_wzcr",
             legend_labels=legend_labels,
-            signal_labels=["WWW", "VH"],
+            signal_labels=["WWW ", "VH"],
             donorm=False,
             signal_scale=sig_scale,
             hsuffix="__yield",
@@ -405,7 +410,7 @@ else:
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             output_name="yield_ordered" if args.order_by_purity else "yield",
             legend_labels=legend_labels,
-            signal_labels=["WWW", "VH"],
+            signal_labels=["WWW ", "VH"],
             donorm=False,
             signal_scale=sig_scale,
             hsuffix="__yield",
@@ -425,17 +430,55 @@ else:
             )
 
     #__________________________________________________________________________________
-    # Draw the money plot (the preselection plots)
+    # Draw the money plot (the 9 bin plot), BDT
+    binorder=[ "{}BDT{}(1)".format(x, args.syst) for x in binorder9binSR ]
+    if args.order_by_purity:
+        binorder.reverse()
+        binlabels9binSR.reverse()
     p.plot_yields(
             fnames=bkg_fnames,
             sig_fnames=sig_fnames,
             data_fname="{}/data.root".format(input_dir),
-            regions=binorder9binPreSel,
-            binlabels=binorder9binPreSel,
+            regions=binorder,
+            binlabels=binlabels9binSR,
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
-            output_name="yield_presel",
+            output_name="yield_ordered_BDT" if args.order_by_purity else "yield_BDT",
             legend_labels=legend_labels,
-            signal_labels=["WWW", "VH"],
+            signal_labels=["WWW ", "VH"],
+            donorm=False,
+            signal_scale=sig_scale,
+            hsuffix="__yield",
+            extraoptions={
+                "bkg_sort_method": "unsorted",
+                "legend_scalex": 2.8,
+                "legend_scaley": 0.8,
+                "lumi_value": lumi,
+                "print_yield": True,
+                "legend_ncolumns": 3,
+                "ratio_range": [0., 2.],
+                "ymax_scale": 1.3,
+                #"yaxis_range": [0., 46.],
+                "blind": not args.draw_data, # BE CAREFUL!!!!!!!!!!!!!!!!!!
+                },
+            usercolors=histcolors,
+            )
+
+    #__________________________________________________________________________________
+    # Draw the money plot (the 9 bin plot), BDT, no Full
+    binorder=[ "{}BDT{}(1)".format(x, args.syst) for x in binorder9binSRnoFull ]
+    if args.order_by_purity:
+        binorder.reverse()
+        binlabels9binSR.reverse()
+    p.plot_yields(
+            fnames=bkg_fnames,
+            sig_fnames=sig_fnames,
+            data_fname="{}/data.root".format(input_dir),
+            regions=binorder,
+            binlabels=binlabels9binSR,
+            dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
+            output_name="yield_ordered_BDT_noFull" if args.order_by_purity else "yield_BDT_noFull",
+            legend_labels=legend_labels,
+            signal_labels=["WWW ", "VH"],
             donorm=False,
             signal_scale=sig_scale,
             hsuffix="__yield",
@@ -475,7 +518,7 @@ else:
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             output_name="yield_bcr",
             legend_labels=legend_labels,
-            signal_labels=["WWW", "VH"],
+            signal_labels=["WWW ", "VH"],
             donorm=False,
             signal_scale=sig_scale,
             hsuffix="__yield",
@@ -486,7 +529,7 @@ else:
                 "lumi_value": lumi,
                 "print_yield": True,
                 "legend_ncolumns": 3,
-                "ratio_range": [0., 2.],
+                "ratio_range": [0., 3.],
                 "ymax_scale": 1.3,
                 "blind": False,
                 },
@@ -517,7 +560,7 @@ else:
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             output_name="yield_ar",
             legend_labels=legend_labels_mc_fakes,
-            signal_labels=["WWW", "VH"],
+            signal_labels=["WWW ", "VH"],
             donorm=False,
             signal_scale=sig_scale,
             hsuffix="__yield",

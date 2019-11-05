@@ -307,9 +307,11 @@ def get_histnames(fpath, region, syst=""):
     f = r.TFile(fpath)
     rtn = []
     for key in f.GetListOfKeys():
-        if region in str(key.GetName()) and "FullBDT{}__yield".format(syst) in str(key.GetName()):
+        if region in str(key.GetName()) and "Full{}__yield".format(syst) in str(key.GetName()):
             name = str(key.GetName())
             name = name.replace("__yield", "")
+            if "SFOSe" in name:
+		continue
             rtn.append(name)
     return rtn;
 

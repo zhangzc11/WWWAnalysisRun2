@@ -183,11 +183,16 @@ namespace Lambdas
     std::function<float()> DRljMin3LCut(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, float value = 1.5); // Low Mjj
 
     std::function<float()> SSPreSelection(  Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, bool invert_btag=false);
+    std::function<float()> SSPreSelectionNoNb(  Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, bool invert_btag=false);
+    std::function<float()> SSPreSelectionBDT(  Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, bool invert_btag=false);
     std::function<float()> SSKinSel(        Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()> SSKinSelBDT(        Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
     std::function<float()> SSMjjIn(         Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
     std::function<float()> SSMjjOut(        Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
     std::function<float()> SS1JPreselection(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, bool invert_btag=false);
+    std::function<float()> SS1JPreselectionBDT(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, bool invert_btag=false);
     std::function<float()> SS1J(            Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()> SS1JBDT(            Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
 
     std::function<float()> SRSSeeSelection( Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
     std::function<float()> SRSSemSelection( Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
@@ -200,7 +205,21 @@ namespace Lambdas
     extern std::function<float()> is1SFOS;
     extern std::function<float()> is2SFOS;
 
+    extern std::function<float()> SRDilepCutBDT2JeeMjjIn;
+    extern std::function<float()> SRDilepCutBDT2JemMjjIn;
+    extern std::function<float()> SRDilepCutBDT2JmmMjjIn;
+    extern std::function<float()> SRDilepCutBDT2JeeMjjOut;
+    extern std::function<float()> SRDilepCutBDT2JemMjjOut;
+    extern std::function<float()> SRDilepCutBDT2JmmMjjOut;
+    extern std::function<float()> SRDilepCutBDT1Jee;
+    extern std::function<float()> SRDilepCutBDT1Jem;
+    extern std::function<float()> SRDilepCutBDT1Jmm;
+    extern std::function<float()> SRTrilepCutBDT0SFOS;
+    extern std::function<float()> SRTrilepCutBDT1SFOS;
+    extern std::function<float()> SRTrilepCutBDT2SFOS;
+
     std::function<float()> ThreeLepPresel(  Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, bool invert_btag=false);
+    std::function<float()> ThreeLepPreselBDT(  Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, bool invert_btag=false);
 
     extern std::function<float()> ZVeto3L;
     extern std::function<float()> DYAndZVetoes;
@@ -210,9 +229,13 @@ namespace Lambdas
     extern std::function<float()> DYVetoes2SFOS;
     std::function<float()> DPhi3lMETcut(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, float value=2.1);
     std::function<float()> KinSel3L(    Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()> KinSel3LBDT(    Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
     std::function<float()> KinSel0SFOS( Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
     std::function<float()> KinSel1SFOS( Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
     std::function<float()> KinSel2SFOS( Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()> KinSel0SFOSBDT( Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()> KinSel1SFOSBDT( Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()> KinSel2SFOSBDT( Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
 
     // Inverting z-veto for lost-lepton CR
     extern std::function<float()> HasZ_SS;
@@ -246,5 +269,6 @@ extern int this_lumi;
 extern unsigned long long this_evt;
 
 float getRawMVA(float raw);
+float VarXGBBDT(int idx=0, int var=0);
 
 #endif

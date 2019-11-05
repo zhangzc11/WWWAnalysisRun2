@@ -45,7 +45,8 @@ done
 if [ -z ${INPUT_BABY_VERSION} ]; then usage; fi
 if [ -z ${JOB_TAG}  ]; then usage; fi
 if [ -z ${USERNAME} ]; then USERNAME=mliu; fi
-if [ -z ${DOSKIM} ]; then JOBS=" -L -H"; fi
+#if [ -z ${DOSKIM} ]; then JOBS=" -L -H"; fi
+JOBS=" -L -H"
 
 # to shift away the parsed options
 shift $(($OPTIND - 1))
