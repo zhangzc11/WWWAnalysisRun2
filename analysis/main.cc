@@ -1610,7 +1610,9 @@ int main(int argc, char** argv)
         // And NO book cutflows!
 
         // // ---- Example showing how to filter out cuts and only run what one wants
+        // // Comment out the previous line that says "bookHistogramsForEndCuts()
         // ana.cutflow.filterCuts({"WZCRSSnoZmassKinSel", "WZCRSSnoZmassLowDetaMjj"});
+        // ana.cutflow.bookHistogramsForCutAndBelow("WZCRSSnoZmassLowDetaMjj");
 
     }
     else
