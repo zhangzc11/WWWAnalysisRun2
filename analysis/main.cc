@@ -1611,8 +1611,9 @@ int main(int argc, char** argv)
 
         // // ---- Example showing how to filter out cuts and only run what one wants
         // // Comment out the previous line that says "bookHistogramsForEndCuts()
-        // ana.cutflow.filterCuts({"WZCRSSnoZmassKinSel"});
-        // ana.cutflow.bookHistogramsForCutAndBelow("WZCRSSnoZmassLowDetaMjj");
+        // std::vector<TString> cuts_to_keep = {"WZCRSSnoZmassKinSel"};
+        // ana.cutflow.filterCuts(cuts_to_keep);
+        // ana.cutflow.bookHistogramsForCutAndBelow(ana.histograms, "WZCRSSnoZmassLowDetaMjj");
 
     }
     else
