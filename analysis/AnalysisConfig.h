@@ -60,6 +60,9 @@ public:
     // Once the study shows promising results, we can port them to the main work flow
     bool do_user_study;
 
+    // Flag to only book histogram with yield counts only (to speed up for systematics, TODO: implement for main part)
+    bool do_yield_histogram_only;
+
     // The TChain that holds the input TTree's
     TChain* events_tchain;
 

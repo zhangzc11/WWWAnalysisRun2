@@ -427,372 +427,168 @@ std::function<float()> Lambdas::FakeFactorVariation(Variation::FakeVar fakevar_,
 
     return [&, fakevar_, var_]()
     {
-    /*    static Variation::FakeVar fakevar;
+        static Variation::FakeVar fakevar;
         static Variation::Var var;
 
         fakevar = fakevar_;
         var = var_;
 
+        float ffwgt = fakerates.getFakeFactor();
+
+        if (ffwgt == 0)
+            return 0.f;
+
+        float v = 0;
+        if (var == Variation::Up)
+            v = 1;
+        else
+            v = -1;
+
+        float fr_frac_err = 0;
+        float cl_frac_err = 0;
+        float tot_frac_err= 0;
+
+        // Full uncertainty where the fake rate uncertainty and the closure errors are summed in quadrature
         if (fakevar == Variation::Full)
         {
-            if (input.year == 2016)
-            {
-                if (var == Variation::Up)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_full_up() / www.ffwgt();
-                else // else if (var == Variation::Down)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_full_dn() / www.ffwgt();
-            }
-            else if (input.year == 2017)
-            {
-                // TODO
-                return float(1);
-            }
-            else // else if (input.year == 2018) // TODO 2018 fake rate not computed yet
-            {
-                // TODO
-                return float(1);
-            }
+            fr_frac_err = abs(fakerates.getFakeFactor(v, 0) / ffwgt - 1);
+            cl_frac_err = abs(fakerates.getFakeFactor(v, 0, true) / ffwgt - 1);
+            tot_frac_err= sqrt(pow(fr_frac_err, 2) + pow(cl_frac_err, 2));
+            return (1.f + v * tot_frac_err);
         }
         else if (fakevar == Variation::Rate)
         {
-            if (input.year == 2016)
-            {
-                if (var == Variation::Up)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_up() / www.ffwgt();
-                else // else if (var == Variation::Down)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_dn() / www.ffwgt();
-            }
-            else if (input.year == 2017)
-            {
-                // TODO
-                return float(1);
-            }
-            else // else if (input.year == 2018) // TODO 2018 fake rate not computed yet
-            {
-                // TODO
-                return float(1);
-            }
+            fr_frac_err = abs(fakerates.getFakeFactor(v, 0) / ffwgt - 1);
+            cl_frac_err = 0;
+            tot_frac_err= sqrt(pow(fr_frac_err, 2) + pow(cl_frac_err, 2));
+            return (1.f + v * tot_frac_err);
         }
         else if (fakevar == Variation::Closure)
         {
-            if (input.year == 2016)
-            {
-                if (var == Variation::Up)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_up() / www.ffwgt();
-                else // else if (var == Variation::Down)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_dn() / www.ffwgt();
-            }
-            else if (input.year == 2017)
-            {
-                // TODO
-                return float(1);
-            }
-            else // else if (input.year == 2018) // TODO 2018 fake rate not computed yet
-            {
-                // TODO
-                return float(1);
-            }
+            fr_frac_err = 0;
+            cl_frac_err = abs(fakerates.getFakeFactor(v, 0, true) / ffwgt - 1);
+            tot_frac_err= sqrt(pow(fr_frac_err, 2) + pow(cl_frac_err, 2));
+            return (1.f + v * tot_frac_err);
         }
 
         // Split by electron/muons
         else if (fakevar == Variation::RateEl)
         {
-            if (input.year == 2016)
-            {
-                if (var == Variation::Up)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_el_up() / www.ffwgt();
-                else // else if (var == Variation::Down)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_el_dn() / www.ffwgt();
-            }
-            else if (input.year == 2017 || input.year == 2018)
-            {
-                if (var == Variation::Up)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor( 1, 11) / fakerates.getFakeFactor(0, 11);
-                else // else if (var == Variation::Down)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor(-1, 11) / fakerates.getFakeFactor(0, 11);
-            }
-            else // else if (input.year == 2018) // TODO 2018 fake rate not computed yet
-            {
-                // TODO
-                return float(1);
-            }
+            fr_frac_err = abs(fakerates.getFakeFactor(v, 11) / ffwgt - 1);
+            cl_frac_err = 0;
+            tot_frac_err= sqrt(pow(fr_frac_err, 2) + pow(cl_frac_err, 2));
+            return (1.f + v * tot_frac_err);
         }
 
         // Split by electron/muons
         else if (fakevar == Variation::RateSSEl)
         {
-            if (www.nLlep() >= 3) return float(1);
-            if (input.year == 2016)
-            {
-                if (var == Variation::Up)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_el_up() / www.ffwgt();
-                else // else if (var == Variation::Down)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_el_dn() / www.ffwgt();
-            }
-            else if (input.year == 2017 || input.year == 2018)
-            {
-                if (var == Variation::Up)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor( 1, 11) / fakerates.getFakeFactor(0, 11);
-                else // else if (var == Variation::Down)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor(-1, 11) / fakerates.getFakeFactor(0, 11);
-            }
-            else // else if (input.year == 2018) // TODO 2018 fake rate not computed yet
-            {
-                // TODO
-                return float(1);
-            }
+            if (www.nVlep() >= 3) return float(1);
+            fr_frac_err = abs(fakerates.getFakeFactor(v, 11) / ffwgt - 1);
+            cl_frac_err = 0;
+            tot_frac_err= sqrt(pow(fr_frac_err, 2) + pow(cl_frac_err, 2));
+            return (1.f + v * tot_frac_err);
         }
 
         // Split by electron/muons
         else if (fakevar == Variation::Rate3LEl)
         {
-            if (www.nLlep() < 3) return float(1);
-            if (input.year == 2016)
-            {
-                if (var == Variation::Up)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_el_up() / www.ffwgt();
-                else // else if (var == Variation::Down)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_el_dn() / www.ffwgt();
-            }
-            else if (input.year == 2017 || input.year == 2018)
-            {
-                if (var == Variation::Up)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor( 1, 11) / fakerates.getFakeFactor(0, 11);
-                else // else if (var == Variation::Down)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor(-1, 11) / fakerates.getFakeFactor(0, 11);
-            }
-            else // else if (input.year == 2018) // TODO 2018 fake rate not computed yet
-            {
-                // TODO
-                return float(1);
-            }
+            if (www.nVlep() < 3) return float(1);
+            fr_frac_err = abs(fakerates.getFakeFactor(v, 11) / ffwgt - 1);
+            cl_frac_err = 0;
+            tot_frac_err= sqrt(pow(fr_frac_err, 2) + pow(cl_frac_err, 2));
+            return (1.f + v * tot_frac_err);
         }
 
         // Split by electron/muons
         else if (fakevar == Variation::RateMu)
         {
-            if (input.year == 2016)
-            {
-                if (var == Variation::Up)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_mu_up() / www.ffwgt();
-                else // else if (var == Variation::Down)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_mu_dn() / www.ffwgt();
-            }
-            else if (input.year == 2017 || input.year == 2018)
-            {
-                if (var == Variation::Up)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor( 1, 13) / fakerates.getFakeFactor(0, 13);
-                else // else if (var == Variation::Down)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor(-1, 13) / fakerates.getFakeFactor(0, 13);
-            }
-            else // else if (input.year == 2018) // TODO 2018 fake rate not computed yet
-            {
-                // TODO
-                return float(1);
-            }
+            fr_frac_err = abs(fakerates.getFakeFactor(v, 13) / ffwgt - 1);
+            cl_frac_err = 0;
+            tot_frac_err= sqrt(pow(fr_frac_err, 2) + pow(cl_frac_err, 2));
+            return (1.f + v * tot_frac_err);
         }
 
         // Split by electron/muons
         else if (fakevar == Variation::RateSSMu)
         {
-            if (www.nLlep() >= 3) return float(1);
-            if (input.year == 2016)
-            {
-                if (var == Variation::Up)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_mu_up() / www.ffwgt();
-                else // else if (var == Variation::Down)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_mu_dn() / www.ffwgt();
-            }
-            else if (input.year == 2017 || input.year == 2018)
-            {
-                if (var == Variation::Up)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor( 1, 13) / fakerates.getFakeFactor(0, 13);
-                else // else if (var == Variation::Down)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor(-1, 13) / fakerates.getFakeFactor(0, 13);
-            }
-            else // else if (input.year == 2018) // TODO 2018 fake rate not computed yet
-            {
-                // TODO
-                return float(1);
-            }
+            if (www.nVlep() >= 3) return float(1);
+            fr_frac_err = abs(fakerates.getFakeFactor(v, 13) / ffwgt - 1);
+            cl_frac_err = 0;
+            tot_frac_err= sqrt(pow(fr_frac_err, 2) + pow(cl_frac_err, 2));
+            return (1.f + v * tot_frac_err);
         }
 
         // Split by electron/muons
         else if (fakevar == Variation::Rate3LMu)
         {
-            if (www.nLlep() < 3) return float(1);
-            if (input.year == 2016)
-            {
-                if (var == Variation::Up)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_mu_up() / www.ffwgt();
-                else // else if (var == Variation::Down)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_mu_dn() / www.ffwgt();
-            }
-            else if (input.year == 2017 || input.year == 2018)
-            {
-                if (var == Variation::Up)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor( 1, 13) / fakerates.getFakeFactor(0, 13);
-                else // else if (var == Variation::Down)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor(-1, 13) / fakerates.getFakeFactor(0, 13);
-            }
-            else // else if (input.year == 2018) // TODO 2018 fake rate not computed yet
-            {
-                // TODO
-                return float(1);
-            }
+            if (www.nVlep() < 3) return float(1);
+            fr_frac_err = abs(fakerates.getFakeFactor(v, 13) / ffwgt - 1);
+            cl_frac_err = 0;
+            tot_frac_err= sqrt(pow(fr_frac_err, 2) + pow(cl_frac_err, 2));
+            return (1.f + v * tot_frac_err);
         }
 
         // Split by electron/muons
         else if (fakevar == Variation::ClosureEl)
         {
-            if (input.year == 2016)
-            {
-                if (var == Variation::Up)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_el_up() / www.ffwgt();
-                else // else if (var == Variation::Down)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_el_dn() / www.ffwgt();
-            }
-            else if (input.year == 2017 || input.year == 2018)
-            {
-                if (var == Variation::Up)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor( 1, 11, true) / fakerates.getFakeFactor(0, 11);
-                else // else if (var == Variation::Down)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor(-1, 11, true) / fakerates.getFakeFactor(0, 11);
-            }
-            else // else if (input.year == 2018) // TODO 2018 fake rate not computed yet
-            {
-                // TODO
-                return float(1);
-            }
+            fr_frac_err = 0;
+            cl_frac_err = abs(fakerates.getFakeFactor(v, 11, true) / ffwgt - 1);
+            tot_frac_err= sqrt(pow(fr_frac_err, 2) + pow(cl_frac_err, 2));
+            return (1.f + v * tot_frac_err);
         }
 
         // Split by electron/muons
         else if (fakevar == Variation::ClosureSSEl)
         {
-            if (www.nLlep() >= 3) return float(1);
-            if (input.year == 2016)
-            {
-                if (var == Variation::Up)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_el_up() / www.ffwgt();
-                else // else if (var == Variation::Down)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_el_dn() / www.ffwgt();
-            }
-            else if (input.year == 2017 || input.year == 2018)
-            {
-                if (var == Variation::Up)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor( 1, 11, true) / fakerates.getFakeFactor(0, 11);
-                else // else if (var == Variation::Down)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor(-1, 11, true) / fakerates.getFakeFactor(0, 11);
-            }
-            else // else if (input.year == 2018) // TODO 2018 fake rate not computed yet
-            {
-                // TODO
-                return float(1);
-            }
+            if (www.nVlep() >= 3) return float(1);
+            fr_frac_err = 0;
+            cl_frac_err = abs(fakerates.getFakeFactor(v, 11, true) / ffwgt - 1);
+            tot_frac_err= sqrt(pow(fr_frac_err, 2) + pow(cl_frac_err, 2));
+            return (1.f + v * tot_frac_err);
         }
 
         // Split by electron/muons
         else if (fakevar == Variation::Closure3LEl)
         {
-            if (www.nLlep() < 3) return float(1);
-            if (input.year == 2016)
-            {
-                if (var == Variation::Up)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_el_up() / www.ffwgt();
-                else // else if (var == Variation::Down)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_el_dn() / www.ffwgt();
-            }
-            else if (input.year == 2017 || input.year == 2018)
-            {
-                if (var == Variation::Up)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor( 1, 11, true) / fakerates.getFakeFactor(0, 11);
-                else // else if (var == Variation::Down)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor(-1, 11, true) / fakerates.getFakeFactor(0, 11);
-            }
-            else // else if (input.year == 2018) // TODO 2018 fake rate not computed yet
-            {
-                // TODO
-                return float(1);
-            }
+            if (www.nVlep() < 3) return float(1);
+            fr_frac_err = 0;
+            cl_frac_err = abs(fakerates.getFakeFactor(v, 11, true) / ffwgt - 1);
+            tot_frac_err= sqrt(pow(fr_frac_err, 2) + pow(cl_frac_err, 2));
+            return (1.f + v * tot_frac_err);
         }
 
         // Split by electron/muons
         else if (fakevar == Variation::ClosureMu)
         {
-            if (input.year == 2016)
-            {
-                if (var == Variation::Up)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_mu_up() / www.ffwgt();
-                else // else if (var == Variation::Down)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_mu_dn() / www.ffwgt();
-            }
-            else if (input.year == 2017 || input.year == 2018)
-            {
-                if (var == Variation::Up)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor( 1, 13, true) / fakerates.getFakeFactor(0, 13);
-                else // else if (var == Variation::Down)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor(-1, 13, true) / fakerates.getFakeFactor(0, 13);
-            }
-            else // else if (input.year == 2018) // TODO 2018 fake rate not computed yet
-            {
-                // TODO
-                return float(1);
-            }
+            fr_frac_err = 0;
+            cl_frac_err = abs(fakerates.getFakeFactor(v, 13, true) / ffwgt - 1);
+            tot_frac_err= sqrt(pow(fr_frac_err, 2) + pow(cl_frac_err, 2));
+            return (1.f + v * tot_frac_err);
         }
 
         // Split by electron/muons
         else if (fakevar == Variation::ClosureSSMu)
         {
-            if (www.nLlep() >= 3) return float(1);
-            if (input.year == 2016)
-            {
-                if (var == Variation::Up)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_mu_up() / www.ffwgt();
-                else // else if (var == Variation::Down)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_mu_dn() / www.ffwgt();
-            }
-            else if (input.year == 2017 || input.year == 2018)
-            {
-                if (var == Variation::Up)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor( 1, 13, true) / fakerates.getFakeFactor(0, 13);
-                else // else if (var == Variation::Down)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor(-1, 13, true) / fakerates.getFakeFactor(0, 13);
-            }
-            else // else if (input.year == 2018) // TODO 2018 fake rate not computed yet
-            {
-                // TODO
-                return float(1);
-            }
+            if (www.nVlep() >= 3) return float(1);
+            fr_frac_err = 0;
+            cl_frac_err = abs(fakerates.getFakeFactor(v, 13, true) / ffwgt - 1);
+            tot_frac_err= sqrt(pow(fr_frac_err, 2) + pow(cl_frac_err, 2));
+            return (1.f + v * tot_frac_err);
         }
 
         // Split by electron/muons
         else // else if (fakevar == Variation::Closure3LMu)
         {
-            if (www.nLlep() < 3) return float(1);
-            if (input.year == 2016)
-            {
-                if (var == Variation::Up)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_mu_up() / www.ffwgt();
-                else // else if (var == Variation::Down)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_mu_dn() / www.ffwgt();
-            }
-            else if (input.year == 2017 || input.year == 2018)
-            {
-                if (var == Variation::Up)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor( 1, 13, true) / fakerates.getFakeFactor(0, 13);
-                else // else if (var == Variation::Down)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor(-1, 13, true) / fakerates.getFakeFactor(0, 13);
-            }
-            else // else if (input.year == 2018) // TODO 2018 fake rate not computed yet
-            {
-                // TODO
-                return float(1);
-            }
+            if (www.nVlep() < 3) return float(1);
+            fr_frac_err = 0;
+            cl_frac_err = abs(fakerates.getFakeFactor(v, 13, true) / ffwgt - 1);
+            tot_frac_err= sqrt(pow(fr_frac_err, 2) + pow(cl_frac_err, 2));
+            return (1.f + v * tot_frac_err);
         }
 
-*/
-                // TODO
-                return float(1);
+        // TODO
+        return float(1);
     };
 
 }
