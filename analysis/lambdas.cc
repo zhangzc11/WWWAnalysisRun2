@@ -427,372 +427,168 @@ std::function<float()> Lambdas::FakeFactorVariation(Variation::FakeVar fakevar_,
 
     return [&, fakevar_, var_]()
     {
-    /*    static Variation::FakeVar fakevar;
+        static Variation::FakeVar fakevar;
         static Variation::Var var;
 
         fakevar = fakevar_;
         var = var_;
 
+        float ffwgt = fakerates.getFakeFactor();
+
+        if (ffwgt == 0)
+            return 0.f;
+
+        float v = 0;
+        if (var == Variation::Up)
+            v = 1;
+        else
+            v = -1;
+
+        float fr_frac_err = 0;
+        float cl_frac_err = 0;
+        float tot_frac_err= 0;
+
+        // Full uncertainty where the fake rate uncertainty and the closure errors are summed in quadrature
         if (fakevar == Variation::Full)
         {
-            if (input.year == 2016)
-            {
-                if (var == Variation::Up)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_full_up() / www.ffwgt();
-                else // else if (var == Variation::Down)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_full_dn() / www.ffwgt();
-            }
-            else if (input.year == 2017)
-            {
-                // TODO
-                return float(1);
-            }
-            else // else if (input.year == 2018) // TODO 2018 fake rate not computed yet
-            {
-                // TODO
-                return float(1);
-            }
+            fr_frac_err = abs(fakerates.getFakeFactor(v, 0) / ffwgt - 1);
+            cl_frac_err = abs(fakerates.getFakeFactor(v, 0, true) / ffwgt - 1);
+            tot_frac_err= sqrt(pow(fr_frac_err, 2) + pow(cl_frac_err, 2));
+            return (1.f + v * tot_frac_err);
         }
         else if (fakevar == Variation::Rate)
         {
-            if (input.year == 2016)
-            {
-                if (var == Variation::Up)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_up() / www.ffwgt();
-                else // else if (var == Variation::Down)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_dn() / www.ffwgt();
-            }
-            else if (input.year == 2017)
-            {
-                // TODO
-                return float(1);
-            }
-            else // else if (input.year == 2018) // TODO 2018 fake rate not computed yet
-            {
-                // TODO
-                return float(1);
-            }
+            fr_frac_err = abs(fakerates.getFakeFactor(v, 0) / ffwgt - 1);
+            cl_frac_err = 0;
+            tot_frac_err= sqrt(pow(fr_frac_err, 2) + pow(cl_frac_err, 2));
+            return (1.f + v * tot_frac_err);
         }
         else if (fakevar == Variation::Closure)
         {
-            if (input.year == 2016)
-            {
-                if (var == Variation::Up)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_up() / www.ffwgt();
-                else // else if (var == Variation::Down)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_dn() / www.ffwgt();
-            }
-            else if (input.year == 2017)
-            {
-                // TODO
-                return float(1);
-            }
-            else // else if (input.year == 2018) // TODO 2018 fake rate not computed yet
-            {
-                // TODO
-                return float(1);
-            }
+            fr_frac_err = 0;
+            cl_frac_err = abs(fakerates.getFakeFactor(v, 0, true) / ffwgt - 1);
+            tot_frac_err= sqrt(pow(fr_frac_err, 2) + pow(cl_frac_err, 2));
+            return (1.f + v * tot_frac_err);
         }
 
         // Split by electron/muons
         else if (fakevar == Variation::RateEl)
         {
-            if (input.year == 2016)
-            {
-                if (var == Variation::Up)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_el_up() / www.ffwgt();
-                else // else if (var == Variation::Down)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_el_dn() / www.ffwgt();
-            }
-            else if (input.year == 2017 || input.year == 2018)
-            {
-                if (var == Variation::Up)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor( 1, 11) / fakerates.getFakeFactor(0, 11);
-                else // else if (var == Variation::Down)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor(-1, 11) / fakerates.getFakeFactor(0, 11);
-            }
-            else // else if (input.year == 2018) // TODO 2018 fake rate not computed yet
-            {
-                // TODO
-                return float(1);
-            }
+            fr_frac_err = abs(fakerates.getFakeFactor(v, 11) / ffwgt - 1);
+            cl_frac_err = 0;
+            tot_frac_err= sqrt(pow(fr_frac_err, 2) + pow(cl_frac_err, 2));
+            return (1.f + v * tot_frac_err);
         }
 
         // Split by electron/muons
         else if (fakevar == Variation::RateSSEl)
         {
-            if (www.nLlep() >= 3) return float(1);
-            if (input.year == 2016)
-            {
-                if (var == Variation::Up)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_el_up() / www.ffwgt();
-                else // else if (var == Variation::Down)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_el_dn() / www.ffwgt();
-            }
-            else if (input.year == 2017 || input.year == 2018)
-            {
-                if (var == Variation::Up)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor( 1, 11) / fakerates.getFakeFactor(0, 11);
-                else // else if (var == Variation::Down)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor(-1, 11) / fakerates.getFakeFactor(0, 11);
-            }
-            else // else if (input.year == 2018) // TODO 2018 fake rate not computed yet
-            {
-                // TODO
-                return float(1);
-            }
+            if (www.nVlep() >= 3) return float(1);
+            fr_frac_err = abs(fakerates.getFakeFactor(v, 11) / ffwgt - 1);
+            cl_frac_err = 0;
+            tot_frac_err= sqrt(pow(fr_frac_err, 2) + pow(cl_frac_err, 2));
+            return (1.f + v * tot_frac_err);
         }
 
         // Split by electron/muons
         else if (fakevar == Variation::Rate3LEl)
         {
-            if (www.nLlep() < 3) return float(1);
-            if (input.year == 2016)
-            {
-                if (var == Variation::Up)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_el_up() / www.ffwgt();
-                else // else if (var == Variation::Down)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_el_dn() / www.ffwgt();
-            }
-            else if (input.year == 2017 || input.year == 2018)
-            {
-                if (var == Variation::Up)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor( 1, 11) / fakerates.getFakeFactor(0, 11);
-                else // else if (var == Variation::Down)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor(-1, 11) / fakerates.getFakeFactor(0, 11);
-            }
-            else // else if (input.year == 2018) // TODO 2018 fake rate not computed yet
-            {
-                // TODO
-                return float(1);
-            }
+            if (www.nVlep() < 3) return float(1);
+            fr_frac_err = abs(fakerates.getFakeFactor(v, 11) / ffwgt - 1);
+            cl_frac_err = 0;
+            tot_frac_err= sqrt(pow(fr_frac_err, 2) + pow(cl_frac_err, 2));
+            return (1.f + v * tot_frac_err);
         }
 
         // Split by electron/muons
         else if (fakevar == Variation::RateMu)
         {
-            if (input.year == 2016)
-            {
-                if (var == Variation::Up)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_mu_up() / www.ffwgt();
-                else // else if (var == Variation::Down)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_mu_dn() / www.ffwgt();
-            }
-            else if (input.year == 2017 || input.year == 2018)
-            {
-                if (var == Variation::Up)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor( 1, 13) / fakerates.getFakeFactor(0, 13);
-                else // else if (var == Variation::Down)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor(-1, 13) / fakerates.getFakeFactor(0, 13);
-            }
-            else // else if (input.year == 2018) // TODO 2018 fake rate not computed yet
-            {
-                // TODO
-                return float(1);
-            }
+            fr_frac_err = abs(fakerates.getFakeFactor(v, 13) / ffwgt - 1);
+            cl_frac_err = 0;
+            tot_frac_err= sqrt(pow(fr_frac_err, 2) + pow(cl_frac_err, 2));
+            return (1.f + v * tot_frac_err);
         }
 
         // Split by electron/muons
         else if (fakevar == Variation::RateSSMu)
         {
-            if (www.nLlep() >= 3) return float(1);
-            if (input.year == 2016)
-            {
-                if (var == Variation::Up)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_mu_up() / www.ffwgt();
-                else // else if (var == Variation::Down)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_mu_dn() / www.ffwgt();
-            }
-            else if (input.year == 2017 || input.year == 2018)
-            {
-                if (var == Variation::Up)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor( 1, 13) / fakerates.getFakeFactor(0, 13);
-                else // else if (var == Variation::Down)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor(-1, 13) / fakerates.getFakeFactor(0, 13);
-            }
-            else // else if (input.year == 2018) // TODO 2018 fake rate not computed yet
-            {
-                // TODO
-                return float(1);
-            }
+            if (www.nVlep() >= 3) return float(1);
+            fr_frac_err = abs(fakerates.getFakeFactor(v, 13) / ffwgt - 1);
+            cl_frac_err = 0;
+            tot_frac_err= sqrt(pow(fr_frac_err, 2) + pow(cl_frac_err, 2));
+            return (1.f + v * tot_frac_err);
         }
 
         // Split by electron/muons
         else if (fakevar == Variation::Rate3LMu)
         {
-            if (www.nLlep() < 3) return float(1);
-            if (input.year == 2016)
-            {
-                if (var == Variation::Up)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_mu_up() / www.ffwgt();
-                else // else if (var == Variation::Down)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_mu_dn() / www.ffwgt();
-            }
-            else if (input.year == 2017 || input.year == 2018)
-            {
-                if (var == Variation::Up)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor( 1, 13) / fakerates.getFakeFactor(0, 13);
-                else // else if (var == Variation::Down)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor(-1, 13) / fakerates.getFakeFactor(0, 13);
-            }
-            else // else if (input.year == 2018) // TODO 2018 fake rate not computed yet
-            {
-                // TODO
-                return float(1);
-            }
+            if (www.nVlep() < 3) return float(1);
+            fr_frac_err = abs(fakerates.getFakeFactor(v, 13) / ffwgt - 1);
+            cl_frac_err = 0;
+            tot_frac_err= sqrt(pow(fr_frac_err, 2) + pow(cl_frac_err, 2));
+            return (1.f + v * tot_frac_err);
         }
 
         // Split by electron/muons
         else if (fakevar == Variation::ClosureEl)
         {
-            if (input.year == 2016)
-            {
-                if (var == Variation::Up)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_el_up() / www.ffwgt();
-                else // else if (var == Variation::Down)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_el_dn() / www.ffwgt();
-            }
-            else if (input.year == 2017 || input.year == 2018)
-            {
-                if (var == Variation::Up)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor( 1, 11, true) / fakerates.getFakeFactor(0, 11);
-                else // else if (var == Variation::Down)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor(-1, 11, true) / fakerates.getFakeFactor(0, 11);
-            }
-            else // else if (input.year == 2018) // TODO 2018 fake rate not computed yet
-            {
-                // TODO
-                return float(1);
-            }
+            fr_frac_err = 0;
+            cl_frac_err = abs(fakerates.getFakeFactor(v, 11, true) / ffwgt - 1);
+            tot_frac_err= sqrt(pow(fr_frac_err, 2) + pow(cl_frac_err, 2));
+            return (1.f + v * tot_frac_err);
         }
 
         // Split by electron/muons
         else if (fakevar == Variation::ClosureSSEl)
         {
-            if (www.nLlep() >= 3) return float(1);
-            if (input.year == 2016)
-            {
-                if (var == Variation::Up)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_el_up() / www.ffwgt();
-                else // else if (var == Variation::Down)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_el_dn() / www.ffwgt();
-            }
-            else if (input.year == 2017 || input.year == 2018)
-            {
-                if (var == Variation::Up)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor( 1, 11, true) / fakerates.getFakeFactor(0, 11);
-                else // else if (var == Variation::Down)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor(-1, 11, true) / fakerates.getFakeFactor(0, 11);
-            }
-            else // else if (input.year == 2018) // TODO 2018 fake rate not computed yet
-            {
-                // TODO
-                return float(1);
-            }
+            if (www.nVlep() >= 3) return float(1);
+            fr_frac_err = 0;
+            cl_frac_err = abs(fakerates.getFakeFactor(v, 11, true) / ffwgt - 1);
+            tot_frac_err= sqrt(pow(fr_frac_err, 2) + pow(cl_frac_err, 2));
+            return (1.f + v * tot_frac_err);
         }
 
         // Split by electron/muons
         else if (fakevar == Variation::Closure3LEl)
         {
-            if (www.nLlep() < 3) return float(1);
-            if (input.year == 2016)
-            {
-                if (var == Variation::Up)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_el_up() / www.ffwgt();
-                else // else if (var == Variation::Down)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_el_dn() / www.ffwgt();
-            }
-            else if (input.year == 2017 || input.year == 2018)
-            {
-                if (var == Variation::Up)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor( 1, 11, true) / fakerates.getFakeFactor(0, 11);
-                else // else if (var == Variation::Down)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor(-1, 11, true) / fakerates.getFakeFactor(0, 11);
-            }
-            else // else if (input.year == 2018) // TODO 2018 fake rate not computed yet
-            {
-                // TODO
-                return float(1);
-            }
+            if (www.nVlep() < 3) return float(1);
+            fr_frac_err = 0;
+            cl_frac_err = abs(fakerates.getFakeFactor(v, 11, true) / ffwgt - 1);
+            tot_frac_err= sqrt(pow(fr_frac_err, 2) + pow(cl_frac_err, 2));
+            return (1.f + v * tot_frac_err);
         }
 
         // Split by electron/muons
         else if (fakevar == Variation::ClosureMu)
         {
-            if (input.year == 2016)
-            {
-                if (var == Variation::Up)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_mu_up() / www.ffwgt();
-                else // else if (var == Variation::Down)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_mu_dn() / www.ffwgt();
-            }
-            else if (input.year == 2017 || input.year == 2018)
-            {
-                if (var == Variation::Up)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor( 1, 13, true) / fakerates.getFakeFactor(0, 13);
-                else // else if (var == Variation::Down)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor(-1, 13, true) / fakerates.getFakeFactor(0, 13);
-            }
-            else // else if (input.year == 2018) // TODO 2018 fake rate not computed yet
-            {
-                // TODO
-                return float(1);
-            }
+            fr_frac_err = 0;
+            cl_frac_err = abs(fakerates.getFakeFactor(v, 13, true) / ffwgt - 1);
+            tot_frac_err= sqrt(pow(fr_frac_err, 2) + pow(cl_frac_err, 2));
+            return (1.f + v * tot_frac_err);
         }
 
         // Split by electron/muons
         else if (fakevar == Variation::ClosureSSMu)
         {
-            if (www.nLlep() >= 3) return float(1);
-            if (input.year == 2016)
-            {
-                if (var == Variation::Up)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_mu_up() / www.ffwgt();
-                else // else if (var == Variation::Down)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_mu_dn() / www.ffwgt();
-            }
-            else if (input.year == 2017 || input.year == 2018)
-            {
-                if (var == Variation::Up)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor( 1, 13, true) / fakerates.getFakeFactor(0, 13);
-                else // else if (var == Variation::Down)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor(-1, 13, true) / fakerates.getFakeFactor(0, 13);
-            }
-            else // else if (input.year == 2018) // TODO 2018 fake rate not computed yet
-            {
-                // TODO
-                return float(1);
-            }
+            if (www.nVlep() >= 3) return float(1);
+            fr_frac_err = 0;
+            cl_frac_err = abs(fakerates.getFakeFactor(v, 13, true) / ffwgt - 1);
+            tot_frac_err= sqrt(pow(fr_frac_err, 2) + pow(cl_frac_err, 2));
+            return (1.f + v * tot_frac_err);
         }
 
         // Split by electron/muons
         else // else if (fakevar == Variation::Closure3LMu)
         {
-            if (www.nLlep() < 3) return float(1);
-            if (input.year == 2016)
-            {
-                if (var == Variation::Up)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_mu_up() / www.ffwgt();
-                else // else if (var == Variation::Down)
-                    return www.ffwgt() == 0 ? 0 : www.ffwgt_closure_mu_dn() / www.ffwgt();
-            }
-            else if (input.year == 2017 || input.year == 2018)
-            {
-                if (var == Variation::Up)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor( 1, 13, true) / fakerates.getFakeFactor(0, 13);
-                else // else if (var == Variation::Down)
-                    return fakerates.getFakeFactor() == 0 ? 0 : fakerates.getFakeFactor(-1, 13, true) / fakerates.getFakeFactor(0, 13);
-            }
-            else // else if (input.year == 2018) // TODO 2018 fake rate not computed yet
-            {
-                // TODO
-                return float(1);
-            }
+            if (www.nVlep() < 3) return float(1);
+            fr_frac_err = 0;
+            cl_frac_err = abs(fakerates.getFakeFactor(v, 13, true) / ffwgt - 1);
+            tot_frac_err= sqrt(pow(fr_frac_err, 2) + pow(cl_frac_err, 2));
+            return (1.f + v * tot_frac_err);
         }
 
-*/
-                // TODO
-                return float(1);
+        // TODO
+        return float(1);
     };
 
 }
@@ -1258,6 +1054,7 @@ std::function<LV()> Lambdas::jetVec(Variation::ExpSyst expsyst, Variation::Var v
 std::function<float()> Lambdas::isSRSSeeChannel = [&]() { return (www.passSSee())*(www.MllSS()>20.); };
 std::function<float()> Lambdas::isSRSSemChannel = [&]() { return (www.passSSem())*(www.MllSS()>20.); };//2019/07/15: changed 30 --> 40
 std::function<float()> Lambdas::isSRSSmmChannel = [&]() { return (www.passSSmm())*(www.MllSS()>20.); };
+std::function<float()> Lambdas::isSRSS = [&]() { return (Lambdas::isSRSSeeChannel() or Lambdas::isSRSSemChannel() or Lambdas::isSRSSmmChannel()); };
 
 std::function<float()> Lambdas::LeqOneJet(Variation::ExpSyst expsyst, Variation::Var var)
 {
@@ -1472,9 +1269,9 @@ std::function<float()> Lambdas::NBveto(Variation::ExpSyst expsyst, Variation::Va
 std::function<float()> Lambdas::NBcut(Variation::ExpSyst expsyst, Variation::Var var, bool invert_btag, int value){
   return [&, expsyst, var, invert_btag, value]()
     {
-        if (not invert_btag)
+        if (invert_btag)
         {
-            if (not (
+            if (
                         jetVar(expsyst, var,
                             [&, value]() { return (www.nb_up()   >=value); },
                             [&, value]() { return (www.nb_dn()   >=value); },
@@ -1482,11 +1279,11 @@ std::function<float()> Lambdas::NBcut(Variation::ExpSyst expsyst, Variation::Var
                             [&, value]() { return (www.nb_jerup()>=value); },
                             [&, value]() { return (www.nb_jerdn()>=value); },
                             [&, value]() { return (www.nb_jer()  >=value); }
-                            )()                                    )) return false;
+                            )()                                    ) return false;
         }
         else
         {
-            if (not (
+            if (
                         jetVar(expsyst, var,
                             [&, value]() { return (www.nb_up()   <value); },
                             [&, value]() { return (www.nb_dn()   <value); },
@@ -1494,7 +1291,7 @@ std::function<float()> Lambdas::NBcut(Variation::ExpSyst expsyst, Variation::Var
                             [&, value]() { return (www.nb_jerup()<value); },
                             [&, value]() { return (www.nb_jerdn()<value); },
                             [&, value]() { return (www.nb_jer()  <value); }
-                            )()                                    )) return false;
+                            )()                                    ) return false;
         }
         return true;
     };
@@ -1561,13 +1358,13 @@ std::function<float()> Lambdas::NBmedcut(Variation::ExpSyst expsyst, Variation::
           }
         }
 
-        if (not invert_btag)
+        if (invert_btag)
         {
-          if ( nbmed<value ) return false;
+          if (nbmed>=value ) return false;
         }
         else
         {
-          if (nbmed>=value ) return false;
+          if (nbmed< value ) return false;
         }
         return true;
     };
@@ -1988,9 +1785,75 @@ std::function<float()> Lambdas::KinSel3L(Variation::ExpSyst expsyst, Variation::
       else {
         //if(not (Lambdas::METcut(expsyst,var,60.)()))       return false;
         if(not (Lambdas::MTmaxcut(expsyst,var,90.)()))     return false;
-        if (not (www.Pt3l() > 50.    ))                    return false;
+        if(not (www.Pt3l() > 50.    ))                     return false;
         if(not (Lambdas::DPhi3lMETcut(expsyst,var,2.5)())) return false;
       }
+      return true;
+    };
+}
+
+std::function<float()> Lambdas::KinSel3LInvertMTmax(Variation::ExpSyst expsyst, Variation::Var var)
+{
+    return [&, expsyst, var]()
+    {
+      //if(not (Lambdas::METcut(expsyst,var,60.)()))       return false;
+      if(    (Lambdas::MTmaxcut(expsyst,var,90.)()))     return false;
+      if(not (www.Pt3l() > 50.    ))                     return false;
+      if(not (Lambdas::DPhi3lMETcut(expsyst,var,2.5)())) return false;
+      return true;
+    };
+}
+
+std::function<float()> Lambdas::KinSel3LInvertPt3l(Variation::ExpSyst expsyst, Variation::Var var)
+{
+    return [&, expsyst, var]()
+    {
+      //if(not (Lambdas::METcut(expsyst,var,60.)()))       return false;
+      if(not (Lambdas::MTmaxcut(expsyst,var,90.)()))     return false;
+      if(    (www.Pt3l() > 50.    ))                     return false;
+      if(not (Lambdas::DPhi3lMETcut(expsyst,var,2.5)())) return false;
+      return true;
+   };
+}
+
+std::function<float()> Lambdas::KinSel3LInvertDPhi(Variation::ExpSyst expsyst, Variation::Var var)
+{
+    return [&, expsyst, var]()
+    {
+      //if(not (Lambdas::METcut(expsyst,var,60.)()))       return false;
+      if(not (Lambdas::MTmaxcut(expsyst,var,90.)()))     return false;
+      if(not (www.Pt3l() > 50.    ))                     return false;
+      if(    (Lambdas::DPhi3lMETcut(expsyst,var,2.5)())) return false;
+      return true;
+    };
+}
+std::function<float()> Lambdas::KinSel3LInvertExOne(Variation::ExpSyst expsyst, Variation::Var var)
+{
+    return [&, expsyst, var]()
+    {
+      if(Lambdas::KinSel3LInvertMTmax(expsyst, var)()) return true;
+      if(Lambdas::KinSel3LInvertPt3l( expsyst, var)()) return true;
+      if(Lambdas::KinSel3LInvertDPhi( expsyst, var)()) return true;
+      return false;
+    };
+}
+std::function<float()> Lambdas::KinSel3LInvertOne(Variation::ExpSyst expsyst, Variation::Var var)
+{
+    return [&, expsyst, var]()
+    {
+      if(not (Lambdas::MTmaxcut(expsyst,var,90.)()))     return true;
+      if(not (www.Pt3l() > 50.    ))                     return true;
+      if(not (Lambdas::DPhi3lMETcut(expsyst,var,2.5)())) return true;
+      return false;
+    };
+}
+std::function<float()> Lambdas::KinSel3LInvertAll(Variation::ExpSyst expsyst, Variation::Var var)
+{
+    return [&, expsyst, var]()
+    {
+      if(    (Lambdas::MTmaxcut(expsyst,var,90.)()))     return false;
+      if(    (www.Pt3l() > 50.    ))                     return false;
+      if(    (Lambdas::DPhi3lMETcut(expsyst,var,2.5)())) return false;
       return true;
     };
 }
@@ -2096,9 +1959,11 @@ std::function<float()> Lambdas::KinSel2SFOS(Variation::ExpSyst expsyst, Variatio
 
 std::function<float()> Lambdas::HasZ_SS = [&]() { return (abs(www.Mll3L()-91.1876)<20.||abs(www.Mll3L1()-91.1876)<20.); };//2019/07/16: changed this from 10 to 20 GeV to unify things
 std::function<float()> Lambdas::HasZ_3L = [&]() { return (abs(www.Mll3L()-91.1876)<20.||abs(www.Mll3L1()-91.1876)<20.); };
+std::function<float()> Lambdas::HasZcand_SS = [&]() { return (www.nSFOS()>=1); };//no Z mass window
+std::function<float()> Lambdas::HasZcand_3L = [&]() { return (www.nSFOS()>=1); };//no Z mass window
 
-std::function<float()> Lambdas::isWZCRSS = [&]() {
-        if (not (Lambdas::HasZ_SS() ))                 return false;
+std::function<float()> Lambdas::isWZCRSScand = [&]() {//no Z mass window
+        if (not (Lambdas::HasZcand_SS() ))             return false;
         if (www.lep_idx0_SS()<0)                       return false;
         if (www.lep_idx1_SS()<0)                       return false;
         if (www.lep_p4()[www.lep_idx0_SS() ].Pt()<25.) return false;
@@ -2106,7 +1971,21 @@ std::function<float()> Lambdas::isWZCRSS = [&]() {
         return true;
 };
 
+std::function<float()> Lambdas::isWZCRSS = [&]() {//Z mass window
+        if (not (Lambdas::HasZ_SS() ))                 return false;//nSFOS>=1 does not work, so do the lep3idx thing
+        if (www.lep_idx0_SS()<0)                       return false;
+        if (www.lep_idx1_SS()<0)                       return false;
+        if (www.lep_p4()[www.lep_idx0_SS() ].Pt()<25.) return false;
+        if (www.lep_p4()[www.lep_idx1_SS() ].Pt()<25.) return false;
+        int lep3idx = 0;
+        if(www.lep_idx0_SS()==0 || www.lep_idx1_SS()==0) lep3idx = 1;
+        if(www.lep_idx0_SS()==1 || www.lep_idx1_SS()==1) lep3idx = 2;
+        if( ((www.lep_pdgId()[www.lep_idx0_SS()])!=(-(www.lep_pdgId()[lep3idx]))) and ((www.lep_pdgId()[www.lep_idx1_SS()])!=(-(www.lep_pdgId()[lep3idx]))) ) return false;
+        return true;
+};
+
 std::function<float()> Lambdas::isWZCR3L = [&]() {
+        if (not (Lambdas::HasZcand_3L() ))             return false;
         if (not (Lambdas::HasZ_3L() ))                 return false;
         return true;
 };
@@ -2194,7 +2073,7 @@ std::function<float()> Lambdas::is0SFOSeem = [&]() { return (www.lep_pdgId().siz
 std::function<float()> Lambdas::is0SFOSemm = [&]() { return (www.lep_pdgId().size() > 2) and (Lambdas::is0SFOS()) and ((abs(www.lep_pdgId()[0])+abs(www.lep_pdgId()[1])+abs(www.lep_pdgId()[2]))==37); };
 
 
-std::function<float()> Lambdas::GammaCR(Variation::ExpSyst expsyst, Variation::Var var)
+std::function<float()> Lambdas::GammaCR(Variation::ExpSyst expsyst, Variation::Var var)//does not work anymore, as we don't have a MET cut
 {
     return [&, expsyst, var]()
     {
@@ -2210,6 +2089,22 @@ std::function<float()> Lambdas::GammaCR(Variation::ExpSyst expsyst, Variation::V
       return true;
     };
 }
+
+std::function<float()> Lambdas::GammaCRLowMT(Variation::ExpSyst expsyst, Variation::Var var)
+{
+    return [&, expsyst, var]()
+    {
+        if(Lambdas::is0SFOS()){
+          return false;//need to veto 0 SFOS
+        }
+        else if(Lambdas::is1SFOS() or Lambdas::is2SFOS()){
+          if(Lambdas::MTmaxcut(expsyst,var,90.)())     return false;
+        }
+        return true;
+    };
+}
+std::function<float()> Lambdas::GammaCRLowPt3l = [&]() { return ((www.nSFOS()>0) and (www.Pt3l() <= 50.)); };//need to veto 0 SFOS
+
 
 std::function<float()> Lambdas::ttZWZfitRegion(Variation::ExpSyst expsyst, Variation::Var var)
 {
@@ -2324,4 +2219,134 @@ float getRawMVA(float notraw)
     return -0.5*log((2.0/(notraw+1))-1.0);
 }
 
+//_______________________________________________________________________________________________________
+float Lambdas::fake_iso(int idx, int pdgid)
+{
+    if (www.lep_pdgId().size() < 1)
+        return float(-999.);
+
+    float maxiso = -1;
+    bool isfake = false;
+    float ptcor = -1;//0: <20, 1: 20-25, 2: 25-30, 3: 30-35, 4: 35-50, 5: 50-inf //+0.5
+    float eta = -1;//0: <1.6, +6: for >=6
+
+    const float thresh3l = (abs(pdgid) == 11 ? 0.10 : 0.15);
+    const float threshss = (abs(pdgid) == 11 ? 0.05 : 0.04);
+    const float thresh = ((www.nVlep() == 2) or (www.nVlep() == 3 and www.nSFOS() == 0)) ? threshss : thresh3l;
+
+    vector<float> reliso = ((input.year == 2016) ? (www.lep_relIso03EAv2Lep()) : (www.lep_relIso03EALep()));
+
+    for (unsigned int i = 0; i < reliso.size(); ++i)
+    {
+
+        if (abs(www.lep_pdgId()[i]) != pdgid)
+            continue;
+        if (www.lep_motherIdSS()[i] >= 0)
+            continue;
+        if (www.lep_motherIdSS()[i] == (-3))
+            continue;
+
+        if (reliso[i] > maxiso)
+            maxiso = reliso[i];
+        else
+            continue;
+
+        isfake = true;
+
+        if (abs(www.lep_p4()[i].Eta()) < 1.6)
+            eta = 0.;
+        else
+            eta = 5.;
+
+        float lepcorpt = www.lep_pt()[i];
+        lepcorpt *= (1. + std::max(0., (double) reliso[i] - thresh));
+
+        if (lepcorpt < 20.)
+            ptcor = 0;
+        else if (lepcorpt < 25.)
+            ptcor = 1;
+        else if (lepcorpt < 30.)
+            ptcor = 2;
+        else if (lepcorpt < 35.)
+            ptcor = 3;
+        else
+            ptcor = 4;
+    }
+
+    if (isfake)
+    {
+        if (idx == ptcor + eta)
+        {
+            return maxiso;
+        }
+        else
+        {
+            return -999.;
+        }
+    }
+    else
+    {
+        return -999.;
+    }
+
+}
+
+// ana.histograms.addHistogram("ele_fake_ptcoretahist"      ,  14 , 0.0     , 14.0    , [&]() {
+//         if (www.lep_pdgId().size()<1) return float(-999.);
+//         vector<float> reliso = ((input.year == 2016) ? (www.lep_relIso03EAv2Lep()) : (www.lep_relIso03EALep()));
+//         float maxeleiso = -1;
+//         bool fakeele = false;
+//         float ptcor = -1;//0: <20, 1: 20-25, 2: 25-30, 3: 30-35, 4: 35-50, 5: 50-inf //+0.5
+//         float eta = -1;//0: <1.6, +6: for >=6
+//         for(unsigned int i = 0; i<reliso.size(); ++i){
+//         if(abs(www.lep_pdgId()[i])!=11)   continue;
+//         if(www.lep_motherIdSS()[i]>=0)    continue;
+//         if(www.lep_motherIdSS()[i]==(-3)) continue;
+//         if(reliso[i]>maxeleiso) maxeleiso = reliso[i];
+//         else                    continue;
+//         fakeele = true;
+//         if(abs(www.lep_p4()[i].Eta())<1.6) eta = 0.;
+//         else                               eta = 7.;
+//         float lepcorpt = www.lep_pt()[i];
+//         if((www.nSFOS()>=1) or (www.nSFOS()==0 and ((abs(www.lep_pdgId()[0])+abs(www.lep_pdgId()[1])+abs(www.lep_pdgId()[2]))==37) ) ) lepcorpt *= (1.+std::max(0.,reliso[i]-0.10));
+//         else lepcorpt *= (1.+std::max(0.,reliso[i]-0.05));
+//         if(     lepcorpt<20.)  ptcor = 1.5;
+//         else if(lepcorpt<25.)  ptcor = 2.5;
+//         else if(lepcorpt<30.)  ptcor = 3.5;
+//         else if(lepcorpt<35.)  ptcor = 4.5;
+//         else if(lepcorpt<50.)  ptcor = 5.5;
+//         else                   ptcor = 6.5;
+//         }
+//         if(fakeele) return ptcor+eta;
+//         return float(-999.);
+// });
+// ana.histograms.addHistogram("muo_fake_ptcoretahist"      ,  14 , 0.0     , 14.0    , [&]() {
+//         if (www.lep_pdgId().size()<1) return float(-999.);
+//         vector<float> reliso = ((input.year == 2016) ? (www.lep_relIso03EAv2Lep()) : (www.lep_relIso03EALep()));
+//         float maxeleiso = -1.;
+//         bool fakemuo = false;
+//         float ptcor = -1;//0: <20, 1: 20-25, 2: 25-30, 3: 30-35, 4: 35-50, 5: 50-inf //+0.5
+//         float eta = -1;//0: <1.6, +6: for >=6
+//         for(unsigned int i = 0; i<reliso.size(); ++i){
+//         if(abs(www.lep_pdgId()[i])!=13)   continue;
+//         if(www.lep_motherIdSS()[i]>=0)    continue;
+//         if(www.lep_motherIdSS()[i]==(-3)) continue;
+//         if(reliso[i]>maxeleiso) maxeleiso = reliso[i];
+//         else                    continue;
+//         fakemuo = true;
+//         if(abs(www.lep_p4()[i].Eta())<1.6) eta = 0.;
+//         else                               eta = 7.;
+//         float lepcorpt = www.lep_pt()[i];
+//         if((www.nSFOS()>=1) or (www.nSFOS()==0 and ((abs(www.lep_pdgId()[0])+abs(www.lep_pdgId()[1])+abs(www.lep_pdgId()[2]))==35) ) ) lepcorpt *= (1.+std::max(0.,reliso[i]-0.15));
+//         else lepcorpt *= (1.+std::max(0.,reliso[i]-0.04));
+//         if(     lepcorpt<20.)  ptcor = 1.5;
+//         else if(lepcorpt<25.)  ptcor = 2.5;
+//         else if(lepcorpt<30.)  ptcor = 3.5;
+//         else if(lepcorpt<35.)  ptcor = 4.5;
+//         else if(lepcorpt<50.)  ptcor = 5.5;
+//         else                   ptcor = 6.5;
+//         }
+//         if(fakemuo) return ptcor+eta;
+//         return float(-999.);
+// });
 
