@@ -226,17 +226,22 @@ binorder9binSR=[
     "SR1SFOSFull",
     "SR2SFOSFull",
     ]
-binorder9binPreSel=[
-    'SRSSeeNsoftbVeto',
-    'SRSSemNsoftbVeto',
-    'SRSSmmNsoftbVeto',
-    'SRSS1JeeNsoftbVeto',
-    'SRSS1JemNsoftbVeto',
-    'SRSS1JmmNsoftbVeto',
-    'SR0SFOSNsoftbVeto',
-    'SR1SFOSNsoftbVeto',
-    'SR2SFOSNsoftbVeto',
+
+binorder9binSRnoFull=[
+    "SRSSeeMjjIn",
+    "SRSSemMjjIn",
+    "SRSSmmMjjIn",
+    "SRSSeeMjjOut",
+    "SRSSemMjjOut",
+    "SRSSmmMjjOut",
+    "SRSS1Jee",
+    "SRSS1Jem",
+    "SRSS1Jmm",    
+    "SR0SFOS",
+    "SR1SFOS",
+    "SR2SFOS",
     ]
+
 
 if args.usewhatSR:
     binorder9binSR = args.whatSR[0].split(',')
@@ -303,7 +308,7 @@ if hist_filters:
             data_fname="{}/data.root".format(input_dir),
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             legend_labels=legend_labels,
-            signal_labels=["WWW", "VH"],
+            signal_labels=["WWW ", "VH"],
             donorm=False,
             filter_pattern=hist_filters,
             signal_scale=sig_scale,
@@ -372,7 +377,7 @@ else:
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             output_name="yield_wzcr",
             legend_labels=legend_labels,
-            signal_labels=["WWW", "VH"],
+            signal_labels=["WWW ", "VH"],
             donorm=False,
             signal_scale=sig_scale,
             hsuffix="__yield",
@@ -390,6 +395,168 @@ else:
             usercolors=histcolors,
             )
 
+    p.plot_yields(
+            fnames=bkg_fnames,
+            sig_fnames=sig_fnames,
+            data_fname="{}/data.root".format(input_dir),
+            regions=[
+                "WZCRSSeeMjjInFull{}(1)".format(args.syst),
+                "WZCRSSemMjjInFull{}(1)".format(args.syst),
+                "WZCRSSmmMjjInFull{}(1)".format(args.syst),
+                "WZCRSSeeMjjOutFull{}(1)".format(args.syst),
+                "WZCRSSemMjjOutFull{}(1)".format(args.syst),
+                "WZCRSSmmMjjOutFull{}(1)".format(args.syst),
+                "WZCRSS1JeeFull{}(1)".format(args.syst),
+                "WZCRSS1JemFull{}(1)".format(args.syst),
+                "WZCRSS1JmmFull{}(1)".format(args.syst),
+                "WZCR1SFOSFull{}(1)".format(args.syst),
+                "WZCR2SFOSFull{}(1)".format(args.syst)
+                ],
+            binlabels=[ "ee,MjjIn", "em,MjjIn", "mm,MjjIn", "ee,MjjOut", "em,MjjOut", "mm,MjjOut","ee1j", "em1j", "mm1j", "1SFOS", "2SFOS", ],
+            dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
+            output_name="yield_wzcr_12bin",
+            legend_labels=legend_labels,
+            signal_labels=["WWW ", "VH"],
+            donorm=False,
+            signal_scale=sig_scale,
+            hsuffix="__yield",
+            extraoptions={
+                "bkg_sort_method": "unsorted",
+                "legend_scalex": 2.8,
+                "legend_scaley": 0.8,
+                "lumi_value": lumi,
+                "print_yield": True,
+                "blind": False,
+                "legend_ncolumns": 3,
+                "ymax_scale": 1.3,
+                "ratio_range": [0., 2.],
+                },
+            usercolors=histcolors,
+            )
+
+
+    #__________________________________________________________________________________
+    # Draw the lost lepton control region plot for BDT method
+    p.plot_yields(
+            fnames=bkg_fnames,
+            sig_fnames=sig_fnames,
+            data_fname="{}/data.root".format(input_dir),
+            regions=[
+                "WZCRSSeeMjjInFullBDT{}(1)".format(args.syst),
+                "WZCRSSemMjjInFullBDT{}(1)".format(args.syst),
+                "WZCRSSmmMjjInFullBDT{}(1)".format(args.syst),
+                "WZCRSSeeMjjOutFullBDT{}(1)".format(args.syst),
+                "WZCRSSemMjjOutFullBDT{}(1)".format(args.syst),
+                "WZCRSSmmMjjOutFullBDT{}(1)".format(args.syst),
+                "WZCRSS1JeeFullBDT{}(1)".format(args.syst),
+                "WZCRSS1JemFullBDT{}(1)".format(args.syst),
+                "WZCRSS1JmmFullBDT{}(1)".format(args.syst),
+                "WZCR1SFOSFullBDT{}(1)".format(args.syst),
+                "WZCR2SFOSFullBDT{}(1)".format(args.syst)
+                ],
+            binlabels=[ "ee,MjjIn", "em,MjjIn", "mm,MjjIn", "ee,MjjOut", "em,MjjOut", "mm,MjjOut","ee1j", "em1j", "mm1j", "1SFOS", "2SFOS", ],
+            dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
+            output_name="yield_wzcr_BDT_12bin",
+            legend_labels=legend_labels,
+            signal_labels=["WWW ", "VH"],
+            donorm=False,
+            signal_scale=sig_scale,
+            hsuffix="__yield",
+            extraoptions={
+                "bkg_sort_method": "unsorted",
+                "legend_scalex": 2.8,
+                "legend_scaley": 0.8,
+                "lumi_value": lumi,
+                "print_yield": True,
+                "blind": False,
+                "legend_ncolumns": 3,
+                "ymax_scale": 1.3,
+                "ratio_range": [0., 2.],
+                },
+            usercolors=histcolors,
+            )
+
+
+    p.plot_yields(
+            fnames=bkg_fnames,
+            sig_fnames=sig_fnames,
+            data_fname="{}/data.root".format(input_dir),
+            regions=[
+                "WZCRSSeeKinSelBDT{}(1)".format(args.syst),
+                "WZCRSSemKinSelBDT{}(1)".format(args.syst),
+                "WZCRSSmmKinSelBDT{}(1)".format(args.syst),
+                "WZCRSS1JeeFullBDT{}(1)".format(args.syst),
+                "WZCRSS1JemFullBDT{}(1)".format(args.syst),
+                "WZCRSS1JmmFullBDT{}(1)".format(args.syst),
+                "WZCR1SFOSFullBDT{}(1)".format(args.syst),
+                "WZCR2SFOSFullBDT{}(1)".format(args.syst)
+                ],
+            binlabels=[ "ee", "em", "mm", "ee1j", "em1j", "mm1j", "1SFOS", "2SFOS", ],
+            dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
+            output_name="yield_wzcr_BDT_9bin",
+            legend_labels=legend_labels,
+            signal_labels=["WWW ", "VH"],
+            donorm=False,
+            signal_scale=sig_scale,
+            hsuffix="__yield",
+            extraoptions={
+                "bkg_sort_method": "unsorted",
+                "legend_scalex": 2.8,
+                "legend_scaley": 0.8,
+                "lumi_value": lumi,
+                "print_yield": True,
+                "blind": False,
+                "legend_ncolumns": 3,
+                "ymax_scale": 1.3,
+                "ratio_range": [0., 2.],
+                },
+            usercolors=histcolors,
+            )
+
+
+
+    #__________________________________________________________________________________
+    # Draw the lost lepton control region plot for BDT method
+    p.plot_yields(
+            fnames=bkg_fnames,
+            sig_fnames=sig_fnames,
+            data_fname="{}/data.root".format(input_dir),
+            regions=[
+                "WZCRSSeeMjjInBDT{}(1)".format(args.syst),
+                "WZCRSSemMjjInBDT{}(1)".format(args.syst),
+                "WZCRSSmmMjjInBDT{}(1)".format(args.syst),
+                "WZCRSSeeMjjOutBDT{}(1)".format(args.syst),
+                "WZCRSSemMjjOutBDT{}(1)".format(args.syst),
+                "WZCRSSmmMjjOutBDT{}(1)".format(args.syst),
+                "WZCRSS1JeeBDT{}(1)".format(args.syst),
+                "WZCRSS1JemBDT{}(1)".format(args.syst),
+                "WZCRSS1JmmBDT{}(1)".format(args.syst),
+                "WZCR1SFOSBDT{}(1)".format(args.syst),
+                "WZCR2SFOSBDT{}(1)".format(args.syst)
+                ],
+            binlabels=[ "ee,MjjIn", "em,MjjIn", "mm,MjjIn", "ee,MjjOut", "em,MjjOut", "mm,MjjOut","ee1j", "em1j", "mm1j", "1SFOS", "2SFOS", ],
+            dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
+            output_name="yield_wzcr_BDT_12bin_noFull",
+            legend_labels=legend_labels,
+            signal_labels=["WWW ", "VH"],
+            donorm=False,
+            signal_scale=sig_scale,
+            hsuffix="__yield",
+            extraoptions={
+                "bkg_sort_method": "unsorted",
+                "legend_scalex": 2.8,
+                "legend_scaley": 0.8,
+                "lumi_value": lumi,
+                "print_yield": True,
+                "blind": False,
+                "legend_ncolumns": 3,
+                "ymax_scale": 1.3,
+                "ratio_range": [0., 2.],
+                },
+            usercolors=histcolors,
+            )
+
+
     #__________________________________________________________________________________
     # Draw the money plot (the 9 bin plot)
     binorder=[ "{}{}(1)".format(x, args.syst) for x in binorder9binSR ]
@@ -405,7 +572,7 @@ else:
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             output_name="yield_ordered" if args.order_by_purity else "yield",
             legend_labels=legend_labels,
-            signal_labels=["WWW", "VH"],
+            signal_labels=["WWW ", "VH"],
             donorm=False,
             signal_scale=sig_scale,
             hsuffix="__yield",
@@ -425,17 +592,55 @@ else:
             )
 
     #__________________________________________________________________________________
-    # Draw the money plot (the preselection plots)
+    # Draw the money plot (the 9 bin plot), BDT
+    binorder=[ "{}BDT{}(1)".format(x, args.syst) for x in binorder9binSR ]
+    if args.order_by_purity:
+        binorder.reverse()
+        binlabels9binSR.reverse()
     p.plot_yields(
             fnames=bkg_fnames,
             sig_fnames=sig_fnames,
             data_fname="{}/data.root".format(input_dir),
-            regions=binorder9binPreSel,
-            binlabels=binorder9binPreSel,
+            regions=binorder,
+            binlabels=binlabels9binSR,
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
-            output_name="yield_presel",
+            output_name="yield_ordered_BDT" if args.order_by_purity else "yield_BDT",
             legend_labels=legend_labels,
-            signal_labels=["WWW", "VH"],
+            signal_labels=["WWW ", "VH"],
+            donorm=False,
+            signal_scale=sig_scale,
+            hsuffix="__yield",
+            extraoptions={
+                "bkg_sort_method": "unsorted",
+                "legend_scalex": 2.8,
+                "legend_scaley": 0.8,
+                "lumi_value": lumi,
+                "print_yield": True,
+                "legend_ncolumns": 3,
+                "ratio_range": [0., 2.],
+                "ymax_scale": 1.3,
+                #"yaxis_range": [0., 46.],
+                "blind": not args.draw_data, # BE CAREFUL!!!!!!!!!!!!!!!!!!
+                },
+            usercolors=histcolors,
+            )
+
+    #__________________________________________________________________________________
+    # Draw the money plot (the 9 bin plot), BDT, no Full
+    binorder=[ "{}BDT{}(1)".format(x, args.syst) for x in binorder9binSRnoFull ]
+    if args.order_by_purity:
+        binorder.reverse()
+        binlabels9binSR.reverse()
+    p.plot_yields(
+            fnames=bkg_fnames,
+            sig_fnames=sig_fnames,
+            data_fname="{}/data.root".format(input_dir),
+            regions=binorder,
+            binlabels=binlabels9binSR,
+            dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
+            output_name="yield_ordered_BDT_noFull" if args.order_by_purity else "yield_BDT_noFull",
+            legend_labels=legend_labels,
+            signal_labels=["WWW ", "VH"],
             donorm=False,
             signal_scale=sig_scale,
             hsuffix="__yield",
@@ -475,7 +680,7 @@ else:
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             output_name="yield_bcr",
             legend_labels=legend_labels,
-            signal_labels=["WWW", "VH"],
+            signal_labels=["WWW ", "VH"],
             donorm=False,
             signal_scale=sig_scale,
             hsuffix="__yield",
@@ -486,7 +691,7 @@ else:
                 "lumi_value": lumi,
                 "print_yield": True,
                 "legend_ncolumns": 3,
-                "ratio_range": [0., 2.],
+                "ratio_range": [0., 3.],
                 "ymax_scale": 1.3,
                 "blind": False,
                 },
@@ -517,7 +722,218 @@ else:
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             output_name="yield_ar",
             legend_labels=legend_labels_mc_fakes,
-            signal_labels=["WWW", "VH"],
+            signal_labels=["WWW ", "VH"],
+            donorm=False,
+            signal_scale=sig_scale,
+            hsuffix="__yield",
+            extraoptions={
+                "bkg_sort_method": "unsorted",
+                "legend_scalex": 2.8,
+                "legend_scaley": 0.8,
+                "lumi_value": lumi,
+                "print_yield": True,
+                "legend_ncolumns": 3,
+                "ratio_range": [0., 2.],
+                "ymax_scale": 1.3,
+                "blind": False,
+                },
+            usercolors=histcolors,
+            )
+
+    p.plot_yields(
+            fnames=bkg_fnames_mc_fakes,
+            sig_fnames=sig_fnames,
+            data_fname="{}/data.root".format(input_dir),
+            regions=[
+                "ARSSeeMjjInFullBDT{}(1)".format(args.syst),
+                "ARSSemMjjInFullBDT{}(1)".format(args.syst),
+                "ARSSmmMjjInFullBDT{}(1)".format(args.syst),
+                "ARSSeeMjjOutFullBDT{}(1)".format(args.syst),
+                "ARSSemMjjOutFullBDT{}(1)".format(args.syst),
+                "ARSSmmMjjOutFullBDT{}(1)".format(args.syst),
+                "ARSS1JeeFullBDT{}(1)".format(args.syst),
+                "ARSS1JemFullBDT{}(1)".format(args.syst),
+                "ARSS1JmmFullBDT{}(1)".format(args.syst),
+                "AR0SFOSFullBDT{}(1)".format(args.syst),
+                "AR1SFOSFullBDT{}(1)".format(args.syst),
+                "AR2SFOSFullBDT{}(1)".format(args.syst)
+                ],
+            binlabels=[ "ee", "em", "mm", "ee-out", "em-out", "mm-out", "ee1j", "em1j", "mm1j", "0SFOS", "1SFOS", "2SFOS" ],
+            dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
+            output_name="yield_ar_BDT",
+            legend_labels=legend_labels_mc_fakes,
+            signal_labels=["WWW ", "VH"],
+            donorm=False,
+            signal_scale=sig_scale,
+            hsuffix="__yield",
+            extraoptions={
+                "bkg_sort_method": "unsorted",
+                "legend_scalex": 2.8,
+                "legend_scaley": 0.8,
+                "lumi_value": lumi,
+                "print_yield": True,
+                "legend_ncolumns": 3,
+                "ratio_range": [0., 2.],
+                "ymax_scale": 1.3,
+                "blind": False,
+                },
+            usercolors=histcolors,
+            )
+
+
+    p.plot_yields(
+            fnames=bkg_fnames_mc_fakes,
+            sig_fnames=sig_fnames,
+            data_fname="{}/data.root".format(input_dir),
+            regions=[
+                "ARSSeeMjjInBDT{}(1)".format(args.syst),
+                "ARSSemMjjInBDT{}(1)".format(args.syst),
+                "ARSSmmMjjInBDT{}(1)".format(args.syst),
+                "ARSSeeMjjOutBDT{}(1)".format(args.syst),
+                "ARSSemMjjOutBDT{}(1)".format(args.syst),
+                "ARSSmmMjjOutBDT{}(1)".format(args.syst),
+                "ARSS1JeeBDT{}(1)".format(args.syst),
+                "ARSS1JemBDT{}(1)".format(args.syst),
+                "ARSS1JmmBDT{}(1)".format(args.syst),
+                "AR0SFOSBDT{}(1)".format(args.syst),
+                "AR1SFOSBDT{}(1)".format(args.syst),
+                "AR2SFOSBDT{}(1)".format(args.syst)
+                ],
+            binlabels=[ "ee", "em", "mm", "ee-out", "em-out", "mm-out", "ee1j", "em1j", "mm1j", "0SFOS", "1SFOS", "2SFOS" ],
+            dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
+            output_name="yield_ar_BDT_noFull",
+            legend_labels=legend_labels_mc_fakes,
+            signal_labels=["WWW ", "VH"],
+            donorm=False,
+            signal_scale=sig_scale,
+            hsuffix="__yield",
+            extraoptions={
+                "bkg_sort_method": "unsorted",
+                "legend_scalex": 2.8,
+                "legend_scaley": 0.8,
+                "lumi_value": lumi,
+                "print_yield": True,
+                "legend_ncolumns": 3,
+                "ratio_range": [0., 2.],
+                "ymax_scale": 1.3,
+                "blind": False,
+                },
+            usercolors=histcolors,
+            )
+
+
+    p.plot_yields(
+            fnames=bkg_fnames_mc_fakes,
+            sig_fnames=sig_fnames,
+            data_fname="{}/data.root".format(input_dir),
+            regions=[
+                "ARSSee{}(1)".format(args.syst),
+                "ARSSem{}(1)".format(args.syst),
+                "ARSSmm{}(1)".format(args.syst),
+                "AR0SFOS{}(1)".format(args.syst),
+                "AR1SFOS{}(1)".format(args.syst),
+                "AR2SFOS{}(1)".format(args.syst)
+                ],
+            binlabels=[ "ee", "em", "mm", "0SFOS", "1SFOS", "2SFOS" ],
+            dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
+            output_name="yield_ar_BDT_PreSel",
+            legend_labels=legend_labels_mc_fakes,
+            signal_labels=["WWW ", "VH"],
+            donorm=False,
+            signal_scale=sig_scale,
+            hsuffix="__yield",
+            extraoptions={
+                "bkg_sort_method": "unsorted",
+                "legend_scalex": 2.8,
+                "legend_scaley": 0.8,
+                "lumi_value": lumi,
+                "print_yield": True,
+                "legend_ncolumns": 3,
+                "ratio_range": [0., 2.],
+                "ymax_scale": 1.3,
+                "blind": False,
+                },
+            usercolors=histcolors,
+            )
+
+    p.plot_yields(
+            fnames=bkg_fnames_mc_fakes,
+            sig_fnames=sig_fnames,
+            data_fname="{}/data.root".format(input_dir),
+            regions=[
+                "CutBDTTrainPreSelSS2J{}(1)".format(args.syst),
+                "CutBDTTrainPreSelSS1J{}(1)".format(args.syst),
+                "CutBDTTrainPreSelSFOS{}(1)".format(args.syst)
+                ],
+            binlabels=[ "SS2J", "SS1J", "SFOS"],
+            dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
+            output_name="yield_CutBDTTrainPreSel",
+            legend_labels=legend_labels_mc_fakes,
+            signal_labels=["WWW ", "VH"],
+            donorm=False,
+            signal_scale=sig_scale,
+            hsuffix="__yield",
+            extraoptions={
+                "bkg_sort_method": "unsorted",
+                "legend_scalex": 2.8,
+                "legend_scaley": 0.8,
+                "lumi_value": lumi,
+                "print_yield": True,
+                "legend_ncolumns": 3,
+                "ratio_range": [0., 2.],
+                "ymax_scale": 1.3,
+                "blind": True,
+                },
+            usercolors=histcolors,
+            )
+
+
+    p.plot_yields(
+            fnames=bkg_fnames_mc_fakes,
+            sig_fnames=sig_fnames,
+            data_fname="{}/data.root".format(input_dir),
+            regions=[
+                "WZCRBDTTrainPreSelSS2J{}(1)".format(args.syst),
+                "WZCRBDTTrainPreSelSS1J{}(1)".format(args.syst),
+                "WZCRBDTTrainPreSelSFOS{}(1)".format(args.syst)
+                ],
+            binlabels=[ "SS2J", "SS1J", "SFOS"],
+            dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
+            output_name="yield_WZCRBDTTrainPreSel",
+            legend_labels=legend_labels_mc_fakes,
+            signal_labels=["WWW ", "VH"],
+            donorm=False,
+            signal_scale=sig_scale,
+            hsuffix="__yield",
+            extraoptions={
+                "bkg_sort_method": "unsorted",
+                "legend_scalex": 2.8,
+                "legend_scaley": 0.8,
+                "lumi_value": lumi,
+                "print_yield": True,
+                "legend_ncolumns": 3,
+                "ratio_range": [0., 2.],
+                "ymax_scale": 1.3,
+                "blind": False,
+                },
+            usercolors=histcolors,
+            )
+
+
+    p.plot_yields(
+            fnames=bkg_fnames_mc_fakes,
+            sig_fnames=sig_fnames,
+            data_fname="{}/data.root".format(input_dir),
+            regions=[
+                "ARBDTTrainPreSelSS2J{}(1)".format(args.syst),
+                "ARBDTTrainPreSelSS1J{}(1)".format(args.syst),
+                "ARBDTTrainPreSelSFOS{}(1)".format(args.syst)
+                ],
+            binlabels=[ "SS2J", "SS1J", "SFOS"],
+            dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
+            output_name="yield_ARBDTTrainPreSel",
+            legend_labels=legend_labels_mc_fakes,
+            signal_labels=["WWW ", "VH"],
             donorm=False,
             signal_scale=sig_scale,
             hsuffix="__yield",

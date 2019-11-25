@@ -251,6 +251,32 @@ namespace Lambdas
     std::function<float()> KinSelNj1ee(   Variation::ExpSyst expsyst, Variation::Var var);
 
     float fake_iso(int idx, int pdgid);
+
+    extern std::function<float()> isBDTTrainPreSelSS2J;
+    extern std::function<float()> isBDTTrainPreSelSS1J;
+    extern std::function<float()> isBDTTrainPreSelSFOS;
+    std::function<float()> SSPreSelectionBDT(  Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, bool invert_btag=false);
+    std::function<float()> SSKinSelBDT(        Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()> SS1JPreselectionBDT(Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, bool invert_btag=false);
+    std::function<float()> SS1JBDT(            Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    extern std::function<float()> SRDilepCutBDT2JeeMjjIn;
+    extern std::function<float()> SRDilepCutBDT2JemMjjIn;
+    extern std::function<float()> SRDilepCutBDT2JmmMjjIn;
+    extern std::function<float()> SRDilepCutBDT2JeeMjjOut;
+    extern std::function<float()> SRDilepCutBDT2JemMjjOut;
+    extern std::function<float()> SRDilepCutBDT2JmmMjjOut;
+    extern std::function<float()> SRDilepCutBDT1Jee;
+    extern std::function<float()> SRDilepCutBDT1Jem;
+    extern std::function<float()> SRDilepCutBDT1Jmm;
+    extern std::function<float()> SRTrilepCutBDT0SFOS;
+    extern std::function<float()> SRTrilepCutBDT1SFOS;
+    extern std::function<float()> SRTrilepCutBDT2SFOS;
+    std::function<float()> ThreeLepPreselBDT(  Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, bool invert_btag=false);
+    std::function<float()> KinSel3LBDT(    Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()> KinSel0SFOSBDT( Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()> KinSel1SFOSBDT( Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+    std::function<float()> KinSel2SFOSBDT( Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
+
 }
 
 bool passTrigger2016();
@@ -260,5 +286,5 @@ extern int this_lumi;
 extern unsigned long long this_evt;
 
 float getRawMVA(float raw);
-
+float VarXGBBDT(int idx=0, int var=0);
 #endif
