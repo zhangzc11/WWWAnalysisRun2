@@ -35,12 +35,6 @@ args = parser.parse_args()
 
 import plottery_wrapper as p
 
-# sig scale determines how much to scale your signal up by
-# default is set to 1
-if float(args.sig_scale) < 0:
-    sig_scale = "auto"
-else:
-    sig_scale = float(args.sig_scale)
 
 # hist_filters is used to filter out specific histograms you want to plot
 # otherwise it will dump EVERY histograms which could reach O(1000) of histograms
@@ -116,7 +110,7 @@ else:
 bkg_fnames = [
     "{}/photon.root".format(input_dir),
     "{}/qflip.root".format(input_dir),
-    "{}/fakes.root".format(input_dir) if args.use_mc_fake else "{}/ddfakes.root".format(input_dir),
+    "{}/fakes.root".format(input_dir) if args.use_mc_fake else "{}/dddfakes.root".format(input_dir),
     "{}/lostlep.root".format(input_dir),
     "{}/prompt.root".format(input_dir),
     ]
@@ -137,7 +131,7 @@ if args.split_vbsttw:
     bkg_fnames = [
             "{}/fitphoton.root".format(input_dir),
             "{}/fitqflip.root".format(input_dir),
-            "{}/fitfakes.root".format(input_dir) if args.use_mc_fake else "{}/ddfakes.root".format(input_dir),
+            "{}/fitfakes.root".format(input_dir) if args.use_mc_fake else "{}/dddfakes.root".format(input_dir),
             "{}/fitlostlep.root".format(input_dir),
             "{}/fitprompt.root".format(input_dir),
             "{}/vbs.root".format(input_dir),
@@ -146,20 +140,36 @@ if args.split_vbsttw:
     histcolors = [920, 2007, 2005, 2003, 2001, 7005, 7001, 2011]
 
 # Signal file names
+signallabels = ["VVV"]
 if args.use_private:
     if args.split_signal:
         sig_fnames = [
-            "{}/www_private.root".format(input_dir),
-            "{}/vh_private.root".format(input_dir),
-            # "{}/vh_www_private.root".format(input_dir),
+            "{}/www.root".format(input_dir),
+            "{}/vh.root".format(input_dir),
+            "{}/wwz.root".format(input_dir),
+            "{}/wzz.root".format(input_dir),
+            "{}/zzz.root".format(input_dir),
+            # "{}/vh_www.root".format(input_dir),
             ]
+	signallabels = ["WWW", "VH", "WWZ", "WZZ", "ZZZ"]
     else:
         sig_fnames = [
-            "{}/signal_private.root".format(input_dir),
+            "{}/vvv.root".format(input_dir),
+            #"{}/signal_private.root".format(input_dir),
             # "{}/vh_private.root".format(input_dir),
             ]
 else:
     sig_fnames = ["{}/signal.root".format(input_dir)]
+
+# sig scale determines how much to scale your signal up by
+# default is set to 1
+if float(args.sig_scale) < 0:
+    sig_scale = "auto"
+else:
+    sig_scale = float(args.sig_scale)
+    if sig_scale != 1:
+	for idx in range(len(signallabels)):
+		signallabels[idx] = signallabels[idx]+" x "+args.sig_scale 
 
 if args.stack_signal:
     if args.use_private:
@@ -308,7 +318,7 @@ if hist_filters:
             data_fname="{}/data.root".format(input_dir),
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             legend_labels=legend_labels,
-            signal_labels=["WWW ", "VH"],
+            signal_labels=signallabels,
             donorm=False,
             filter_pattern=hist_filters,
             signal_scale=sig_scale,
@@ -334,7 +344,7 @@ if hist_filters:
                 },
             do_sum=args.sum_hists,
             dogrep=args.do_grep,
-            output_name=args.output_name if args.sum_hists else None,
+            output_name=args.output_name, # if args.sum_hists else None,
             usercolors=histcolors,
             )
     
@@ -377,7 +387,7 @@ else:
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             output_name="yield_wzcr",
             legend_labels=legend_labels,
-            signal_labels=["WWW ", "VH"],
+            signal_labels=signallabels,
             donorm=False,
             signal_scale=sig_scale,
             hsuffix="__yield",
@@ -416,7 +426,7 @@ else:
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             output_name="yield_wzcr_12bin",
             legend_labels=legend_labels,
-            signal_labels=["WWW ", "VH"],
+            signal_labels=signallabels,
             donorm=False,
             signal_scale=sig_scale,
             hsuffix="__yield",
@@ -458,7 +468,7 @@ else:
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             output_name="yield_wzcr_BDT_12bin",
             legend_labels=legend_labels,
-            signal_labels=["WWW ", "VH"],
+            signal_labels=signallabels,
             donorm=False,
             signal_scale=sig_scale,
             hsuffix="__yield",
@@ -495,7 +505,7 @@ else:
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             output_name="yield_wzcr_BDT_9bin",
             legend_labels=legend_labels,
-            signal_labels=["WWW ", "VH"],
+            signal_labels=signallabels,
             donorm=False,
             signal_scale=sig_scale,
             hsuffix="__yield",
@@ -538,7 +548,7 @@ else:
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             output_name="yield_wzcr_BDT_12bin_noFull",
             legend_labels=legend_labels,
-            signal_labels=["WWW ", "VH"],
+            signal_labels=signallabels,
             donorm=False,
             signal_scale=sig_scale,
             hsuffix="__yield",
@@ -572,7 +582,7 @@ else:
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             output_name="yield_ordered" if args.order_by_purity else "yield",
             legend_labels=legend_labels,
-            signal_labels=["WWW ", "VH"],
+            signal_labels=signallabels,
             donorm=False,
             signal_scale=sig_scale,
             hsuffix="__yield",
@@ -606,7 +616,7 @@ else:
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             output_name="yield_ordered_BDT" if args.order_by_purity else "yield_BDT",
             legend_labels=legend_labels,
-            signal_labels=["WWW ", "VH"],
+            signal_labels=signallabels,
             donorm=False,
             signal_scale=sig_scale,
             hsuffix="__yield",
@@ -640,7 +650,7 @@ else:
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             output_name="yield_ordered_BDT_noFull" if args.order_by_purity else "yield_BDT_noFull",
             legend_labels=legend_labels,
-            signal_labels=["WWW ", "VH"],
+            signal_labels=signallabels,
             donorm=False,
             signal_scale=sig_scale,
             hsuffix="__yield",
@@ -680,7 +690,7 @@ else:
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             output_name="yield_bcr",
             legend_labels=legend_labels,
-            signal_labels=["WWW ", "VH"],
+            signal_labels=signallabels,
             donorm=False,
             signal_scale=sig_scale,
             hsuffix="__yield",
@@ -722,7 +732,7 @@ else:
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             output_name="yield_ar",
             legend_labels=legend_labels_mc_fakes,
-            signal_labels=["WWW ", "VH"],
+            signal_labels=signallabels,
             donorm=False,
             signal_scale=sig_scale,
             hsuffix="__yield",
@@ -762,7 +772,7 @@ else:
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             output_name="yield_ar_BDT",
             legend_labels=legend_labels_mc_fakes,
-            signal_labels=["WWW ", "VH"],
+            signal_labels=signallabels,
             donorm=False,
             signal_scale=sig_scale,
             hsuffix="__yield",
@@ -803,7 +813,7 @@ else:
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             output_name="yield_ar_BDT_noFull",
             legend_labels=legend_labels_mc_fakes,
-            signal_labels=["WWW ", "VH"],
+            signal_labels=signallabels,
             donorm=False,
             signal_scale=sig_scale,
             hsuffix="__yield",
@@ -838,7 +848,7 @@ else:
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             output_name="yield_ar_BDT_PreSel",
             legend_labels=legend_labels_mc_fakes,
-            signal_labels=["WWW ", "VH"],
+            signal_labels=signallabels,
             donorm=False,
             signal_scale=sig_scale,
             hsuffix="__yield",
@@ -869,7 +879,7 @@ else:
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             output_name="yield_CutBDTTrainPreSel",
             legend_labels=legend_labels_mc_fakes,
-            signal_labels=["WWW ", "VH"],
+            signal_labels=signallabels,
             donorm=False,
             signal_scale=sig_scale,
             hsuffix="__yield",
@@ -901,7 +911,7 @@ else:
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             output_name="yield_WZCRBDTTrainPreSel",
             legend_labels=legend_labels_mc_fakes,
-            signal_labels=["WWW ", "VH"],
+            signal_labels=signallabels,
             donorm=False,
             signal_scale=sig_scale,
             hsuffix="__yield",
@@ -933,7 +943,7 @@ else:
             dirname=output_dir+"/log" if args.yaxis_log else output_dir+"/lin",
             output_name="yield_ARBDTTrainPreSel",
             legend_labels=legend_labels_mc_fakes,
-            signal_labels=["WWW ", "VH"],
+            signal_labels=signallabels,
             donorm=False,
             signal_scale=sig_scale,
             hsuffix="__yield",

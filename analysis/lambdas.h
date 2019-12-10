@@ -271,6 +271,12 @@ namespace Lambdas
     extern std::function<float()> SRTrilepCutBDT0SFOS;
     extern std::function<float()> SRTrilepCutBDT1SFOS;
     extern std::function<float()> SRTrilepCutBDT2SFOS;
+    extern std::function<float()> SRTrilepCutBDTSFOSInvertPrompt;
+    extern std::function<float()> SRTrilepCutBDTSFOSInvertFake;
+    extern std::function<float()> SRTrilepCutBDTSFOSInvertBoth;
+    std::function<float()> SRDilepCutBDTSS2J(Variation::ExpSyst expsyst, Variation::Var var);
+    std::function<float()> SRDilepCutBDTSS1J(Variation::ExpSyst expsyst, Variation::Var var);
+    std::function<float()> SRDilepCutBDTSFOS(Variation::ExpSyst expsyst, Variation::Var var);
     std::function<float()> ThreeLepPreselBDT(  Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal, bool invert_btag=false);
     std::function<float()> KinSel3LBDT(    Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);
     std::function<float()> KinSel0SFOSBDT( Variation::ExpSyst expsyst=Variation::JES, Variation::Var var=Variation::Nominal);

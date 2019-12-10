@@ -583,6 +583,8 @@ int main(int argc, char** argv)
     ana.histograms.addHistogram("dPhill"                   ,  180 , 0.      , 3.1416 , [&]() { return www.lep_p4().size() > 1 ? fabs(RooUtil::Calc::DeltaPhi(www.lep_p4()[0], www.lep_p4()[1])) : -999  ; });
     ana.histograms.addHistogram("Mljmin"                   ,  180 , 0.      , 300.   , [&]() { return (input.oldbaby ? -1. : www.Mljmin())                                         ; });
     ana.histograms.addHistogram("Mljmax"                   ,  180 , 0.      , 600.   , [&]() { return (input.oldbaby ? -1. : www.Mljmax())                                         ; });
+    ana.histograms.addHistogram("DRjj"                    ,  180 , 0.      , 5.   , [&]() { return www.DRjj()                                                                      ; });
+    ana.histograms.addHistogram("DRjjDR1"                    ,  180 , 0.      , 5.   , [&]() { return www.DRjjDR1()                                                                ; });
     ana.histograms.addHistogram("DRljmin"                  ,  180 , 0.      , 6.     , [&]() { return (input.oldbaby ? -1. : www.DRljmin())                                        ; });
     ana.histograms.addHistogram("DRljmax"                  ,  180 , 0.      , 6.     , [&]() { return (input.oldbaby ? -1. : www.DRljmax())                                        ; });
     ana.histograms.addHistogram("Mljmin3L"                 ,  180 , 0.      , 300.   , [&]() { return (input.oldbaby ? -1. : www.Mljmin3L())                                       ; });
@@ -987,7 +989,7 @@ int main(int argc, char** argv)
         ana.cutflow.addCutToLastActiveCut("SRSSeePreSelBDT"     , Lambdas::SSPreSelectionBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
         ana.cutflow.addCutToLastActiveCut("SRSSeeNsoftbVetoBDT" , Lambdas::NBvetoSoft      (Variation::JES, Variation::Nominal), UNITY);
         //ana.cutflow.addCutToLastActiveCut("SRSSeeLowDetaMjjBDT" , Lambdas::LowDEtaMJJ      (Variation::JES, Variation::Nominal), UNITY);
-        ana.cutflow.addCutToLastActiveCut("SRSSeeKinSelBDT"     , Lambdas::SSKinSelBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSeeKinSelBDT"     , UNITY                                                        , UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSSeeMjjInBDT"      , Lambdas::SSMjjIn         (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSSeeMjjInFullBDT"  , Lambdas::SRDilepCutBDT2JeeMjjIn                                                       , UNITY); // Adding one more node with name "<Region>Full"
         ana.cutflow.getCut("SRSSeeKinSelBDT");
@@ -997,7 +999,7 @@ int main(int argc, char** argv)
         ana.cutflow.addCutToLastActiveCut("SRSSemPreSelBDT"     , Lambdas::SSPreSelectionBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
         ana.cutflow.addCutToLastActiveCut("SRSSemNsoftbVetoBDT" , Lambdas::NBvetoSoft      (Variation::JES, Variation::Nominal), UNITY);
         //ana.cutflow.addCutToLastActiveCut("SRSSemLowDetaMjjBDT" , Lambdas::LowDEtaMJJ      (Variation::JES, Variation::Nominal), UNITY);
-        ana.cutflow.addCutToLastActiveCut("SRSSemKinSelBDT"     , Lambdas::SSKinSelBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSemKinSelBDT"     , UNITY                                                        , UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSSemMjjInBDT"      , Lambdas::SSMjjIn         (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSSemMjjInFullBDT"  , Lambdas::SRDilepCutBDT2JemMjjIn                                                        , UNITY); // Adding one more node with name "<Region>Full"
         ana.cutflow.getCut("SRSSemKinSelBDT");
@@ -1007,7 +1009,7 @@ int main(int argc, char** argv)
         ana.cutflow.addCutToLastActiveCut("SRSSmmPreSelBDT"     , Lambdas::SSPreSelectionBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
         ana.cutflow.addCutToLastActiveCut("SRSSmmNsoftbVetoBDT" , Lambdas::NBvetoSoft      (Variation::JES, Variation::Nominal), UNITY);
         //ana.cutflow.addCutToLastActiveCut("SRSSmmLowDetaMjjBDT" , Lambdas::LowDEtaMJJ      (Variation::JES, Variation::Nominal), UNITY);
-        ana.cutflow.addCutToLastActiveCut("SRSSmmKinSelBDT"     , Lambdas::SSKinSelBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSSmmKinSelBDT"     , UNITY                                                        , UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSSmmMjjInBDT"      , Lambdas::SSMjjIn         (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSSmmMjjInFullBDT"  , Lambdas::SRDilepCutBDT2JmmMjjIn                                                        , UNITY); // Adding one more node with name "<Region>Full"
         ana.cutflow.getCut("SRSSmmKinSelBDT");
@@ -1017,40 +1019,40 @@ int main(int argc, char** argv)
         ana.cutflow.getCut("SRSSee");
         ana.cutflow.addCutToLastActiveCut("SRSS1Jee1JPreBDT"  , Lambdas::SS1JPreselectionBDT (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSS1JeeNsoftbVetoBDT", Lambdas::NBvetoSoft       (Variation::JES, Variation::Nominal), UNITY);
-        ana.cutflow.addCutToLastActiveCut("SRSS1JeeBDT"  , Lambdas::SS1JBDT             (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSS1JeeBDT"  , UNITY, UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSS1JeeFullBDT"   , Lambdas::SRDilepCutBDT1Jee                                                         , UNITY);
 
         ana.cutflow.getCut("SRSSem");
         ana.cutflow.addCutToLastActiveCut("SRSS1Jem1JPreBDT"  , Lambdas::SS1JPreselectionBDT (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSS1JemNsoftbVetoBDT", Lambdas::NBvetoSoft       (Variation::JES, Variation::Nominal), UNITY);
-        ana.cutflow.addCutToLastActiveCut("SRSS1JemBDT"  , Lambdas::SS1JBDT             (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSS1JemBDT"  , UNITY, UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSS1JemFullBDT"   , Lambdas::SRDilepCutBDT1Jem                                                         , UNITY);
 
         ana.cutflow.getCut("SRSSmm");
    ana.cutflow.addCutToLastActiveCut("SRSS1Jmm1JPreBDT"  , Lambdas::SS1JPreselectionBDT (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSS1JmmNsoftbVetoBDT", Lambdas::NBvetoSoft       (Variation::JES, Variation::Nominal), UNITY);
-        ana.cutflow.addCutToLastActiveCut("SRSS1JmmBDT"  , Lambdas::SS1JBDT             (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SRSS1JmmBDT"  , UNITY, UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSS1JmmFullBDT"   , Lambdas::SRDilepCutBDT1Jmm                                                         , UNITY);
 
         ana.cutflow.getCut("SR0SFOS");
         ana.cutflow.addCutToLastActiveCut("SR0SFOSPreSelBDT"    , Lambdas::ThreeLepPreselBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
         ana.cutflow.addCutToLastActiveCut("SR0SFOSDYVetoBDT"    , Lambdas::DYAndZVetoes                                        , UNITY);
         ana.cutflow.addCutToLastActiveCut("SR0SFOSNsoftbVetoBDT", Lambdas::NBvetoSoft      (Variation::JES, Variation::Nominal), UNITY);
-        ana.cutflow.addCutToLastActiveCut("SR0SFOSBDT"    , Lambdas::KinSel3LBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR0SFOSBDT"    , UNITY                                                        , UNITY);
         ana.cutflow.addCutToLastActiveCut("SR0SFOSFullBDT"      , Lambdas::SRTrilepCutBDT0SFOS                                                        , UNITY);
 
         ana.cutflow.getCut("SR1SFOS");
         ana.cutflow.addCutToLastActiveCut("SR1SFOSPreSelBDT"    , Lambdas::ThreeLepPreselBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
         ana.cutflow.addCutToLastActiveCut("SR1SFOSDYVetoBDT"    , Lambdas::DYAndZVetoes                                        , UNITY);
         ana.cutflow.addCutToLastActiveCut("SR1SFOSNsoftbVetoBDT", Lambdas::NBvetoSoft      (Variation::JES, Variation::Nominal), UNITY);
-        ana.cutflow.addCutToLastActiveCut("SR1SFOSBDT"    , Lambdas::KinSel3LBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR1SFOSBDT"    , UNITY                                                        , UNITY);
         ana.cutflow.addCutToLastActiveCut("SR1SFOSFullBDT"      , Lambdas::SRTrilepCutBDT1SFOS                                                        , UNITY);
 
         ana.cutflow.getCut("SR2SFOS");
         ana.cutflow.addCutToLastActiveCut("SR2SFOSPreSelBDT"    , Lambdas::ThreeLepPreselBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
         ana.cutflow.addCutToLastActiveCut("SR2SFOSDYVetoBDT"    , Lambdas::DYAndZVetoes                                        , UNITY);
         ana.cutflow.addCutToLastActiveCut("SR2SFOSNsoftbVetoBDT", Lambdas::NBvetoSoft      (Variation::JES, Variation::Nominal), UNITY);
-        ana.cutflow.addCutToLastActiveCut("SR2SFOSBDT"    , Lambdas::KinSel3LBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("SR2SFOSBDT"    , UNITY                                                        , UNITY);
         ana.cutflow.addCutToLastActiveCut("SR2SFOSFullBDT"      , Lambdas::SRTrilepCutBDT2SFOS                                                        , UNITY);
 
 
@@ -1171,7 +1173,7 @@ int main(int argc, char** argv)
         ana.cutflow.getCut("WZCRSSee");
         ana.cutflow.addCutToLastActiveCut("WZCRSSeePreSelBDT"     , Lambdas::SSPreSelectionBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
         ana.cutflow.addCutToLastActiveCut("WZCRSSeeNsoftbVetoBDT" , Lambdas::NBvetoSoft      (Variation::JES, Variation::Nominal), UNITY);
-        ana.cutflow.addCutToLastActiveCut("WZCRSSeeKinSelBDT"     , Lambdas::SSKinSelBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCRSSeeKinSelBDT"     , UNITY                                                        , UNITY);
         ana.cutflow.addCutToLastActiveCut("WZCRSSeeMjjInBDT"      , Lambdas::SSMjjIn         (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("WZCRSSeeMjjInFullBDT"  , Lambdas::SRDilepCutBDT2JeeMjjIn                                          , UNITY); // Adding one more node with name "<Region>Full"
         ana.cutflow.getCut("WZCRSSeeKinSelBDT");
@@ -1181,7 +1183,7 @@ int main(int argc, char** argv)
         ana.cutflow.getCut("WZCRSSem");
         ana.cutflow.addCutToLastActiveCut("WZCRSSemPreSelBDT"     , Lambdas::SSPreSelectionBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
         ana.cutflow.addCutToLastActiveCut("WZCRSSemNsoftbVetoBDT" , Lambdas::NBvetoSoft      (Variation::JES, Variation::Nominal), UNITY);
-        ana.cutflow.addCutToLastActiveCut("WZCRSSemKinSelBDT"     , Lambdas::SSKinSelBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCRSSemKinSelBDT"     , UNITY                                                        , UNITY);
         ana.cutflow.addCutToLastActiveCut("WZCRSSemMjjInBDT"      , Lambdas::SSMjjIn         (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("WZCRSSemMjjInFullBDT"  , Lambdas::SRDilepCutBDT2JeeMjjIn                                          , UNITY); // Adding one more node with name "<Region>Full"
         ana.cutflow.getCut("WZCRSSemKinSelBDT");
@@ -1191,7 +1193,7 @@ int main(int argc, char** argv)
         ana.cutflow.getCut("WZCRSSmm");
         ana.cutflow.addCutToLastActiveCut("WZCRSSmmPreSelBDT"     , Lambdas::SSPreSelectionBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
         ana.cutflow.addCutToLastActiveCut("WZCRSSmmNsoftbVetoBDT" , Lambdas::NBvetoSoft      (Variation::JES, Variation::Nominal), UNITY);
-        ana.cutflow.addCutToLastActiveCut("WZCRSSmmKinSelBDT"     , Lambdas::SSKinSelBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCRSSmmKinSelBDT"     , UNITY, UNITY);
         ana.cutflow.addCutToLastActiveCut("WZCRSSmmMjjInBDT"      , Lambdas::SSMjjIn         (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("WZCRSSmmMjjInFullBDT"  , Lambdas::SRDilepCutBDT2JeeMjjIn                                          , UNITY); // Adding one more node with name "<Region>Full"
         ana.cutflow.getCut("WZCRSSmmKinSelBDT");
@@ -1201,39 +1203,39 @@ int main(int argc, char** argv)
         ana.cutflow.getCut("WZCRSSee");
         ana.cutflow.addCutToLastActiveCut("WZCRSS1Jee1JPreBDT"     , Lambdas::SS1JPreselectionBDT (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("WZCRSS1JeeNsoftbVetoBDT", Lambdas::NBvetoSoft       (Variation::JES, Variation::Nominal), UNITY);
-        ana.cutflow.addCutToLastActiveCut("WZCRSS1JeeBDT"     , Lambdas::SS1JBDT             (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCRSS1JeeBDT"     , UNITY, UNITY);
         ana.cutflow.addCutToLastActiveCut("WZCRSS1JeeFullBDT"      , Lambdas::SRDilepCutBDT1Jee                                          , UNITY);
 
         ana.cutflow.getCut("WZCRSSem");
         ana.cutflow.addCutToLastActiveCut("WZCRSS1Jem1JPreBDT"     , Lambdas::SS1JPreselectionBDT (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("WZCRSS1JemNsoftbVetoBDT", Lambdas::NBvetoSoft       (Variation::JES, Variation::Nominal), UNITY);
-        ana.cutflow.addCutToLastActiveCut("WZCRSS1JemBDT"     , Lambdas::SS1JBDT             (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCRSS1JemBDT"     , UNITY, UNITY);
         ana.cutflow.addCutToLastActiveCut("WZCRSS1JemFullBDT"      , Lambdas::SRDilepCutBDT1Jem                                          , UNITY);
 
         ana.cutflow.getCut("WZCRSSmm");
         ana.cutflow.addCutToLastActiveCut("WZCRSS1Jmm1JPreBDT"     , Lambdas::SS1JPreselectionBDT (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("WZCRSS1JmmNsoftbVetoBDT", Lambdas::NBvetoSoft       (Variation::JES, Variation::Nominal), UNITY);
-        ana.cutflow.addCutToLastActiveCut("WZCRSS1JmmBDT"     , Lambdas::SS1JBDT             (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCRSS1JmmBDT"     , UNITY, UNITY);
         ana.cutflow.addCutToLastActiveCut("WZCRSS1JmmFullBDT"      , Lambdas::SRDilepCutBDT1Jmm                                          , UNITY);
         ana.cutflow.getCut("WZCR0SFOS");
         ana.cutflow.addCutToLastActiveCut("WZCR0SFOSPreSelBDT"    , Lambdas::ThreeLepPreselBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
         ana.cutflow.addCutToLastActiveCut("WZCR0SFOSDYVetoBDT"    , Lambdas::DYVetoes                                            , UNITY);
         ana.cutflow.addCutToLastActiveCut("WZCR0SFOSNsoftbVetoBDT", Lambdas::NBvetoSoft      (Variation::JES, Variation::Nominal), UNITY);
-        ana.cutflow.addCutToLastActiveCut("WZCR0SFOSBDT"    , Lambdas::KinSel3LBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCR0SFOSBDT"    , UNITY                                                        , UNITY);
         ana.cutflow.addCutToLastActiveCut("WZCR0SFOSFullBDT"   , Lambdas::SRTrilepCutBDT0SFOS                                        , UNITY);
 
         ana.cutflow.getCut("WZCR1SFOS");
         ana.cutflow.addCutToLastActiveCut("WZCR1SFOSPreSelBDT"    , Lambdas::ThreeLepPreselBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
         ana.cutflow.addCutToLastActiveCut("WZCR1SFOSDYVetoBDT"    , Lambdas::DYVetoes                                            , UNITY);
         ana.cutflow.addCutToLastActiveCut("WZCR1SFOSNsoftbVetoBDT", Lambdas::NBvetoSoft      (Variation::JES, Variation::Nominal), UNITY);
-        ana.cutflow.addCutToLastActiveCut("WZCR1SFOSBDT"    , Lambdas::KinSel3LBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCR1SFOSBDT"    , UNITY                                                        , UNITY);
         ana.cutflow.addCutToLastActiveCut("WZCR1SFOSFullBDT"   , Lambdas::SRTrilepCutBDT1SFOS                                        , UNITY);
 
         ana.cutflow.getCut("WZCR2SFOS");
         ana.cutflow.addCutToLastActiveCut("WZCR2SFOSPreSelBDT"    , Lambdas::ThreeLepPreselBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
         ana.cutflow.addCutToLastActiveCut("WZCR2SFOSDYVetoBDT"    , Lambdas::DYVetoes                                            , UNITY);
         ana.cutflow.addCutToLastActiveCut("WZCR2SFOSNsoftbVetoBDT", Lambdas::NBvetoSoft      (Variation::JES, Variation::Nominal), UNITY);
-        ana.cutflow.addCutToLastActiveCut("WZCR2SFOSBDT"    , Lambdas::KinSel3LBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCR2SFOSBDT"    , UNITY                                                        , UNITY);
         ana.cutflow.addCutToLastActiveCut("WZCR2SFOSFullBDT"   , Lambdas::SRTrilepCutBDT2SFOS                                        , UNITY);
 
 
@@ -1345,7 +1347,7 @@ int main(int argc, char** argv)
         ana.cutflow.getCut("ARSSee");
         ana.cutflow.addCutToLastActiveCut("ARSSeePreSelBDT"     , Lambdas::SSPreSelectionBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
         ana.cutflow.addCutToLastActiveCut("ARSSeeNsoftbVetoBDT" , Lambdas::NBvetoSoft      (Variation::JES, Variation::Nominal), UNITY);
-        ana.cutflow.addCutToLastActiveCut("ARSSeeKinSelBDT"     , Lambdas::SSKinSelBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("ARSSeeKinSelBDT"     , UNITY, UNITY);
         ana.cutflow.addCutToLastActiveCut("ARSSeeMjjInBDT"      , Lambdas::SSMjjIn         (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("ARSSeeMjjInFullBDT"  , Lambdas::SRDilepCutBDT2JeeMjjIn                                     , UNITY); // Adding one more node with name "<Region>Full"
 
@@ -1356,7 +1358,7 @@ int main(int argc, char** argv)
         ana.cutflow.getCut("ARSSem");
         ana.cutflow.addCutToLastActiveCut("ARSSemPreSelBDT"     , Lambdas::SSPreSelectionBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
         ana.cutflow.addCutToLastActiveCut("ARSSemNsoftbVetoBDT" , Lambdas::NBvetoSoft      (Variation::JES, Variation::Nominal), UNITY);
-        ana.cutflow.addCutToLastActiveCut("ARSSemKinSelBDT"     , Lambdas::SSKinSelBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("ARSSemKinSelBDT"     , UNITY, UNITY);
         ana.cutflow.addCutToLastActiveCut("ARSSemMjjInBDT"      , Lambdas::SSMjjIn         (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("ARSSemMjjInFullBDT"  , Lambdas::SRDilepCutBDT2JeeMjjIn                                     , UNITY); // Adding one more node with name "<Region>Full"
 
@@ -1368,7 +1370,7 @@ int main(int argc, char** argv)
         ana.cutflow.getCut("ARSSmm");
         ana.cutflow.addCutToLastActiveCut("ARSSmmPreSelBDT"     , Lambdas::SSPreSelectionBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
         ana.cutflow.addCutToLastActiveCut("ARSSmmNsoftbVetoBDT" , Lambdas::NBvetoSoft      (Variation::JES, Variation::Nominal), UNITY);
-        ana.cutflow.addCutToLastActiveCut("ARSSmmKinSelBDT"     , Lambdas::SSKinSelBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("ARSSmmKinSelBDT"     , UNITY, UNITY);
         ana.cutflow.addCutToLastActiveCut("ARSSmmMjjInBDT"      , Lambdas::SSMjjIn         (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("ARSSmmMjjInFullBDT"  , Lambdas::SRDilepCutBDT2JeeMjjIn                                     , UNITY); // Adding one more node with name "<Region>Full"
 
@@ -1379,40 +1381,40 @@ int main(int argc, char** argv)
         ana.cutflow.getCut("ARSSee");
         ana.cutflow.addCutToLastActiveCut("ARSS1Jee1JPreBDT"     , Lambdas::SS1JPreselectionBDT (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("ARSS1JeeNsoftbVetoBDT", Lambdas::NBvetoSoft       (Variation::JES, Variation::Nominal), UNITY);
-        ana.cutflow.addCutToLastActiveCut("ARSS1JeeBDT"     , Lambdas::SS1JBDT             (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("ARSS1JeeBDT"     , UNITY, UNITY);
         ana.cutflow.addCutToLastActiveCut("ARSS1JeeFullBDT"    , Lambdas::SRDilepCutBDT1Jee                                          , UNITY);
 
         ana.cutflow.getCut("ARSSem");
         ana.cutflow.addCutToLastActiveCut("ARSS1Jem1JPreBDT"     , Lambdas::SS1JPreselectionBDT (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("ARSS1JemNsoftbVetoBDT", Lambdas::NBvetoSoft       (Variation::JES, Variation::Nominal), UNITY);
-        ana.cutflow.addCutToLastActiveCut("ARSS1JemBDT"     , Lambdas::SS1JBDT             (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("ARSS1JemBDT"     , UNITY, UNITY);
         ana.cutflow.addCutToLastActiveCut("ARSS1JemFullBDT"    , Lambdas::SRDilepCutBDT1Jem                                          , UNITY);
 
         ana.cutflow.getCut("ARSSmm");
         ana.cutflow.addCutToLastActiveCut("ARSS1Jmm1JPreBDT"     , Lambdas::SS1JPreselectionBDT (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("ARSS1JmmNsoftbVetoBDT", Lambdas::NBvetoSoft       (Variation::JES, Variation::Nominal), UNITY);
-        ana.cutflow.addCutToLastActiveCut("ARSS1JmmBDT"     , Lambdas::SS1JBDT             (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("ARSS1JmmBDT"     , UNITY, UNITY);
         ana.cutflow.addCutToLastActiveCut("ARSS1JmmFullBDT"    , Lambdas::SRDilepCutBDT1Jmm                                          , UNITY);
 
         ana.cutflow.getCut("AR0SFOS");
         ana.cutflow.addCutToLastActiveCut("AR0SFOSPreSelBDT"    , Lambdas::ThreeLepPreselBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
         ana.cutflow.addCutToLastActiveCut("AR0SFOSDYVetoBDT"    , Lambdas::DYAndZVetoes                                        , UNITY);
         ana.cutflow.addCutToLastActiveCut("AR0SFOSNsoftbVetoBDT", Lambdas::NBvetoSoft      (Variation::JES, Variation::Nominal), UNITY);
-        ana.cutflow.addCutToLastActiveCut("AR0SFOSBDT"    , Lambdas::KinSel3LBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("AR0SFOSBDT"    , UNITY                                                        , UNITY);
         ana.cutflow.addCutToLastActiveCut("AR0SFOSFullBDT"      , Lambdas::SRTrilepCutBDT0SFOS                                        , UNITY);
 
         ana.cutflow.getCut("AR1SFOS");
         ana.cutflow.addCutToLastActiveCut("AR1SFOSPreSelBDT"    , Lambdas::ThreeLepPreselBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
         ana.cutflow.addCutToLastActiveCut("AR1SFOSDYVetoBDT"    , Lambdas::DYAndZVetoes                                        , UNITY);
         ana.cutflow.addCutToLastActiveCut("AR1SFOSNsoftbVetoBDT", Lambdas::NBvetoSoft      (Variation::JES, Variation::Nominal), UNITY);
-        ana.cutflow.addCutToLastActiveCut("AR1SFOSBDT"    , Lambdas::KinSel3LBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("AR1SFOSBDT"    , UNITY                                                        , UNITY);
         ana.cutflow.addCutToLastActiveCut("AR1SFOSFullBDT"      , Lambdas::SRTrilepCutBDT1SFOS                                        , UNITY);
 
         ana.cutflow.getCut("AR2SFOS");
         ana.cutflow.addCutToLastActiveCut("AR2SFOSPreSelBDT"    , Lambdas::ThreeLepPreselBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
         ana.cutflow.addCutToLastActiveCut("AR2SFOSDYVetoBDT"    , Lambdas::DYAndZVetoes                                        , UNITY);
         ana.cutflow.addCutToLastActiveCut("AR2SFOSNsoftbVetoBDT", Lambdas::NBvetoSoft      (Variation::JES, Variation::Nominal), UNITY);
-        ana.cutflow.addCutToLastActiveCut("AR2SFOSBDT"    , Lambdas::KinSel3LBDT        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("AR2SFOSBDT"    , UNITY                                                        , UNITY);
         ana.cutflow.addCutToLastActiveCut("AR2SFOSFullBDT"      , Lambdas::SRTrilepCutBDT2SFOS                                        , UNITY);
 
         //************************************************************************************************************************************************************************************************
@@ -1422,6 +1424,7 @@ int main(int argc, char** argv)
         //
         //
         //************************************************************************************************************************************************************************************************
+
 
         ana.cutflow.getCut("CutSRDilep");
         ana.cutflow.addCutToLastActiveCut("CRBTagee"           , Lambdas::isSRSSeeChannel                                     , UNITY);
@@ -1505,6 +1508,66 @@ int main(int argc, char** argv)
         ana.cutflow.addCutToLastActiveCut("CRBTag2SFOSKinSel"    , Lambdas::KinSel3L        (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("CRBTag2SFOSFull"      , UNITY                                                        , UNITY);
 
+
+	/////////BTag CR for BDT method
+        ana.cutflow.getCut("CRBTagee");
+        ana.cutflow.addCutToLastActiveCut("CRBTageePreSelBDT"     , Lambdas::SSPreSelectionBDT  (Variation::JES, Variation::Nominal,true), Lambdas::BTagScaleFactor);
+        ana.cutflow.addCutToLastActiveCut("CRBTageeFullBDT"       , UNITY                                                        , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.addCutToLastActiveCut("CRBTageeMjjInBDT"      , Lambdas::SSMjjIn         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("CRBTageeMjjInFullBDT"  , Lambdas::SRDilepCutBDT2JeeMjjIn                                                       , UNITY); // Adding one more node with name "<Region>Full
+        ana.cutflow.getCut("CRBTageePreSelBDT");
+        ana.cutflow.addCutToLastActiveCut("CRBTageeMjjOutBDT"     , Lambdas::SSMjjOut        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("CRBTageeMjjOutFullBDT" , Lambdas::SRDilepCutBDT2JeeMjjOut                                                        , UNITY); // Adding one more node with name "<Region>Full
+
+        ana.cutflow.getCut("CRBTagem");
+        ana.cutflow.addCutToLastActiveCut("CRBTagemPreSelBDT"     , Lambdas::SSPreSelectionBDT  (Variation::JES, Variation::Nominal,true), Lambdas::BTagScaleFactor);
+        ana.cutflow.addCutToLastActiveCut("CRBTagemFullBDT"       , UNITY                                                        , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.addCutToLastActiveCut("CRBTagemMjjInBDT"      , Lambdas::SSMjjIn         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("CRBTagemMjjInFullBDT"  , Lambdas::SRDilepCutBDT2JemMjjIn                                                        , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.getCut("CRBTagemPreSelBDT");
+        ana.cutflow.addCutToLastActiveCut("CRBTagemMjjOutBDT"     , Lambdas::SSMjjOut        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("CRBTagemMjjOutFullBDT" , Lambdas::SRDilepCutBDT2JemMjjOut                                                        , UNITY); // Adding one more node with name "<Region>Full"
+
+        ana.cutflow.getCut("CRBTagmm");
+        ana.cutflow.addCutToLastActiveCut("CRBTagmmPreSelBDT"     , Lambdas::SSPreSelectionBDT  (Variation::JES, Variation::Nominal,true), Lambdas::BTagScaleFactor);
+        ana.cutflow.addCutToLastActiveCut("CRBTagmmFullBDT"       , UNITY                                                        , UNITY); // Adding one more node with name "<Region>Full"
+        ana.cutflow.addCutToLastActiveCut("CRBTagmmMjjInBDT"      , Lambdas::SSMjjIn         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("CRBTagmmMjjInFullBDT"  , Lambdas::SRDilepCutBDT2JmmMjjIn                                                        , UNITY); // Adding one more node with name "<Region>Full
+        ana.cutflow.getCut("CRBTagmmPreSelBDT");
+        ana.cutflow.addCutToLastActiveCut("CRBTagmmMjjOutBDT"     , Lambdas::SSMjjOut        (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("CRBTagmmMjjOutFullBDT" , Lambdas::SRDilepCutBDT2JmmMjjOut                                                        , UNITY); // Adding one more node with name "<Region>Full
+        
+        ana.cutflow.getCut("CRBTagee");
+        ana.cutflow.addCutToLastActiveCut("CRBTag1Jee1JPreBDT"  , Lambdas::SS1JPreselectionBDT (Variation::JES, Variation::Nominal,true), UNITY);
+        //ana.cutflow.addCutToLastActiveCut("CRBTag1Jee1JKinBDT"  , UNITY, UNITY);
+        ana.cutflow.addCutToLastActiveCut("CRBTag1JeeFullBDT"   , Lambdas::SRDilepCutBDT1Jee                                                         , UNITY);
+        ana.cutflow.getCut("CRBTagem");
+        ana.cutflow.addCutToLastActiveCut("CRBTag1Jem1JPreBDT"  , Lambdas::SS1JPreselectionBDT (Variation::JES, Variation::Nominal,true), UNITY);
+        //ana.cutflow.addCutToLastActiveCut("CRBTag1Jem1JKinBDT"  , UNITY, UNITY);
+        ana.cutflow.addCutToLastActiveCut("CRBTag1JemFullBDT"   , Lambdas::SRDilepCutBDT1Jem                                                         , UNITY);
+        ana.cutflow.getCut("CRBTagmm");
+        ana.cutflow.addCutToLastActiveCut("CRBTag1Jmm1JPreBDT"  , Lambdas::SS1JPreselectionBDT (Variation::JES, Variation::Nominal,true), UNITY);
+        //ana.cutflow.addCutToLastActiveCut("CRBTag1Jmm1JKinBDT"  , UNITY,        UNITY);
+        ana.cutflow.addCutToLastActiveCut("CRBTag1JmmFullBDT"   , Lambdas::SRDilepCutBDT1Jmm                                                         , UNITY);
+
+        ana.cutflow.getCut("CRBTag0SFOS");
+        ana.cutflow.addCutToLastActiveCut("CRBTag0SFOSPreSelBDT"    , Lambdas::ThreeLepPreselBDT  (Variation::JES, Variation::Nominal,true), Lambdas::BTagScaleFactor);
+        ana.cutflow.addCutToLastActiveCut("CRBTag0SFOSDYVetoBDT"    , Lambdas::DYAndZVetoes                                        , UNITY);
+        //ana.cutflow.addCutToLastActiveCut("CRBTag0SFOSKinSelBDT"    , UNITY                                                        , UNITY);
+        ana.cutflow.addCutToLastActiveCut("CRBTag0SFOSFullBDT"      , Lambdas::SRTrilepCutBDT0SFOS                                                        , UNITY);
+
+        ana.cutflow.getCut("CRBTag1SFOS");
+        ana.cutflow.addCutToLastActiveCut("CRBTag1SFOSPreSelBDT"    , Lambdas::ThreeLepPreselBDT  (Variation::JES, Variation::Nominal,true), Lambdas::BTagScaleFactor);
+        ana.cutflow.addCutToLastActiveCut("CRBTag1SFOSDYVetoBDT"    , Lambdas::DYAndZVetoes                                        , UNITY);
+        //ana.cutflow.addCutToLastActiveCut("CRBTag1SFOSKinSelBDT"    , UNITY                                                        , UNITY);
+        ana.cutflow.addCutToLastActiveCut("CRBTag1SFOSFullBDT"      , Lambdas::SRTrilepCutBDT1SFOS                                                        , UNITY);
+
+        ana.cutflow.getCut("CRBTag2SFOS");
+        ana.cutflow.addCutToLastActiveCut("CRBTag2SFOSPreSelBDT"    , Lambdas::ThreeLepPreselBDT  (Variation::JES, Variation::Nominal,true), Lambdas::BTagScaleFactor);
+        ana.cutflow.addCutToLastActiveCut("CRBTag2SFOSDYVetoBDT"    , Lambdas::DYAndZVetoes                                        , UNITY);
+        //ana.cutflow.addCutToLastActiveCut("CRBTag2SFOSKinSelBDT"    , UNITY                                                        , UNITY);
+        ana.cutflow.addCutToLastActiveCut("CRBTag2SFOSFullBDT"      , Lambdas::SRTrilepCutBDT2SFOS                                                        , UNITY);
+
         //************************************************************************************************************************************************************************************************
         //
         //
@@ -1519,6 +1582,20 @@ int main(int argc, char** argv)
         ana.cutflow.getCut("CutSRTrilep");
         ana.cutflow.addCutToLastActiveCut("GammaCRLowPt3l"       , Lambdas::GammaCRLowPt3l                                  , UNITY);//inverted MET cut
         ana.cutflow.addCutToLastActiveCut("GammaCRLowPt3lMT"     , Lambdas::GammaCRLowMT(Variation::JES, Variation::Nominal), UNITY);//inverted MET cut
+	//validation of photon fakes, inverting fake BDT cut
+	ana.cutflow.getCut("CutSRTrilep");
+        ana.cutflow.addCutToLastActiveCut("GammaCRInvertFakeBDT"  , Lambdas::SRTrilepCutBDTSFOSInvertFake, UNITY);	
+        ana.cutflow.addCutToLastActiveCut("GammaCRIFPreSelBDT"    , Lambdas::ThreeLepPreselBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
+        ana.cutflow.addCutToLastActiveCut("GammaCRIFDYVetoBDT"    , Lambdas::DYAndZVetoes                                        , UNITY);
+        ana.cutflow.addCutToLastActiveCut("GammaCRIFNsoftbVetoBDT", Lambdas::NBvetoSoft      (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("GammaCRIFBDT"    , UNITY                                                        , UNITY);
+	ana.cutflow.getCut("CutSRTrilep");
+        ana.cutflow.addCutToLastActiveCut("GammaCRInvertBothBDT"  , Lambdas::SRTrilepCutBDTSFOSInvertBoth, UNITY);	
+        ana.cutflow.addCutToLastActiveCut("GammaCRIBPreSelBDT"    , Lambdas::ThreeLepPreselBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
+        ana.cutflow.addCutToLastActiveCut("GammaCRIBDYVetoBDT"    , Lambdas::DYAndZVetoes                                        , UNITY);
+        ana.cutflow.addCutToLastActiveCut("GammaCRIBNsoftbVetoBDT", Lambdas::NBvetoSoft      (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("GammaCRIBBDT"    , UNITY                                                        , UNITY);
+
         //validation of WWjj (WW VBS)
         ana.cutflow.getCut("CutSRDilep");
         ana.cutflow.addCutToLastActiveCut("SRSSPresel"      , Lambdas::SSPreSelection  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
@@ -1536,6 +1613,7 @@ int main(int argc, char** argv)
         ana.cutflow.addCutToLastActiveCut("ttWVRlNBgeq2"    , Lambdas::NBcut           (Variation::JES, Variation::Nominal,false,2), Lambdas::BTagScaleFactor);//geq 2b (loose)
         ana.cutflow.getCut("ttWVRPresel");
         ana.cutflow.addCutToLastActiveCut("ttWVRmNBgeq2"    , Lambdas::NBmedcut        (Variation::JES, Variation::Nominal,false,2), Lambdas::BTagScaleFactor);
+
         //fit WZ vs. ttZ
         ana.cutflow.getCut("CutSRTrilep");
         ana.cutflow.addCutToLastActiveCut("ttZWZfitRegion"  , Lambdas::ttZWZfitRegion  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
@@ -1551,6 +1629,19 @@ int main(int argc, char** argv)
         ana.cutflow.addCutToLastActiveCut("WZCRSS1JnoZcand1JPre"     , Lambdas::SS1JPreselection (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("WZCRSS1JnoZcandNsoftbVeto", Lambdas::NBvetoSoft       (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("WZCRSS1JnoZcand1JKin"     , Lambdas::SS1J             (Variation::JES, Variation::Nominal), UNITY);
+
+        //WZ validation SS, BDT method
+        ana.cutflow.getCut("WZCRSSnoZcand");
+        ana.cutflow.addCutToLastActiveCut("WZCRSSnoZmassPreSelBDT"     , Lambdas::SSPreSelectionBDT  (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
+        ana.cutflow.addCutToLastActiveCut("WZCRSSnoZmassNsoftbVetoBDT" , Lambdas::NBvetoSoft      (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCRSSnoZmassKinSelBDT"     , UNITY, UNITY);      
+        ana.cutflow.addCutToLastActiveCut("WZCRSSnoZmassBDTFull"     , Lambdas::SRDilepCutBDTSS2J      (Variation::JES, Variation::Nominal), UNITY);      
+        ana.cutflow.getCut("WZCRSSnoZcand");
+        ana.cutflow.addCutToLastActiveCut("WZCRSS1JnoZcand1JPreBDT"     , Lambdas::SS1JPreselectionBDT (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCRSS1JnoZcandNsoftbVetoBDT", Lambdas::NBvetoSoft       (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCRSS1JnoZcand1JKinBDT"     , UNITY, UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCRSS1JnoZcandBDTFull"     , Lambdas::SRDilepCutBDTSS1J       (Variation::JES, Variation::Nominal), UNITY);
+ 
         //WZ validation 3l
         ana.cutflow.getCut("CutWZCRTrilep");
         ana.cutflow.addCutToLastActiveCut("WZCR3LnoZmass"                 , Lambdas::HasZcand_3L                                            , UNITY);
@@ -1568,6 +1659,17 @@ int main(int argc, char** argv)
         ana.cutflow.getCut("WZCR3LnoZmassKinSelInvertOne");
         ana.cutflow.addCutToLastActiveCut("WZCR3LnoZmassKinSelInvertAll"  , Lambdas::KinSel3LInvertAll  (Variation::JES, Variation::Nominal), UNITY);
 
+        //WZ validation 3l, BDT method
+        ana.cutflow.getCut("WZCR3LnoZmass");
+        ana.cutflow.addCutToLastActiveCut("WZCR3LnoZmassPreSelBDT"           , Lambdas::ThreeLepPreselBDT     (Variation::JES, Variation::Nominal), Lambdas::BTagScaleFactor);
+        ana.cutflow.addCutToLastActiveCut("WZCR3LnoZmassDYVetoBDT"           , Lambdas::DYVetoes                                               , UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCR3LnoZmassNsoftbVetoBDT"       , Lambdas::NBvetoSoft         (Variation::JES, Variation::Nominal), UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCR3LnoZmassKinSelBDT"  , UNITY                                                        , UNITY);
+        ana.cutflow.addCutToLastActiveCut("WZCR3LnoZmassInvertPromptBDT"  , Lambdas::SRTrilepCutBDTSFOSInvertPrompt, UNITY);
+        ana.cutflow.getCut("WZCR3LnoZmassKinSelBDT");
+        ana.cutflow.addCutToLastActiveCut("WZCR3LnoZmassInvertFakeBDT"  , Lambdas::SRTrilepCutBDTSFOSInvertFake, UNITY);
+        ana.cutflow.getCut("WZCR3LnoZmassKinSelBDT");
+        ana.cutflow.addCutToLastActiveCut("WZCR3LnoZmassInvertBothBDT"  , Lambdas::SRTrilepCutBDTSFOSInvertBoth, UNITY);
         
     };
 
@@ -1933,6 +2035,144 @@ int main(int argc, char** argv)
         ana.cutflow.setCutSyst ( "WZCR3LnoZmassKinSelInvertDPhi"  , systname , Lambdas::KinSel3LInvertDPhi  ( expsyst , var              ) , UNITY                    ) ;
         ana.cutflow.setCutSyst ( "WZCR3LnoZmassKinSelInvertPt3l"  , systname , Lambdas::KinSel3LInvertPt3l  ( expsyst , var              ) , UNITY                    ) ;
         ana.cutflow.setCutSyst ( "WZCR3LnoZmassKinSelInvertAll"   , systname , Lambdas::KinSel3LInvertAll   ( expsyst , var              ) , UNITY                    ) ;
+
+///////////BDT part
+
+
+        ana.cutflow.setCutSyst ( "SRSSemKinSelBDT"                   , systname , UNITY                          , UNITY);
+        ana.cutflow.setCutSyst ( "SRSSeeKinSelBDT"                   , systname , UNITY                          , UNITY);
+        ana.cutflow.setCutSyst ( "SRSSmmKinSelBDT"                   , systname , UNITY                          , UNITY);
+        ana.cutflow.setCutSyst ( "WZCRSSemKinSelBDT"                   , systname , UNITY                          , UNITY);
+        ana.cutflow.setCutSyst ( "WZCRSSeeKinSelBDT"                   , systname , UNITY                          , UNITY);
+        ana.cutflow.setCutSyst ( "WZCRSSmmKinSelBDT"                   , systname , UNITY                          , UNITY);
+        ana.cutflow.setCutSyst ( "WZCRSSnoZmassKinSelBDT"                   , systname , UNITY                          , UNITY);
+        ana.cutflow.setCutSyst ( "WZCR3LnoZmassKinSelBDT"                   , systname , UNITY                          , UNITY);
+
+        ana.cutflow.setCutSyst ( "WZCRBDTTrainPreSelSS2J"                   , systname , Lambdas::isBDTTrainPreSelSS2J                          , UNITY);
+        ana.cutflow.setCutSyst ( "WZCRBDTTrainPreSelSS1J"                   , systname , Lambdas::isBDTTrainPreSelSS1J                          , UNITY);
+        ana.cutflow.setCutSyst ( "WZCRBDTTrainPreSelSFOS"                   , systname , Lambdas::isBDTTrainPreSelSFOS                          , UNITY);
+        ana.cutflow.setCutSyst ( "ARBDTTrainPreSelSS2J"                   , systname , Lambdas::isBDTTrainPreSelSS2J                          , UNITY);
+        ana.cutflow.setCutSyst ( "ARBDTTrainPreSelSS1J"                   , systname , Lambdas::isBDTTrainPreSelSS1J                          , UNITY);
+        ana.cutflow.setCutSyst ( "ARBDTTrainPreSelSFOS"                   , systname , Lambdas::isBDTTrainPreSelSFOS                          , UNITY);
+        ana.cutflow.setCutSyst ( "CutBDTTrainPreSelSS2J"                   , systname , Lambdas::isBDTTrainPreSelSS2J                          , UNITY);
+        ana.cutflow.setCutSyst ( "CutBDTTrainPreSelSS1J"                   , systname , Lambdas::isBDTTrainPreSelSS1J                          , UNITY);
+        ana.cutflow.setCutSyst ( "CutBDTTrainPreSelSFOS"                   , systname , Lambdas::isBDTTrainPreSelSFOS                          , UNITY);
+        ana.cutflow.setCutSyst ( "SRSSeePreSelBDT"                   , systname , Lambdas::SSPreSelectionBDT      ( expsyst , var              ) , Lambdas::BTagScaleFactor ) ;
+        ana.cutflow.setCutSyst ( "SRSSeeNsoftbVetoBDT"               , systname , Lambdas::NBvetoSoft          ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "SRSSeeMjjInBDT"                    , systname , Lambdas::SSMjjIn             ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "SRSSeeMjjOutBDT"                   , systname , Lambdas::SSMjjOut            ( expsyst , var              ) , UNITY                    ) ;
+
+	ana.cutflow.setCutSyst ( "SRSSemPreSelBDT"                   , systname , Lambdas::SSPreSelectionBDT      ( expsyst , var              ) , Lambdas::BTagScaleFactor ) ;
+        ana.cutflow.setCutSyst ( "SRSSemNsoftbVetoBDT"               , systname , Lambdas::NBvetoSoft          ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "SRSSemMjjInBDT"                    , systname , Lambdas::SSMjjIn             ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "SRSSemMjjOutBDT"                   , systname , Lambdas::SSMjjOut            ( expsyst , var              ) , UNITY                    ) ;
+
+	ana.cutflow.setCutSyst ( "SRSSmmPreSelBDT"                   , systname , Lambdas::SSPreSelectionBDT      ( expsyst , var              ) , Lambdas::BTagScaleFactor ) ;
+        ana.cutflow.setCutSyst ( "SRSSmmNsoftbVetoBDT"               , systname , Lambdas::NBvetoSoft          ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "SRSSmmMjjInBDT"                    , systname , Lambdas::SSMjjIn             ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "SRSSmmMjjOutBDT"                   , systname , Lambdas::SSMjjOut            ( expsyst , var              ) , UNITY                    ) ;
+
+        ana.cutflow.setCutSyst ( "SRSS1Jee1JPreBDT"                  , systname , Lambdas::SS1JPreselectionBDT    ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "SRSS1JeeNsoftbVetoBDT"             , systname , Lambdas::NBvetoSoft          ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "SRSS1Jem1JPreBDT"                  , systname , Lambdas::SS1JPreselectionBDT    ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "SRSS1JemNsoftbVetoBDT"             , systname , Lambdas::NBvetoSoft          ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "SRSS1Jmm1JPreBDT"                  , systname , Lambdas::SS1JPreselectionBDT    ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "SRSS1JmmNsoftbVetoBDT"             , systname , Lambdas::NBvetoSoft          ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "SR0SFOSPreSelBDT"                  , systname , Lambdas::ThreeLepPreselBDT      ( expsyst , var              ) , Lambdas::BTagScaleFactor ) ;
+        ana.cutflow.setCutSyst ( "SR0SFOSNsoftbVetoBDT"              , systname , Lambdas::NBvetoSoft          ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "SR1SFOSPreSelBDT"                  , systname , Lambdas::ThreeLepPreselBDT      ( expsyst , var              ) , Lambdas::BTagScaleFactor ) ;
+        ana.cutflow.setCutSyst ( "SR1SFOSNsoftbVetoBDT"              , systname , Lambdas::NBvetoSoft          ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "SR2SFOSPreSelBDT"                  , systname , Lambdas::ThreeLepPreselBDT      ( expsyst , var              ) , Lambdas::BTagScaleFactor ) ;
+        ana.cutflow.setCutSyst ( "SR2SFOSNsoftbVetoBDT"              , systname , Lambdas::NBvetoSoft          ( expsyst , var              ) , UNITY                    ) ;
+
+        ana.cutflow.setCutSyst ( "WZCRSSeePreSelBDT"                 , systname , Lambdas::SSPreSelectionBDT      ( expsyst , var              ) , Lambdas::BTagScaleFactor ) ;
+        ana.cutflow.setCutSyst ( "WZCRSSeeNsoftbVetoBDT"             , systname , Lambdas::NBvetoSoft          ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "WZCRSSeeMjjInBDT"                  , systname , Lambdas::SSMjjIn             ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "WZCRSSeeMjjOutBDT"                 , systname , Lambdas::SSMjjOut            ( expsyst , var              ) , UNITY                    ) ;
+
+        ana.cutflow.setCutSyst ( "WZCRSSemPreSelBDT"                 , systname , Lambdas::SSPreSelectionBDT      ( expsyst , var              ) , Lambdas::BTagScaleFactor ) ;
+        ana.cutflow.setCutSyst ( "WZCRSSemNsoftbVetoBDT"             , systname , Lambdas::NBvetoSoft          ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "WZCRSSemMjjInBDT"                  , systname , Lambdas::SSMjjIn             ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "WZCRSSemMjjOutBDT"                 , systname , Lambdas::SSMjjOut            ( expsyst , var              ) , UNITY                    ) ;
+
+        ana.cutflow.setCutSyst ( "WZCRSSmmPreSelBDT"                 , systname , Lambdas::SSPreSelectionBDT      ( expsyst , var              ) , Lambdas::BTagScaleFactor ) ;
+        ana.cutflow.setCutSyst ( "WZCRSSmmNsoftbVetoBDT"             , systname , Lambdas::NBvetoSoft          ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "WZCRSSmmMjjInBDT"                  , systname , Lambdas::SSMjjIn             ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "WZCRSSmmMjjOutBDT"                 , systname , Lambdas::SSMjjOut            ( expsyst , var              ) , UNITY                    ) ;
+
+
+        ana.cutflow.setCutSyst ( "WZCRSS1Jee1JPreBDT"                , systname , Lambdas::SS1JPreselectionBDT    ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "WZCRSS1JeeNsoftbVetoBDT"           , systname , Lambdas::NBvetoSoft          ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "WZCRSS1Jem1JPreBDT"                , systname , Lambdas::SS1JPreselectionBDT    ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "WZCRSS1JemNsoftbVetoBDT"           , systname , Lambdas::NBvetoSoft          ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "WZCRSS1Jmm1JPreBDT"                , systname , Lambdas::SS1JPreselectionBDT    ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "WZCRSS1JmmNsoftbVetoBDT"           , systname , Lambdas::NBvetoSoft          ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "WZCR0SFOSPreSelBDT"                , systname , Lambdas::ThreeLepPreselBDT      ( expsyst , var              ) , Lambdas::BTagScaleFactor ) ;
+        ana.cutflow.setCutSyst ( "WZCR0SFOSNsoftbVetoBDT"            , systname , Lambdas::NBvetoSoft          ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "WZCR1SFOSPreSelBDT"                , systname , Lambdas::ThreeLepPreselBDT      ( expsyst , var              ) , Lambdas::BTagScaleFactor ) ;
+        ana.cutflow.setCutSyst ( "WZCR1SFOSNsoftbVetoBDT"            , systname , Lambdas::NBvetoSoft          ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "WZCR2SFOSPreSelBDT"                , systname , Lambdas::ThreeLepPreselBDT      ( expsyst , var              ) , Lambdas::BTagScaleFactor ) ;
+        ana.cutflow.setCutSyst ( "WZCR2SFOSNsoftbVetoBDT"            , systname , Lambdas::NBvetoSoft          ( expsyst , var              ) , UNITY                    ) ;
+
+        ana.cutflow.setCutSyst ( "ARSSeePreSelBDT"                   , systname , Lambdas::SSPreSelectionBDT      ( expsyst , var              ) , Lambdas::BTagScaleFactor ) ;
+        ana.cutflow.setCutSyst ( "ARSSeeNsoftbVetoBDT"               , systname , Lambdas::NBvetoSoft          ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "ARSSeeMjjInBDT"                    , systname , Lambdas::SSMjjIn             ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "ARSSeeMjjOutBDT"                   , systname , Lambdas::SSMjjOut            ( expsyst , var              ) , UNITY                    ) ;
+ 
+        ana.cutflow.setCutSyst ( "ARSSemPreSelBDT"                   , systname , Lambdas::SSPreSelectionBDT      ( expsyst , var              ) , Lambdas::BTagScaleFactor ) ;
+        ana.cutflow.setCutSyst ( "ARSSemNsoftbVetoBDT"               , systname , Lambdas::NBvetoSoft          ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "ARSSemMjjInBDT"                    , systname , Lambdas::SSMjjIn             ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "ARSSemMjjOutBDT"                   , systname , Lambdas::SSMjjOut            ( expsyst , var              ) , UNITY                    ) ;
+ 
+        ana.cutflow.setCutSyst ( "ARSSmmPreSelBDT"                   , systname , Lambdas::SSPreSelectionBDT      ( expsyst , var              ) , Lambdas::BTagScaleFactor ) ;
+        ana.cutflow.setCutSyst ( "ARSSmmNsoftbVetoBDT"               , systname , Lambdas::NBvetoSoft          ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "ARSSmmMjjInBDT"                    , systname , Lambdas::SSMjjIn             ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "ARSSmmMjjOutBDT"                   , systname , Lambdas::SSMjjOut            ( expsyst , var              ) , UNITY                    ) ;
+       
+        ana.cutflow.setCutSyst ( "ARSS1Jee1JPreBDT"                  , systname , Lambdas::SS1JPreselectionBDT    ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "ARSS1JeeNsoftbVetoBDT"             , systname , Lambdas::NBvetoSoft          ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "ARSS1Jem1JPreBDT"                  , systname , Lambdas::SS1JPreselectionBDT    ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "ARSS1JemNsoftbVetoBDT"             , systname , Lambdas::NBvetoSoft          ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "ARSS1Jmm1JPreBDT"                  , systname , Lambdas::SS1JPreselectionBDT    ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "ARSS1JmmNsoftbVetoBDT"             , systname , Lambdas::NBvetoSoft          ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "AR0SFOSPreSelBDT"                  , systname , Lambdas::ThreeLepPreselBDT      ( expsyst , var              ) , Lambdas::BTagScaleFactor ) ;
+        ana.cutflow.setCutSyst ( "AR0SFOSNsoftbVetoBDT"              , systname , Lambdas::NBvetoSoft          ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "AR1SFOSPreSelBDT"                  , systname , Lambdas::ThreeLepPreselBDT      ( expsyst , var              ) , Lambdas::BTagScaleFactor ) ;
+        ana.cutflow.setCutSyst ( "AR1SFOSNsoftbVetoBDT"              , systname , Lambdas::NBvetoSoft          ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "AR2SFOSPreSelBDT"                  , systname , Lambdas::ThreeLepPreselBDT      ( expsyst , var              ) , Lambdas::BTagScaleFactor ) ;
+        ana.cutflow.setCutSyst ( "AR2SFOSNsoftbVetoBDT"              , systname , Lambdas::NBvetoSoft          ( expsyst , var              ) , UNITY                    ) ;
+
+        ana.cutflow.setCutSyst ( "CRBTageePreSelBDT"                 , systname , Lambdas::SSPreSelectionBDT      ( expsyst , var  , true      ) , Lambdas::BTagScaleFactor ) ;
+        ana.cutflow.setCutSyst ( "CRBTageeMjjInBDT"                  , systname , Lambdas::SSMjjIn             ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "CRBTageeMjjOutBDT"                 , systname , Lambdas::SSMjjOut            ( expsyst , var              ) , UNITY                    ) ;
+
+         ana.cutflow.setCutSyst ( "CRBTagemPreSelBDT"                 , systname , Lambdas::SSPreSelectionBDT      ( expsyst , var  , true      ) , Lambdas::BTagScaleFactor ) ;
+        ana.cutflow.setCutSyst ( "CRBTagemMjjInBDT"                  , systname , Lambdas::SSMjjIn             ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "CRBTagemMjjOutBDT"                 , systname , Lambdas::SSMjjOut            ( expsyst , var              ) , UNITY                    ) ;
+  
+        ana.cutflow.setCutSyst ( "CRBTagmmPreSelBDT"                 , systname , Lambdas::SSPreSelectionBDT      ( expsyst , var  , true      ) , Lambdas::BTagScaleFactor ) ;
+        ana.cutflow.setCutSyst ( "CRBTagmmMjjInBDT"                  , systname , Lambdas::SSMjjIn             ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "CRBTagmmMjjOutBDT"                 , systname , Lambdas::SSMjjOut            ( expsyst , var              ) , UNITY                    ) ;
+   
+        ana.cutflow.setCutSyst ( "CRBTag1Jee1JPreBDT"                , systname , Lambdas::SS1JPreselectionBDT    ( expsyst , var  , true      ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "CRBTag1Jem1JPreBDT"                , systname , Lambdas::SS1JPreselectionBDT    ( expsyst , var  , true      ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "CRBTag1Jmm1JPreBDT"                , systname , Lambdas::SS1JPreselectionBDT    ( expsyst , var  , true      ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "CRBTag0SFOSPreSelBDT"              , systname , Lambdas::ThreeLepPreselBDT      ( expsyst , var  , true      ) , Lambdas::BTagScaleFactor ) ;
+        ana.cutflow.setCutSyst ( "CRBTag1SFOSPreSelBDT"              , systname , Lambdas::ThreeLepPreselBDT      ( expsyst , var  , true      ) , Lambdas::BTagScaleFactor ) ;
+        ana.cutflow.setCutSyst ( "CRBTag2SFOSPreSelBDT"              , systname , Lambdas::ThreeLepPreselBDT      ( expsyst , var  , true      ) , Lambdas::BTagScaleFactor ) ;
+        ana.cutflow.setCutSyst ( "WZCRSSnoZmassPreSelBDT"            , systname , Lambdas::SSPreSelectionBDT      ( expsyst , var              ) , Lambdas::BTagScaleFactor ) ;
+        ana.cutflow.setCutSyst ( "WZCRSSnoZmassNsoftbVetoBDT"        , systname , Lambdas::NBvetoSoft          ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "WZCRSS1JnoZcand1JPreBDT"           , systname , Lambdas::SS1JPreselectionBDT    ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "WZCRSS1JnoZcandNsoftbVetoBDT"      , systname , Lambdas::NBvetoSoft          ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "WZCR3LnoZmassPreSelBDT"            , systname , Lambdas::ThreeLepPreselBDT      ( expsyst , var              ) , Lambdas::BTagScaleFactor ) ;
+        ana.cutflow.setCutSyst ( "WZCR3LnoZmassNsoftbVetoBDT"        , systname , Lambdas::NBvetoSoft          ( expsyst , var              ) , UNITY                    ) ;
+
+        ana.cutflow.setCutSyst ( "GammaCRIFPreSelBDT"        , systname , Lambdas::ThreeLepPreselBDT          ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "GammaCRIFNsoftbVetoBDT"        , systname , Lambdas::NBvetoSoft          ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "GammaCRIBPreSelBDT"        , systname , Lambdas::ThreeLepPreselBDT          ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "GammaCRIBNsoftbVetoBDT"        , systname , Lambdas::NBvetoSoft          ( expsyst , var              ) , UNITY                    ) ;
+        ana.cutflow.setCutSyst ( "passNsoftbVeto"        , systname , Lambdas::NBvetoSoft          ( expsyst , var              ) , UNITY                    ) ;
+
 
         };
 

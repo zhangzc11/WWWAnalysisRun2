@@ -45,7 +45,8 @@ done
 if [ -z ${INPUT_BABY_VERSION} ]; then usage; fi
 if [ -z ${JOB_TAG}  ]; then usage; fi
 if [ -z ${USERNAME} ]; then USERNAME=mliu; fi
-if [ -z ${DOSKIM} ]; then JOBS=" -L -H"; fi
+#if [ -z ${DOSKIM} ]; then JOBS=" -L -H"; fi
+JOBS=" -L -H"
 
 # to shift away the parsed options
 shift $(($OPTIND - 1))
@@ -62,6 +63,7 @@ echo "================================================"
 
 # DDFAKEDIR=data/
 DDFAKEDIR=bkgdata/
+DDDFAKEDIR=data/
 #if [[ ${INPUT_BABY_VERSION} == *"2016"* ]]; then
 #    DDFAKEDIR=data/
 #fi
@@ -78,8 +80,11 @@ echo "Submitting parallel jobs ... ==>"
 echo "(below are individual bash commands)"
 # Split a couple of big jobs by a few sub jobs
 (set -x ;./doAnalysis ${DOSKIM} ${SYSTEMATICS} ${CUTFLOW} ${JOBS} ${DO_USER_STUDY} -i /nfs-7/userdata/${USERNAME}/WWW_babies/${INPUT_BABY_VERSION}/${SUBDIRECTORY}/grouped/${DDFAKEDIR}  -o hists/${INPUT_BABY_VERSION}/${JOB_TAG}/ddfakes_0.root      -T t_ss -F   -j 3 -I 0 > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/ddfakes_0.log      2>&1) & # fake estimation
+(set -x ;./doAnalysis ${DOSKIM} ${SYSTEMATICS} ${CUTFLOW} ${JOBS} ${DO_USER_STUDY} -i /nfs-7/userdata/${USERNAME}/WWW_babies/${INPUT_BABY_VERSION}/${SUBDIRECTORY}/grouped/${DDDFAKEDIR}  -o hists/${INPUT_BABY_VERSION}/${JOB_TAG}/dddfakes_0.root      -T t_ss -F   -j 3 -I 0 > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/dddfakes_0.log      2>&1) & # fake estimation
 (set -x ;./doAnalysis ${DOSKIM} ${SYSTEMATICS} ${CUTFLOW} ${JOBS} ${DO_USER_STUDY} -i /nfs-7/userdata/${USERNAME}/WWW_babies/${INPUT_BABY_VERSION}/${SUBDIRECTORY}/grouped/${DDFAKEDIR}  -o hists/${INPUT_BABY_VERSION}/${JOB_TAG}/ddfakes_1.root      -T t_ss -F   -j 3 -I 1 > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/ddfakes_1.log      2>&1) & # fake estimation
+(set -x ;./doAnalysis ${DOSKIM} ${SYSTEMATICS} ${CUTFLOW} ${JOBS} ${DO_USER_STUDY} -i /nfs-7/userdata/${USERNAME}/WWW_babies/${INPUT_BABY_VERSION}/${SUBDIRECTORY}/grouped/${DDDFAKEDIR}  -o hists/${INPUT_BABY_VERSION}/${JOB_TAG}/dddfakes_1.root      -T t_ss -F   -j 3 -I 1 > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/dddfakes_1.log      2>&1) & # fake estimation
 (set -x ;./doAnalysis ${DOSKIM} ${SYSTEMATICS} ${CUTFLOW} ${JOBS} ${DO_USER_STUDY} -i /nfs-7/userdata/${USERNAME}/WWW_babies/${INPUT_BABY_VERSION}/${SUBDIRECTORY}/grouped/${DDFAKEDIR}  -o hists/${INPUT_BABY_VERSION}/${JOB_TAG}/ddfakes_2.root      -T t_ss -F   -j 3 -I 2 > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/ddfakes_2.log      2>&1) & # fake estimation
+(set -x ;./doAnalysis ${DOSKIM} ${SYSTEMATICS} ${CUTFLOW} ${JOBS} ${DO_USER_STUDY} -i /nfs-7/userdata/${USERNAME}/WWW_babies/${INPUT_BABY_VERSION}/${SUBDIRECTORY}/grouped/${DDDFAKEDIR}  -o hists/${INPUT_BABY_VERSION}/${JOB_TAG}/dddfakes_2.root      -T t_ss -F   -j 3 -I 2 > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/dddfakes_2.log      2>&1) & # fake estimation
 (set -x ;./doAnalysis ${DOSKIM} ${SYSTEMATICS} ${CUTFLOW} ${JOBS} ${DO_USER_STUDY} -i /nfs-7/userdata/${USERNAME}/WWW_babies/${INPUT_BABY_VERSION}/${SUBDIRECTORY}/grouped/bkg/          -o hists/${INPUT_BABY_VERSION}/${JOB_TAG}/lostlep_0.root      -T t_lostlep -j 3 -I 0 > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/lostlep_0.log      2>&1) &
 (set -x ;./doAnalysis ${DOSKIM} ${SYSTEMATICS} ${CUTFLOW} ${JOBS} ${DO_USER_STUDY} -i /nfs-7/userdata/${USERNAME}/WWW_babies/${INPUT_BABY_VERSION}/${SUBDIRECTORY}/grouped/bkg/          -o hists/${INPUT_BABY_VERSION}/${JOB_TAG}/lostlep_1.root      -T t_lostlep -j 3 -I 1 > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/lostlep_1.log      2>&1) &
 (set -x ;./doAnalysis ${DOSKIM} ${SYSTEMATICS} ${CUTFLOW} ${JOBS} ${DO_USER_STUDY} -i /nfs-7/userdata/${USERNAME}/WWW_babies/${INPUT_BABY_VERSION}/${SUBDIRECTORY}/grouped/bkg/          -o hists/${INPUT_BABY_VERSION}/${JOB_TAG}/lostlep_2.root      -T t_lostlep -j 3 -I 2 > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/lostlep_2.log      2>&1) &
@@ -89,14 +94,20 @@ echo "(below are individual bash commands)"
 (set -x ;./doAnalysis ${DOSKIM} ${SYSTEMATICS} ${CUTFLOW} ${JOBS} ${DO_USER_STUDY} -i /nfs-7/userdata/${USERNAME}/WWW_babies/${INPUT_BABY_VERSION}/${SUBDIRECTORY}/grouped/bkg/          -o hists/${INPUT_BABY_VERSION}/${JOB_TAG}/photon.root         -T t_photon            > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/photon.log         2>&1) &
 (set -x ;./doAnalysis ${DOSKIM} ${SYSTEMATICS} ${CUTFLOW} ${JOBS} ${DO_USER_STUDY} -i /nfs-7/userdata/${USERNAME}/WWW_babies/${INPUT_BABY_VERSION}/${SUBDIRECTORY}/grouped/bkg/          -o hists/${INPUT_BABY_VERSION}/${JOB_TAG}/others.root         -T t_others            > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/others.log         2>&1) &
 (set -x ;./doAnalysis ${DOSKIM} ${SYSTEMATICS} ${CUTFLOW} ${JOBS} ${DO_USER_STUDY} -i /nfs-7/userdata/${USERNAME}/WWW_babies/${INPUT_BABY_VERSION}/${SUBDIRECTORY}/grouped/data/         -o hists/${INPUT_BABY_VERSION}/${JOB_TAG}/data.root           -T t_ss                > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/data.log           2>&1) &
-(set -x ;./doAnalysis ${DOSKIM} ${SYSTEMATICS} ${CUTFLOW} ${JOBS} ${DO_USER_STUDY} -i /nfs-7/userdata/${USERNAME}/WWW_babies/${INPUT_BABY_VERSION}/${SUBDIRECTORY}/grouped/sig/          -o hists/${INPUT_BABY_VERSION}/${JOB_TAG}/signal_private.root -T t_www               > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/signal_private.log 2>&1) & # Private sample generated over winter break by P.Chang
-(set -x ;./doAnalysis ${DOSKIM} ${SYSTEMATICS} ${CUTFLOW} ${JOBS} ${DO_USER_STUDY} -i /nfs-7/userdata/${USERNAME}/WWW_babies/${INPUT_BABY_VERSION}/${SUBDIRECTORY}/grouped/sigofficial/  -o hists/${INPUT_BABY_VERSION}/${JOB_TAG}/signal_old.root     -T t_www               > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/signal_old.log     2>&1) & # Official CMS sample
-(set -x ;./doAnalysis ${DOSKIM} ${SYSTEMATICS} ${CUTFLOW} ${JOBS} ${DO_USER_STUDY} -i /nfs-7/userdata/${USERNAME}/WWW_babies/${INPUT_BABY_VERSION}/${SUBDIRECTORY}/grouped/sigvh/        -o hists/${INPUT_BABY_VERSION}/${JOB_TAG}/vh_private.root     -T t_www               > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/vh_private.log     2>&1) & # Private sample generated over winter break by P.Chang
-(set -x ;./doAnalysis ${DOSKIM} ${SYSTEMATICS} ${CUTFLOW} ${JOBS} ${DO_USER_STUDY} -i /nfs-7/userdata/${USERNAME}/WWW_babies/${INPUT_BABY_VERSION}/${SUBDIRECTORY}/grouped/sigallwww/    -o hists/${INPUT_BABY_VERSION}/${JOB_TAG}/www.root            -T t                   > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/www.log            2>&1) & # Private sample generated over winter break by P.Chang
-(set -x ;./doAnalysis ${DOSKIM} ${SYSTEMATICS} ${CUTFLOW} ${JOBS} ${DO_USER_STUDY} -i /nfs-7/userdata/${USERNAME}/WWW_babies/${INPUT_BABY_VERSION}/${SUBDIRECTORY}/grouped/sigallwwz/    -o hists/${INPUT_BABY_VERSION}/${JOB_TAG}/wwz.root            -T t                   > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/wwz.log            2>&1) & # WWZ
-(set -x ;./doAnalysis ${DOSKIM} ${SYSTEMATICS} ${CUTFLOW} ${JOBS} ${DO_USER_STUDY} -i /nfs-7/userdata/${USERNAME}/WWW_babies/${INPUT_BABY_VERSION}/${SUBDIRECTORY}/grouped/sigallwzz/    -o hists/${INPUT_BABY_VERSION}/${JOB_TAG}/wzz.root            -T t                   > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/wzz.log            2>&1) & # WZZ
-(set -x ;./doAnalysis ${DOSKIM} ${SYSTEMATICS} ${CUTFLOW} ${JOBS} ${DO_USER_STUDY} -i /nfs-7/userdata/${USERNAME}/WWW_babies/${INPUT_BABY_VERSION}/${SUBDIRECTORY}/grouped/sigallzzz/    -o hists/${INPUT_BABY_VERSION}/${JOB_TAG}/zzz.root            -T t                   > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/zzz.log            2>&1) & # ZZZ
-(set -x ;./doAnalysis ${DOSKIM} ${SYSTEMATICS} ${CUTFLOW} ${JOBS} ${DO_USER_STUDY} -i /nfs-7/userdata/${USERNAME}/WWW_babies/${INPUT_BABY_VERSION}/${SUBDIRECTORY}/grouped/vvv/          -o hists/${INPUT_BABY_VERSION}/${JOB_TAG}/signal.root         -T t                   > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/signal.log         2>&1) & # The signal sample for all triboson samples
+
+USERNAME2=zhicaiz
+(set -x ;./doAnalysis ${DOSKIM} ${SYSTEMATICS} ${CUTFLOW} ${JOBS} ${DO_USER_STUDY} -i /nfs-7/userdata/${USERNAME2}/WWW_babies/${INPUT_BABY_VERSION}/${SUBDIRECTORY}/grouped/sigwwwvh/          -o hists/${INPUT_BABY_VERSION}/${JOB_TAG}/wwwvh.root -T t               > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/wwwvh.log 2>&1) &
+(set -x ;./doAnalysis ${DOSKIM} ${SYSTEMATICS} ${CUTFLOW} ${JOBS} ${DO_USER_STUDY} -i /nfs-7/userdata/${USERNAME2}/WWW_babies/${INPUT_BABY_VERSION}/${SUBDIRECTORY}/grouped/sigwwzvh/          -o hists/${INPUT_BABY_VERSION}/${JOB_TAG}/wwzvh.root -T t               > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/wwzvh.log 2>&1) &
+(set -x ;./doAnalysis ${DOSKIM} ${SYSTEMATICS} ${CUTFLOW} ${JOBS} ${DO_USER_STUDY} -i /nfs-7/userdata/${USERNAME2}/WWW_babies/${INPUT_BABY_VERSION}/${SUBDIRECTORY}/grouped/sigwzzvh/          -o hists/${INPUT_BABY_VERSION}/${JOB_TAG}/wzzvh.root -T t               > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/wzzvh.log 2>&1) &
+(set -x ;./doAnalysis ${DOSKIM} ${SYSTEMATICS} ${CUTFLOW} ${JOBS} ${DO_USER_STUDY} -i /nfs-7/userdata/${USERNAME2}/WWW_babies/${INPUT_BABY_VERSION}/${SUBDIRECTORY}/grouped/sigzzzvh/          -o hists/${INPUT_BABY_VERSION}/${JOB_TAG}/zzzvh.root -T t               > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/zzzvh.log 2>&1) &
+(set -x ;./doAnalysis ${DOSKIM} ${SYSTEMATICS} ${CUTFLOW} ${JOBS} ${DO_USER_STUDY} -i /nfs-7/userdata/${USERNAME2}/WWW_babies/${INPUT_BABY_VERSION}/${SUBDIRECTORY}/grouped/sigvh/          -o hists/${INPUT_BABY_VERSION}/${JOB_TAG}/vh.root -T t_www               > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/vh.log 2>&1) &
+(set -x ;./doAnalysis ${DOSKIM} ${SYSTEMATICS} ${CUTFLOW} ${JOBS} ${DO_USER_STUDY} -i /nfs-7/userdata/${USERNAME2}/WWW_babies/${INPUT_BABY_VERSION}/${SUBDIRECTORY}/grouped/sigvh/          -o hists/${INPUT_BABY_VERSION}/${JOB_TAG}/vh_tss.root -T t_ss               > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/vh_tss.log 2>&1) &
+(set -x ;./doAnalysis ${DOSKIM} ${SYSTEMATICS} ${CUTFLOW} ${JOBS} ${DO_USER_STUDY} -i /nfs-7/userdata/${USERNAME2}/WWW_babies/${INPUT_BABY_VERSION}/${SUBDIRECTORY}/grouped/sigwww/          -o hists/${INPUT_BABY_VERSION}/${JOB_TAG}/www.root -T t_www               > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/www.log 2>&1) &
+(set -x ;./doAnalysis ${DOSKIM} ${SYSTEMATICS} ${CUTFLOW} ${JOBS} ${DO_USER_STUDY} -i /nfs-7/userdata/${USERNAME2}/WWW_babies/${INPUT_BABY_VERSION}/${SUBDIRECTORY}/grouped/sigwwz/          -o hists/${INPUT_BABY_VERSION}/${JOB_TAG}/wwz.root -T t_ss               > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/wwz.log 2>&1) &
+(set -x ;./doAnalysis ${DOSKIM} ${SYSTEMATICS} ${CUTFLOW} ${JOBS} ${DO_USER_STUDY} -i /nfs-7/userdata/${USERNAME2}/WWW_babies/${INPUT_BABY_VERSION}/${SUBDIRECTORY}/grouped/sigwzz/          -o hists/${INPUT_BABY_VERSION}/${JOB_TAG}/wzz.root -T t_ss               > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/wzz.log 2>&1) &
+(set -x ;./doAnalysis ${DOSKIM} ${SYSTEMATICS} ${CUTFLOW} ${JOBS} ${DO_USER_STUDY} -i /nfs-7/userdata/${USERNAME2}/WWW_babies/${INPUT_BABY_VERSION}/${SUBDIRECTORY}/grouped/sigzzz/          -o hists/${INPUT_BABY_VERSION}/${JOB_TAG}/zzz.root -T t_ss               > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/zzz.log 2>&1) &
+
+
 if [ -z ${DOSKIM} ]; then
     (set -x ;./doAnalysis ${DOSKIM} ${SYSTEMATICS} ${CUTFLOW} ${JOBS} ${DO_USER_STUDY} -i /nfs-7/userdata/${USERNAME}/WWW_babies/${INPUT_BABY_VERSION}/${SUBDIRECTORY}/grouped/bkgnonvbsttw/ -o hists/${INPUT_BABY_VERSION}/${JOB_TAG}/fitlostlep_0.root   -T t_lostlep -j 3 -I 0 > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/fitlostlep_0.log   2>&1) & # These are for fits where vbs and ttw are not included
     (set -x ;./doAnalysis ${DOSKIM} ${SYSTEMATICS} ${CUTFLOW} ${JOBS} ${DO_USER_STUDY} -i /nfs-7/userdata/${USERNAME}/WWW_babies/${INPUT_BABY_VERSION}/${SUBDIRECTORY}/grouped/bkgnonvbsttw/ -o hists/${INPUT_BABY_VERSION}/${JOB_TAG}/fitlostlep_1.root   -T t_lostlep -j 3 -I 1 > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/fitlostlep_1.log   2>&1) & # These are for fits where vbs and ttw are not included
@@ -120,13 +131,15 @@ echo "Printing how long it took for each job."
 tail -n 3 hists/${INPUT_BABY_VERSION}/${JOB_TAG}/*.log
 
 # Hadd the split jobs result
-if [ -z ${DOSKIM} ]; then
-    echo "Hadding some histogram outputs ... ==>"
-    (set -x ; hadd hists/${INPUT_BABY_VERSION}/${JOB_TAG}/lostlep.root hists/${INPUT_BABY_VERSION}/${JOB_TAG}/lostlep_*.root > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/lostlep.log) &
-    (set -x ; hadd hists/${INPUT_BABY_VERSION}/${JOB_TAG}/ddfakes.root hists/${INPUT_BABY_VERSION}/${JOB_TAG}/ddfakes_*.root > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/ddfakes.log) &
-    (set -x ; hadd hists/${INPUT_BABY_VERSION}/${JOB_TAG}/fitlostlep.root hists/${INPUT_BABY_VERSION}/${JOB_TAG}/fitlostlep_*.root > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/fitlostlep.log) &
-fi
+echo "Hadding some histogram outputs ... ==>"
+(set -x ; hadd hists/${INPUT_BABY_VERSION}/${JOB_TAG}/lostlep.root hists/${INPUT_BABY_VERSION}/${JOB_TAG}/lostlep_*.root > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/lostlep.log) &
+(set -x ; hadd hists/${INPUT_BABY_VERSION}/${JOB_TAG}/ddfakes.root hists/${INPUT_BABY_VERSION}/${JOB_TAG}/ddfakes_*.root > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/ddfakes.log) &
+(set -x ; hadd hists/${INPUT_BABY_VERSION}/${JOB_TAG}/dddfakes.root hists/${INPUT_BABY_VERSION}/${JOB_TAG}/dddfakes_*.root > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/dddfakes.log) &
+(set -x ; hadd hists/${INPUT_BABY_VERSION}/${JOB_TAG}/fitlostlep.root hists/${INPUT_BABY_VERSION}/${JOB_TAG}/fitlostlep_*.root > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/fitlostlep.log) &
+(set -x ; hadd hists/${INPUT_BABY_VERSION}/${JOB_TAG}/vvv.root hists/${INPUT_BABY_VERSION}/${JOB_TAG}/www.root hists/${INPUT_BABY_VERSION}/${JOB_TAG}/wwz.root hists/${INPUT_BABY_VERSION}/${JOB_TAG}/wzz.root hists/${INPUT_BABY_VERSION}/${JOB_TAG}/zzz.root hists/${INPUT_BABY_VERSION}/${JOB_TAG}/vh.root > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/vvv.log) &
+(set -x ; hadd hists/${INPUT_BABY_VERSION}/${JOB_TAG}/vvvvh.root hists/${INPUT_BABY_VERSION}/${JOB_TAG}/wwwvh.root hists/${INPUT_BABY_VERSION}/${JOB_TAG}/wwzvh.root hists/${INPUT_BABY_VERSION}/${JOB_TAG}/wzzvh.root hists/${INPUT_BABY_VERSION}/${JOB_TAG}/zzzvh.root > hists/${INPUT_BABY_VERSION}/${JOB_TAG}/vvvvh.log) &
 wait
+
 echo "<== Done hadding histogram outputs!"
 
 echo "histograms are at hists/${INPUT_BABY_VERSION}/${JOB_TAG}/*.root"

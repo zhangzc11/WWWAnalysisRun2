@@ -1074,13 +1074,13 @@ std::function<float()> Lambdas::SRDilepCutBDT2JeeMjjIn = [&]() {
         return true;
 };
 std::function<float()> Lambdas::SRDilepCutBDT2JemMjjIn = [&]() {
-        if (VarXGBBDT(0) < 0.330) return false;
-        if (VarXGBBDT(3) < 0.910) return false;
+        if (VarXGBBDT(0) < 0.320) return false;
+        if (VarXGBBDT(3) < 0.890) return false;
         return true;
 };
 std::function<float()> Lambdas::SRDilepCutBDT2JmmMjjIn = [&]() {
-        if (VarXGBBDT(0) < 0.250) return false;
-        if (VarXGBBDT(3) < 0.870) return false;
+        if (VarXGBBDT(0) < 0.140) return false;
+        if (VarXGBBDT(3) < 0.770) return false;
         return true;
 };
 std::function<float()> Lambdas::SRDilepCutBDT2JeeMjjOut = [&]() {
@@ -1090,7 +1090,7 @@ std::function<float()> Lambdas::SRDilepCutBDT2JeeMjjOut = [&]() {
 };
 std::function<float()> Lambdas::SRDilepCutBDT2JemMjjOut = [&]() {
         if (VarXGBBDT(0) < 0.190) return false;
-        if (VarXGBBDT(3) < 0.800) return false;
+        if (VarXGBBDT(3) < 0.820) return false;
         return true;
 };
 std::function<float()> Lambdas::SRDilepCutBDT2JmmMjjOut = [&]() {
@@ -1100,36 +1100,89 @@ std::function<float()> Lambdas::SRDilepCutBDT2JmmMjjOut = [&]() {
 };
 
 std::function<float()> Lambdas::SRDilepCutBDT1Jee = [&]() {
-        if (VarXGBBDT(1) < 0.310) return false;
-        if (VarXGBBDT(4) < 0.660) return false;
+        if (VarXGBBDT(1) < 0.320) return false;
+        if (VarXGBBDT(4) < 0.680) return false;
         return true;
 };
 std::function<float()> Lambdas::SRDilepCutBDT1Jem = [&]() {
-        if (VarXGBBDT(1) < 0.290) return false;
+        if (VarXGBBDT(1) < 0.260) return false;
         if (VarXGBBDT(4) < 0.890) return false;
         return true;
 };
 std::function<float()> Lambdas::SRDilepCutBDT1Jmm = [&]() {
-        if (VarXGBBDT(1) < 0.400) return false;
+        if (VarXGBBDT(1) < 0.390) return false;
         if (VarXGBBDT(4) < 0.640) return false;
         return true;
 };
 
 std::function<float()> Lambdas::SRTrilepCutBDT0SFOS = [&]() {
         if (VarXGBBDT(2) < 0.280) return false;
-        if (VarXGBBDT(5) < 0.690) return false;
-        return true;
-};
-std::function<float()> Lambdas::SRTrilepCutBDT1SFOS = [&]() {
-        if (VarXGBBDT(2) < 0.620) return false;
-        if (VarXGBBDT(5) < 0.970) return false;
-        return true;
-};
-std::function<float()> Lambdas::SRTrilepCutBDT2SFOS = [&]() {
-        if (VarXGBBDT(2) < 0.470) return false;
         if (VarXGBBDT(5) < 0.930) return false;
         return true;
 };
+std::function<float()> Lambdas::SRTrilepCutBDT1SFOS = [&]() {
+        if (VarXGBBDT(2) < 0.720) return false;
+        if (VarXGBBDT(5) < 0.850) return false;
+        return true;
+};
+std::function<float()> Lambdas::SRTrilepCutBDT2SFOS = [&]() {
+        if (VarXGBBDT(2) < 0.380) return false;
+        if (VarXGBBDT(5) < 0.780) return false;
+        return true;
+};
+
+std::function<float()> Lambdas::SRTrilepCutBDTSFOSInvertPrompt = [&]() {
+        if (VarXGBBDT(2) > 0.280) return false;
+        if (VarXGBBDT(5) < 0.780) return false;
+        return true;
+};
+
+
+std::function<float()> Lambdas::SRTrilepCutBDTSFOSInvertFake = [&]() {
+        if (VarXGBBDT(2) < 0.280) return false;
+        if (VarXGBBDT(5) > 0.780) return false;
+        return true;
+};
+
+std::function<float()> Lambdas::SRTrilepCutBDTSFOSInvertBoth = [&]() {
+        if (VarXGBBDT(2) > 0.280) return false;
+        if (VarXGBBDT(5) > 0.780) return false;
+        return true;
+};
+
+std::function<float()> Lambdas::SRDilepCutBDTSS2J(Variation::ExpSyst expsyst, Variation::Var var){
+ return [&, expsyst, var]()
+    {
+	if ((Lambdas::MjjIn(expsyst,var)()) && (www.passSSee()) && (Lambdas::SRDilepCutBDT2JeeMjjIn())) return true;
+	if ((Lambdas::MjjIn(expsyst,var)()) && (www.passSSem()) && (Lambdas::SRDilepCutBDT2JemMjjIn())) return true;
+	if ((Lambdas::MjjIn(expsyst,var)()) && (www.passSSmm()) && (Lambdas::SRDilepCutBDT2JmmMjjIn())) return true;
+	if ((Lambdas::MjjOut(expsyst,var)()) && (www.passSSee()) && (Lambdas::SRDilepCutBDT2JeeMjjOut())) return true;
+	if ((Lambdas::MjjOut(expsyst,var)()) && (www.passSSem()) && (Lambdas::SRDilepCutBDT2JemMjjOut())) return true;
+	if ((Lambdas::MjjOut(expsyst,var)()) && (www.passSSmm()) && (Lambdas::SRDilepCutBDT2JmmMjjOut())) return true;
+        return false;
+    };
+}
+
+std::function<float()> Lambdas::SRDilepCutBDTSS1J(Variation::ExpSyst expsyst, Variation::Var var){
+ return [&, expsyst, var]()
+    {
+	if ((www.passSSee()) && (Lambdas::SRDilepCutBDT1Jee())) return true;
+	if ((www.passSSem()) && (Lambdas::SRDilepCutBDT1Jem())) return true;
+	if ((www.passSSmm()) && (Lambdas::SRDilepCutBDT1Jmm())) return true;
+        return false;
+    };
+}
+
+
+std::function<float()> Lambdas::SRDilepCutBDTSFOS(Variation::ExpSyst expsyst, Variation::Var var){
+  return [&, expsyst, var]()
+    {
+	if ((www.nSFOS()==0) && (Lambdas::SRTrilepCutBDT0SFOS())) return true;
+	if ((www.nSFOS()==1) && (Lambdas::SRTrilepCutBDT1SFOS())) return true;
+	if ((www.nSFOS()==2) && (Lambdas::SRTrilepCutBDT2SFOS())) return true;
+        return false;
+    };
+}
 
 std::function<float()> Lambdas::LeqOneJet(Variation::ExpSyst expsyst, Variation::Var var)
 {
@@ -1674,7 +1727,7 @@ std::function<float()> Lambdas::SSKinSel(Variation::ExpSyst expsyst, Variation::
 std::function<float()> Lambdas::SSKinSelBDT(Variation::ExpSyst expsyst, Variation::Var var){
     return [&, expsyst, var]()
     {
-        if(not (Lambdas::Mllcut(20.)()))                 return false;
+        //if(not (Lambdas::Mllcut(20.)()))                 return false;
         return true;
     };
 }
@@ -1741,7 +1794,7 @@ std::function<float()> Lambdas::SS1J(Variation::ExpSyst expsyst, Variation::Var 
 std::function<float()> Lambdas::SS1JBDT(Variation::ExpSyst expsyst, Variation::Var var){
     return [&, expsyst, var]()
     {
-        if(not (Lambdas::Mllcut(20.)()))                 return false;
+        //if(not (Lambdas::Mllcut(20.)()))                 return false;
         return true;
     };
 }

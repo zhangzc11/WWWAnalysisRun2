@@ -13,19 +13,24 @@ parser = argparse.ArgumentParser(description="Higgs Combine Datacard dumper for 
 parser.add_argument('-i' , '--input_dir' , dest='input_dir' , help='input dir path (where hists are) NOTE: pattern MUST be hists/${BABY_VERSION}/${TAG}/', required=True ) 
 args = parser.parse_args()
 
+use_mc_fakes = False
+
 # Global variables
 config = {
 
         # Order of backgrounds to be written out to the data cards
-        #"bkg_order": ["fakes", "photon", "lostlep", "qflip", "prompt", "ttw", "vbsww"],
-        "bkg_order": ["fakes", "photon", "lostlep", "qflip", "prompt"],
+        #"bkg_order": ["Fakes", "GammaFakes", "LostLepton", "ChargeFlip", "Prompt", "ttw", "vbsww"],
+        #"bkg_order": ["Fakes", "GammaFakes", "LostLepton", "ChargeFlip", "Prompt"],
+        "bkg_order": ["LostLepton", "Prompt", "Fakes", "ChargeFlip", "GammaFakes"],
 
         # The input dirpath which is the output of the looper
         "input_dirpath": args.input_dir,
 
         # Signal sample root name
         #"signal_filename" : "signal_private.root"
-        "signal_filename" : "signal.root"
+        #"signal_filename" : "signal.root"
+        #"signal_filename" : ["www.root", "vh.root"],
+        "sig_order" : ["WWWon", "WWWh", "WWZon", "WWZh", "WZZon", "WZZh", "ZZZon", "ZZZh"],
 
     }
 
@@ -67,32 +72,33 @@ def parse_output_dir():
 # Writing statistics datacards
 def write_datacard():
 
-    #lostlep_sf = get_lostlep_sf() # Get the lost lepton scale factors
-
+    lostlep_sf = get_lostlep_sf() # Get the lost lepton scale factors
+    #print lostlep_sf
+    
     #hists = get_yield_hists("SR", True, lostlep_sf) # Get the main yields with lost lepton scale factors applied
-    hists = get_yield_hists("SR", True)
+    hists = get_yield_hists("SR", not use_mc_fakes, lostlep_sf)
 
     systs = get_systs_fake() # Get all systematic histograms
 
     # putting together the background histograms
     bgs = [ hists[x] for x in config["bkg_order"] ]
+    sigs = [ hists[x] for x in config["sig_order"] ]
 
     # Write to the datacard
-    # d = dw.DataCardWriter(sig=hists["www"], bgs=bgs, data=None, datacard_filename="datacard.txt", systs=systs, no_stat_procs=["lostlep"])
-    #d = dw.DataCardWriter(sig=hists["www"], bgs=bgs, data=hists["data"], datacard_filename="datacard.txt", systs=systs, no_stat_procs=["lostlep"])
-    d = dw.DataCardWriter(sig=hists["www"], bgs=bgs, data=None, datacard_filename="datacard.txt", systs=systs, no_stat_procs=[])
+    #d = dw.DataCardWriter(sig=sigs, bgs=bgs, data=hists["data"], datacard_filename="datacard.txt", systs=systs, no_stat_procs=["LostLepton"])
+    d = dw.DataCardWriter(sig=sigs, bgs=bgs, data=None, datacard_filename="datacardSS3l.txt", systs=systs, no_stat_procs=[])
 
     # Create output directory
     os.system("mkdir -p {}".format(config["output_dir"]))
 
     # Region names
-    reg_names = [ "b{}".format(index) for index in xrange(1, 13) ]
+    reg_names = [ "binch"+"%02d"%index for index in xrange(1, 13) ]
 
     # Write the datacards for each regions
     for i, reg_name in enumerate(reg_names):
         d.set_bin(i+1) # TH1 bin indices start with 1
         d.set_region_name(reg_name)
-        d.write("{}/datacard_{}.txt".format(config["output_dir"], reg_name))
+        d.write("{}/datacardSS3l_{}.txt".format(config["output_dir"], reg_name))
 
     print "Wrote datacards to {}".format(config["output_dir"])
 
@@ -112,8 +118,8 @@ def write_datacard_nj1():
     bgs = [ hists[x] for x in config["bkg_order"] ]
 
     # Write to the datacard
-    # d = dw.DataCardWriter(sig=hists["www"], bgs=bgs, data=None, datacard_filename="datacard.txt", systs=systs, no_stat_procs=["lostlep"])
-    d = dw.DataCardWriter(sig=hists["www"], bgs=bgs, data=hists["data"], datacard_filename="datacard.txt", systs=systs)#, no_stat_procs=["lostlep"])
+    # d = dw.DataCardWriter(sig=hists["WWWon"], bgs=bgs, data=None, datacard_filename="datacard.txt", systs=systs, no_stat_procs=["LostLepton"])
+    d = dw.DataCardWriter(sig=hists["WWWon"], bgs=bgs, data=hists["data"], datacard_filename="datacard.txt", systs=systs)#, no_stat_procs=["LostLepton"])
 
     # Create output directory
     os.system("mkdir -p {}".format(config["output_dir"]))
@@ -145,8 +151,8 @@ def write_datacard_btag():
     bgs = [ hists[x] for x in config["bkg_order"] ]
 
     # Write to the datacard
-    # d = dw.DataCardWriter(sig=hists["www"], bgs=bgs, data=None, datacard_filename="datacard.txt", systs=systs, no_stat_procs=["lostlep"])
-    d = dw.DataCardWriter(sig=hists["www"], bgs=bgs, data=hists["data"], datacard_filename="datacard.txt", systs=systs)#, no_stat_procs=["lostlep"])
+    # d = dw.DataCardWriter(sig=hists["WWWon"], bgs=bgs, data=None, datacard_filename="datacard.txt", systs=systs, no_stat_procs=["LostLepton"])
+    d = dw.DataCardWriter(sig=hists["WWWon"], bgs=bgs, data=hists["data"], datacard_filename="datacard.txt", systs=systs)#, no_stat_procs=["LostLepton"])
 
     # Create output directory
     os.system("mkdir -p {}".format(config["output_dir"]))
@@ -177,7 +183,7 @@ def write_datacard_w_control_regions():
     bgs = [ hists[x] for x in config["bkg_order"] ]
 
     # Write to the datacard
-    d = dw.DataCardWriter(sig=hists["www"], bgs=bgs, data=hists["data"], datacard_filename="datacard.txt", systs=systs)
+    d = dw.DataCardWriter(sig=hists["WWWon"], bgs=bgs, data=hists["data"], datacard_filename="datacard.txt", systs=systs)
 
     # Region names
     reg_names = [ "s{}".format(index) for index in xrange(1, 10) ]
@@ -199,7 +205,7 @@ def write_datacard_w_control_regions():
     bgs = [ hists[x] for x in config["bkg_order"] ]
 
     # Write to the datacard
-    d = dw.DataCardWriter(sig=hists["www"], bgs=bgs, data=hists["data"], datacard_filename="datacard.txt", systs=systs)
+    d = dw.DataCardWriter(sig=hists["WWWon"], bgs=bgs, data=hists["data"], datacard_filename="datacard.txt", systs=systs)
 
     # Region names
     reg_names = [ "c{}".format(index) for index in xrange(1, 10) ]
@@ -220,26 +226,32 @@ def write_datacard_w_control_regions():
 def get_lostlep_sf():
 
     # Retrieve the yield histograms (i.e. yields per SR/CR bins)
-    hists = get_yield_hists("WZCR", False)
+    hists = get_yield_hists("WZCR", False, remove_neg=False)
     
     bgs = [ hists[x] for x in config["bkg_order"] ]
 
     sf = ru.get_sf(
-            h_proc=hists["lostlep"], # The process to measure scale factors of
+            h_proc=hists["LostLepton"], # The process to measure scale factors of
             h_data=hists["data"], # The data yields
-            h_sub=[hists["photon"], hists["qflip"], hists["fakes"], hists["prompt"], hists["ttw"], hists["vbsww"]] # rest of the process that needs to be subtracted
+            h_sub=[hists["GammaFakes"], hists["ChargeFlip"], hists["Fakes"], hists["Prompt"]] # rest of the process that needs to be subtracted
             )
-
+    hist_other = hists["GammaFakes"]
+    hist_other.Add(hists["ChargeFlip"])
+    hist_other.Add(hists["Fakes"])
+    hist_other.Add(hists["Prompt"])
     # This kind of map format is used to later apply scalefactors to the histograms under the hood via rooutil/rooutil.py utility script
     sfs = {"lostlep": {
-            "SSee"    : [sf.GetBinContent(1),sf.GetBinError(1)],
-            "SSem"    : [sf.GetBinContent(2),sf.GetBinError(2)],
-            "SSmm"    : [sf.GetBinContent(3),sf.GetBinError(3)],
-            "SSSideee": [sf.GetBinContent(4),sf.GetBinError(4)],
-            "SSSideem": [sf.GetBinContent(5),sf.GetBinError(5)],
-            "SSSidemm": [sf.GetBinContent(6),sf.GetBinError(6)],
-            "1SFOS"   : [sf.GetBinContent(8),sf.GetBinError(8)],
-            "2SFOS"   : [sf.GetBinContent(9),sf.GetBinError(9)],
+            "eeMjjIn"    : [sf.GetBinContent(1),sf.GetBinError(1)],
+            "emMjjIn"    : [sf.GetBinContent(2),sf.GetBinError(2)],
+            "mmMjjIn"    : [sf.GetBinContent(3),sf.GetBinError(3)],
+            "eeMjjOut": [sf.GetBinContent(4),sf.GetBinError(4)],
+            "emMjjOut": [sf.GetBinContent(5),sf.GetBinError(5)],
+            "mmMjjOut": [sf.GetBinContent(6),sf.GetBinError(6)],
+            "1Jee"   : [sf.GetBinContent(7),sf.GetBinError(8)],
+            "1Jem"   : [sf.GetBinContent(8),sf.GetBinError(8)],
+            "1Jmm"   : [sf.GetBinContent(9),sf.GetBinError(9)],
+            "1SFOS"   : [sf.GetBinContent(11),sf.GetBinError(11)],
+            "2SFOS"   : [sf.GetBinContent(12),sf.GetBinError(12)],
             }
             }
 
@@ -247,26 +259,28 @@ def get_lostlep_sf():
 
 #________________________________________________________________________________________________________________________________________
 # Interface to read the histograms from output path
-def get_yield_hists(region, use_data_driven_fakes, sfs={}, syst=""):
+def get_yield_hists(region, use_data_driven_fakes, sfs={}, syst="", remove_neg = True):
     #use_data_driven_fakes=False
 
     # get all the histogram names in the file matching the region string and syst string
-    histnames = get_histnames(config["input_dirpath"] + "/" + config["signal_filename"], region, syst)
+    histnames = get_histnames(config["input_dirpath"] + "/www.root", region, syst)
 
-    print histnames
 
     # Sort the histogram names that were retrieved
     histnames.sort(key=region_index)
+    print histnames
 
     # actually obtain the histograms from the histogram files
     hists = get_hists(histnames, use_data_driven_fakes, sfs=sfs)
 
     # Do some modifications to clean up negative or zero bins in as RooStats goes haywire when dealing with negative probability
-    for h in hists:
-        hists[h] = ru.remove_negative_or_zero(hists[h])
+    if remove_neg:
+	    for h in hists:
+		hists[h] = ru.remove_negative_or_zero(hists[h])
 
     # Now when obtaing yield histograms for WZCR, make the 5 bin output into a 9 bin out
-    if region == "WZCR": # Special treatment for WZCR
+    #if region == "WZCR": # Special treatment for WZCR
+    if False:
         for h in hists:
             tmphist = r.TH1F(hists[h].GetName(), hists[h].GetTitle(), 9, 0, 9)
             tmphist.Sumw2()
@@ -303,6 +317,7 @@ def get_yield_hists(region, use_data_driven_fakes, sfs={}, syst=""):
 # SR0SFOSFullLepSFUp__yield
 # SR1SFOSFullLepSFUp__yield
 # SR2SFOSFullLepSFUp__yield
+
 def get_histnames(fpath, region, syst=""):
     f = r.TFile(fpath)
     rtn = []
@@ -322,20 +337,31 @@ def get_hists(histnames, use_data_driven_fakes=False, sfs={}, dorawcutflow=False
 
     # Form all the strings for the backgrounds, signal, and data
     bkg_lists = {}
-    bkg_lists["ddfakes"] = [ x for x in glob.glob(config["input_dirpath"]+"/ddfakes.root") ]
+    sig_lists = {}
+    bkg_lists["ddfakes"] = [ x for x in glob.glob(config["input_dirpath"]+"/dddfakes.root") ]
     bkg_lists["mcfakes"] = [ x for x in glob.glob(config["input_dirpath"]+"/fakes.root") ]
-    #bkg_lists["lostlep"] = [ x for x in glob.glob(config["input_dirpath"]+"/fitlostlep.root") ]
-    bkg_lists["lostlep"] = [ x for x in glob.glob(config["input_dirpath"]+"/lostlep.root") ]
-    #bkg_lists["photon"]  = [ x for x in glob.glob(config["input_dirpath"]+"/fitphoton.root")  ]
-    bkg_lists["photon"]  = [ x for x in glob.glob(config["input_dirpath"]+"/photon.root")  ]
-    bkg_lists["qflip"]   = [ x for x in glob.glob(config["input_dirpath"]+"/fitqflip.root")   ]
-    bkg_lists["mcfakes"] = [ x for x in glob.glob(config["input_dirpath"]+"/fitfakes.root")   ]
-    #bkg_lists["prompt"]  = [ x for x in glob.glob(config["input_dirpath"]+"/fitprompt.root")  ]
-    bkg_lists["prompt"]  = [ x for x in glob.glob(config["input_dirpath"]+"/prompt.root")  ]
+    #bkg_lists["LostLepton"] = [ x for x in glob.glob(config["input_dirpath"]+"/fitlostlep.root") ]
+    bkg_lists["LostLepton"] = [ x for x in glob.glob(config["input_dirpath"]+"/lostlep.root") ]
+    #bkg_lists["GammaFakes"]  = [ x for x in glob.glob(config["input_dirpath"]+"/fitphoton.root")  ]
+    bkg_lists["GammaFakes"]  = [ x for x in glob.glob(config["input_dirpath"]+"/photon.root")  ]
+    bkg_lists["GammaFakes2016"]  = [ x for x in glob.glob(config["input_dirpath"].replace("combineyearsLoose", "Loose2016")+"/photon.root")  ]
+    bkg_lists["GammaFakes2017"]  = [ x for x in glob.glob(config["input_dirpath"].replace("combineyearsLoose", "Loose2017")+"/photon.root")  ]
+    bkg_lists["GammaFakes2018"]  = [ x for x in glob.glob(config["input_dirpath"].replace("combineyearsLoose", "Loose2018")+"/photon.root")  ]
+    bkg_lists["ChargeFlip"]   = [ x for x in glob.glob(config["input_dirpath"]+"/qflip.root")   ]
+    #bkg_lists["mcfakes"] = [ x for x in glob.glob(config["input_dirpath"]+"/fitfakes.root")   ]
+    bkg_lists["PromptNonvbsttw"]  = [ x for x in glob.glob(config["input_dirpath"]+"/fitprompt.root")  ]
+    bkg_lists["Prompt"]  = [ x for x in glob.glob(config["input_dirpath"]+"/prompt.root")  ]
     bkg_lists["vbsww"]   = [ x for x in glob.glob(config["input_dirpath"]+"/vbs.root")   ]
     bkg_lists["ttw"]     = [ x for x in glob.glob(config["input_dirpath"]+"/ttw.root")     ]
-    bkg_lists["fakes"]   = bkg_lists["ddfakes"] if use_data_driven_fakes else bkg_lists["mcfakes"]
-    sig_list = [ x for x in glob.glob(config["input_dirpath"]+"/"+config["signal_filename"]) ]
+    bkg_lists["Fakes"]   = bkg_lists["ddfakes"] if use_data_driven_fakes else bkg_lists["mcfakes"]
+    sig_lists["WWWon"] = [ x for x in glob.glob(config["input_dirpath"]+"/www.root") ]
+    sig_lists["WWWh"] = [ x for x in glob.glob(config["input_dirpath"]+"/vh.root") ]
+    sig_lists["WWZon"] = [ x for x in glob.glob(config["input_dirpath"]+"/wwz.root") ]
+    sig_lists["WWZh"] = [ x for x in glob.glob(config["input_dirpath"]+"/wwzvh.root") ]
+    sig_lists["WZZon"] = [ x for x in glob.glob(config["input_dirpath"]+"/wzz.root") ]
+    sig_lists["WZZh"] = [ x for x in glob.glob(config["input_dirpath"]+"/wzzvh.root") ]
+    sig_lists["ZZZon"] = [ x for x in glob.glob(config["input_dirpath"]+"/zzz.root") ]
+    sig_lists["ZZZh"] = [ x for x in glob.glob(config["input_dirpath"]+"/zzzvh.root") ]
     data_list = [ x for x in glob.glob(config["input_dirpath"]+"/data.root") ]
 
     # Form the labeling of the histograms
@@ -345,23 +371,76 @@ def get_hists(histnames, use_data_driven_fakes=False, sfs={}, dorawcutflow=False
 
     # Retrieve all the histograms with the scale factors applied appropriately (sfs is the special format that ru.get_yield_histogram expects)
     hists = {}
-    hists["lostlep"] = ru.get_yield_histogram(bkg_lists["lostlep"] , histnames , labels=labels, sfs=sfs, hsuffix="__yield")
-    hists["photon"]  = ru.get_yield_histogram(bkg_lists["photon"]  , histnames , labels=labels, sfs=sfs, hsuffix="__yield")
-    hists["qflip"]   = ru.get_yield_histogram(bkg_lists["qflip"]   , histnames , labels=labels, sfs=sfs, hsuffix="__yield")
-    hists["prompt"]  = ru.get_yield_histogram(bkg_lists["prompt"]  , histnames , labels=labels, sfs=sfs, hsuffix="__yield")
+    hists_ll_nosf= ru.get_yield_histogram(bkg_lists["LostLepton"] , histnames , labels=labels, sfs={}, hsuffix="__yield")
+    hists["LostLepton"] = ru.get_yield_histogram(bkg_lists["LostLepton"] , histnames , labels=labels, sfs=sfs, hsuffix="__yield")
+    if "SR" not in histnames[0]:
+	    hists["GammaFakes"]  = ru.get_yield_histogram(bkg_lists["GammaFakes"]  , histnames , labels=labels, sfs=sfs, hsuffix="__yield")
+    hists["GammaFakes2016"]  = ru.get_yield_histogram(bkg_lists["GammaFakes2016"]  , histnames , labels=labels, sfs=sfs, hsuffix="__yield")
+    hists["GammaFakes2017"]  = ru.get_yield_histogram(bkg_lists["GammaFakes2017"]  , histnames , labels=labels, sfs=sfs, hsuffix="__yield")
+    hists["GammaFakes2018"]  = ru.get_yield_histogram(bkg_lists["GammaFakes2018"]  , histnames , labels=labels, sfs=sfs, hsuffix="__yield")
+    hists["ChargeFlip"]   = ru.get_yield_histogram(bkg_lists["ChargeFlip"]   , histnames , labels=labels, sfs=sfs, hsuffix="__yield")
+
+    if "SR" not in histnames[0]:
+	    hists["Prompt"]  = ru.get_yield_histogram(bkg_lists["Prompt"]  , histnames , labels=labels, sfs=sfs, hsuffix="__yield")
+    else:
+	    hists["Prompt"]  = ru.get_yield_histogram(bkg_lists["PromptNonvbsttw"]  , histnames , labels=labels, sfs=sfs, hsuffix="__yield")
+    #hists["PromptNonvbsttw"]  = ru.get_yield_histogram(bkg_lists["PromptNonvbsttw"]  , histnames , labels=labels, sfs=sfs, hsuffix="__yield")
     hists["vbsww"]   = ru.get_yield_histogram(bkg_lists["vbsww"]   , histnames , labels=labels, sfs=sfs, hsuffix="__yield")
     hists["ttw"]     = ru.get_yield_histogram(bkg_lists["ttw"]     , histnames , labels=labels, sfs=sfs, hsuffix="__yield")
-    hists["fakes"]   = ru.get_yield_histogram(bkg_lists["fakes"]   , histnames , labels=labels, sfs=sfs, hsuffix="__yield")
-    hists["www"]     = ru.get_yield_histogram(sig_list             , histnames , labels=labels, sfs=sfs, hsuffix="__yield")
+    hists["Fakes"]   = ru.get_yield_histogram(bkg_lists["Fakes"]   , histnames , labels=labels, sfs=sfs, hsuffix="__yield")
+    hists["WWWon"]     = ru.get_yield_histogram(sig_lists["WWWon"]             , histnames , labels=labels, sfs=sfs, hsuffix="__yield")
+    hists["WWWh"]     = ru.get_yield_histogram(sig_lists["WWWh"]             , histnames , labels=labels, sfs=sfs, hsuffix="__yield")
+    hists["WWZon"]     = ru.get_yield_histogram(sig_lists["WWZon"]             , histnames , labels=labels, sfs=sfs, hsuffix="__yield")
+    hists["WWZh"]     = ru.get_yield_histogram(sig_lists["WWZh"]             , histnames , labels=labels, sfs=sfs, hsuffix="__yield")
+    hists["WZZon"]     = ru.get_yield_histogram(sig_lists["WZZon"]             , histnames , labels=labels, sfs=sfs, hsuffix="__yield")
+    hists["WZZh"]     = ru.get_yield_histogram(sig_lists["WZZh"]             , histnames , labels=labels, sfs=sfs, hsuffix="__yield")
+    hists["ZZZon"]     = ru.get_yield_histogram(sig_lists["ZZZon"]             , histnames , labels=labels, sfs=sfs, hsuffix="__yield")
+    hists["ZZZh"]     = ru.get_yield_histogram(sig_lists["ZZZh"]             , histnames , labels=labels, sfs=sfs, hsuffix="__yield")
     hists["data"]    = ru.get_yield_histogram(data_list            , histnames , labels=labels, sfs=sfs, hsuffix="__yield")
 
+    #for prompt bkg, split it to vbs and ww
+    if "SR" in histnames[0]:
+	    hists["Prompt"].Add(hists["vbsww"], 1.58)
+	    hists["Prompt"].Add(hists["ttw"])
+
+	    #for photon fake, do it separately for 2016,2017,2018
+	    hists["GammaFakes"] = hists["GammaFakes2016"]
+	    hists["GammaFakes"].Scale(0.547)
+	    hists["GammaFakes"].Add(hists["GammaFakes2017"], 0.259)
+	    hists["GammaFakes"].Add(hists["GammaFakes2018"], 0.282)
+	    #fakes: multiply purity 
+	    histnames_AR = [x.replace("SR", "AR") for x in histnames]	
+	    labels_AR = [x.replace("SR", "AR") for x in labels]
+	    hists_AR = {}
+	    hists_AR["GammaFakes"] = ru.get_yield_histogram(bkg_lists["GammaFakes"] , histnames_AR , labels=labels_AR, sfs=sfs, hsuffix="__yield")
+	    hists_AR["ChargeFlip"] = ru.get_yield_histogram(bkg_lists["ChargeFlip"] , histnames_AR , labels=labels_AR, sfs=sfs, hsuffix="__yield")
+	    hists_AR["Fakes"] = ru.get_yield_histogram(bkg_lists["mcfakes"] , histnames_AR , labels=labels_AR, sfs=sfs, hsuffix="__yield")
+	    hists_AR["LostLepton"] = ru.get_yield_histogram(bkg_lists["LostLepton"] , histnames_AR , labels=labels_AR, sfs={}, hsuffix="__yield")
+	    hists_AR["Prompt"] = ru.get_yield_histogram(bkg_lists["Prompt"] , histnames_AR , labels=labels_AR, sfs=sfs, hsuffix="__yield")
+	    hist_AR_total = hists_AR["GammaFakes"]
+	    hist_AR_total.Add(hists_AR["ChargeFlip"])
+	    hist_AR_total.Add(hists_AR["Fakes"])
+	    hist_AR_total.Add(hists_AR["LostLepton"])
+	    hist_AR_total.Add(hists_AR["Prompt"])
+	    purity_AR = hists_AR["Fakes"]
+	    purity_AR.Divide(hist_AR_total)
+
+	    hists["Fakes"].Multiply(purity_AR)
+    
     # The title of histograms are used as the name of the process for datacards
-    hists["lostlep"] .SetTitle("lostlep")
-    hists["photon"]  .SetTitle("photon")
-    hists["qflip"]   .SetTitle("qflip")
-    hists["fakes"]   .SetTitle("fakes")
-    hists["prompt"]  .SetTitle("prompt")
-    hists["www"]     .SetTitle("www")
+    hists["LostLepton"] .SetTitle("LostLepton")
+    hists["GammaFakes"]  .SetTitle("GammaFakes")
+    hists["ChargeFlip"]   .SetTitle("ChargeFlip")
+    hists["Fakes"]   .SetTitle("Fakes")
+    hists["Prompt"]  .SetTitle("Prompt")
+    hists["WWWon"]     .SetTitle("WWWon")
+    hists["WWWh"]     .SetTitle("WWWh")
+    hists["WWZon"]     .SetTitle("WWZon")
+    hists["WWZh"]     .SetTitle("WWZh")
+    hists["WZZon"]     .SetTitle("WZZon")
+    hists["WZZh"]     .SetTitle("WZZh")
+    hists["ZZZon"]     .SetTitle("ZZZon")
+    hists["ZZZh"]     .SetTitle("ZZZh")
     hists["data"]    .SetTitle("data")
     hists["vbsww"]   .SetTitle("vbsww")
     hists["ttw"]     .SetTitle("ttw")
@@ -371,15 +450,18 @@ def get_hists(histnames, use_data_driven_fakes=False, sfs={}, dorawcutflow=False
 #________________________________________________________________________________________________________________________________________
 # To sort histograms based on the region. This will be provided to "sort" function later on
 def region_index(s):
-    if "ee" in s and "Side" not in s: return 0
-    if "em" in s and "Side" not in s: return 1
-    if "mm" in s and "Side" not in s: return 2
-    if "ee" in s and "Side" in s: return 3
-    if "em" in s and "Side" in s: return 4
-    if "mm" in s and "Side" in s: return 5
-    if "0SFOS" in s: return 6
-    if "1SFOS" in s: return 7
-    if "2SFOS" in s: return 8
+    if "ee" in s and "MjjIn" in s: return 0
+    if "em" in s and "MjjIn" in s: return 1
+    if "mm" in s and "MjjIn" in s: return 2
+    if "ee" in s and "MjjOut" in s: return 3
+    if "em" in s and "MjjOut" in s: return 4
+    if "mm" in s and "MjjOut" in s: return 5
+    if "ee" in s and "SS1J" in s: return 6
+    if "em" in s and "SS1J" in s: return 7
+    if "mm" in s and "SS1J" in s: return 8
+    if "0SFOS" in s: return 9
+    if "1SFOS" in s: return 10
+    if "2SFOS" in s: return 11
     else: return 999
 
 #________________________________________________________________________________________________________________________________________
@@ -391,7 +473,7 @@ def get_lostlep_alpha(syst=""):
     hists = get_yield_hists("WZCR", False, syst=syst)
     bgs = [ hists[x] for x in config["bkg_order"] ]
     histsSR = get_yield_hists("SR", False, syst=syst)
-    alpha = ru.get_alpha(histsSR["lostlep"], hists["lostlep"], hists_nosyst["data"], [hists["photon"], hists["qflip"], hists["fakes"], hists["prompt"], hists["ttw"], hists["vbsww"]])
+    alpha = ru.get_alpha(histsSR["LostLepton"], hists["LostLepton"], hists_nosyst["data"], [hists["GammaFakes"], hists["ChargeFlip"], hists["Fakes"], hists["Prompt"], hists["ttw"], hists["vbsww"]])
     return alpha
 
 #________________________________________________________________________________________________________________________________________
@@ -426,22 +508,22 @@ def get_lostlep_alpha(syst=""):
 def get_systs_fake(region="SR"):
 
     systs = []
-
+    return systs
     # Usual systematic variations for both signal and backgrounds
     syst_names = ["fake_SYS", "prompt_SYS", "photon_SYS", "lostlep_SYS"]
     # if "v1.2.2" not in input_ntuple:
     #     syst_names += ["JER"]
     for sys in syst_names:
         systval = {}
-        for proc in ["www"] + config["bkg_order"]:
+        for proc in ["WWWon"] + config["bkg_order"]:
             bkglist = config["bkg_order"]
-            if proc == "fakes" and sys == "fake_SYS":
+            if proc == "Fakes" and sys == "fake_SYS":
                 systval[proc] = "1.50"
-            elif proc == "photon" and sys == "photon_SYS":
+            elif proc == "GammaFakes" and sys == "photon_SYS":
                 systval[proc] = "1.50"
-            elif proc == "prompt" and sys == "prompt_SYS":
+            elif proc == "Prompt" and sys == "prompt_SYS":
                 systval[proc] = "1.20"
-            elif proc == "lostlep" and sys == "lostlep_SYS":
+            elif proc == "LostLepton" and sys == "lostlep_SYS":
                 systval[proc] = "1.20"
             else:
                 systval[proc] = 0
@@ -467,13 +549,13 @@ def get_systs(region="SR", apply_lostlep_sf=True, include_lostlep=False, isnj1=F
         sys_hists_up = get_yield_hists(region, True, lostlep_sf, sys+"Up")
         sys_hists_dn = get_yield_hists(region, True, lostlep_sf, sys+"Down")
         systval = {}
-        for proc in ["www"] + config["bkg_order"]:
-            bkglist = ["www", "qflip", "prompt", "photon", "ttw", "vbsww"]
+        for proc in ["WWWon"] + config["bkg_order"]:
+            bkglist = ["WWWon", "ChargeFlip", "Prompt", "GammaFakes", "ttw", "vbsww"]
             if include_lostlep:
-                bkglist.append("lostlep")
+                bkglist.append("LostLepton")
             if proc in bkglist:
                 systval[proc] = [sys_hists_up[proc], sys_hists_dn[proc]]
-            elif proc == "lostlep":
+            elif proc == "LostLepton":
                 lostlep_yield_sysup = get_yield_hists(region, True, lostlep_sf)
                 lostlep_yield_sysdn = get_yield_hists(region, True, lostlep_sf)
                 lostlep_alpha_nom = get_lostlep_alpha()
@@ -497,8 +579,8 @@ def get_systs(region="SR", apply_lostlep_sf=True, include_lostlep=False, isnj1=F
         sys_hists_up = get_yield_hists(region, True, lostlep_sf, sys+"Up")
         sys_hists_dn = get_yield_hists(region, True, lostlep_sf, sys+"Down")
         systval = {}
-        for proc in ["www"] + config["bkg_order"]:
-            if proc in ["fakes"]:
+        for proc in ["WWWon"] + config["bkg_order"]:
+            if proc in ["Fakes"]:
                 systval[proc] = [sys_hists_up[proc], sys_hists_dn[proc]]
             else:
                 systval[proc] = 0
@@ -510,8 +592,8 @@ def get_systs(region="SR", apply_lostlep_sf=True, include_lostlep=False, isnj1=F
         sys_hists_up = get_yield_hists(region, True, lostlep_sf, sys+"Up")
         sys_hists_dn = get_yield_hists(region, True, lostlep_sf, sys+"Down")
         systval = {}
-        for proc in ["www"] + config["bkg_order"]:
-            if proc in ["www"]:
+        for proc in ["WWWon"] + config["bkg_order"]:
+            if proc in ["WWWon"]:
                 systval[proc] = [sys_hists_up[proc], sys_hists_dn[proc]]
             else:
                 systval[proc] = 0
@@ -521,10 +603,10 @@ def get_systs(region="SR", apply_lostlep_sf=True, include_lostlep=False, isnj1=F
     # LostLep alpha MC statistical error
     if apply_lostlep_sf:
         hists = get_yield_hists(region, True)
-        h_mcstat_alpha = hists["lostlep"].Clone()
-        hnom = get_yield_hists(region, True, lostlep_sf)["lostlep"].Clone()
+        h_mcstat_alpha = hists["LostLepton"].Clone()
+        hnom = get_yield_hists(region, True, lostlep_sf)["LostLepton"].Clone()
         hnom_raw = hnom.Clone()
-        h_mcstat_alpha.Divide(get_yield_hists("WZCR", True)["lostlep"])
+        h_mcstat_alpha.Divide(get_yield_hists("WZCR", True)["LostLepton"])
         for i in xrange(len(h_mcstat_alpha)):
             h_mcstat_alpha.SetBinContent(i+1, 1 + (h_mcstat_alpha.GetBinError(i+1) / h_mcstat_alpha.GetBinContent(i+1) if h_mcstat_alpha.GetBinContent(i+1) != 0 else 0))
         h_mcstat_alpha.SetBinContent(7, h_mcstat_alpha.GetBinContent(8))
@@ -546,8 +628,8 @@ def get_systs(region="SR", apply_lostlep_sf=True, include_lostlep=False, isnj1=F
 	
         for sys in systnames:
             systval = {}
-            for proc in ["www"] + config["bkg_order"]:
-                if proc == "lostlep":
+            for proc in ["WWWon"] + config["bkg_order"]:
+                if proc == "LostLepton":
                     systval[proc] = [ "{:.4f}".format((hnom.GetBinContent(i)/hnom_raw.GetBinContent(i) if hnom_raw.GetBinContent(i) > 0 else 1)) if i in syst_relevant_bins[sys] else "-" for i in xrange(1, hnom.GetNbinsX()+1) ]
                 else:
                     systval[proc] = 0
@@ -571,8 +653,8 @@ def get_systs(region="SR", apply_lostlep_sf=True, include_lostlep=False, isnj1=F
 	syst_relevant_bins = {}
         for sys in systnames:
             systval = {}
-            for proc in ["www"] + config["bkg_order"]:
-                if proc in ["lostlep"]:
+            for proc in ["WWWon"] + config["bkg_order"]:
+                if proc in ["LostLepton"]:
                     systval[proc] = [ "{:.4f}".format(lostlep_alpha.GetBinContent(i)) if i in syst_relevant_bins[sys] else "-" for i in xrange(1, lostlep_alpha.GetNbinsX()+1) ]
                 else:
                     systval[proc] = 0
@@ -582,8 +664,8 @@ def get_systs(region="SR", apply_lostlep_sf=True, include_lostlep=False, isnj1=F
     if not isnj1:
         # Lost-Lep extrapolation factor (alpha) error
         systval = {}
-        for proc in ["www"] + config["bkg_order"]:
-            if proc in ["lostlep"]:
+        for proc in ["WWWon"] + config["bkg_order"]:
+            if proc in ["LostLepton"]:
                 systval[proc] = ["1.049"] * 6 + ["-"] * 3
             else:
                 systval[proc] = 0
@@ -591,8 +673,8 @@ def get_systs(region="SR", apply_lostlep_sf=True, include_lostlep=False, isnj1=F
 
         # Lost-Lep extrapolation factor (alpha) error
         systval = {}
-        for proc in ["www"] + config["bkg_order"]:
-            if proc in ["lostlep"]:
+        for proc in ["WWWon"] + config["bkg_order"]:
+            if proc in ["LostLepton"]:
                 systval[proc] = ["1.053"] * 6 + ["-"] * 3
             else:
                 systval[proc] = 0
@@ -600,8 +682,8 @@ def get_systs(region="SR", apply_lostlep_sf=True, include_lostlep=False, isnj1=F
 
         # Lost-Lep extrapolation factor (alpha) error
         systval = {}
-        for proc in ["www"] + config["bkg_order"]:
-            if proc in ["lostlep"]:
+        for proc in ["WWWon"] + config["bkg_order"]:
+            if proc in ["LostLepton"]:
                 systval[proc] = ["-"] * 6 + ["1.082"] * 3
             else:
                 systval[proc] = 0
@@ -611,7 +693,7 @@ def get_systs(region="SR", apply_lostlep_sf=True, include_lostlep=False, isnj1=F
 
     # VBSWWVR
     systval = {}
-    for proc in ["www"] + config["bkg_order"]:
+    for proc in ["WWWon"] + config["bkg_order"]:
         if proc in ["vbsww"]:
             systval[proc] = "1.22"
         else:
@@ -620,7 +702,7 @@ def get_systs(region="SR", apply_lostlep_sf=True, include_lostlep=False, isnj1=F
 
     # VBSWWXsec
     systval = {}
-    for proc in ["www"] + config["bkg_order"]:
+    for proc in ["WWWon"] + config["bkg_order"]:
         if proc in ["vbsww"]:
             systval[proc] = "1.20"
         else:
@@ -629,7 +711,7 @@ def get_systs(region="SR", apply_lostlep_sf=True, include_lostlep=False, isnj1=F
 
     # ttWXVR
     systval = {}
-    for proc in ["www"] + config["bkg_order"]:
+    for proc in ["WWWon"] + config["bkg_order"]:
         if proc in ["ttw"]:
             systval[proc] = "1.18"
         else:
@@ -638,7 +720,7 @@ def get_systs(region="SR", apply_lostlep_sf=True, include_lostlep=False, isnj1=F
 
     # ttWXsec
     systval = {}
-    for proc in ["www"] + config["bkg_order"]:
+    for proc in ["WWWon"] + config["bkg_order"]:
         if proc in ["ttw"]:
             systval[proc] = "1.20"
         else:
@@ -647,8 +729,8 @@ def get_systs(region="SR", apply_lostlep_sf=True, include_lostlep=False, isnj1=F
 
     # photon validation region
     systval = {}
-    for proc in ["www"] + config["bkg_order"]:
-        if proc in ["photon"]:
+    for proc in ["WWWon"] + config["bkg_order"]:
+        if proc in ["GammaFakes"]:
             systval[proc] = "1.50"
         else:
             systval[proc] = 0
@@ -656,8 +738,8 @@ def get_systs(region="SR", apply_lostlep_sf=True, include_lostlep=False, isnj1=F
 
     # qflip MC syst
     systval = {}
-    for proc in ["www"] + config["bkg_order"]:
-        if proc in ["qflip"]:
+    for proc in ["WWWon"] + config["bkg_order"]:
+        if proc in ["ChargeFlip"]:
             systval[proc] = "1.50"
         else:
             systval[proc] = 0
@@ -665,10 +747,10 @@ def get_systs(region="SR", apply_lostlep_sf=True, include_lostlep=False, isnj1=F
 
     # LumiSyst
     systval = {}
-    for proc in ["www"] + config["bkg_order"]:
-        bkglist = ["www", "qflip", "prompt", "photon", "ttw", "vbsww"]
+    for proc in ["WWWon"] + config["bkg_order"]:
+        bkglist = ["WWWon", "ChargeFlip", "Prompt", "GammaFakes", "ttw", "vbsww"]
         if include_lostlep:
-            bkglist.append("lostlep")
+            bkglist.append("LostLepton")
         if proc in bkglist:
             systval[proc] = "1.025"
         else:
