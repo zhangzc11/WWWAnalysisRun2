@@ -252,7 +252,7 @@ std::function<float()> Lambdas::LeptonScaleFactor = [&]()
         //     return leptonScaleFactors.getScaleFactors(true, ana.do_fake_estimation, input.is_data);
         // else
         //     return www.lepsf();
-        return leptonScaleFactors.getScaleFactors(true, ana.do_fake_estimation, input.is_data);
+        return leptonScaleFactors.getScaleFactors(input.year, ana.do_fake_estimation, input.is_data);
     };
 
 //______________________________________________________________________________________________
@@ -273,39 +273,56 @@ std::function<float()> Lambdas::LepSFVariation(Variation::Var var)
 {
     return [&, var]()
     {
-/*        if (input.year == 2016)
+        float lepsf = leptonScaleFactors.getScaleFactors(input.year, ana.do_fake_estimation, input.is_data);
+        if (var == Variation::Up)
         {
-            if (var == Variation::Up)
-                return www.lepsf() == 0 ? 0 : www.lepsf_up() / www.lepsf() ;
-            else // else if (var == Variation::Down)
-                return www.lepsf() == 0 ? 0 : www.lepsf_dn() / www.lepsf() ;
+            return ((lepsf == 0) ? 0 : (leptonScaleFactors.getScaleFactors(input.year, ana.do_fake_estimation, input.is_data,  1) / lepsf)) ;
         }
-        else if (input.year == 2017)
+        else if (var == Variation::Down)
         {
-            if (var == Variation::Up)
-            {
-                float lepsf = leptonScaleFactors.getScaleFactors(true, ana.do_fake_estimation, input.is_data);
-                return lepsf == 0 ? 0 : leptonScaleFactors.getScaleFactors(true, ana.do_fake_estimation, input.is_data, 1) / lepsf ;
-            }
-            else // else if (var == Variation::Down)
-            {
-                float lepsf = leptonScaleFactors.getScaleFactors(true, ana.do_fake_estimation, input.is_data);
-                return lepsf == 0 ? 0 : leptonScaleFactors.getScaleFactors(true, ana.do_fake_estimation, input.is_data, -1) / lepsf ;
-            }
+            return ((lepsf == 0) ? 0 : (leptonScaleFactors.getScaleFactors(input.year, ana.do_fake_estimation, input.is_data, -1) / lepsf)) ;
         }
-        else // else if (input.year == 2018) // TODO 2018 scale factor is not provided yet
-*/
+        else 
         {
-            if (var == Variation::Up)
-            {
-                // TODO UPDATE THIS
-                return float(1);
-            }
-            else // else if (var == Variation::Down)
-            {
-                // TODO UPDATE THIS
-                return float(1);
-            }
+            return lepsf;
+        }
+    };
+}
+std::function<float()> Lambdas::EleSFVariation(Variation::Var var)
+{
+    return [&, var]()
+    {
+        float lepsf = leptonScaleFactors.getScaleFactors(input.year, ana.do_fake_estimation, input.is_data);
+        if (var == Variation::Up)
+        {
+            return ((lepsf == 0) ? 0 : (leptonScaleFactors.getScaleFactors(input.year, ana.do_fake_estimation, input.is_data,  11) / lepsf)) ;
+        }
+        else if (var == Variation::Down)
+        {
+            return ((lepsf == 0) ? 0 : (leptonScaleFactors.getScaleFactors(input.year, ana.do_fake_estimation, input.is_data, -11) / lepsf)) ;
+        }
+        else 
+        {
+            return lepsf;
+        }
+    };
+}
+std::function<float()> Lambdas::MuoSFVariation(Variation::Var var)
+{
+    return [&, var]()
+    {
+        float lepsf = leptonScaleFactors.getScaleFactors(input.year, ana.do_fake_estimation, input.is_data);
+        if (var == Variation::Up)
+        {
+            return ((lepsf == 0) ? 0 : (leptonScaleFactors.getScaleFactors(input.year, ana.do_fake_estimation, input.is_data,  13) / lepsf)) ;
+        }
+        else if (var == Variation::Down)
+        {
+            return ((lepsf == 0) ? 0 : (leptonScaleFactors.getScaleFactors(input.year, ana.do_fake_estimation, input.is_data, -13) / lepsf)) ;
+        }
+        else 
+        {
+            return lepsf;
         }
     };
 }
@@ -894,6 +911,23 @@ std::function<float()> Lambdas::PassTightIsolationAR = [&]()
         return false;
 
     };
+
+std::function<float()> Lambdas::Cut2VLep = [&]()
+    {
+        if(not(www.nVlep() == 2))          return false;
+        return true;
+    };
+std::function<float()> Lambdas::Cut3VLep = [&]()
+    {
+        if(not(www.nVlep() == 3))          return false;
+        return true;
+    };
+std::function<float()> Lambdas::NoIsoTrack = [&]()
+    {
+          if (not (www.nisoTrack_mt2_cleaned_VVV_cutbased_veto()==0 )) return false;
+          return true;
+    };
+
 
 //______________________________________________________________________________________________
 // SR Dilepton selection

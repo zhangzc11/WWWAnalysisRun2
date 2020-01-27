@@ -149,7 +149,7 @@ if args.split_vbsttw:
 if args.use_private:
     if args.split_signal:
         sig_fnames = [
-            "{}/www_private.root".format(input_dir),
+            "{}/www.root".format(input_dir),
             "{}/vh_private.root".format(input_dir),
             # "{}/vh_www_private.root".format(input_dir),
             ]
@@ -309,6 +309,7 @@ if hist_filters:
             signal_scale=sig_scale,
             extraoptions={
                 "nbins":int(args.nbins),
+                 #"do_ks_test":True,
                 "print_yield":True,
                 "yaxis_log":args.yaxis_log,
                 "legend_scalex": 1.8,

@@ -578,7 +578,14 @@ int main(int argc, char** argv)
     ana.histograms.addHistogram("Mljmax3L"                 ,  180 , 0.      , 600.   , [&]() { return (input.oldbaby ? -1. : www.Mljmax3L())                                       ; });
     ana.histograms.addHistogram("DRljmin3L"                ,  180 , 0.      , 6.     , [&]() { return (input.oldbaby ? -1. : www.DRljmin3L())                                      ; });
     ana.histograms.addHistogram("DRljmax3L"                ,  180 , 0.      , 6.     , [&]() { return (input.oldbaby ? -1. : www.DRljmax3L())                                      ; });
-    
+    ana.histograms.addHistogram("METExtra"                 ,   90 , 0.      , 90.    , [&]() { return www.met_pt()                                                                 ; });
+    ana.histograms.addHistogram("MTmax_afterMET"           ,  180 , 0.      ,180.    , [&]() { return (www.met_pt()>45. ? www.MTmax() : -999); });
+    ana.histograms.addHistogram("lep_pt2_afterNJ"          ,  180 , 0.     , 150    , [&]() { return (www.nj30()<=1 ? (www.lep_pt().size() > 2 ? www.lep_pt()[2]  : -999) : -999)                           ; });
+    ana.histograms.addHistogram("Pt3l_afterMTmax"          ,  180 , 0.      , 300.   , [&]() { return (www.MTmax3L()>90. ? www.Pt3l() : -999)                                                                ; });
+    ana.histograms.addHistogram("Pt3l_afterMT3rd"          ,  180 , 0.      , 300.   , [&]() { return (www.MT3rd()  >90. ? www.Pt3l() : -999)                                                                   ; });
+    ana.histograms.addHistogram("nb__nj2"                  ,  5   , 0.      , 5.     , [&]() { return (www.nj30()>=2 ? www.nb()  : -999)                                                                  ; });
+    ana.histograms.addHistogram("nb__nj1"                  ,  5   , 0.      , 5.     , [&]() { return (www.nj30()==1 ? www.nb()  : -999)                                                                    ; });
+
     ana.histograms.addHistogram("nbsoft"                   ,  5   , 0.      , 5.     , [&]() {
         int nsoftbtag  = 0;
         for(unsigned int i = 0; i<www.svs_nTrks().size(); ++i){
@@ -591,6 +598,20 @@ int main(int argc, char** argv)
         }
         return nsoftbtag;
       });
+    ana.histograms.addHistogram("subleadq_pt" , 150 , 0. , 150. , [&]() {
+                if (not (www.nVlep()==2))
+                    return float(-999);
+                float minpt=9e5;
+                for(unsigned int i = 0; i<www.genPart_pdgId().size(); ++i){
+                  if(abs(www.genPart_pdgId()[i])==0) continue;
+                  if(abs(www.genPart_pdgId()[i])>=5) continue;
+                  if(abs(www.genPart_motherId()[i])!=24) continue;
+                  if(minpt>www.genPart_p4()[i].Pt()) minpt = www.genPart_p4()[i].Pt();
+                }
+                if(minpt>1.4e5)
+                  return float(-999);
+                return minpt;
+            });
     ana.histograms.addHistogram("Mllmin" , 180 , 0. , 300. , [&]()
             {
                 if (not (www.lep_p4().size() > 1))
@@ -798,6 +819,29 @@ int main(int argc, char** argv)
                         rtn.push_back(www.lep_MVA()[ilep]);
                 return rtn;
             });
+    ana.histograms.addHistogram("genMatches"                    ,  351   , -1      , 350      , [&]() {
+        int ngenlepFromWorX = 0;
+        int ngenlep         = 0;
+        int ngenlepFromTau  = 0;
+        int ngentau         = 0;
+        int ngentauFromWorX = 0;
+        for(unsigned int ig = 0; ig<www.genPart_p4().size(); ++ig) {
+          if(abs(www.genPart_pdgId()[ig])==11 || abs(www.genPart_pdgId()[ig])==13){
+            ++ngenlep;
+            if(abs(www.genPart_motherId()[ig])==15) ++ngenlepFromTau;
+            else if(abs(www.genPart_motherId()[ig])>21 && abs(www.genPart_motherId()[ig])<25) ++ngenlepFromWorX;
+          }
+          if(abs(www.genPart_pdgId()[ig])==15) {
+            ++ngentau;
+            if(abs(www.genPart_motherId()[ig])>21 && abs(www.genPart_motherId()[ig])<25) ++ngentauFromWorX;
+          }
+        }
+        int ngenhadtau = ngentauFromWorX - ngenlepFromTau;//this should be a number from 0-3 - nhadtau
+        int nreturn = 100*ngenlepFromWorX + ngenlepFromTau*10 + ngenhadtau; // bin in how many genlep vs. how many genhadtau one has.
+        return nreturn;
+      });
+
+    
 
     // One bin histogram to hold the total yield at this cut stage
     RooUtil::Histograms yield_histogram_only;
@@ -830,6 +874,11 @@ int main(int argc, char** argv)
 
     // Trigger selection
     ana.cutflow.addCutToLastActiveCut("CutTrigger", Lambdas::TriggerSelection, Lambdas::TriggerScaleFactor);
+    ana.cutflow.addCutToLastActiveCut("Cut2Vlep", Lambdas::Cut2VLep, UNITY);
+    ana.cutflow.addCutToLastActiveCut("Cut2VlepNoIsoTrack", Lambdas::NoIsoTrack, UNITY);
+    ana.cutflow.getCut("CutTrigger"); // Retrieve the CutTrigger and add CutSRDilep to the CutTrigger node
+    ana.cutflow.addCutToLastActiveCut("Cut3Vlep", Lambdas::Cut3VLep, UNITY);
+    ana.cutflow.addCutToLastActiveCut("Cut3VlepNoIsoTrack", Lambdas::NoIsoTrack, UNITY);
 
     //===================
     // N lep requirements
@@ -1382,6 +1431,10 @@ int main(int argc, char** argv)
     {
         ana.cutflow.addWgtSyst("LepSFUp"    , Lambdas::LepSFVariation     (Variation::Up   ));
         ana.cutflow.addWgtSyst("LepSFDown"  , Lambdas::LepSFVariation     (Variation::Down ));
+        ana.cutflow.addWgtSyst("EleSFUp"    , Lambdas::EleSFVariation     (Variation::Up   ));
+        ana.cutflow.addWgtSyst("EleSFDown"  , Lambdas::EleSFVariation     (Variation::Down ));
+        ana.cutflow.addWgtSyst("MuoSFUp"    , Lambdas::MuoSFVariation     (Variation::Up   ));
+        ana.cutflow.addWgtSyst("MuoSFDown"  , Lambdas::MuoSFVariation     (Variation::Down ));
         ana.cutflow.addWgtSyst("TrigSFUp"   , Lambdas::TriggerSFVariation (Variation::Up   ));
         ana.cutflow.addWgtSyst("TrigSFDown" , Lambdas::TriggerSFVariation (Variation::Down ));
         ana.cutflow.addWgtSyst("BTagLFUp"   , Lambdas::BTagLFVariation    (Variation::Up   ));
@@ -1775,11 +1828,12 @@ int main(int argc, char** argv)
         // Book histograms
         if (ana.do_histograms)
         {
-            ana.cutflow.bookHistogramsForCutAndBelow(ana.histograms, "CutSRDilep");
-            ana.cutflow.bookHistogramsForCutAndBelow(ana.histograms, "CutSRTrilep");
-            ana.cutflow.bookHistogramsForCutAndBelow(ana.histograms, "CutWZCRTrilep");
-            ana.cutflow.bookHistogramsForCutAndBelow(ana.histograms, "CutARDilep");
-            ana.cutflow.bookHistogramsForCutAndBelow(ana.histograms, "CutARTrilep");
+            ana.cutflow.bookHistogramsForCutAndBelow(ana.histograms, "CutTrigger");
+            //ana.cutflow.bookHistogramsForCutAndBelow(ana.histograms, "CutSRDilep");
+            //ana.cutflow.bookHistogramsForCutAndBelow(ana.histograms, "CutSRTrilep");
+            //ana.cutflow.bookHistogramsForCutAndBelow(ana.histograms, "CutWZCRTrilep");
+            //ana.cutflow.bookHistogramsForCutAndBelow(ana.histograms, "CutARDilep");
+            //ana.cutflow.bookHistogramsForCutAndBelow(ana.histograms, "CutARTrilep");
         }
 
         // Book cutflows
