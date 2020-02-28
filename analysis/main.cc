@@ -636,6 +636,33 @@ int main(int argc, char** argv)
         }
         return maxeleiso;
       });
+    ana.histograms.addHistogram("ele_ip3dMax"      ,  100 , -0.05     , 0.05    , [&]() {
+        if (www.lep_pdgId().size()<1) return float(-999.);
+        float maxeleiso = 0.;
+        int countele = 0;
+        for(unsigned int i = 0; i<www.lep_ip3d().size(); ++i){
+          if(abs(www.lep_pdgId()[i])==11){
+            ++countele;
+            if(fabs(www.lep_ip3d()[i])>fabs(maxeleiso)) maxeleiso = www.lep_ip3d()[i];
+          }
+        }
+        if(countele==0) return float(-999.);
+        return maxeleiso;
+      });
+        ana.histograms.addHistogram("ele_ip3dMax_EE"      ,  100 , -0.05     , 0.05    , [&]() {
+        if (www.lep_pdgId().size()<1) return float(-999.);
+        float maxeleiso = 0.;
+        int countele = 0;
+        for(unsigned int i = 0; i<www.lep_ip3d().size(); ++i){
+          if(fabs(www.lep_eta()[i])<1.6) continue;
+          if(abs(www.lep_pdgId()[i])==11){
+            ++countele;
+            if(fabs(www.lep_ip3d()[i])>fabs(maxeleiso)) maxeleiso = www.lep_ip3d()[i];
+          }
+        }
+        if(countele==0) return float(-999.);
+        return maxeleiso;
+      });
     ana.histograms.addHistogram("muo_relIso03EAMax"      ,  160 , 0.0     , 0.4    , [&]() {
         if (www.lep_pdgId().size()<1) return float(-999.);
         vector<float> reliso = ((input.year == 2016) ? (www.lep_relIso03EAv2Lep()) : (www.lep_relIso03EALep()));
@@ -953,7 +980,7 @@ int main(int argc, char** argv)
         ana.cutflow.getCut("SRSSmmKinSel");
         ana.cutflow.addCutToLastActiveCut("SRSSmmMjjOut"     , Lambdas::SSMjjOut        (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSSmmMjjOutFull" , UNITY                                                        , UNITY); // Adding one more node with name "<Region>Full"
-        
+
         ana.cutflow.getCut("SRSSee");
         ana.cutflow.addCutToLastActiveCut("SRSS1Jee1JPre"     , Lambdas::SS1JPreselection (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("SRSS1JeeNsoftbVeto", Lambdas::NBvetoSoft       (Variation::JES, Variation::Nominal), UNITY);
@@ -1007,7 +1034,6 @@ int main(int argc, char** argv)
         ana.cutflow.addCutToLastActiveCut("SR2SFOSNsoftbVeto", Lambdas::NBvetoSoft      (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("SR2SFOSKinSel"    , Lambdas::KinSel3L        (Variation::JES, Variation::Nominal), UNITY);
         ana.cutflow.addCutToLastActiveCut("SR2SFOSFull"      , UNITY                                                        , UNITY);
-
         //************************************************************************************************************************************************************************************************
         //
         //
