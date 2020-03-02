@@ -242,12 +242,7 @@ std::function<float()> Lambdas::TriggerSelection = [&]()
 // Trigger scale factor
 std::function<float()> Lambdas::TriggerScaleFactor = [&]()
     {
-        // 2017 and 2018 trigger scale factors are not available yet (have not done the studies yet)
-        // For 2016 the trigsf branch in the TTree holds the proper trigger scalefactors
-        // TODO UPDATE THIS for 2017 and 2018
-        // For now, using 2016 trigger scale factor for 2017/2018 (these are almost identical to 1 anyways...
-        //return input.is_data ? 1 : www.trigsf();
-        return 1;
+        return triggerScaleFactors.getScaleFactors(input.year, ana.do_fake_estimation, input.is_data, 0);
     };
 
 //______________________________________________________________________________________________
@@ -339,38 +334,14 @@ std::function<float()> Lambdas::TriggerSFVariation(Variation::Var var)
 {
     return [&, var]()
     {
-/*        if (input.year == 2016)
+        float trigSF =  triggerScaleFactors.getScaleFactors(input.year, ana.do_fake_estimation, input.is_data, 0);
+        if (var == Variation::Up)
         {
-            if (var == Variation::Up)
-                return www.trigsf() == 0 ? 0 : www.trigsf_up() / www.trigsf();
-            else // else if (var == Variation::Down)
-                return www.trigsf() == 0 ? 0 : www.trigsf_dn() / www.trigsf();
+                return ( (trigSF == 0) ? 0 : (triggerScaleFactors.getScaleFactors(input.year, ana.do_fake_estimation, input.is_data, 1)) / trigSF) ;
         }
-        else if (input.year == 2017)
+        else // else if (var == Variation::Down)
         {
-            if (var == Variation::Up)
-            {
-                // TODO UPDATE THIS
-                return float(1);
-            }
-            else // else if (var == Variation::Down)
-            {
-                // TODO UPDATE THIS
-                return float(1);
-            }
-        }
-        else // else if (input.year == 2018) // TODO 2018 scale factor is not provided yet
- */       {
-            if (var == Variation::Up)
-            {
-                // TODO UPDATE THIS
-                return float(1);
-            }
-            else // else if (var == Variation::Down)
-            {
-                // TODO UPDATE THIS
-                return float(1);
-            }
+                return ( (trigSF == 0) ? 0 : (triggerScaleFactors.getScaleFactors(input.year, ana.do_fake_estimation, input.is_data, -1)) / trigSF) ;
         }
     };
 }
