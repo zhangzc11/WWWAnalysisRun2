@@ -25,10 +25,10 @@ CXXFLAGS   = $(DEBUG) -O2 -Wall -fPIC -Wshadow -Woverloaded-virtual
 LDFLAGS    = $(DEBUG) -O2
 ROOTLIBS   = $(shell root-config --libs)
 ROOTCFLAGS = $(shell root-config --cflags)
-CXXFLAGS  += $(ROOTCFLAGS)
+CXXFLAGS  += $(ROOTCFLAGS) -std=c++17 -lstdc++fs
 CFLAGS     = $(ROOTCFLAGS) -Wall -Wno-unused-function $(DEBUG) -O2 -fPIC -fno-var-tracking -I../wwwbabymaker/CORE/
-EXTRACFLAGS = $(shell rooutil-config)
-EXTRAFLAGS = -fPIC -ITMultiDrawTreePlayer -Wunused-variable -lTMVA -lEG -lGenVector -lXMLIO -lMLP -lTreePlayer
+EXTRACFLAGS = $(shell rooutil-config) -std=c++17 -lstdc++fs
+EXTRAFLAGS = -fPIC -ITMultiDrawTreePlayer -Wunused-variable -lTMVA -lEG -lGenVector -lXMLIO -lMLP -lTreePlayer -std=c++17 -lstdc++fs
 USERSTUDY  = $(wildcard user_study.h)
 
 #.PHONY: check-env
@@ -50,7 +50,7 @@ coreobjs/%.o : $(COREDIR)/%.cc
 	mkdir -p coreobjs/Tools
 	$(CC) $(CFLAGS) $(EXTRACFLAGS) $< -c -o $@
 
-%.o: %.cc
+%.o: %.cc %.h
 	$(CC) $(CFLAGS) $(EXTRACFLAGS) $< -c
 
 clean:
