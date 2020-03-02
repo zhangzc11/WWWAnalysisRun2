@@ -157,9 +157,9 @@ class TriggerScaleFactors
 		float lep_pt0 = www.lep_pt()[idx1];
 		float lep_pt1 = www.lep_pt()[idx2];
 		if(lep_pt0 <= 25.0) lep_pt0 = 25.1;
-		if(lep_pt0 >= 2055.0) lep_pt0 = 204.9;
+		if(lep_pt0 >= 205.0) lep_pt0 = 204.9;
 		if(lep_pt1 <= 25.0) lep_pt1 = 25.1;
-		if(lep_pt1 >= 2055.0) lep_pt1 = 204.9;
+		if(lep_pt1 >= 205.0) lep_pt1 = 204.9;
 
 		if(abs(www.lep_eta()[idx1]) < 1.2 && abs(www.lep_eta()[idx2]) < 1.2) idx_eta = 0;//00
 		if(abs(www.lep_eta()[idx1]) < 1.2 && abs(www.lep_eta()[idx2]) >= 1.2) idx_eta = 1;//01
