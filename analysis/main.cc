@@ -586,6 +586,272 @@ int main(int argc, char** argv)
     ana.histograms.addHistogram("nb__nj2"                  ,  5   , 0.      , 5.     , [&]() { return (www.nj30()>=2 ? www.nb()  : -999)                                                                  ; });
     ana.histograms.addHistogram("nb__nj1"                  ,  5   , 0.      , 5.     , [&]() { return (www.nj30()==1 ? www.nb()  : -999)                                                                    ; });
 
+    // // histograms made to only study electron or muons in certain eta region for POG questions
+    // ana.histograms.addVecHistogram("el_pt_all",  180 , 0., 150, [&]()
+    //         {
+    //             std::vector<float> pts;
+    //             for (unsigned int i = 0; i < www.lep_pt().size(); ++i)
+    //                 if (abs(www.lep_pdgId()[i]) == 11 and www.lep_pass_VVV_fo()[i])
+    //                     pts.push_back(www.lep_pt()[i]);
+    //             return pts;
+    //         });
+    // ana.histograms.addVecHistogram("el_eta_all",  180 , -2.5, 2.5, [&]()
+    //         {
+    //             std::vector<float> etas;
+    //             for (unsigned int i = 0; i < www.lep_eta().size(); ++i)
+    //                 if (abs(www.lep_pdgId()[i]) == 11 and www.lep_pass_VVV_fo()[i])
+    //                     etas.push_back(www.lep_eta()[i]);
+    //             return etas;
+    //         });
+    // ana.histograms.addVecHistogram("el_ip3d_all",  180 , -0.03, 0.03, [&]()
+    //         {
+    //             std::vector<float> ip3ds;
+    //             for (unsigned int i = 0; i < www.lep_ip3d().size(); ++i)
+    //                 if (abs(www.lep_pdgId()[i]) == 11 and www.lep_pass_VVV_fo()[i])
+    //                     ip3ds.push_back(www.lep_ip3d()[i]);
+    //             return ip3ds;
+    //         });
+    // ana.histograms.addVecHistogram("el_sip3d_all",  180 , -10, 10, [&]()
+    //         {
+    //             std::vector<float> ip3ds;
+    //             for (unsigned int i = 0; i < www.lep_ip3d().size(); ++i)
+    //                 if (abs(www.lep_pdgId()[i]) == 11 and www.lep_pass_VVV_fo()[i])
+    //                     ip3ds.push_back(www.lep_ip3d()[i]/www.lep_ip3derr()[i]);
+    //             return ip3ds;
+    //         });
+
+    // ana.histograms.addVecHistogram("el_cen_pt_all",  180 , 0., 150, [&]()
+    //         {
+    //             std::vector<float> pts;
+    //             for (unsigned int i = 0; i < www.lep_pt().size(); ++i)
+    //                 if (abs(www.lep_pdgId()[i]) == 11 and abs(www.lep_eta()[i]) < 1.6 and www.lep_pass_VVV_fo()[i])
+    //                     pts.push_back(www.lep_pt()[i]);
+    //             return pts;
+    //         });
+    // ana.histograms.addVecHistogram("el_cen_eta_all",  180 , -2.5, 2.5, [&]()
+    //         {
+    //             std::vector<float> etas;
+    //             for (unsigned int i = 0; i < www.lep_eta().size(); ++i)
+    //                 if (abs(www.lep_pdgId()[i]) == 11 and abs(www.lep_eta()[i]) < 1.6 and www.lep_pass_VVV_fo()[i])
+    //                     etas.push_back(www.lep_eta()[i]);
+    //             return etas;
+    //         });
+    // ana.histograms.addVecHistogram("el_cen_ip3d_all",  180 , -0.03, 0.03, [&]()
+    //         {
+    //             std::vector<float> ip3ds;
+    //             for (unsigned int i = 0; i < www.lep_ip3d().size(); ++i)
+    //                 if (abs(www.lep_pdgId()[i]) == 11 and abs(www.lep_eta()[i]) < 1.6 and www.lep_pass_VVV_fo()[i])
+    //                     ip3ds.push_back(www.lep_ip3d()[i]);
+    //             return ip3ds;
+    //         });
+    // ana.histograms.addVecHistogram("el_cen_sip3d_all",  180 , -10, 10, [&]()
+    //         {
+    //             std::vector<float> ip3ds;
+    //             for (unsigned int i = 0; i < www.lep_ip3d().size(); ++i)
+    //                 if (abs(www.lep_pdgId()[i]) == 11 and abs(www.lep_eta()[i]) < 1.6 and www.lep_pass_VVV_fo()[i])
+    //                     ip3ds.push_back(www.lep_ip3d()[i]/www.lep_ip3derr()[i]);
+    //             return ip3ds;
+    //         });
+
+    // ana.histograms.addVecHistogram("el_fwd_pt_all",  180 , 0., 150, [&]()
+    //         {
+    //             std::vector<float> pts;
+    //             for (unsigned int i = 0; i < www.lep_pt().size(); ++i)
+    //                 if (abs(www.lep_pdgId()[i]) == 11 and abs(www.lep_eta()[i]) > 1.6 and www.lep_pass_VVV_fo()[i])
+    //                     pts.push_back(www.lep_pt()[i]);
+    //             return pts;
+    //         });
+    // ana.histograms.addVecHistogram("el_fwd_eta_all",  180 , -2.5, 2.5, [&]()
+    //         {
+    //             std::vector<float> etas;
+    //             for (unsigned int i = 0; i < www.lep_eta().size(); ++i)
+    //                 if (abs(www.lep_pdgId()[i]) == 11 and abs(www.lep_eta()[i]) > 1.6 and www.lep_pass_VVV_fo()[i])
+    //                     etas.push_back(www.lep_eta()[i]);
+    //             return etas;
+    //         });
+    // ana.histograms.addVecHistogram("el_fwd_ip3d_all",  180 , -0.03, 0.03, [&]()
+    //         {
+    //             std::vector<float> ip3ds;
+    //             for (unsigned int i = 0; i < www.lep_ip3d().size(); ++i)
+    //                 if (abs(www.lep_pdgId()[i]) == 11 and abs(www.lep_eta()[i]) > 1.6 and www.lep_pass_VVV_fo()[i])
+    //                     ip3ds.push_back(www.lep_ip3d()[i]);
+    //             return ip3ds;
+    //         });
+    // ana.histograms.addVecHistogram("el_fwd_sip3d_all",  180 , -10, 10, [&]()
+    //         {
+    //             std::vector<float> ip3ds;
+    //             for (unsigned int i = 0; i < www.lep_ip3d().size(); ++i)
+    //                 if (abs(www.lep_pdgId()[i]) == 11 and abs(www.lep_eta()[i]) > 1.6 and www.lep_pass_VVV_fo()[i])
+    //                     ip3ds.push_back(www.lep_ip3d()[i]/www.lep_ip3derr()[i]);
+    //             return ip3ds;
+    //         });
+
+    // ana.histograms.addVecHistogram("el_very_fwd_pt_all",  180 , 0., 150, [&]()
+    //         {
+    //             std::vector<float> pts;
+    //             for (unsigned int i = 0; i < www.lep_pt().size(); ++i)
+    //                 if (abs(www.lep_pdgId()[i]) == 11 and abs(www.lep_eta()[i]) > 2.0 and www.lep_pass_VVV_fo()[i])
+    //                     pts.push_back(www.lep_pt()[i]);
+    //             return pts;
+    //         });
+    // ana.histograms.addVecHistogram("el_very_fwd_eta_all",  180 , -2.5, 2.5, [&]()
+    //         {
+    //             std::vector<float> etas;
+    //             for (unsigned int i = 0; i < www.lep_eta().size(); ++i)
+    //                 if (abs(www.lep_pdgId()[i]) == 11 and abs(www.lep_eta()[i]) > 2.0 and www.lep_pass_VVV_fo()[i])
+    //                     etas.push_back(www.lep_eta()[i]);
+    //             return etas;
+    //         });
+    // ana.histograms.addVecHistogram("el_very_fwd_ip3d_all",  180 , -0.03, 0.03, [&]()
+    //         {
+    //             std::vector<float> ip3ds;
+    //             for (unsigned int i = 0; i < www.lep_ip3d().size(); ++i)
+    //                 if (abs(www.lep_pdgId()[i]) == 11 and abs(www.lep_eta()[i]) > 2.0 and www.lep_pass_VVV_fo()[i])
+    //                     ip3ds.push_back(www.lep_ip3d()[i]);
+    //             return ip3ds;
+    //         });
+    // ana.histograms.addVecHistogram("el_very_fwd_sip3d_all",  180 , -10, 10, [&]()
+    //         {
+    //             std::vector<float> ip3ds;
+    //             for (unsigned int i = 0; i < www.lep_ip3d().size(); ++i)
+    //                 if (abs(www.lep_pdgId()[i]) == 11 and abs(www.lep_eta()[i]) > 2.0 and www.lep_pass_VVV_fo()[i])
+    //                     ip3ds.push_back(www.lep_ip3d()[i]/www.lep_ip3derr()[i]);
+    //             return ip3ds;
+    //         });
+
+    // ana.histograms.addVecHistogram("mu_pt_all",  180 , 0., 150, [&]()
+    //         {
+    //             std::vector<float> pts;
+    //             for (unsigned int i = 0; i < www.lep_pt().size(); ++i)
+    //                 if (abs(www.lep_pdgId()[i]) == 13)
+    //                     pts.push_back(www.lep_pt()[i]);
+    //             return pts;
+    //         });
+    // ana.histograms.addVecHistogram("mu_eta_all",  180 , -2.5, 2.5, [&]()
+    //         {
+    //             std::vector<float> etas;
+    //             for (unsigned int i = 0; i < www.lep_eta().size(); ++i)
+    //                 if (abs(www.lep_pdgId()[i]) == 13)
+    //                     etas.push_back(www.lep_eta()[i]);
+    //             return etas;
+    //         });
+    // ana.histograms.addVecHistogram("mu_ip3d_all",  180 , -0.03, 0.03, [&]()
+    //         {
+    //             std::vector<float> ip3ds;
+    //             for (unsigned int i = 0; i < www.lep_ip3d().size(); ++i)
+    //                 if (abs(www.lep_pdgId()[i]) == 13)
+    //                     ip3ds.push_back(www.lep_ip3d()[i]);
+    //             return ip3ds;
+    //         });
+    // ana.histograms.addVecHistogram("mu_sip3d_all",  180 , -10, 10, [&]()
+    //         {
+    //             std::vector<float> ip3ds;
+    //             for (unsigned int i = 0; i < www.lep_ip3d().size(); ++i)
+    //                 if (abs(www.lep_pdgId()[i]) == 13)
+    //                     ip3ds.push_back(www.lep_ip3d()[i]/www.lep_ip3derr()[i]);
+    //             return ip3ds;
+    //         });
+
+
+    // ana.histograms.addVecHistogram("mu_cen_pt_all",  180 , 0., 150, [&]()
+    //         {
+    //             std::vector<float> pts;
+    //             for (unsigned int i = 0; i < www.lep_pt().size(); ++i)
+    //                 if (abs(www.lep_pdgId()[i]) == 13 and abs(www.lep_eta()[i]) < 1.6)
+    //                     pts.push_back(www.lep_pt()[i]);
+    //             return pts;
+    //         });
+    // ana.histograms.addVecHistogram("mu_cen_eta_all",  180 , -2.5, 2.5, [&]()
+    //         {
+    //             std::vector<float> etas;
+    //             for (unsigned int i = 0; i < www.lep_eta().size(); ++i)
+    //                 if (abs(www.lep_pdgId()[i]) == 13 and abs(www.lep_eta()[i]) < 1.6)
+    //                     etas.push_back(www.lep_eta()[i]);
+    //             return etas;
+    //         });
+    // ana.histograms.addVecHistogram("mu_cen_ip3d_all",  180 , -0.03, 0.03, [&]()
+    //         {
+    //             std::vector<float> ip3ds;
+    //             for (unsigned int i = 0; i < www.lep_ip3d().size(); ++i)
+    //                 if (abs(www.lep_pdgId()[i]) == 13 and abs(www.lep_eta()[i]) < 1.6)
+    //                     ip3ds.push_back(www.lep_ip3d()[i]);
+    //             return ip3ds;
+    //         });
+    // ana.histograms.addVecHistogram("mu_cen_sip3d_all",  180 , -10, 10, [&]()
+    //         {
+    //             std::vector<float> ip3ds;
+    //             for (unsigned int i = 0; i < www.lep_ip3d().size(); ++i)
+    //                 if (abs(www.lep_pdgId()[i]) == 13 and abs(www.lep_eta()[i]) < 1.6)
+    //                     ip3ds.push_back(www.lep_ip3d()[i]/www.lep_ip3derr()[i]);
+    //             return ip3ds;
+    //         });
+
+    // ana.histograms.addVecHistogram("mu_fwd_pt_all",  180 , 0., 150, [&]()
+    //         {
+    //             std::vector<float> pts;
+    //             for (unsigned int i = 0; i < www.lep_pt().size(); ++i)
+    //                 if (abs(www.lep_pdgId()[i]) == 13 and abs(www.lep_eta()[i]) > 1.6)
+    //                     pts.push_back(www.lep_pt()[i]);
+    //             return pts;
+    //         });
+    // ana.histograms.addVecHistogram("mu_fwd_eta_all",  180 , -2.5, 2.5, [&]()
+    //         {
+    //             std::vector<float> etas;
+    //             for (unsigned int i = 0; i < www.lep_eta().size(); ++i)
+    //                 if (abs(www.lep_pdgId()[i]) == 13 and abs(www.lep_eta()[i]) > 1.6)
+    //                     etas.push_back(www.lep_eta()[i]);
+    //             return etas;
+    //         });
+    // ana.histograms.addVecHistogram("mu_fwd_ip3d_all",  180 , -0.03, 0.03, [&]()
+    //         {
+    //             std::vector<float> ip3ds;
+    //             for (unsigned int i = 0; i < www.lep_ip3d().size(); ++i)
+    //                 if (abs(www.lep_pdgId()[i]) == 13 and abs(www.lep_eta()[i]) > 1.6)
+    //                     ip3ds.push_back(www.lep_ip3d()[i]);
+    //             return ip3ds;
+    //         });
+    // ana.histograms.addVecHistogram("mu_fwd_sip3d_all",  180 , -10, 10, [&]()
+    //         {
+    //             std::vector<float> ip3ds;
+    //             for (unsigned int i = 0; i < www.lep_ip3d().size(); ++i)
+    //                 if (abs(www.lep_pdgId()[i]) == 13 and abs(www.lep_eta()[i]) > 1.6)
+    //                     ip3ds.push_back(www.lep_ip3d()[i]/www.lep_ip3derr()[i]);
+    //             return ip3ds;
+    //         });
+
+    // ana.histograms.addVecHistogram("mu_very_fwd_pt_all",  180 , 0., 150, [&]()
+    //         {
+    //             std::vector<float> pts;
+    //             for (unsigned int i = 0; i < www.lep_pt().size(); ++i)
+    //                 if (abs(www.lep_pdgId()[i]) == 13 and abs(www.lep_eta()[i]) > 2.0)
+    //                     pts.push_back(www.lep_pt()[i]);
+    //             return pts;
+    //         });
+    // ana.histograms.addVecHistogram("mu_very_fwd_eta_all",  180 , -2.5, 2.5, [&]()
+    //         {
+    //             std::vector<float> etas;
+    //             for (unsigned int i = 0; i < www.lep_eta().size(); ++i)
+    //                 if (abs(www.lep_pdgId()[i]) == 13 and abs(www.lep_eta()[i]) > 2.0)
+    //                     etas.push_back(www.lep_eta()[i]);
+    //             return etas;
+    //         });
+    // ana.histograms.addVecHistogram("mu_very_fwd_ip3d_all",  180 , -0.03, 0.03, [&]()
+    //         {
+    //             std::vector<float> ip3ds;
+    //             for (unsigned int i = 0; i < www.lep_ip3d().size(); ++i)
+    //                 if (abs(www.lep_pdgId()[i]) == 13 and abs(www.lep_eta()[i]) > 2.0)
+    //                     ip3ds.push_back(www.lep_ip3d()[i]);
+    //             return ip3ds;
+    //         });
+    // ana.histograms.addVecHistogram("mu_very_fwd_sip3d_all",  180 , -10, 10, [&]()
+    //         {
+    //             std::vector<float> ip3ds;
+    //             for (unsigned int i = 0; i < www.lep_ip3d().size(); ++i)
+    //                 if (abs(www.lep_pdgId()[i]) == 13 and abs(www.lep_eta()[i]) > 2.0)
+    //                     ip3ds.push_back(www.lep_ip3d()[i]/www.lep_ip3derr()[i]);
+    //             return ip3ds;
+    //         });
+
     ana.histograms.addHistogram("nbsoft"                   ,  5   , 0.      , 5.     , [&]() {
         int nsoftbtag  = 0;
         for(unsigned int i = 0; i<www.svs_nTrks().size(); ++i){
