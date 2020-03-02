@@ -21,11 +21,11 @@ histpath = sys.argv[1]
 systs = []
 
 # 20% symmetric error on prompt
-systs.append( ("promptSyst"  , "lnN" , [] , {"signal":0 , "prompt":"1.2" , "photon":0     , "qflip":0     , "ddfakes":0     , "lostlep":0}) )
-systs.append( ("ddfakesSyst" , "lnN" , [] , {"signal":0 , "prompt":0     , "photon":0     , "qflip":0     , "ddfakes":"1.5" , "lostlep":0}) )
-systs.append( ("lostlepSyst" , "lnN" , [] , {"signal":0 , "prompt":0     , "photon":0     , "qflip":0     , "ddfakes":0     , "lostlep":0}) )
-systs.append( ("qflipSyst"   , "lnN" , [] , {"signal":0 , "prompt":0     , "photon":0     , "qflip":"1.5" , "ddfakes":0     , "lostlep":0}) )
-systs.append( ("photonSyst"  , "lnN" , [] , {"signal":0 , "prompt":0     , "photon":"1.5" , "qflip":0     , "ddfakes":0     , "lostlep":0}) )
+systs.append( ("promptSyst"  , "lnN" , [] , {"signal":0 , "prompt":"1.2" , "photon":0     , "qflip":0     , "ddfakes":0     , "lostlep":0    }) )
+systs.append( ("ddfakesSyst" , "lnN" , [] , {"signal":0 , "prompt":0     , "photon":0     , "qflip":0     , "ddfakes":"1.5" , "lostlep":0    }) )
+systs.append( ("lostlepSyst" , "lnN" , [] , {"signal":0 , "prompt":0     , "photon":0     , "qflip":0     , "ddfakes":0     , "lostlep":"1.2"}) )
+systs.append( ("qflipSyst"   , "lnN" , [] , {"signal":0 , "prompt":0     , "photon":0     , "qflip":"1.5" , "ddfakes":0     , "lostlep":0    }) )
+systs.append( ("photonSyst"  , "lnN" , [] , {"signal":0 , "prompt":0     , "photon":"1.5" , "qflip":0     , "ddfakes":0     , "lostlep":0    }) )
 
 fnames = [
         "{}/photon.root".format(histpath),

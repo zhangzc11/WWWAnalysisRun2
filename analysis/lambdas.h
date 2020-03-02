@@ -84,6 +84,8 @@ namespace Lambdas
     //************************************************
     // Lepton scale factor variations
     std::function<float()> LepSFVariation(Variation::Var var);
+    std::function<float()> EleSFVariation(Variation::Var var);
+    std::function<float()> MuoSFVariation(Variation::Var var);
 
     // Trigger scale factor variations
     std::function<float()> TriggerSFVariation(Variation::Var var);
@@ -117,6 +119,9 @@ namespace Lambdas
     std::function<float()> LepPtThresholds(float val1=25., float val2=25., float val3=-1.);
     std::function<float()> PassCustomIsolation(float eleiso=0.10, float muoniso=0.15);
 
+    extern std::function<float()> Cut2VLep;
+    extern std::function<float()> Cut3VLep;
+    extern std::function<float()> NoIsoTrack;
     extern std::function<float()> PassTightIsolation;
     extern std::function<float()> PassTightIsolationAR;
     extern std::function<float()> CutSRDilep; // Two tight leptons
