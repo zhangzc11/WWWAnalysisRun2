@@ -954,17 +954,6 @@ int main(int argc, char** argv)
         if(countele==0) return float(-999.);
         return maxeleiso;
       });
-    ana.histograms.addHistogram("muo_relIso03EAMax"      ,  160 , 0.0     , 0.4    , [&]() {
-        if (www.lep_pdgId().size()<1) return float(-999.);
-        vector<float> reliso = ((input.year == 2016) ? (www.lep_relIso03EAv2Lep()) : (www.lep_relIso03EALep()));
-        float maxmuoiso = 0.;
-        for(unsigned int i = 0; i<reliso.size(); ++i){
-          if(abs(www.lep_pdgId()[i])==13){
-            if(reliso[i]>maxmuoiso) maxmuoiso = reliso[i];
-          }
-        }
-        return maxmuoiso;
-      });
     ana.histograms.addHistogram("ele_fake_ptcoretahist"      ,  14 , 0.0     , 14.0    , [&]() {
         if (www.lep_pdgId().size()<1) return float(-999.);
         vector<float> reliso = ((input.year == 2016) ? (www.lep_relIso03EAv2Lep()) : (www.lep_relIso03EALep()));
