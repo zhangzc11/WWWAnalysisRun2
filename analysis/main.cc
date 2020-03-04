@@ -633,6 +633,7 @@ int main(int argc, char** argv)
     //             return ip3ds;
     //         });
 
+    // // histograms made to only study electron or muons in certain eta region for POG questions
     // ana.histograms.addVecHistogram("el_cen_pt_all",  180 , 0., 150, [&]()
     //         {
     //             std::vector<float> pts;
@@ -865,7 +866,347 @@ int main(int argc, char** argv)
     //             return ip3ds;
     //         });
 
-    
+    // ana.histograms.addHistogram("muo_ip3dMax"      ,  100 , -0.05     , 0.05    , [&]() {
+    //     if (www.lep_pdgId().size()<1) return float(-999.);
+    //     float maxmuoiso = 0.;
+    //     int countmuo = 0;
+    //     for(unsigned int i = 0; i<www.lep_ip3d().size(); ++i){
+    //       if(abs(www.lep_pdgId()[i])==13){
+    //         ++countmuo;
+    //         if(fabs(www.lep_ip3d()[i])>fabs(maxmuoiso)) maxmuoiso = www.lep_ip3d()[i];
+    //       }
+    //     }
+    //     if(countmuo==0) return float(-999.);
+    //     return maxmuoiso;
+    //   });
+    // ana.histograms.addHistogram("ele_ip3dMax_flav"      ,  7 , -5     , 2       , [&]() {
+    //     if (www.lep_pdgId().size()<1) return float(-999.);
+    //     float maxeleiso = 0.;
+    //     float maxeleiso_flav = -999;
+    //     int countele = 0;
+    //     for(unsigned int i = 0; i<www.lep_ip3d().size(); ++i){
+    //       if(abs(www.lep_pdgId()[i])==11){
+    //         ++countele;
+    //         if(fabs(www.lep_ip3d()[i])>fabs(maxeleiso))
+    //         {
+    //             maxeleiso = www.lep_ip3d()[i];
+    //             maxeleiso_flav = www.lep_motherIdSS()[i];
+    //         }
+    //       }
+    //     }
+    //     if(countele==0) return float(-999.);
+    //     return maxeleiso_flav;
+    //   });
+
+    // ana.histograms.addHistogram("ele_ip3dMax_flav_b"      ,  180 , -0.05     , 0.05       , [&]() {
+    //     if (www.lep_pdgId().size()<1) return float(-999.);
+    //     float maxeleiso = 0.;
+    //     float maxeleiso_flav = -999;
+    //     int countele = 0;
+    //     for(unsigned int i = 0; i<www.lep_ip3d().size(); ++i){
+    //       if(abs(www.lep_pdgId()[i])==11){
+    //         ++countele;
+    //         if(fabs(www.lep_ip3d()[i])>fabs(maxeleiso))
+    //         {
+    //             maxeleiso = www.lep_ip3d()[i];
+    //             maxeleiso_flav = www.lep_motherIdSS()[i];
+    //         }
+    //       }
+    //     }
+    //     if(countele==0) return float(-999.);
+    //     if (maxeleiso_flav == -1)
+    //         return maxeleiso;
+    //     else
+    //         return float(-999.);
+    //   });
+
+    // ana.histograms.addHistogram("ele_ip3dMax_flav_hf"      ,  180 , -0.05     , 0.05       , [&]() {
+    //     if (www.lep_pdgId().size()<1) return float(-999.);
+    //     float maxeleiso = 0.;
+    //     float maxeleiso_flav = -999;
+    //     int countele = 0;
+    //     for(unsigned int i = 0; i<www.lep_ip3d().size(); ++i){
+    //       if(abs(www.lep_pdgId()[i])==11){
+    //         ++countele;
+    //         if(fabs(www.lep_ip3d()[i])>fabs(maxeleiso))
+    //         {
+    //             maxeleiso = www.lep_ip3d()[i];
+    //             maxeleiso_flav = www.lep_motherIdSS()[i];
+    //         }
+    //       }
+    //     }
+    //     if(countele==0) return float(-999.);
+    //     if (maxeleiso_flav == -1 or maxeleiso_flav == -2)
+    //         return maxeleiso;
+    //     else
+    //         return float(-999.);
+    //   });
+
+    // ana.histograms.addHistogram("ele_ip3dMax_flav_c"      ,  180 , -0.05     , 0.05       , [&]() {
+    //     if (www.lep_pdgId().size()<1) return float(-999.);
+    //     float maxeleiso = 0.;
+    //     float maxeleiso_flav = -999;
+    //     int countele = 0;
+    //     for(unsigned int i = 0; i<www.lep_ip3d().size(); ++i){
+    //       if(abs(www.lep_pdgId()[i])==11){
+    //         ++countele;
+    //         if(fabs(www.lep_ip3d()[i])>fabs(maxeleiso))
+    //         {
+    //             maxeleiso = www.lep_ip3d()[i];
+    //             maxeleiso_flav = www.lep_motherIdSS()[i];
+    //         }
+    //       }
+    //     }
+    //     if(countele==0) return float(-999.);
+    //     if (maxeleiso_flav == -2)
+    //         return maxeleiso;
+    //     else
+    //         return float(-999.);
+    //   });
+
+    // ana.histograms.addHistogram("ele_ip3dMax_flav_lf"      ,  180 , -0.05     , 0.05       , [&]() {
+    //     if (www.lep_pdgId().size()<1) return float(-999.);
+    //     float maxeleiso = 0.;
+    //     float maxeleiso_flav = -999;
+    //     int countele = 0;
+    //     for(unsigned int i = 0; i<www.lep_ip3d().size(); ++i){
+    //       if(abs(www.lep_pdgId()[i])==11){
+    //         ++countele;
+    //         if(fabs(www.lep_ip3d()[i])>fabs(maxeleiso))
+    //         {
+    //             maxeleiso = www.lep_ip3d()[i];
+    //             maxeleiso_flav = www.lep_motherIdSS()[i];
+    //         }
+    //       }
+    //     }
+    //     if(countele==0) return float(-999.);
+    //     if (maxeleiso_flav == -4)
+    //         return maxeleiso;
+    //     else
+    //         return float(-999.);
+    //   });
+
+    // ana.histograms.addHistogram("ele_ip3dMax_flav_photon"      ,  180 , -0.05     , 0.05       , [&]() {
+    //     if (www.lep_pdgId().size()<1) return float(-999.);
+    //     float maxeleiso = 0.;
+    //     float maxeleiso_flav = -999;
+    //     int countele = 0;
+    //     for(unsigned int i = 0; i<www.lep_ip3d().size(); ++i){
+    //       if(abs(www.lep_pdgId()[i])==11){
+    //         ++countele;
+    //         if(fabs(www.lep_ip3d()[i])>fabs(maxeleiso))
+    //         {
+    //             maxeleiso = www.lep_ip3d()[i];
+    //             maxeleiso_flav = www.lep_motherIdSS()[i];
+    //         }
+    //       }
+    //     }
+    //     if(countele==0) return float(-999.);
+    //     if (maxeleiso_flav == -3)
+    //         return maxeleiso;
+    //     else
+    //         return float(-999.);
+    //   });
+
+    // ana.histograms.addHistogram("ele_ip3dMax_flav_unmatched"      ,  180 , -0.05     , 0.05       , [&]() {
+    //     if (www.lep_pdgId().size()<1) return float(-999.);
+    //     float maxeleiso = 0.;
+    //     float maxeleiso_flav = -999;
+    //     int countele = 0;
+    //     for(unsigned int i = 0; i<www.lep_ip3d().size(); ++i){
+    //       if(abs(www.lep_pdgId()[i])==11){
+    //         ++countele;
+    //         if(fabs(www.lep_ip3d()[i])>fabs(maxeleiso))
+    //         {
+    //             maxeleiso = www.lep_ip3d()[i];
+    //             maxeleiso_flav = www.lep_motherIdSS()[i];
+    //         }
+    //       }
+    //     }
+    //     if(countele==0) return float(-999.);
+    //     if (maxeleiso_flav == 0)
+    //         return maxeleiso;
+    //     else
+    //         return float(-999.);
+    //   });
+
+    // ana.histograms.addHistogram("ele_ip3dMax_flav_prompt"      ,  180 , -0.05     , 0.05       , [&]() {
+    //     if (www.lep_pdgId().size()<1) return float(-999.);
+    //     float maxeleiso = 0.;
+    //     float maxeleiso_flav = -999;
+    //     int countele = 0;
+    //     for(unsigned int i = 0; i<www.lep_ip3d().size(); ++i){
+    //       if(abs(www.lep_pdgId()[i])==11){
+    //         ++countele;
+    //         if(fabs(www.lep_ip3d()[i])>fabs(maxeleiso))
+    //         {
+    //             maxeleiso = www.lep_ip3d()[i];
+    //             maxeleiso_flav = www.lep_motherIdSS()[i];
+    //         }
+    //       }
+    //     }
+    //     if(countele==0) return float(-999.);
+    //     if (maxeleiso_flav > 0)
+    //         return maxeleiso;
+    //     else
+    //         return float(-999.);
+    //   });
+
+
+    // ana.histograms.addHistogram("muo_ip3dMax_flav_b"      ,  180 , -0.05     , 0.05       , [&]() {
+    //     if (www.lep_pdgId().size()<1) return float(-999.);
+    //     float maxmuoiso = 0.;
+    //     float maxmuoiso_flav = -999;
+    //     int countmuo = 0;
+    //     for(unsigned int i = 0; i<www.lep_ip3d().size(); ++i){
+    //       if(abs(www.lep_pdgId()[i])==13){
+    //         ++countmuo;
+    //         if(fabs(www.lep_ip3d()[i])>fabs(maxmuoiso))
+    //         {
+    //             maxmuoiso = www.lep_ip3d()[i];
+    //             maxmuoiso_flav = www.lep_motherIdSS()[i];
+    //         }
+    //       }
+    //     }
+    //     if(countmuo==0) return float(-999.);
+    //     if (maxmuoiso_flav == -1)
+    //         return maxmuoiso;
+    //     else
+    //         return float(-999.);
+    //   });
+
+    // ana.histograms.addHistogram("muo_ip3dMax_flav_hf"      ,  180 , -0.05     , 0.05       , [&]() {
+    //     if (www.lep_pdgId().size()<1) return float(-999.);
+    //     float maxmuoiso = 0.;
+    //     float maxmuoiso_flav = -999;
+    //     int countmuo = 0;
+    //     for(unsigned int i = 0; i<www.lep_ip3d().size(); ++i){
+    //       if(abs(www.lep_pdgId()[i])==13){
+    //         ++countmuo;
+    //         if(fabs(www.lep_ip3d()[i])>fabs(maxmuoiso))
+    //         {
+    //             maxmuoiso = www.lep_ip3d()[i];
+    //             maxmuoiso_flav = www.lep_motherIdSS()[i];
+    //         }
+    //       }
+    //     }
+    //     if(countmuo==0) return float(-999.);
+    //     if (maxmuoiso_flav == -1 or maxmuoiso_flav == -2)
+    //         return maxmuoiso;
+    //     else
+    //         return float(-999.);
+    //   });
+
+    // ana.histograms.addHistogram("muo_ip3dMax_flav_c"      ,  180 , -0.05     , 0.05       , [&]() {
+    //     if (www.lep_pdgId().size()<1) return float(-999.);
+    //     float maxmuoiso = 0.;
+    //     float maxmuoiso_flav = -999;
+    //     int countmuo = 0;
+    //     for(unsigned int i = 0; i<www.lep_ip3d().size(); ++i){
+    //       if(abs(www.lep_pdgId()[i])==13){
+    //         ++countmuo;
+    //         if(fabs(www.lep_ip3d()[i])>fabs(maxmuoiso))
+    //         {
+    //             maxmuoiso = www.lep_ip3d()[i];
+    //             maxmuoiso_flav = www.lep_motherIdSS()[i];
+    //         }
+    //       }
+    //     }
+    //     if(countmuo==0) return float(-999.);
+    //     if (maxmuoiso_flav == -2)
+    //         return maxmuoiso;
+    //     else
+    //         return float(-999.);
+    //   });
+
+    // ana.histograms.addHistogram("muo_ip3dMax_flav_lf"      ,  180 , -0.05     , 0.05       , [&]() {
+    //     if (www.lep_pdgId().size()<1) return float(-999.);
+    //     float maxmuoiso = 0.;
+    //     float maxmuoiso_flav = -999;
+    //     int countmuo = 0;
+    //     for(unsigned int i = 0; i<www.lep_ip3d().size(); ++i){
+    //       if(abs(www.lep_pdgId()[i])==13){
+    //         ++countmuo;
+    //         if(fabs(www.lep_ip3d()[i])>fabs(maxmuoiso))
+    //         {
+    //             maxmuoiso = www.lep_ip3d()[i];
+    //             maxmuoiso_flav = www.lep_motherIdSS()[i];
+    //         }
+    //       }
+    //     }
+    //     if(countmuo==0) return float(-999.);
+    //     if (maxmuoiso_flav == -4)
+    //         return maxmuoiso;
+    //     else
+    //         return float(-999.);
+    //   });
+
+    // ana.histograms.addHistogram("muo_ip3dMax_flav_photon"      ,  180 , -0.05     , 0.05       , [&]() {
+    //     if (www.lep_pdgId().size()<1) return float(-999.);
+    //     float maxmuoiso = 0.;
+    //     float maxmuoiso_flav = -999;
+    //     int countmuo = 0;
+    //     for(unsigned int i = 0; i<www.lep_ip3d().size(); ++i){
+    //       if(abs(www.lep_pdgId()[i])==13){
+    //         ++countmuo;
+    //         if(fabs(www.lep_ip3d()[i])>fabs(maxmuoiso))
+    //         {
+    //             maxmuoiso = www.lep_ip3d()[i];
+    //             maxmuoiso_flav = www.lep_motherIdSS()[i];
+    //         }
+    //       }
+    //     }
+    //     if(countmuo==0) return float(-999.);
+    //     if (maxmuoiso_flav == -3)
+    //         return maxmuoiso;
+    //     else
+    //         return float(-999.);
+    //   });
+
+    // ana.histograms.addHistogram("muo_ip3dMax_flav_unmatched"      ,  180 , -0.05     , 0.05       , [&]() {
+    //     if (www.lep_pdgId().size()<1) return float(-999.);
+    //     float maxmuoiso = 0.;
+    //     float maxmuoiso_flav = -999;
+    //     int countmuo = 0;
+    //     for(unsigned int i = 0; i<www.lep_ip3d().size(); ++i){
+    //       if(abs(www.lep_pdgId()[i])==13){
+    //         ++countmuo;
+    //         if(fabs(www.lep_ip3d()[i])>fabs(maxmuoiso))
+    //         {
+    //             maxmuoiso = www.lep_ip3d()[i];
+    //             maxmuoiso_flav = www.lep_motherIdSS()[i];
+    //         }
+    //       }
+    //     }
+    //     if(countmuo==0) return float(-999.);
+    //     if (maxmuoiso_flav == 0)
+    //         return maxmuoiso;
+    //     else
+    //         return float(-999.);
+    //   });
+
+    // ana.histograms.addHistogram("muo_ip3dMax_flav_prompt"      ,  180 , -0.05     , 0.05       , [&]() {
+    //     if (www.lep_pdgId().size()<1) return float(-999.);
+    //     float maxmuoiso = 0.;
+    //     float maxmuoiso_flav = -999;
+    //     int countmuo = 0;
+    //     for(unsigned int i = 0; i<www.lep_ip3d().size(); ++i){
+    //       if(abs(www.lep_pdgId()[i])==13){
+    //         ++countmuo;
+    //         if(fabs(www.lep_ip3d()[i])>fabs(maxmuoiso))
+    //         {
+    //             maxmuoiso = www.lep_ip3d()[i];
+    //             maxmuoiso_flav = www.lep_motherIdSS()[i];
+    //         }
+    //       }
+    //     }
+    //     if(countmuo==0) return float(-999.);
+    //     if (maxmuoiso_flav > 0)
+    //         return maxmuoiso;
+    //     else
+    //         return float(-999.);
+    //   });
+
     ana.histograms.addHistogram("nbsoft"                   ,  5   , 0.      , 5.     , [&]() {
         int nsoftbtag  = 0;
         for(unsigned int i = 0; i<www.svs_nTrks().size(); ++i){

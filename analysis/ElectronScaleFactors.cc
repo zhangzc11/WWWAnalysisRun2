@@ -16,7 +16,7 @@ ElectronScaleFactors::ElectronScaleFactors(std::string const& electronScaleFacto
       {LeptonID::ZCandidate, "passingWVZCandidateZID"},
       {LeptonID::WCandidate, "passingWVZCandidateWID"},
       {LeptonID::ThreeLepton, "passingWWW3LID"},
-      {LeptonID::SameSign, "passingWWWSameSignIDnoIP3D"},
+      {LeptonID::SameSign, "passingWWWSameSignID"},
   };
 
   // Load ID scale factors

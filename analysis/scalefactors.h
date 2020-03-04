@@ -449,7 +449,8 @@ class LeptonScaleFactors
             histmap2016_mu_recoid_sf     = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/EfficiencyStudies_2016_rootfiles_RunBCDEF_SF_ID.root:NUM_LooseID_DEN_genTracks_eta_pt");
             histmap2016_el_recoid_sf     = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/EGM2D_BtoH_GT20GeV_RecoSF_Legacy2016.root:EGamma_SF2D");
             histmap2016_el_mva_sf        = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/2016LegacyReReco_ElectronMVA80noiso_Fall17V2.root:EGamma_SF2D");
-            histmap2016_mu_veto_sf       = new RooUtil::HistMap("/nfs-7/userdata/haweber/scalefactors/sf_2016_muon_vetoID_20191115.root:h_sf_pt_vs_eta");
+            //histmap2016_mu_veto_sf       = new RooUtil::HistMap("/nfs-7/userdata/haweber/scalefactors/sf_2016_muon_vetoID_20191115.root:h_sf_pt_vs_eta");
+            histmap2016_mu_veto_sf       = new RooUtil::HistMap("/nfs-7/userdata/sapta/MuonSFs/wvz/v3/MuonID_2016vvv/muon/MuLoosePOG_MuVetoVVV/sf.root:h_sf_pt_vs_eta");
             histmap2016_mu_ss_sf         = new RooUtil::HistMap("/nfs-7/userdata/haweber/scalefactors/sf_2016_muon_ssID_20191115.root:h_sf_pt_vs_eta");
             histmap2016_mu_3l_sf         = new RooUtil::HistMap("/nfs-7/userdata/haweber/scalefactors/sf_2016_muon_3lID_20191115.root:h_sf_pt_vs_eta");
             histmap2016_el_veto_sf       = new RooUtil::HistMap("/nfs-7/userdata/haweber/scalefactors/sf_2016_electron_vetoID_20191115.root:h_sf_pt_vs_eta");
@@ -459,7 +460,8 @@ class LeptonScaleFactors
             histmap2017_mu_recoid_sf     = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/RunBCDEF_SF_ID.root:NUM_LooseID_DEN_genTracks_pt_abseta");
             histmap2017_el_recoid_sf     = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/egammaEffi.txt_EGM2D_runBCDEF_passingRECO.root:EGamma_SF2D");
             histmap2017_el_mva_sf        = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/gammaEffi.txt_EGM2D_runBCDEF_passingMVA94Xwp80noiso.root:EGamma_SF2D");
-            histmap2017_mu_veto_sf       = new RooUtil::HistMap("/nfs-7/userdata/haweber/scalefactors/sf_2017_muon_vetoID_20191115.root:h_sf_pt_vs_eta");
+            //histmap2017_mu_veto_sf       = new RooUtil::HistMap("/nfs-7/userdata/haweber/scalefactors/sf_2017_muon_vetoID_20191115.root:h_sf_pt_vs_eta");
+            histmap2017_mu_veto_sf       = new RooUtil::HistMap("/nfs-7/userdata/sapta/MuonSFs/wvz/v3/MuonID_2017vvv/muon/MuLoosePOG_MuVetoVVV/sf.root:h_sf_pt_vs_eta");
             histmap2017_mu_ss_sf         = new RooUtil::HistMap("/nfs-7/userdata/haweber/scalefactors/sf_2017_muon_ssID_20191115.root:h_sf_pt_vs_eta");
             histmap2017_mu_3l_sf         = new RooUtil::HistMap("/nfs-7/userdata/haweber/scalefactors/sf_2017_muon_3lID_20191115.root:h_sf_pt_vs_eta");
             histmap2017_el_veto_sf       = new RooUtil::HistMap("/nfs-7/userdata/haweber/scalefactors/sf_2017_electron_vetoID_20191115.root:h_sf_pt_vs_eta");
@@ -469,7 +471,8 @@ class LeptonScaleFactors
             histmap2018_mu_recoid_sf     = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/EfficienciesStudies_2018_rootfiles_RunABCD_SF_ID.root:NUM_LooseID_DEN_TrackerMuons_pt_abseta");
             histmap2018_el_recoid_sf     = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/egammaEffi.txt_EGM2D_updatedAll.root:EGamma_SF2D");
             histmap2018_el_mva_sf        = new RooUtil::HistMap("/nfs-7/userdata/phchang/scalefactors/2018_ElectronMVA80noiso.root:EGamma_SF2D");
-            histmap2018_mu_veto_sf       = new RooUtil::HistMap("/nfs-7/userdata/haweber/scalefactors/sf_2018_muon_vetoID_20191115.root:h_sf_pt_vs_eta");
+            //histmap2018_mu_veto_sf       = new RooUtil::HistMap("/nfs-7/userdata/haweber/scalefactors/sf_2018_muon_vetoID_20191115.root:h_sf_pt_vs_eta");
+            histmap2018_mu_veto_sf       = new RooUtil::HistMap("/nfs-7/userdata/sapta/MuonSFs/wvz/v3/MuonID_2018vvv/muon/MuLoosePOG_MuVetoVVV/sf.root:h_sf_pt_vs_eta");
             histmap2018_mu_ss_sf         = new RooUtil::HistMap("/nfs-7/userdata/haweber/scalefactors/sf_2018_muon_ssID_20191115.root:h_sf_pt_vs_eta");
             histmap2018_mu_3l_sf         = new RooUtil::HistMap("/nfs-7/userdata/haweber/scalefactors/sf_2018_muon_3lID_20191115.root:h_sf_pt_vs_eta");
             histmap2018_el_veto_sf       = new RooUtil::HistMap("/nfs-7/userdata/haweber/scalefactors/sf_2018_electron_vetoID_20191115.root:h_sf_pt_vs_eta");
@@ -594,19 +597,19 @@ class LeptonScaleFactors
                     if (variationel == 0) thrd_el_ss_sf = electronScaleFactors(input.year, LeptonID::SameSign, www.lep_eta()[2], min((double)www.lep_pt()[2],b500), SystematicVariation::Nominal);
                 }
 
-                if (variationel >  0) frst_el_3l_sf = electronScaleFactors(input.year, LeptonID::SameSign, www.lep_eta()[1], min((double)www.lep_pt()[1],b500), SystematicVariation::Up);
-                if (variationel <  0) frst_el_3l_sf = electronScaleFactors(input.year, LeptonID::SameSign, www.lep_eta()[1], min((double)www.lep_pt()[1],b500), SystematicVariation::Down);
-                if (variationel == 0) frst_el_3l_sf = electronScaleFactors(input.year, LeptonID::SameSign, www.lep_eta()[1], min((double)www.lep_pt()[1],b500), SystematicVariation::Nominal);
+                if (variationel >  0) frst_el_3l_sf = electronScaleFactors(input.year, LeptonID::ThreeLepton, www.lep_eta()[1], min((double)www.lep_pt()[1],b500), SystematicVariation::Up);
+                if (variationel <  0) frst_el_3l_sf = electronScaleFactors(input.year, LeptonID::ThreeLepton, www.lep_eta()[1], min((double)www.lep_pt()[1],b500), SystematicVariation::Down);
+                if (variationel == 0) frst_el_3l_sf = electronScaleFactors(input.year, LeptonID::ThreeLepton, www.lep_eta()[1], min((double)www.lep_pt()[1],b500), SystematicVariation::Nominal);
 
-                if (variationel >  0) scnd_el_3l_sf = electronScaleFactors(input.year, LeptonID::SameSign, www.lep_eta()[1], min((double)www.lep_pt()[1],b500), SystematicVariation::Up);
-                if (variationel <  0) scnd_el_3l_sf = electronScaleFactors(input.year, LeptonID::SameSign, www.lep_eta()[1], min((double)www.lep_pt()[1],b500), SystematicVariation::Down);
-                if (variationel == 0) scnd_el_3l_sf = electronScaleFactors(input.year, LeptonID::SameSign, www.lep_eta()[1], min((double)www.lep_pt()[1],b500), SystematicVariation::Nominal);
+                if (variationel >  0) scnd_el_3l_sf = electronScaleFactors(input.year, LeptonID::ThreeLepton, www.lep_eta()[1], min((double)www.lep_pt()[1],b500), SystematicVariation::Up);
+                if (variationel <  0) scnd_el_3l_sf = electronScaleFactors(input.year, LeptonID::ThreeLepton, www.lep_eta()[1], min((double)www.lep_pt()[1],b500), SystematicVariation::Down);
+                if (variationel == 0) scnd_el_3l_sf = electronScaleFactors(input.year, LeptonID::ThreeLepton, www.lep_eta()[1], min((double)www.lep_pt()[1],b500), SystematicVariation::Nominal);
 
                 if (www.nVlep() == 3)
                 {
-                    if (variationel >  0) thrd_el_3l_sf = electronScaleFactors(input.year, LeptonID::SameSign, www.lep_eta()[1], min((double)www.lep_pt()[1],b500), SystematicVariation::Up);
-                    if (variationel <  0) thrd_el_3l_sf = electronScaleFactors(input.year, LeptonID::SameSign, www.lep_eta()[1], min((double)www.lep_pt()[1],b500), SystematicVariation::Down);
-                    if (variationel == 0) thrd_el_3l_sf = electronScaleFactors(input.year, LeptonID::SameSign, www.lep_eta()[1], min((double)www.lep_pt()[1],b500), SystematicVariation::Nominal);
+                    if (variationel >  0) thrd_el_3l_sf = electronScaleFactors(input.year, LeptonID::ThreeLepton, www.lep_eta()[1], min((double)www.lep_pt()[1],b500), SystematicVariation::Up);
+                    if (variationel <  0) thrd_el_3l_sf = electronScaleFactors(input.year, LeptonID::ThreeLepton, www.lep_eta()[1], min((double)www.lep_pt()[1],b500), SystematicVariation::Down);
+                    if (variationel == 0) thrd_el_3l_sf = electronScaleFactors(input.year, LeptonID::ThreeLepton, www.lep_eta()[1], min((double)www.lep_pt()[1],b500), SystematicVariation::Nominal);
                 }
 
                 // Scale factors
@@ -730,13 +733,13 @@ class LeptonScaleFactors
                     if (variationel == 0) thrd_el_ss_sf = electronScaleFactors(input.year, LeptonID::SameSign, www.lep_eta()[2], min((double)www.lep_pt()[2],b500), SystematicVariation::Nominal);
                 }
 
-                if (variationel >  0) frst_el_3l_sf = electronScaleFactors(input.year, LeptonID::SameSign, www.lep_eta()[1], min((double)www.lep_pt()[1],b500), SystematicVariation::Up);
-                if (variationel <  0) frst_el_3l_sf = electronScaleFactors(input.year, LeptonID::SameSign, www.lep_eta()[1], min((double)www.lep_pt()[1],b500), SystematicVariation::Down);
-                if (variationel == 0) frst_el_3l_sf = electronScaleFactors(input.year, LeptonID::SameSign, www.lep_eta()[1], min((double)www.lep_pt()[1],b500), SystematicVariation::Nominal);
+                if (variationel >  0) frst_el_3l_sf = electronScaleFactors(input.year, LeptonID::ThreeLepton, www.lep_eta()[1], min((double)www.lep_pt()[1],b500), SystematicVariation::Up);
+                if (variationel <  0) frst_el_3l_sf = electronScaleFactors(input.year, LeptonID::ThreeLepton, www.lep_eta()[1], min((double)www.lep_pt()[1],b500), SystematicVariation::Down);
+                if (variationel == 0) frst_el_3l_sf = electronScaleFactors(input.year, LeptonID::ThreeLepton, www.lep_eta()[1], min((double)www.lep_pt()[1],b500), SystematicVariation::Nominal);
 
-                if (variationel >  0) scnd_el_3l_sf = electronScaleFactors(input.year, LeptonID::SameSign, www.lep_eta()[1], min((double)www.lep_pt()[1],b500), SystematicVariation::Up);
-                if (variationel <  0) scnd_el_3l_sf = electronScaleFactors(input.year, LeptonID::SameSign, www.lep_eta()[1], min((double)www.lep_pt()[1],b500), SystematicVariation::Down);
-                if (variationel == 0) scnd_el_3l_sf = electronScaleFactors(input.year, LeptonID::SameSign, www.lep_eta()[1], min((double)www.lep_pt()[1],b500), SystematicVariation::Nominal);
+                if (variationel >  0) scnd_el_3l_sf = electronScaleFactors(input.year, LeptonID::ThreeLepton, www.lep_eta()[1], min((double)www.lep_pt()[1],b500), SystematicVariation::Up);
+                if (variationel <  0) scnd_el_3l_sf = electronScaleFactors(input.year, LeptonID::ThreeLepton, www.lep_eta()[1], min((double)www.lep_pt()[1],b500), SystematicVariation::Down);
+                if (variationel == 0) scnd_el_3l_sf = electronScaleFactors(input.year, LeptonID::ThreeLepton, www.lep_eta()[1], min((double)www.lep_pt()[1],b500), SystematicVariation::Nominal);
 
                 if (www.nVlep() == 3)
                 {
